@@ -9,6 +9,7 @@ from constants import STATE_RUNNING
 from capabilities.registry import CapabilityRegistry
 from journal import EventJournal
 from models.semantic import Screen
+from maintenance.sync import SyncManager
 from normalizer import UINormalizer
 
 # Dynamically link existing external drivers/governors if present
@@ -63,6 +64,10 @@ def main():
 
     print("[10] Enabling plugins...")
     # plugin_loader.load_active()
+
+    print("[10.5] Initializing SyncManager...")
+    sync_mgr = SyncManager()
+    # sync_mgr.perform_full_sync()  # Uncomment to sync on boot
 
     print("[11] Begin execution loop...")
     print("[12] Continuously monitor health and recover failed components.")
