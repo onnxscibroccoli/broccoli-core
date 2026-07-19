@@ -1,44 +1,53 @@
-import time
 import subprocess
-from runtime.logger import setup_logger
+import time
+from typing import Optional, Any
 
 class AccessibilityDriver:
-    def __init__(self):
-        self.logger = setup_logger("accessibility")
-        self.logger.info("✅ Real Accessibility (Shizuku fallback) loaded")
-        self.rish = None  # Will link later
+    def __init__(self, event_bus: Any):
+        self.bus = event_bus
+        self._tick_counter = 0
+        print("[AccessibilityDriver] Initialized and binding to EventBus...")
+        
+        # Subscribe to the heartbeat to trigger polling
+        self.bus.subscribe("TICK", self._on_tick)
 
-    def get_pointer_location(self):
+    def _on_tick(self, payload: Any) -> None:
+        self._tick_counter += 1
+        # Poll every 5 ticks (5 seconds) to avoid CPU/battery thrashing
+        if self._tick_counter % 5 == 0:
+            self.capture_tree()
+
+    def capture_tree(self) -> Optional[str]:
+        """Dumps the UI hierarchy using Shizuku/Rish."""
         try:
-            # Use input service via Shizuku if available, else fallback
-            result = subprocess.run(["getevent", "-t", "-l"], capture_output=True, text=True, timeout=2)
-            self.logger.info("📍 Pointer monitoring active (dev options)")
-            return "monitoring"
-        except:
-            return "unknown"
+            # Execute uiautomator via rish. 
+            # We dump to /data/local/tmp as it has predictable permissions.
+            dump_cmd = [
+                "rish", "-c", 
+                "uiautomator dump /data/local/tmp/ui_dump.xml > /dev/null && cat /data/local/tmp/ui_dump.xml"
+            ]
+            
+            result = subprocess.run(
+                dump_cmd,
+                capture_output=True,
+                text=True,
+                timeout=10
+            )
 
-    def dump_ui(self):
-        """Try multiple ways"""
-        try:
-            # Try Shizuku-wrapped dumpsys if rish exists
-            result = subprocess.run(["dumpsys", "window", "windows"], capture_output=True, text=True, timeout=5)
-            nodes = len([l for l in result.stdout.splitlines() if "Window" in l])
-            self.logger.info(f"📱 UI Dump: \~{nodes} elements")
-            return {"nodes": nodes}
-        except:
-            self.logger.warning("dumpsys unavailable - using fallback")
-            return {"nodes": 0, "status": "limited"}
-
-    def snapshot(self):
-        pointer = self.get_pointer_location()
-        ui = self.dump_ui()
-        return {"pointer": pointer, "ui": ui, "timestamp": time.time()}
-
-    def tap(self, x=540, y=1200):
-        try:
-            subprocess.run(["input", "tap", str(x), str(y)], check=True)
-            self.logger.info(f"🔨 Tapped at ({x},{y})")
-            return True
-        except:
-            self.logger.warning("Tap failed")
-            return False
+            if result.returncode == 0 and result.stdout:
+                xml_data = result.stdout.strip()
+                print(f"[AccessibilityDriver] Captured UI tree ({len(xml_data)} bytes)")
+                
+                # Publish the raw XML payload to the bus
+                self.bus.publish("UI_UPDATED", xml_data)
+                return xml_data
+            else:
+                print(f"[AccessibilityDriver] Failed to dump UI. Ensure rish is initialized. stderr: {result.stderr.strip()}")
+                return None
+                
+        except FileNotFoundError:
+            print("[AccessibilityDriver] Error: 'rish' command not found in PATH.")
+            return None
+        except Exception as e:
+            print(f"[AccessibilityDriver] Exception during capture: {e}")
+            return None

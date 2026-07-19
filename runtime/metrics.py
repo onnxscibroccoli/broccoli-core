@@ -1,5 +1,7 @@
 class Metrics:
     def __init__(self):
-        self.cycles = 0
+        self.counters = {}
     def increment(self, key):
-        if key == "cycle": self.cycles += 1
+        self.counters[key] = self.counters.get(key, 0) + 1
+    def get(self, key):
+        return self.counters.get(key, 0)
