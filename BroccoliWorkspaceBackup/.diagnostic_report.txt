@@ -1,0 +1,138 @@
+BROCCOLI_DIAGNOSTIC_PULL
+timestamp=2026-07-08T02:34:35-04:00
+
+=== state.json ===
+{
+  "initialized": true,
+  "god_mode_learned": true,
+  "use_tab_before_enter": true,
+  "phase": "operational"
+}
+=== outbox_context (before this run) ===
+6529 /data/data/com.termux/files/home/broccoli/outbox_context.txt
+BROCCOLI_DIAGNOSTIC_PULL
+timestamp=2026-07-08T02:30:54-04:00
+
+
+=== py_compile ===
+OK broccoli_chat_loop.py
+OK broccoli_host.py
+OK broccoli_meta_heal.py
+OK broccoli_rish_ui.py
+OK broccoli_secondary_display.py
+OK broccoli_task_queue.py
+OK chat_copy_tap.py
+OK chat_scraper.py
+OK daemon_idle_loop.py
+OK grok_ui_coords.py
+OK parse_learn_log.py
+OK quarry_iter.py
+OK reboot_bootstrap.py
+OK smoke_fast.py
+OK smoke_lesson_foreground.py
+OK ui_window_check.py
+OK workflow_front.py
+
+=== ensure_grok_window ===
+exit=0
+Starting: Intent { flg=0x20000000 cmp=ai.x.grok/.main.GrokActivity }
+    topResumedActivity=ActivityRecord{4c79cdd u0 ai.x.grok/.main.GrokActivity t1806}
+[2026-07-08T02:36:35-04:00] wrong window: ? — relaunch
+[2026-07-08T02:36:38-04:00] ensure try 5/5
+    topResumedActivity=ActivityRecord{4c79cdd u0 ai.x.grok/.main.GrokActivity t1806}
+[2026-07-08T02:36:58-04:00] wrong window: ? — relaunch
+{"ok": true, "reason": "grok_chat", "has_chat_text_input": true, "has_ask_anything": false}
+
+=== inject.log (tail 20) ===
+(empty)
+
+=== wait_reply.log (tail 10) ===
+[2026-07-08T02:30:54-04:00] resume ai.x.grok/.main.GrokActivity
+[2026-07-08T02:31:00-04:00] monkey fallback
+/data/data/com.termux/files/home/broccoli/ensure_grok_window.sh: line 44: /tmp/broccoli_win.json: Permission denied
+[2026-07-08T02:31:16-04:00] wrong window: ? — relaunch
+[2026-07-08T02:31:19-04:00] ensure try 5/5
+/data/data/com.termux/files/home/broccoli/ensure_grok_window.sh: line 44: /tmp/broccoli_win.json: Permission denied
+[2026-07-08T02:31:35-04:00] wrong window: ? — relaunch
+[2026-07-08T02:31:38-04:00] FAIL ensure_grok_window after 5 tries
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+[2026-07-08T02:31:48-04:00] wait: ready (Copy message visible)
+
+=== copy_fetch.log (tail 10) ===
+/data/data/com.termux/files/home/broccoli/ensure_grok_window.sh: line 44: /tmp/broccoli_win.json: Permission denied
+[2026-07-08T02:33:23-04:00] wrong window: ? — relaunch
+[2026-07-08T02:33:27-04:00] ensure try 4/5
+[2026-07-08T02:33:29-04:00] resume ai.x.grok/.main.GrokActivity
+/data/data/com.termux/files/home/broccoli/ensure_grok_window.sh: line 44: /tmp/broccoli_win.json: Permission denied
+[2026-07-08T02:33:47-04:00] wrong window: ? — relaunch
+[2026-07-08T02:33:50-04:00] ensure try 5/5
+[2026-07-08T02:33:56-04:00] resume ai.x.grok/.main.GrokActivity
+[2026-07-08T02:34:22-04:00] FAIL not foreground
+[2026-07-08T02:34:23-04:00] FAIL ensure_grok_window after 5 tries
+
+=== chat_loop.log (tail 15) ===
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 2153, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 1269, in _check_timeout
+    raise TimeoutExpired(
+    ...<2 lines>...
+            stderr=b''.join(stderr_seq) if stderr_seq else None)
+subprocess.TimeoutExpired: Command '['bash', '/data/data/com.termux/files/home/broccoli/chat_copy_fetch.sh']' timed out after 120 seconds
+[2026-07-08 01:52:26] inbox_response.txt written from Grok UI scrape
+[2026-07-08 01:52:27] execute inbox rc=2
+[2026-07-08 01:52:27] cycle 3 (Grok ai.x.grok)
+[2026-07-08 01:53:40] waiting for new Grok response (agent block)...
+[2026-07-08 01:57:52] inbox_response.txt written from Grok UI scrape
+
+=== last_cmd / last_output ===
+CMD:cd /data/data/com.termux/files/home/broccoli && bash self_test.sh
+---
+PASS: dir_writable
+PASS: rish_wrapper
+PASS: host_py
+PASS: chat_scraper
+PASS: chat_profile
+PASS: profile_json
+PASS: state_rw
+FAIL: ui_dump
+FAIL: scrape_once
+PASS: termux_clipboard
+PASS: copy_fetch_sh
+FAIL: rish_echo
+FAIL=3
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=ai.x.grok/.main.GrokActivity }
+--- inject.log ---
+[2026-07-08T01:52:54-04:00] clipboard 8260 bytes
+[2026-07-08T01:53:30-04:00] focus chat_text_input 540 2139
+[2026-07-08T01:53:36-04:00] submit keyevent 66 (ENTER)
+[2026-07-08T01:53:40-04:00] done
+[2026-07-08T01:55:06-04:00] clipboard 8260 bytes
+[2026-07-08T01:58:18-04:00] clipboard 28 bytes
+[2026-07-08T01:58:33-04:00] clipboard 28 bytes
+[2026-07-08T01:58:54-04:00] clipboard 28 bytes
+--- last_cmd cleared ---
+
+=== inbox_response ===
+
+
+=== chat_profile inject ===
+{
+  "CHAT_PACKAGE": "ai.x.grok",
+  "CHAT_ACTIVITY": "ai.x.grok/.main.GrokActivity",
+  "CHAT_INPUT_X": 540,
+  "CHAT_INPUT_Y": 2139,
+  "CHAT_SEND_X": 1001,
+  "CHAT_SEND_Y": 2203,
+  "POST_LAUNCH_SLEEP": 1.8,
+  "POST_PASTE_SLEEP": 0.6,
+  "SUBMIT_METHOD": "tap_send_after_paste"
+}
+
+=== processes ===
+(none)
+
+=== smoke inject (short line) ===
+137 /data/data/com.termux/files/home/broccoli/.smoke_line.txt

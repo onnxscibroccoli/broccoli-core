@@ -1,0 +1,47 @@
+{
+  "ts": "2026-07-10 04:03:35",
+  "reason": "clip",
+  "actions": [
+    {
+      "target": "clip",
+      "before_ok": false,
+      "steps": [
+        {
+          "step": "termux-api",
+          "rc": 0,
+          "out": ""
+        },
+        {
+          "step": "clip-retry",
+          "rc": 0,
+          "out": "FAIL CLIP_V2_040405\n"
+        }
+      ],
+      "after_ok": false,
+      "clip_id": "CLIP_V2_040416"
+    },
+    {
+      "target": "mirror",
+      "ok": true,
+      "steps": [
+        {
+          "step": "mirror_sync",
+          "rc": 0
+        }
+      ]
+    },
+    {
+      "target": "agent",
+      "ok": true,
+      "steps": [
+        {
+          "step": "agent_cycle",
+          "rc": 0,
+          "out": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_040431\n\npull 0 PULL_RISH_OK 1534 /sdcard/Broccoli/pull/bundle_20260710_040443\n\n"
+        }
+      ]
+    }
+  ],
+  "ok": true,
+  "clip_id": "CLIP_V2_023822"
+}

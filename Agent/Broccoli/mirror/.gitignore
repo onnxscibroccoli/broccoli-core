@@ -1,0 +1,10 @@
+meta/vault/
+reports/
+thread/
+queue/missions.txt
+queue/pending.txt
+meta/*.json
+inbox/
+sandbox/
+*.log
+**/ui_dump*.xml

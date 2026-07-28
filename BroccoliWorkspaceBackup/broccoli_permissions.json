@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "block_write_globs": [
+    "broccoli_main*.py",
+    "broccoli_auto_restart.sh",
+    "broccoli_permissions.json",
+    "agent_apply_guardrails.py",
+    "scripts/restart_broccoli_agent.sh"
+  ],
+  "block_spawn_unless_whitelisted": true,
+  "max_child_processes": 2,
+  "allow_write_globs": [
+    "prompts_*.md",
+    "sector_rotation*.json",
+    "archive/**",
+    "logs/**",
+    "scripts/helpers/**"
+  ]
+}

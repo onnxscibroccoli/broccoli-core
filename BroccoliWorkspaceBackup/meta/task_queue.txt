@@ -1,0 +1,2 @@
+2026-07-07T21:16:14 ASK|restored from .bak; agentic UI verify; no Chrome
+2026-07-07T21:17:53 ASK|fix os import; agentic start; bak scan broad

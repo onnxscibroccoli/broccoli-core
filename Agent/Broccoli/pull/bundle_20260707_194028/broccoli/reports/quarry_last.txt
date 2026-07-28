@@ -1,0 +1,13 @@
+PASS reboot_bootstrap 5.74s
+PASS paths_and_bins 0.0s
+PASS display_primary 0.16s
+PASS launch_grok 0.26s
+FAIL chat_foreground 0.26s
+PASS dump_ui 0.0s
+PASS smoke_parse_B 0.03s
+PASS smoke_heal_C 0.23s
+PASS workflow_front 18.19s
+PASS task_queue 0.19s
+PASS idle_gate_dry 0.1s
+
+SCORE 10/11

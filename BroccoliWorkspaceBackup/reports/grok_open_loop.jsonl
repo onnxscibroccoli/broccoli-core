@@ -1,0 +1,6 @@
+{"round": 1, "step": "rish_open", "ok": false, "cmd": "am start -W -n ai.x.grok/.MainActivity", "detail": "Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] pkg=ai.x.grok }\n"}
+{"round": 1, "step": "chat_foreground", "grok_focus": false}
+{"round": 2, "step": "rish_open", "ok": false, "cmd": "am start -W -n ai.x.grok/.MainActivity", "detail": "Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] pkg=ai.x.grok }\n"}
+{"round": 2, "step": "chat_foreground", "grok_focus": false}
+{"round": 3, "step": "rish_open", "ok": false, "cmd": "am start -W -n ai.x.grok/.MainActivity", "detail": "Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] pkg=ai.x.grok }\n"}
+{"round": 3, "step": "chat_foreground", "grok_focus": false}

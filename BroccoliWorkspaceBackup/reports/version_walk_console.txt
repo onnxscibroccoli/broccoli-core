@@ -1,0 +1,25 @@
+SMOKE_SKIP
+clip 0 FAIL CLIP_V2_220643
+
+pull 0 PULL_RISH_OK 711 /sdcard/Broccoli/pull/bundle_20260707_220654
+
+22:05:22 WALK_START
+22:06:03 candidates=6
+22:06:03 TRY 1/6 lib files=['broccoli_operator.py', 'broccoli_rish_shell.py', 'broccoli_ui_dump.py', 'broccoli_agentic_chat.py', 'broccoli_wait.py', 'broccoli_input.py', 'broccoli_strategy.py', 'broccoli_send.py', 'broccoli_selftest.py', 'broccoli_manual.py', 'broccoli_manual_mode.py', 'broccoli_a11y_rish.py', 'broccoli_a11y_send.py', 'broccoli_rish_ui.py']
+22:06:09 RESULT lib -> {"ok": false, "stage": "clipboard", "detail": "termux-clipboard-set failed"}
+22:06:10 TRY 2/6 /sdcard/Broccoli/pull/bundle_20260707_214342/broccoli/lib files=['broccoli_agentic_chat.py', 'broccoli_input.py', 'broccoli_operator.py', 'broccoli_rish_shell.py', 'broccoli_selftest.py', 'broccoli_send.py', 'broccoli_strategy.py', 'broccoli_ui_dump.py', 'broccoli_wait.py']
+22:06:15 RESULT /sdcard/Broccoli/pull/bundle_20260707_214342/broccoli/lib -> {"ok": false, "stage": "clipboard", "detail": "termux-clipboard-set failed"}
+22:06:15 TRY 3/6 /sdcard/Broccoli/pull/bundle_20260707_212854/broccoli/lib files=['broccoli_agentic_chat.py', 'broccoli_input.py', 'broccoli_operator.py', 'broccoli_rish_shell.py', 'broccoli_ui_dump.py', 'broccoli_wait.py']
+22:06:21 RESULT /sdcard/Broccoli/pull/bundle_20260707_212854/broccoli/lib -> {"ok": false, "stage": "clipboard", "detail": "termux-clipboard-set failed"}
+22:06:21 TRY 4/6 /sdcard/Broccoli files=['broccoli_bootstrap.py', 'broccoli_agent.py', 'broccoli_agent_context.py', 'broccoli_mac_ingest.py', 'broccoli_pulse.py', 'broccoli_a11y.py']
+22:06:26 RESULT /sdcard/Broccoli -> {"ok": false, "stage": "clipboard", "detail": "termux-clipboard-set failed"}
+22:06:27 TRY 5/6 . files=['broccoli_secondary_display.py', 'broccoli_meta_heal.py', 'broccoli_task_queue.py', 'broccoli_rish_ui.py']
+22:06:32 RESULT . -> {"ok": false, "stage": "clipboard", "detail": "termux-clipboard-set failed"}
+22:06:32 TRY 6/6 current_lib files=['broccoli_rish_shell.py', 'broccoli_input.py', 'broccoli_ui_dump.py', 'broccoli_rish_ui.py', 'broccoli_agentic_chat.py', 'broccoli_send.py']
+22:06:37 RESULT current_lib -> {"ok": false, "stage": "clipboard", "detail": "termux-clipboard-set failed"}
+22:06:38 FALLBACK brocc agent codev start
+22:07:18 FALLBACK pull bundle_20260707_220654
+{
+  "success": "partial",
+  "via": "codev_pull"
+}

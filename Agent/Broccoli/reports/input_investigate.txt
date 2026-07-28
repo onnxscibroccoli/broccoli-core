@@ -1,0 +1,125 @@
+=== INPUT / RECursion DIFF ===
+  558 broccoli_bootstrap.py
+  433 broccoli_bootstrap.py.bak.smoke
+  464 broccoli_bootstrap.py.bak.fullreplace
+ 1455 total
+--- current: paste|input|prompt|ask|recurs|next step ---
+4:Complete paths: launch, compose, send, deliver reply, smoke, queue.
+71:def shell_clipboard_set(text: str) -> None:
+72:    # Android 10+ shell clipboard (works under rish shell uid)
+74:    rish_cmd(f'cmd clipboard set "{esc}"', timeout=15)
+180:    """Imagine tab breaks text compose; select Ask."""
+183:            continue
+194:def find_composer(nodes: List[UINode]) -> Optional[UINode]:
+199:        if n.package == PKG and "EditText" in n.klass:
+204:def find_send(nodes: List[UINode]) -> Optional[UINode]:
+212:            continue
+214:            continue
+222:def grok_fill_test() -> int:
+226:    comp = find_composer(nodes)
+228:        log("FAIL fill_test: no chat_text_input")
+232:        log("FAIL fill_test: bad bounds")
+234:    log("STEP tap composer", comp.bounds)
+238:    shell_clipboard_set(test)
+243:        log("OK fill_test pasted")
+250:        log("OK fill_test typed")
+252:    log("FAIL fill_test: composer empty in dump")
+256:def grok_send_text(message: str, *, do_launch: bool = True) -> int:
+261:    comp = find_composer(nodes)
+263:        log("FAIL send: no composer")
+267:        log("FAIL send: bounds")
+269:    log("STEP grok_send tap composer")
+274:    shell_clipboard_set(message)
+279:    send = find_send(nodes2)
+280:    if send:
+281:        sc = bounds_center(send.bounds)
+283:            log("STEP grok_send tap send", send.content_desc or send.klass)
+288:        log("STEP grok_send keyevent ENTER")
+304:def _extract_assistant_reply(xml: str, *, user_prompt: Optional[str] = None) -> str:
+310:            continue
+312:            continue
+315:            continue
+317:            continue
+319:            continue
+320:        if user_prompt and t == user_prompt.strip():
+321:            continue
+322:        if t.startswith("Reply with only") and user_prompt and user_prompt.strip() in t:
+323:            continue
+341:    user_prompt: Optional[str] = None,
+353:        reply = _extract_assistant_reply(xml, user_prompt=user_prompt)
+362:                reply2 = _extract_assistant_reply(xml2, user_prompt=user_prompt)
+371:def grok_ask(message: str, timeout: int = DEFAULT_ASK_TIMEOUT) -> int:
+372:    if grok_send_text(message) != 0:
+375:    reply = grok_poll_reply(timeout, user_prompt=message)
+386:    if grok_send_text(msg) != 0:
+387:        log("=== BROCCOLI_DONE === grok FAIL: send")
+397:    reply = _extract_assistant_reply(xml, user_prompt=msg)
+413:            continue
+425:def grok_dump() -> int:
+460:        return grok_dump()
+462:        return 0 if grok_send_text(arg or "ping") == 0 else 1
+464:        return grok_ask(arg or "Say hello in one short sentence.")
+466:        return grok_fill_test()
+489:            continue
+524:            "health | launch-grok | grok-dump | grok-recon | grok-fill-test | "
+525:            "grok-send TEXT | grok-ask TEXT | grok-smoke | run-once | watch"
+534:    if a == "grok-dump":
+535:        return grok_dump()
+538:    if a == "grok-fill-test":
+539:        return grok_fill_test()
+540:    if a == "grok-send":
+542:        return 0 if grok_send_text(msg) == 0 else 1
+545:        return grok_ask(msg)
+--- bak.smoke (stable?) ---
+138:    for kw in ("ask grok", "ask anything", "message", "type"):
+147:def find_send(nl, y_ref):
+149:    if "send_cx" in cal:
+150:        return cal["send_cx"], cal["send_cy"], "cal"
+157:        if re.search(r"send|submit|post|arrow|voice", blob):
+191:def clipboard_set(text):
+192:    log("STEP clipboard_set", repr(text[:50]))
+193:    subprocess.run(["termux-clipboard-set"], input=text.encode("utf-8"), check=False, timeout=15)
+195:    p = subprocess.run(["termux-clipboard-get"], capture_output=True, text=True, timeout=15)
+197:    log("  clipboard_get", repr(got[:60]), "OK" if text in got or got == text else "MISMATCH")
+203:def paste():
+212:    sx, sy, why = find_send(nl, inp["cy"])
+214:    lines.append("send_guess cx=%s cy=%s why=%s" % (sx, sy, why))
+239:def grok_fill_test(msg="BROCCOLI_CLIPBOARD_TEST"):
+249:    clipboard_set(msg)
+250:    paste()
+274:        r"ask|imagine|explore|grok|chat|home|settings|menu|search|voice|"
+275:        r"send\s*message|copy message|share this|like this|dislike|regenerate|"
+319:def grok_ask(text, wait=50, job_name="grok-ask", want=""):
+338:            _UI_SEND = _ui.get("send")
+339:            log("ui_ensure send", _UI_SEND)
+342:    log("grok_ask composer", inp["cx"], inp["cy"])
+346:    clipboard_set(text)
+347:    paste()
+350:    sx, sy, why = find_send(nl2, inp["cy"])
+351:    log("send_tap", sx, sy, why)
+381:def grok_send(text, wait=60):
+382:    return grok_ask(text, wait=wait, want="")
+385:def grok_send(text, wait=60):
+386:    return grok_ask(text, wait=wait)
+391:        log("health | launch-grok | grok-dump | grok-recon | grok-fill-test | grok-ask | grok-smoke | grok-send TEXT")
+402:    if a == "grok-fill-test":
+403:        grok_fill_test()
+405:    if a == "grok-ask":
+406:        prompt = " ".join(sys.argv[2:]) if len(sys.argv) > 2 else sys.stdin.read().strip()
+407:        if not prompt:
+408:            log("usage: grok-ask TEXT  |  echo hi | grok-ask")
+410:        reply = grok_ask(prompt)
+414:        out = {"prompt": prompt, "reply": reply, "ts": run_id}
+418:        subprocess.run([sys.executable, os.path.expanduser("~/broccoli_report.py"), "grok", "grok-ask", "OK", reply or ""], check=False)
+422:        r = grok_ask("Reply with only GROK_SMOKE_OK", want="GROK_SMOKE_OK")
+427:    if a == "grok-send":
+428:        log(grok_send(" ".join(sys.argv[2:])))
+--- rish_ui ---
+15:    p = subprocess.run(["rish"], input=script, capture_output=True, text=True, timeout=90)
+--- lib grok foreground ---
+3:PARAMOUNT: open Grok ASK CHAT in foreground (not Imagine, not background).
+4:Steps: launch → dump UI → tap Ask → tap/focus chat_text_input → scroll_chat_end → heal.
+106:    """chat_text_input = real chat foreground."""
+107:    for rid in ("chat_text_input",):
+155:    toast("Chat foreground OK — heal")
+160:    ok = bool(xml2 and ("chat_text_input" in xml2 or "Ask anything" in xml2))

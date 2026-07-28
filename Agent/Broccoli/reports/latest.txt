@@ -1,0 +1,9 @@
+=== BROCCOLI REPORT ===
+time: 2026-07-05 23:52:16
+provider: grok
+job: grok-ask
+status: OK
+reply: Compare Ruto with Android Virtual Display
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===

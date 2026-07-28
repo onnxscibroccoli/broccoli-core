@@ -1,0 +1,1 @@
+CMD:cd /data/data/com.termux/files/home/broccoli && bash self_test.sh

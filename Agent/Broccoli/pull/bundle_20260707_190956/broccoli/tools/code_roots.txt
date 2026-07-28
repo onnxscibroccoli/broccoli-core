@@ -1,0 +1,3 @@
+$HOME/project_mythara
+$HOME/broccoli
+$HOME/tasks

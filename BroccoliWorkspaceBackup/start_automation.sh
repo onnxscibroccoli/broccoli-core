@@ -1,0 +1,9 @@
+export BROCC_NO_SELF_MUTATE=1
+export BROCC_MAX_CHILDREN=2
+#!/data/data/com.termux/files/usr/bin/bash
+B="${BROCCOLI_DIR:-$HOME/broccoli}"
+# Kill old loop if any
+pkill -f "autoloop.sh" 2>/dev/null || true
+sleep 1
+nohup bash "$B/autoloop.sh" >>"$B/logs/autoloop.log" 2>&1 &
+echo "PID=$!  tail: tail -f $B/logs/autoloop.log"

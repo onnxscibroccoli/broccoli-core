@@ -1,0 +1,13 @@
+{
+  "ts": 1783955206.3855617,
+  "rish": "/data/data/com.termux/files/usr/bin/rish",
+  "clipboard": "/data/data/com.termux/files/usr/bin/termux-clipboard-set",
+  "wire": "skip_no_grok",
+  "diag": {
+    "rish": "/data/data/com.termux/files/usr/bin/rish",
+    "clipboard": "/data/data/com.termux/files/usr/bin/termux-clipboard-set",
+    "dump_ok": 0,
+    "parse": null
+  },
+  "all_pass": false
+}

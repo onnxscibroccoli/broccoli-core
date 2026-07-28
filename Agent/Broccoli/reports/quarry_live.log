@@ -1,0 +1,28 @@
+=== QUARRY ITER START ===
+QUARRY reboot_bootstrap: PASS (4.32s) stop 2>/dev/null; true
+REBOOT python3 "/data/data/com.termux/files/home/broccoli
+QUARRY paths_and_bins: PASS (0.01s) all core paths ok
+DISPLAY grok_focus= False
+
+QUARRY display_primary: PASS (0.2s) grok_focus=False
+QUARRY launch_grok: PASS (0.15s) unknown launch_grok
+
+QUARRY chat_foreground: PASS (22.53s) rc=0 composer=yes
+QUARRY dump_ui: FAIL (0.11s) bytes=16 pkg_grok=False
+QUARRY smoke_parse_B: PASS (0.02s) hit='GROK_SMOKE_OK'
+QUARRY smoke_heal_C: PASS (0.17s) K_SMOKE_OK",
+    "healed_at": 1783312706.851956,
+    "reason": "autoheal"
+  }
+}
+
+QUARRY workflow_front: PASS (8.3s) us": "PASS",
+    "reply": "GROK_SMOKE_OK",
+    "healed_at": 1783312714.926028,
+ 
+QUARRY task_queue: PASS (0.09s) === BROCCOLI TASK QUEUE (auto-generated) ===
+Updated: 2026-07-06 00:38:29
+
+ACTIV
+QUARRY idle_gate_dry: PASS (0.07s) import ok
+=== QUARRY DONE === 10 / 11

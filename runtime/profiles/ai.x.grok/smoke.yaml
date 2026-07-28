@@ -1,0 +1,11 @@
+focus:
+  expected: true
+
+input:
+  paste: BROCCOLI_TEST
+
+verify:
+  contains: BROCCOLI_TEST
+
+send:
+  expect_screen_change: true

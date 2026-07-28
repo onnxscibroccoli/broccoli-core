@@ -1,0 +1,7 @@
+===== DEVICE_OUTPUT 2026-07-07T00:32:12-04:00 =====
+git_phase=NO_VAULT_PAT missions_queued=2
+ui_pkg=none
+grok_last_prefix=ITER_OK
+daemons:
+9434 bash /data/data/com.termux/files/home/broccoli/tools/agent_handler.sh
+===== END =====

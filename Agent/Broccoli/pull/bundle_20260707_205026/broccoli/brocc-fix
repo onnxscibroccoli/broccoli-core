@@ -1,0 +1,20 @@
+\
+#!/data/data/com.termux/files/usr/bin/bash
+set -euo pipefail
+BRO="${BRO:-$HOME/broccoli}"
+cmd="${1:-}"
+shift || true
+case "$cmd" in
+  ask|round) exec "$BRO/tools/rish_grok_round.sh" "$*" ;;
+  pull) exec bash -c 'B=$(ls -t /sdcard/Broccoli/pull/bundle_* 2>/dev/null|head -1);echo "$B";test -n "$B"&&cat "$B"' ;;
+  report) tail -80 "$BRO/reports/rish_round.log"; echo "==="; tail -40 "$BRO/reports/latest.txt" 2>/dev/null || true ;;
+  clip-test) export BRO; brocc clip-test "$@" ;;
+  codev) export BRO; brocc agent codev "$@" ;;
+  agent) export BRO; brocc agent "$@" ;;
+  smoke) bash "$BRO/tools/run_grok_smoke.sh" 2>&1 ;;
+  help|"")
+    echo "brocc-fix: ask|round|pull|report|clip-test|codev|agent|smoke"
+    echo "  ask 'prompt...'  -> clip+codev+pull bundle"
+    ;;
+  *) echo "unknown: $cmd (try help)" >&2; exit 1 ;;
+esac

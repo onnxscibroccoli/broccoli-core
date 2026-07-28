@@ -1,0 +1,4 @@
+#!/data/data/com.termux/files/usr/bin/bash
+set -eu
+Wire harden: every round log dump_bytes + grok package to ~/broccoli/reports/loop_health.jsonl; confirm send without manual tap; dequeue on reply; reply LOOP_OK and next patch filename.&#10;Wire harden: every round log dump_bytes + grok package to ~/broccoli/reports/loop_health.jsonl; confirm send without manual tap; dequeue on reply; reply LOOP_OK and next patch filename.&#10;I'm going to give this 5 seconds to send without manual tap.If it does not send?I will say manual manual manual&#10;It
+Seems as though I had to send this chat manually , we can fix that

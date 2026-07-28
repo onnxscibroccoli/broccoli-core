@@ -1,0 +1,1 @@
+{"type":"grok","attach_context":true,"body":"LOOP_OK line1. NEXT_STEP: one line. Given AGENT_CONTEXT, suggest one cal fix if needed."}

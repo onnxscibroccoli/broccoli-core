@@ -1,0 +1,238 @@
+STEP launch_grok
+2026-07-07T02:32:08-04:00 OK brocc_run-once
+2026-07-07T02:35:21-04:00 TRY queue_bytes=168
+STEP launch_grok
+2026-07-07T02:35:34-04:00 FAIL dump_empty
+2026-07-07T02:35:34-04:00 RETRY keep_queue
+2026-07-07T02:35:34-04:00 TRY queue_bytes=168
+2026-07-07T02:40:46 OK agent_started broccoli_agent.py
+2026-07-07T02:40:46 TRY queue_bytes=278
+2026-07-07T02:41:03 OK dump_sync bytes=8192
+2026-07-07T02:41:43 WAIT typing_changed
+2026-07-07T02:42:03 WAIT typing_changed
+2026-07-07T02:42:39 FAIL typing_not_idle
+2026-07-07T02:42:39 RETRY keep_queue
+2026-07-07T02:43:26 TRY queue_bytes=43
+2026-07-07T02:43:26 OK agent_started v2 brocc_first
+2026-07-07T02:43:26 TRY wire len=43
+2026-07-07T02:44:07 TRY wire len=16
+2026-07-07T02:44:48 brocc_send rc=1 tail=d: Command '['bash', '/data/data/com.termux/files/home/broccoli/lib/launch_grok_native.sh']' timed out after 20 seconds 
+2026-07-07T02:44:52 brocc_send rc=0 tail=or: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok } 
+2026-07-07T02:44:53 OK brocc_send trust_ok_sent
+2026-07-07T02:44:53 OK wire_brocc
+2026-07-07T02:44:53 OK queue_cleared
+2026-07-07T02:44:55 brocc_run-once rc=1 tail=TASK ASK SMOKE 1783406646 unknown task ASK SMOKE 1783406646 
+2026-07-07T02:44:55 OK wire_brocc
+2026-07-07T02:45:25 OK agent_started v2 brocc_first
+2026-07-07T02:45:42 OK agent v3 foreground_first
+2026-07-07T02:45:42 STEP foreground_grok com.ai.x.grok
+2026-07-07T02:46:08 OK grok_foreground
+2026-07-07T02:46:08 TRY wire len=40
+2026-07-07T02:46:28 brocc_send rc=1  '/data/data/com.termux/files/home/broccoli/lib/launch_grok_native.sh']' timed out after 20 seconds 
+2026-07-07T02:46:28 FAIL wire_brocc
+2026-07-07T02:46:28 RETRY keep_queue
+2026-07-07T02:46:28 STEP foreground_grok com.ai.x.grok
+2026-07-07T02:46:46 OK grok_foreground
+2026-07-07T02:46:46 TRY wire len=40
+2026-07-07T02:47:06 brocc_send rc=1  '/data/data/com.termux/files/home/broccoli/lib/launch_grok_native.sh']' timed out after 20 seconds 
+2026-07-07T02:47:06 FAIL wire_brocc
+2026-07-07T02:47:06 RETRY keep_queue
+2026-07-07T02:47:06 STEP foreground_grok com.ai.x.grok
+2026-07-07T02:47:26 OK grok_foreground
+2026-07-07T02:47:26 TRY wire len=40
+2026-07-07T02:47:27 OK agent v4 foreground_brocc_send NO_CLIPBOARD_ON_WIRE
+2026-07-07T02:47:27 TRY queue_bytes=73
+2026-07-07T02:47:27 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T02:47:49 OK grok_foreground
+2026-07-07T02:47:49 TRY brocc_send len=73
+2026-07-07T02:47:49 FAIL clipboard_set want_len=18 got_len=0 head_want='PAYLOAD_1783406864' head_got='' rc_set=0
+2026-07-07T02:47:55 FAIL clipboard_set_retry_b head_got=''
+2026-07-07T02:47:55 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T02:48:22 OK grok_foreground
+2026-07-07T02:48:22 TRY brocc_send len=16
+2026-07-07T02:48:49 brocc_send rc=0 tail= send Send message OK sent Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok } 
+2026-07-07T02:48:49 OK wire_brocc_no_clipboard
+2026-07-07T02:48:49 OK queue_cleared
+2026-07-07T02:49:18 brocc_send rc=0 tail= send Send message OK sent Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok } 
+2026-07-07T02:49:18 OK wire_brocc_no_clipboard
+2026-07-07T02:50:49 TRY queue_bytes=77
+2026-07-07T02:50:49 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T02:51:05 OK grok_foreground
+2026-07-07T02:51:05 TRY brocc_send len=77
+2026-07-07T02:51:54 brocc_send rc=0 tail= send Send message OK sent Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok } 
+2026-07-07T02:51:54 OK wire_brocc_no_clipboard
+2026-07-07T02:51:54 OK queue_cleared
+2026-07-07T02:56:10 TRY queue_bytes=240
+2026-07-07T02:56:10 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T02:56:11 OK agent v4 foreground_brocc_send NO_CLIPBOARD_ON_WIRE
+2026-07-07T02:56:11 TRY queue_bytes=240
+2026-07-07T02:56:11 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T02:56:35 OK grok_foreground
+2026-07-07T02:56:35 TRY brocc_send len=240
+2026-07-07T02:56:37 OK grok_foreground
+2026-07-07T02:56:37 TRY brocc_send len=240
+2026-07-07T02:56:58 brocc_send rc=1 tail=eout) subprocess.TimeoutExpired: Command '['bash', '/data/data/com.termux/files/home/broccoli/lib/launch_grok_native.sh']' timed out after 20 seconds 
+2026-07-07T02:56:58 FAIL wire_brocc
+2026-07-07T02:56:58 RETRY keep_queue
+2026-07-07T02:56:58 TRY queue_bytes=240
+2026-07-07T02:56:58 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T02:57:19 OK grok_foreground
+2026-07-07T02:57:19 TRY brocc_send len=240
+2026-07-07T02:57:40 brocc_send rc=1 tail=eout) subprocess.TimeoutExpired: Command '['bash', '/data/data/com.termux/files/home/broccoli/lib/launch_grok_native.sh']' timed out after 20 seconds 
+2026-07-07T02:57:40 FAIL wire_brocc
+2026-07-07T02:57:40 RETRY keep_queue
+2026-07-07T02:57:40 TRY queue_bytes=240
+2026-07-07T02:57:40 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T02:57:42 brocc_send rc=0 tail= send Send message OK sent Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok } 
+2026-07-07T02:57:42 OK wire_brocc_no_clipboard
+2026-07-07T02:57:42 OK queue_cleared
+2026-07-07T02:58:06 OK grok_foreground
+2026-07-07T02:58:06 TRY brocc_send len=240
+2026-07-07T02:59:07 brocc_send rc=0 tail= send Send message OK sent Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok } 
+2026-07-07T02:59:07 OK wire_brocc_no_clipboard
+2026-07-07T02:59:07 OK queue_cleared
+2026-07-07T03:01:15 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T03:01:35 OK grok_foreground
+2026-07-07T03:01:35 TRY brocc_send len=15
+2026-07-07T03:02:30 brocc_send rc=0 tail= send Send message OK sent Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok } 
+2026-07-07T03:02:30 OK wire_brocc_no_clipboard
+2026-07-07T03:05:57 OK broccoli_brain started WIRE_MODE=ask
+2026-07-07T03:05:57 TRY queue_bytes=125
+2026-07-07T03:05:57 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T03:06:14 OK foreground_rish_am_start
+2026-07-07T03:06:14 TRY brocc_ask len=125
+2026-07-07T03:07:17 brocc rc=0 tail=one of the infrastructures in order to do this === BROCCOLI_DONE === grok OK Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok } 
+2026-07-07T03:07:17 OK wire_brocc
+2026-07-07T03:07:17 OK queue_cleared
+2026-07-07T03:09:12 TRY queue_bytes=121
+2026-07-07T03:09:12 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T03:09:30 OK foreground_rish_am_start
+2026-07-07T03:09:30 TRY brocc_ask len=121
+2026-07-07T03:09:51 brocc rc=1 tail=, in _wait     raise TimeoutExpired(self.args, timeout) subprocess.TimeoutExpired: Command '['bash', '/data/data/com.termux/files/home/broccoli/lib/launch_grok_native.sh']' timed out after 20 seconds 
+2026-07-07T03:09:51 FAIL wire_brocc
+2026-07-07T03:09:51 TRY queue_bytes=121
+2026-07-07T03:09:51 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T03:10:16 OK foreground_rish_am_start
+2026-07-07T03:10:16 TRY brocc_ask len=121
+2026-07-07T03:11:20 brocc rc=0 tail=one of the infrastructures in order to do this === BROCCOLI_DONE === grok OK Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok } 
+2026-07-07T03:11:20 OK wire_brocc
+2026-07-07T03:11:20 OK queue_cleared
+2026-07-07T03:12:00 TRY queue_bytes=714
+2026-07-07T03:12:00 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T03:12:03 TRY queue_bytes=714
+2026-07-07T03:12:03 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T03:12:20 OK foreground_rish_am_start
+2026-07-07T03:12:20 TRY brocc_ask len=714
+2026-07-07T03:13:10 brocc rc=0 tail=one of the infrastructures in order to do this === BROCCOLI_DONE === grok OK Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok } 
+2026-07-07T03:13:10 OK wire_brocc
+2026-07-07T03:13:10 OK queue_cleared
+2026-07-07T03:21:40 OK broccoli_brain started WIRE_MODE=ask
+2026-07-07T03:22:33 OK broccoli_brain started WIRE_MODE=send
+2026-07-07T03:22:33 TRY queue_bytes=88
+2026-07-07T03:22:33 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T03:22:33 TRY queue_bytes=88
+2026-07-07T03:22:33 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T03:22:52 OK foreground_rish_am_start
+2026-07-07T03:22:52 TRY brocc_send len=88
+2026-07-07T03:22:58 OK foreground_rish_am_start
+2026-07-07T03:22:58 TRY brocc_send len=88
+2026-07-07T03:23:50 brocc rc=0 tail=/data/local/tmp/broccoli_ui.xml STEP grok_send tap send Send message OK sent Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok } 
+2026-07-07T03:23:50 OK wire_brocc
+2026-07-07T03:23:50 OK queue_cleared
+2026-07-07T03:23:57 brocc rc=0 tail=/data/local/tmp/broccoli_ui.xml STEP grok_send tap send Send message OK sent Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok } 
+2026-07-07T03:23:57 OK wire_brocc
+2026-07-07T03:23:57 OK queue_cleared
+2026-07-07T03:24:34 OK broccoli_brain started WIRE_MODE=send
+2026-07-07T03:24:34 TRY queue_bytes=88
+2026-07-07T03:24:34 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T03:24:35 TRY queue_bytes=88
+2026-07-07T03:24:35 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T03:24:55 OK foreground_rish_am_start
+2026-07-07T03:24:55 TRY brocc_send len=88
+2026-07-07T03:25:00 OK foreground_rish_am_start
+2026-07-07T03:25:00 TRY brocc_send len=88
+2026-07-07T03:25:16 brocc rc=1 tail=, in _wait     raise TimeoutExpired(self.args, timeout) subprocess.TimeoutExpired: Command '['bash', '/data/data/com.termux/files/home/broccoli/lib/launch_grok_native.sh']' timed out after 20 seconds 
+2026-07-07T03:25:16 FAIL wire_brocc
+2026-07-07T03:25:21 brocc rc=1 tail=, in _wait     raise TimeoutExpired(self.args, timeout) subprocess.TimeoutExpired: Command '['bash', '/data/data/com.termux/files/home/broccoli/lib/launch_grok_native.sh']' timed out after 20 seconds 
+2026-07-07T03:25:21 FAIL wire_brocc
+2026-07-07T03:25:34 TRY queue_bytes=88
+2026-07-07T03:25:34 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T03:25:34 OK broccoli_brain started WIRE_MODE=send
+2026-07-07T03:25:34 TRY queue_bytes=88
+2026-07-07T03:25:34 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T03:26:05 OK foreground_rish_am_start
+2026-07-07T03:26:05 TRY brocc_send len=88
+2026-07-07T03:26:08 OK foreground_rish_am_start
+2026-07-07T03:26:08 TRY brocc_send len=88
+2026-07-07T03:26:26 brocc rc=1 tail=, in _wait     raise TimeoutExpired(self.args, timeout) subprocess.TimeoutExpired: Command '['bash', '/data/data/com.termux/files/home/broccoli/lib/launch_grok_native.sh']' timed out after 20 seconds 
+2026-07-07T03:26:26 FAIL wire_brocc
+2026-07-07T03:26:29 brocc rc=1 tail=, in _wait     raise TimeoutExpired(self.args, timeout) subprocess.TimeoutExpired: Command '['bash', '/data/data/com.termux/files/home/broccoli/lib/launch_grok_native.sh']' timed out after 20 seconds 
+2026-07-07T03:26:29 FAIL wire_brocc
+2026-07-07T03:26:29 TRY queue_bytes=88
+2026-07-07T03:26:29 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T03:26:55 OK foreground_rish_am_start
+2026-07-07T03:26:55 TRY brocc_send len=88
+2026-07-07T03:27:16 brocc rc=1 tail=, in _wait     raise TimeoutExpired(self.args, timeout) subprocess.TimeoutExpired: Command '['bash', '/data/data/com.termux/files/home/broccoli/lib/launch_grok_native.sh']' timed out after 20 seconds 
+2026-07-07T03:27:16 FAIL wire_brocc
+2026-07-07T03:27:16 TRY queue_bytes=88
+2026-07-07T03:27:16 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T03:27:35 OK foreground_rish_am_start
+2026-07-07T03:27:35 TRY brocc_send len=88
+2026-07-07T03:28:31 brocc rc=0 tail=/data/local/tmp/broccoli_ui.xml STEP grok_send tap send Send message OK sent Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok } 
+2026-07-07T03:28:31 OK wire_brocc
+2026-07-07T03:28:31 OK queue_cleared
+2026-07-07T03:32:40 STEP rish_perm_probe done
+2026-07-07T03:32:40 TRY queue_bytes=801
+2026-07-07T03:32:40 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T03:32:44 STEP explicit_start_research foreground+wire
+2026-07-07T03:32:57 OK foreground_rish_am_start
+2026-07-07T03:32:57 TRY brocc_ask len=801
+2026-07-07T03:33:30 TRY brocc_ask_explicit rc=0 tail=ctures in order to do this === BROCCOLI_DONE === grok OK Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok } 
+2026-07-07T03:33:30 OK queue_cleared explicit_brocc_ask
+2026-07-07T03:33:44 brocc rc=0 tail=one of the infrastructures in order to do this === BROCCOLI_DONE === grok OK Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok } 
+2026-07-07T03:33:44 OK wire_brocc
+2026-07-07T03:33:44 OK queue_cleared
+2026-07-07T03:38:06 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T03:38:17 OK grok_foreground
+2026-07-07T03:38:17 TRY brocc_send len=15
+2026-07-07T03:39:06 brocc_send rc=0 tail= send Send message OK sent Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok } 
+2026-07-07T03:39:06 OK wire_brocc_no_clipboard
+2026-07-07T03:52:06 TRY queue_bytes=412
+2026-07-07T03:52:06 WARN fixed pkg ai.x.grok -> com.ai.x.grok
+2026-07-07T03:52:06 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T03:52:25 OK foreground_rish_am_start
+2026-07-07T03:52:25 TRY brocc_send len=412
+2026-07-07T03:52:45 brocc rc=1 tail=, in _wait     raise TimeoutExpired(self.args, timeout) subprocess.TimeoutExpired: Command '['bash', '/data/data/com.termux/files/home/broccoli/lib/launch_grok_native.sh']' timed out after 20 seconds 
+2026-07-07T03:52:45 FAIL wire_brocc
+2026-07-07T03:52:45 TRY queue_bytes=412
+2026-07-07T03:52:45 WARN fixed pkg ai.x.grok -> com.ai.x.grok
+2026-07-07T03:52:45 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T03:53:16 OK foreground_rish_am_start
+2026-07-07T03:53:16 TRY brocc_send len=412
+2026-07-07T03:53:36 brocc rc=1 tail=, in _wait     raise TimeoutExpired(self.args, timeout) subprocess.TimeoutExpired: Command '['bash', '/data/data/com.termux/files/home/broccoli/lib/launch_grok_native.sh']' timed out after 20 seconds 
+2026-07-07T03:53:36 FAIL wire_brocc
+2026-07-07T03:53:36 TRY queue_bytes=412
+2026-07-07T03:53:36 WARN fixed pkg ai.x.grok -> com.ai.x.grok
+2026-07-07T03:53:36 STEP foreground_grok pkg=com.ai.x.grok
+2026-07-07T03:53:58 OK foreground_rish_am_start
+2026-07-07T03:53:58 TRY brocc_send len=412
+2026-07-07T03:54:45 brocc rc=0 tail=/data/local/tmp/broccoli_ui.xml STEP grok_send tap send Send message OK sent Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok } 
+2026-07-07T03:54:45 OK wire_brocc
+2026-07-07T03:54:45 OK queue_cleared
+2026-07-07T11:38:20 OK broccoli_brain started WIRE_MODE=send
+2026-07-07T11:38:20 TRY queue_bytes=326
+2026-07-07T11:38:20 STEP foreground_grok pkg=ai.x.grok
+2026-07-07T11:38:33 OK foreground_rish_am_start
+2026-07-07T11:38:33 TRY brocc_send len=326
+2026-07-07T11:39:09 brocc rc=0 tail=/data/local/tmp/broccoli_ui.xml STEP grok_send tap send Send message OK sent Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok } 
+2026-07-07T11:39:09 OK wire_brocc
+2026-07-07T11:39:09 OK queue_cleared
+2026-07-07T11:40:16 OK broccoli_brain started WIRE_MODE=send
+2026-07-07T12:25:08 OK broccoli_brain started WIRE_MODE=send
+2026-07-07T12:46:59 TRY queue_bytes=487
+2026-07-07T12:46:59 STEP foreground_grok pkg=ai.x.grok
+2026-07-07T12:47:17 OK foreground_rish_am_start
+2026-07-07T12:47:17 TRY brocc_ask len=487
+2026-07-07T12:48:14 brocc rc=0 tail=one of the infrastructures in order to do this === BROCCOLI_DONE === grok OK Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok } 
+2026-07-07T12:48:14 OK wire_brocc
+2026-07-07T12:48:14 OK queue_cleared

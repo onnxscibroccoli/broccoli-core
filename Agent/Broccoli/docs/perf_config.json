@@ -1,0 +1,11 @@
+{
+  "agent_loop_sec": 90,
+  "sync_batch_idle": 25,
+  "sync_batch_drift": 80,
+  "clip_test_min_interval_sec": 300,
+  "pull_rish_min_interval_sec": 180,
+  "codevelop_sync_min_interval_sec": 90,
+  "subprocess_default_timeout": 90,
+  "skip_mirror_if_clean": true,
+  "fingerprint_debounce_sec": 20
+}

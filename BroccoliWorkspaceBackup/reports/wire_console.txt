@@ -1,0 +1,782 @@
+[wire] bin research
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli/tools/bin_research.py", line 61, in <module>
+    "ts": time.strftime("%Y-%m-%dT%H:%M:%S"),
+          ^^^^
+NameError: name 'time' is not defined. Did you forget to import 'time'?
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+[wire] brocc hooks
+brocc-shim: use full brocc from PREFIX if installed
+brocc-shim: rish-validate — install brocc or use: /data/data/com.termux/files/home/broccoli/bin/wire
+[wire] bin research
+brocc-shim: use /data/data/com.termux/files/home/broccoli/bin/wire or install real brocc in PREFIX
+brocc-shim: use /data/data/com.termux/files/home/broccoli/bin/wire or install real brocc in PREFIX
+[wire] bin research
+{
+  "ok": true,
+  "report": "/data/data/com.termux/files/home/broccoli/reports/bin_research.json",
+  "running": {
+    "infinite_dev": 0,
+    "agentic": 0,
+    "poll": 0,
+    "version_walk": 0,
+    "brocc_agent": 0,
+    "agent_loop_cmd": 0
+  }
+}
+brocc-shim: use /data/data/com.termux/files/home/broccoli/bin/wire or install real brocc in PREFIX

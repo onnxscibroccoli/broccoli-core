@@ -1,0 +1,349 @@
+{
+  "ts": "2026-07-07T00:06:30-04:00",
+  "tree": {
+    "file_count": 305,
+    "by_ext": {
+      ".log": 37,
+      ".txt": 57,
+      ".md": 15,
+      ".py": 46,
+      ".json": 57,
+      ".sh": 66,
+      ".pid": 1,
+      "(noext)": 3,
+      ".jsonl": 4,
+      ".1783317057": 1,
+      ".xml": 7,
+      ".lock": 1,
+      ".consumed": 1,
+      ".flag": 1,
+      ".cur": 1,
+      ".last": 1,
+      ".ts": 2,
+      ".hash": 1,
+      ".conf": 3
+    },
+    "sample": [
+      "HANDOFF.md",
+      "INSTRUCTIONS.md",
+      "LAST_RUN.txt",
+      "PROJECT.md",
+      "TASK_LIST.md",
+      "boot/GROK_NATIVE.conf",
+      "boot/SHIZUKU_APP.conf",
+      "boot/ZOO_APP.conf",
+      "boot/reboot_first_job.sh",
+      "brocc",
+      "brocc_legacy_hooks.sh",
+      "broccoli_meta_heal.py",
+      "broccoli_rish_ui.py",
+      "broccoli_secondary_display.py",
+      "broccoli_task_queue.py",
+      "collab_rish_loop.sh",
+      "daemon.log",
+      "daemon.pid",
+      "daemon_idle_loop.py",
+      "docs/RUTO_BRIDGE.md",
+      "done/grok_00_project_bootstrap.txt",
+      "done/grok_1783304154.txt",
+      "done/grok_1783304623.txt",
+      "done/grok_1783305160.txt",
+      "done/grok_1783305299.txt",
+      "done/grok_1783305466.txt",
+      "done/grok_1783305617.txt",
+      "done/grok_1783305757.txt",
+      "done/grok_1783305912.txt",
+      "done/grok_1783306093.txt",
+      "fail/1783306375.txt",
+      "fail/1783306639.txt",
+      "fail/1783306948.txt",
+      "fail/1783307354.txt",
+      "fail/1783307601.txt",
+      "fail/1783307896.txt",
+      "fail/1783308201.txt",
+      "fail/1783308492.txt",
+      "fail/1783308793.txt",
+      "fail/1783309076.txt",
+      "fail/1783309370.txt",
+      "fail/loop_ok_only.txt",
+      "fail/t1.txt",
+      "inbox/google/1783310243_research.txt",
+      "inbox/grok/1783309612.txt",
+      "lib/adb_rish.sh",
+      "lib/agent_loop.py",
+      "lib/brocc_toast.py",
+      "lib/broccoli_operator.py",
+      "lib/chat_context.py",
+      "lib/clip.py",
+      "lib/code_from_chat.py",
+      "lib/display_context.py",
+      "lib/display_lane.py",
+      "lib/dump_ui_fallback.py",
+      "lib/fg_grok_only.sh",
+      "lib/focus_pkg.sh",
+      "lib/grok_chat_foreground.py",
+      "lib/grok_foreground.sh",
+      "lib/grok_open_loop.py",
+      "lib/grok_send_tap.py",
+      "lib/grok_takeover.py",
+      "lib/grok_xml_parse.py",
+      "lib/idle_takeover.py",
+      "lib/input_snapshot.sh",
+      "lib/launch_grok_native.sh",
+      "lib/notify.sh",
+      "lib/recursive_impl.py",
+      "lib/rish_adb.py",
+      "lib/rish_run.py",
+      "lib/rish_shell.sh",
+      "lib/smoke_autoheal.py",
+      "lib/task_complete.py",
+      "lib/task_current.py",
+      "lib/task_queue.py",
+      "lib/toast.py",
+      "lib/ui_dump_rish.sh",
+      "lib/user_idle_sec.sh",
+      "lib/user_task_wait.py",
+      "meta/README.md"
+    ]
+  },
+  "artifacts": {
+    "INSTRUCTIONS.md": {
+      "exists": true,
+      "bytes": 2013,
+      "mtime": "2026-07-06T23:59:31.044002"
+    },
+    "task_box.txt": {
+      "exists": true,
+      "bytes": 46,
+      "mtime": "2026-07-06T23:58:22.752002"
+    },
+    "queue/pending.txt": {
+      "exists": true,
+      "bytes": 96,
+      "mtime": "2026-07-06T23:58:27.636002"
+    },
+    "queue/done.txt": {
+      "exists": true,
+      "bytes": 131,
+      "mtime": "2026-07-06T23:17:00.580002"
+    },
+    "ui/last_ui.xml": {
+      "exists": true,
+      "bytes": 16402,
+      "mtime": "2026-07-06T23:55:44.212002"
+    },
+    "reports/wire_send.log": {
+      "exists": true,
+      "bytes": 2000,
+      "mtime": "2026-07-07T00:06:29.416002"
+    },
+    "reports/wire_daemon.log": {
+      "exists": true,
+      "bytes": 2605,
+      "mtime": "2026-07-06T23:17:00.552002"
+    },
+    "reports/loop_health.jsonl": {
+      "exists": false
+    },
+    "reports/manual_gap.jsonl": {
+      "exists": true,
+      "bytes": 4108,
+      "mtime": "2026-07-06T23:29:52.480002"
+    },
+    "thread/to_chat.md": {
+      "exists": true,
+      "bytes": 3863,
+      "mtime": "2026-07-06T23:47:26.720002"
+    },
+    "meta/WIRE_STOP": {
+      "exists": false
+    }
+  },
+  "ui": {
+    "ok": true,
+    "bytes": 16398,
+    "grok_fg": true,
+    "packages": [
+      "ai.x.grok"
+    ],
+    "has_composer": false,
+    "send_candidates": [],
+    "termux_only": false
+  },
+  "wire_send": {
+    "lines": 46,
+    "counts": {
+      "SEND start": 5,
+      "send_tap": 10,
+      "reply=": 2
+    },
+    "tail": [
+      "2026-07-06T23:17:00-04:00 reply=Start new chat",
+      "2026-07-06T23:28:52-04:00 SEND start len=764",
+      "2026-07-06T23:29:53-04:00 SEND start len=655",
+      "TAP 540 1195",
+      "2026-07-06T23:33:54-04:00 send_tap attempt=1",
+      "TAP 540 1195",
+      "2026-07-06T23:33:55-04:00 send_tap attempt=1",
+      "2026-07-06T23:33:57-04:00 SEND len=33",
+      "2026-07-06T23:35:54-04:00 dump_bytes=29986",
+      "{\"err\": \"no_send\"}",
+      "{\"err\": \"no_composer\"}",
+      "{\"err\": \"no_composer\"}",
+      "2026-07-06T23:47:26-04:00 SEND len=33",
+      "2026-07-06T23:49:08-04:00 dump_bytes=8265",
+      "{\"err\": \"no_send\"}",
+      "2026-07-06T23:54:28-04:00 SEND len=29",
+      "2026-07-06T23:54:42-04:00 SEND len=29",
+      "2026-07-06T23:59:03-04:00 SEND len=91",
+      "2026-07-07T00:05:13-04:00 dump fail",
+      "2026-07-07T00:06:29-04:00 dump fail"
+    ]
+  },
+  "loop_health_tail": [],
+  "manual_gap_tail": [
+    {
+      "ts": "2026-07-06T23:18:26-04:00",
+      "grok_fg": true,
+      "packages": [
+        "ai.x.grok"
+      ],
+      "composer_preview": "",
+      "chat_tail": [
+        "user_touch_watch",
+        "BASH",
+        "Copy",
+        "Paste to_chat.md (or the Send controls section) back here—that’s the fix list for find_send_tap.py without guessing bounds.",
+        "Analyze UI dump patterns",
+        "Explore accessibility services"
+      ],
+      "send_candidates": [],
+      "script_did": [
+        "2026-07-06T22:57:18-04:00 send_tap miss attempt=3 — enter",
+        "2026-07-06T22:58:10-04:00 send_tap miss attempt=4 — enter",
+        "2026-07-06T22:59:05-04:00 reply=DAEMON start, then ROUND start / send_tap ok / reply=",
+        "2026-07-06T23:15:17-04:00 send_tap miss attempt=1 — enter",
+        "2026-07-06T23:16:04-04:00 send_tap miss attempt=2 — enter"
+      ],
+      "script_failed": [],
+      "user_likely_manual": [],
+      "prompt_frag": ""
+    },
+    {
+      "ts": "2026-07-06T23:19:46-04:00",
+      "grok_fg": true,
+      "packages": [
+        "ai.x.grok"
+      ],
+      "composer_preview": "",
+      "chat_tail": [
+        "bash ~/broccoli/tools/gap_enqueue_chat.sh",
+        "Thoughts",
+        "Explain wire daemon architecture",
+        "Describe Termux environment setup"
+      ],
+      "send_candidates": [],
+      "script_did": [
+        "2026-07-06T22:57:18-04:00 send_tap miss attempt=3 — enter",
+        "2026-07-06T22:58:10-04:00 send_tap miss attempt=4 — enter",
+        "2026-07-06T22:59:05-04:00 reply=DAEMON start, then ROUND start / send_tap ok / reply=",
+        "2026-07-06T23:15:17-04:00 send_tap miss attempt=1 — enter",
+        "2026-07-06T23:16:04-04:00 send_tap miss attempt=2 — enter"
+      ],
+      "script_failed": [],
+      "user_likely_manual": [],
+      "prompt_frag": ""
+    },
+    {
+      "ts": "2026-07-06T23:28:51-04:00",
+      "grok_fg": false,
+      "packages": [
+        "com.termux"
+      ],
+      "composer_preview": "",
+      "chat_tail": [
+        "HOME",
+        "END",
+        "PGUP",
+        "CTRL",
+        "ALT",
+        "PGDN"
+      ],
+      "send_candidates": [
+        {
+          "rid": "com.termux:id/terminal_view",
+          "bounds": ""
+        }
+      ],
+      "script_did": [
+        "2026-07-06T22:57:18-04:00 send_tap miss attempt=3 — enter",
+        "2026-07-06T22:58:10-04:00 send_tap miss attempt=4 — enter",
+        "2026-07-06T22:59:05-04:00 reply=DAEMON start, then ROUND start / send_tap ok / reply=",
+        "2026-07-06T23:15:17-04:00 send_tap miss attempt=1 — enter",
+        "2026-07-06T23:16:04-04:00 send_tap miss attempt=2 — enter"
+      ],
+      "script_failed": [],
+      "user_likely_manual": [
+        "foreground was not ai.x.grok during dump — user may have switched app or dump ran on wrong window"
+      ],
+      "prompt_frag": ""
+    },
+    {
+      "ts": "2026-07-06T23:29:52-04:00",
+      "grok_fg": true,
+      "packages": [
+        "ai.x.grok"
+      ],
+      "composer_preview": "",
+      "chat_tail": [
+        "┌─────────────────────────────────────────────────────────┐&#10;│  agent_daemon (idle ≥3s)                                 │&#10;│    └─ agent_tick                                         │&#10;│         ├─ investigate_system.sh --live   (whole system) │&#10;│         ├─ gap_watch.sh                 (manual vs script)│&#10;│         ├─ report_to_queue.sh           (NO human paste) │&#10;│         ├─ wire_send_ui.sh              (rish tap/paste)   │&#10;│         ├─ agent_apply_reply.sh         (block_*.sh)      │&#10;│         └─ agent_state.json             (memory)         │&#10;└─────────────────────────────────────────────────────────┘&#10;         ▲                                    │&#10;         └──────── native Grok UI ────────────┘",
+        "Right",
+        "You paste INVESTIGATION_REPORT.md into Mac chat",
+        "report_to_queue.sh → wire_send_ui.sh",
+        "wire_daemon only drains queue you fill by hand"
+      ],
+      "send_candidates": [],
+      "script_did": [
+        "2026-07-06T22:57:18-04:00 send_tap miss attempt=3 — enter",
+        "2026-07-06T22:58:10-04:00 send_tap miss attempt=4 — enter",
+        "2026-07-06T22:59:05-04:00 reply=DAEMON start, then ROUND start / send_tap ok / reply=",
+        "2026-07-06T23:15:17-04:00 send_tap miss attempt=1 — enter",
+        "2026-07-06T23:16:04-04:00 send_tap miss attempt=2 — enter"
+      ],
+      "script_failed": [],
+      "user_likely_manual": [],
+      "prompt_frag": "BROCCOLI_AGENT: ## Findings (priori"
+    }
+  ],
+  "findings": [
+    {
+      "severity": "high",
+      "msg": "tools/agent_wrap.sh still references Chrome/WEB",
+      "fix": "route to launch_grok_native.sh only"
+    },
+    {
+      "severity": "high",
+      "msg": "lib/grok_send_tap.py still references Chrome/WEB",
+      "fix": "route to launch_grok_native.sh only"
+    },
+    {
+      "severity": "high",
+      "msg": "Grok FG but no send candidates in dump regex",
+      "fix": "dump send row manually; patch find_send_tap.py with exact resource-id"
+    },
+    {
+      "severity": "med",
+      "msg": "wire_send_ui not hooked to gap_watch",
+      "fix": "patch gap hooks on fail/success/timeout"
+    }
+  ],
+  "live_probe": {},
+  "codev": {
+    "session_id": "20260707_000630",
+    "opened_at": "2026-07-07T00:06:30-04:00",
+    "status": "open",
+    "last_investigation": "/data/data/com.termux/files/home/broccoli/reports/INVESTIGATION_REPORT.md",
+    "next_action": "route to launch_grok_native.sh only",
+    "findings_count": 4
+  }
+}

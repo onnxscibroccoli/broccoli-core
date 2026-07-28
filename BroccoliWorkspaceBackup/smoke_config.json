@@ -1,0 +1,17 @@
+{
+  "profile": "fast",
+  "fast": {
+    "preflight_sec": 3,
+    "inject_send_sec": 5,
+    "send_tap_retries": 3,
+    "reply_wait_sec": 45,
+    "reply_poll_sec": 2
+  },
+  "retry": {
+    "only_transient": true,
+    "extra_reply_sec": 10,
+    "max_retries": 1
+  },
+  "transient_errors": ["GROK_NOT_FG", "REPLY_SLOW", "CLIP_EMPTY", "UI_STALE"],
+  "fatal_errors": ["SEND_NOT_FOUND", "INPUT_NOT_FOUND", "WRONG_PACKAGE"]
+}

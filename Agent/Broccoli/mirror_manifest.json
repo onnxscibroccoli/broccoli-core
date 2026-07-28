@@ -1,0 +1,13 @@
+{
+  "ts": "2026-07-07 19:41:11",
+  "missing": 0,
+  "stale": 0,
+  "ok": 593,
+  "mac_pull": [
+    "adb pull /sdcard/Broccoli/mirror_manifest.json .",
+    "adb pull /sdcard/Broccoli/mirror ./Broccoli-mirror",
+    "adb pull /sdcard/Broccoli/pull/CLIPBOARD_LAST.txt ."
+  ],
+  "missing_sample": [],
+  "stale_sample": []
+}

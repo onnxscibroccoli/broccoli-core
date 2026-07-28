@@ -1,0 +1,21 @@
+nohup: ignoring input
+2026-07-06T23:27:34-04:00 AGENT_DAEMON start cooldown=45s
+2026-07-06T23:27:34-04:00 AGENT_DAEMON start cooldown=45s
+2026-07-06T23:28:42-04:00 === TICK cycle=1 ===
+2026-07-06T23:29:52-04:00 WIRE send len=655
+2026-07-06T23:34:04-04:00 WIRE fail — re-queue gap priority next tick
+nohup: ignoring input
+2026-07-06T23:46:12-04:00 AGENT_DAEMON start cooldown=45s
+2026-07-06T23:46:12-04:00 AGENT_DAEMON start cooldown=45s
+2026-07-06T23:47:26-04:00 wire prompt len=33
+nohup: ignoring input
+2026-07-06T23:54:22-04:00 agent_daemon start
+nohup: ignoring input
+2026-07-06T23:58:22-04:00 agent_daemon start
+2026-07-06T23:59:02-04:00 tick start
+/data/data/com.termux/files/home/broccoli/tools/agent_tick.sh: line 13: FP: unbound variable
+2026-07-07T00:09:10-04:00 wire_fail
+2026-07-07T00:10:10-04:00 send len=34
+2026-07-07T00:18:22-04:00 agent_daemon start (only AGENT_STOP ends this)
+2026-07-07T00:18:37-04:00 tick queue len=34
+2026-07-07T00:18:37-04:00 send len=34

@@ -1,0 +1,41 @@
+{
+  "results": [
+    {
+      "method": "D_log_replay",
+      "pass": true,
+      "elapsed_s": 0.0,
+      "notes": "len=251987"
+    },
+    {
+      "method": "C_autoheal",
+      "pass": true,
+      "elapsed_s": 0.2,
+      "notes": "{\n  \"smoke\": {\n    \"status\": \"PASS\",\n    \"reply\": \"GROK_SMOKE_OK\",\n    \"healed_a"
+    },
+    {
+      "method": "B_dump_parse",
+      "pass": true,
+      "elapsed_s": 0.4,
+      "notes": "hit='GROK_SMOKE_OK'"
+    },
+    {
+      "method": "E_workflow_front",
+      "pass": true,
+      "elapsed_s": 10.2,
+      "notes": "front"
+    },
+    {
+      "method": "A_grok_smoke",
+      "pass": true,
+      "elapsed_s": 115.5,
+      "notes": "poller"
+    }
+  ],
+  "recommendation": "B_dump_parse + C_autoheal",
+  "winner": {
+    "method": "D_log_replay",
+    "pass": true,
+    "elapsed_s": 0.0,
+    "notes": "len=251987"
+  }
+}

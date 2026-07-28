@@ -1,0 +1,89 @@
+========== Broccoli Storage Audit ==========
+Sat Jul 18 03:01:05 EDT 2026
+
+Filesystem:
+Filesystem       Size Used Avail Use% Mounted on
+/dev/block/dm-59  48G  45G  3.1G  94% /data/user/0
+
+Top of HOME:
+279K	/data/data/com.termux/files/home/node_modules/tr46
+307K	/data/data/com.termux/files/home/AndroSH/Core
+351K	/data/data/com.termux/files/home/AndroSH/Assets
+408K	/data/data/com.termux/files/home/broccoli/lib
+480K	/data/data/com.termux/files/home/AndroSH/.git
+576K	/data/data/com.termux/files/home/broccoli/state
+576K	/data/data/com.termux/files/home/project_mythara/watchface
+584K	/data/data/com.termux/files/home/node_modules
+680K	/data/data/com.termux/files/home/broccoli/tools
+724K	/data/data/com.termux/files/home/outguess/.git
+748K	/data/data/com.termux/files/home/project_mythara/watchface-minimal
+785K	/data/data/com.termux/files/home/aim_runs
+980K	/data/data/com.termux/files/home/aim_debug/run_20260705_140723
+1.1M	/data/data/com.termux/files/home/ipwndfu/libusbfinder
+1.3M	/data/data/com.termux/files/home/AndroSH
+1.5M	/data/data/com.termux/files/home/.npm
+1.5M	/data/data/com.termux/files/home/.npm/_cacache
+1.6M	/data/data/com.termux/files/home/broccoli/data
+1.9M	/data/data/com.termux/files/home/aim_debug/run_20260705_142334
+2.0M	/data/data/com.termux/files/home/outguess/jpeg-6b-steg
+2.1M	/data/data/com.termux/files/home/ipwndfu/.git
+2.4M	/data/data/com.termux/files/home/aim_debug/run_140042
+2.6M	/data/data/com.termux/files/home/WiFuX/.git
+2.9M	/data/data/com.termux/files/home/outguess
+3.2M	/data/data/com.termux/files/home/downloads
+3.6M	/data/data/com.termux/files/home/WiFuX
+3.9M	/data/data/com.termux/files/home/ipwndfu
+5.9M	/data/data/com.termux/files/home/aim_debug/boot_134909
+7.6M	/data/data/com.termux/files/home/project_mythara/docs
+9.5M	/data/data/com.termux/files/home/broccoli/reports
+9.7M	/data/data/com.termux/files/home/.local
+9.7M	/data/data/com.termux/files/home/.local/lib
+11M	/data/data/com.termux/files/home/project_mythara/app
+12M	/data/data/com.termux/files/home/aim_debug
+22M	/data/data/com.termux/files/home/project_mythara/.git
+42M	/data/data/com.termux/files/home/broccoli/meta
+42M	/data/data/com.termux/files/home/project_mythara
+328M	/data/data/com.termux/files/home/broccoli/quarantine
+387M	/data/data/com.termux/files/home/broccoli
+551M	/data/data/com.termux/files/home
+
+Top of /data/data:
+52K	/data/data
+
+Largest files in HOME:
+226447360 /data/data/com.termux/files/home/broccoli/quarantine/dupes/.pending-1783841521-app-release (1).apk.4e16d570
+116649984 /data/data/com.termux/files/home/broccoli/quarantine/dupes/.pending-1783844701-autojs6-v6.7.0-x86_64-3d410022.apk.40dc5012
+83733746 /data/data/com.termux/files/home/Miniforge3-Linux-aarch64.sh
+22256632 /data/data/com.termux/files/home/project_mythara/.git/objects/pack/pack-b6e0415b069e22af860c91b33c69c72162ace620.pack
+4560119 /data/data/com.termux/files/home/broccoli/reports/codebase_ultra.txt
+2548662 /data/data/com.termux/files/home/broccoli/worker.log
+2510789 /data/data/com.termux/files/home/project_mythara/docs/preview/01_home.png
+2498285 /data/data/com.termux/files/home/WiFuX/.git/objects/pack/pack-c8a7f7474e283ac5d8f3181fd1f89254dc8891e8.pack
+1954214 /data/data/com.termux/files/home/ipwndfu/.git/objects/pack/pack-517c4f08338ed250dce4734115bce91ccf6ae4a5.pack
+1617128 /data/data/com.termux/files/home/project_mythara/app/src/main/res/drawable-nodpi/wallpaper_static_layers.png
+1579520 /data/data/com.termux/files/home/downloads/February_2019_FOIA_Log.xls
+1579520 /data/data/com.termux/files/home/downloads/February_2019_FOIA_Log.txt
+1549864 /data/data/com.termux/files/home/project_mythara/docs/preview/hero.png
+1441526 /data/data/com.termux/files/home/project_mythara/docs/preview/04_people.png
+1303724 /data/data/com.termux/files/home/project_mythara/app/src/main/res/drawable-nodpi/bloom_silhouette.png
+1269506 /data/data/com.termux/files/home/project_mythara/docs/preview/03_alerts.png
+1241082 /data/data/com.termux/files/home/recent_py_sh_md_30d.txt
+1120747 /data/data/com.termux/files/home/broccoli/data/sysdump/system.jsonl
+940754 /data/data/com.termux/files/home/aim_debug/run_140042/post_bootstrap_after.xml
+940754 /data/data/com.termux/files/home/aim_debug/run_140042/post_after_s5.xml
+940262 /data/data/com.termux/files/home/aim_debug/run_20260705_140723/post_bootstrap_after.xml
+939196 /data/data/com.termux/files/home/aim_debug/run_20260705_142334/post_final.xml
+939196 /data/data/com.termux/files/home/aim_debug/run_20260705_142334/post_bootstrap_after.xml
+937602 /data/data/com.termux/files/home/aim_debug/boot_134909/post_before_s11.xml
+937602 /data/data/com.termux/files/home/aim_debug/boot_134909/post_after_s9.xml
+936744 /data/data/com.termux/files/home/aim_debug/boot_134909/post_bootstrap_after.xml
+936744 /data/data/com.termux/files/home/aim_debug/boot_134909/post_after_s11.xml
+905734 /data/data/com.termux/files/home/broccoli/reports/worker.log
+896010 /data/data/com.termux/files/home/.npm/_cacache/content-v2/sha512/e1/71/f77479e68534ec1a2b93d8fc47c7a1399a534f50e98fda4e5c47d2d7210a51a869c271f2732f74df3aba4c3cbc0a5e2d47cc03390b056afb8d95767b0a3c
+842672 /data/data/com.termux/files/home/.local/lib/python3.12/site-packages/Crypto/PublicKey/_ec_ws.abi3.so
+
+Cleaning old caches...
+
+Filesystem after cleanup:
+Filesystem       Size Used Avail Use% Mounted on
+/dev/block/dm-59  48G  45G  3.1G  94% /data/user/0

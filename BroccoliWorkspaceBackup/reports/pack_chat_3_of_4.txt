@@ -1,0 +1,1033 @@
+ for m in methods:
+        if m in seen: continue
+        seen.append(m)
+        xml = xml_before or ui_dump()
+        ns = nodes(xml)
+        if m.startswith("tap_send"):
+            ok, name, xml2 = tap_send_button(ns, pkg)
+        elif m == "keyevent_66":
+            ok, name, xml2 = send_enter()
+        elif m in ("tap_right_of_box", "tap_bottom_right"):
+            ok, name, xml2 = send_near_composer(ns, pkg)
+        else:
+            snd = find_send(ns, pkg)
+            if snd:
+                shell(f"input tap {snd['cx']} {snd['cy']}")
+                time.sleep(0.1)
+                ok, name, xml2 = True, "find_send", ui_dump()
+            else:
+                ok, name, xml2 = False, m, xml
+        if ok:
+            return True, name, xml2
+    log_path("send", "all_failed", False)
+    return False, None, ui_dump()
+
+
+
+===== TIER0: tools/a11y_round_fallback.sh =====
+#!/data/data/com.termux/files/usr/bin/bash
+# No APK: paste + focus + Enter only (no coordinate grid)
+export BRO="${BRO:-$HOME/broccoli}"
+export PYTHONPATH="$BRO/lib"
+export RISH_APPLICATION_ID="${RISH_APPLICATION_ID:-com.termux}"
+TASK="${1:-BROCC_TASK reply exactly: LOOP_OK}"
+termux-clipboard-set "$TASK" 2>/dev/null || true
+printf '%s\n' "$TASK" > "$BRO/inbox/prompt.txt"
+python3 <<PY
+import sys, json, time
+sys.path.insert(0, "$BRO/lib")
+from broccoli_a11y_rish import a11y_status
+from broccoli_a11y_send import full_round_a11y
+st = a11y_status()
+if st["installed"] and st["enabled"]:
+    print(json.dumps(full_round_a11y("$TASK"), indent=2)[:4000])
+else:
+    from broccoli_rish_shell import shell
+    from broccoli_ui_dump import ui_dump, nodes, last_reply_text, find_grok_search_box
+    from broccoli_input import clip_set, wait_for_search_box, task_already_in_composer
+    GROK = "ai.x.grok"
+    TASK = "$TASK"
+    shell(f"monkey -p {GROK} -c android.intent.category.LAUNCHER 1")
+    time.sleep(0.5)
+    clip_set(TASK)
+    box, xml, _ = wait_for_search_box(GROK, 4.0)
+    if box and not task_already_in_composer(nodes(xml), box, TASK):
+        shell(f"input tap {int(box['cx'])} {int(box['cy'])}")
+        time.sleep(0.1)
+        shell("input keyevent 122")
+        shell("input keyevent 279")
+    shell(f"input tap {int(box['cx']) if box else 540} {int(box['cy']) if box else 2200}")
+    time.sleep(0.15)
+    for _ in range(4):
+        shell("input keyevent 66")
+        time.sleep(0.2)
+    before = last_reply_text(nodes(ui_dump()), GROK)
+    t0 = time.time()
+    last = ""
+    while time.time() - t0 < 28:
+        shell("input swipe 540 1500 540 800 200")
+        time.sleep(0.1)
+        ta = last_reply_text(nodes(ui_dump()), GROK)
+        if ta and ta != before and len(ta) >= 3:
+            open("$BRO/inbox/grok_reply.txt","w").write(ta)
+            print(json.dumps({"ok":True,"via":"fallback_enter","loop_ok":"LOOP_OK" in ta,"reply":ta[:300]}, indent=2))
+            break
+        if len(ta) > len(last): last = ta
+    else:
+        print(json.dumps({"ok":False,"via":"fallback_enter","need_apk":True,"a11y":st}, indent=2))
+PY
+
+
+
+===== TIER0: tools/a11y_round_once.sh =====
+#!/data/data/com.termux/files/usr/bin/bash
+export BRO="${BRO:-$HOME/broccoli}"
+export PYTHONPATH="$BRO/lib"
+export RISH_APPLICATION_ID="${RISH_APPLICATION_ID:-com.termux}"
+TASK="${1:-BROCC_TASK reply exactly: LOOP_OK}"
+termux-clipboard-set "$TASK" 2>/dev/null || true
+printf '%s\n' "$TASK" > "$BRO/inbox/prompt.txt"
+python3 -c "
+import sys, json
+sys.path.insert(0, '$BRO/lib')
+from broccoli_a11y_send import full_round_a11y
+print(json.dumps(full_round_a11y('$TASK'), indent=2)[:4000])
+"
+
+
+
+===== TIER0: tools/agent_wire_rish.sh =====
+#!/data/data/com.termux/files/usr/bin/bash
+set -eu
+B="$HOME/broccoli"
+PROMPT="$(bash "$B/tools/wire_build_prompt.sh" "${1:-wire_ok}")"
+bash "$B/tools/notify_toast.sh" "Wire" "rish…" broccoli_wire
+REPLY="$(bash "$B/tools/wire_send_ui.sh" "$PROMPT" 2>>"$B/reports/wire_send.log" || true)"
+[ -n "$REPLY" ] && printf '%s\n' "$REPLY" >> "$B/thread/grok_last.txt"
+bash "$B/lib/ui_dump_rish.sh" 2>/dev/null || true
+bash "$B/tools/prepare_mac_bundle_redacted.sh"
+bash "$B/tools/notify_toast.sh" "Wire" "done" broccoli_wire
+
+
+
+===== TIER0: tools/broccoli_infinite_dev_loop.py =====
+
+def mac_context_stamp():
+    import json, hashlib
+    from pathlib import Path
+    BRO = Path.home() / "broccoli"
+    def sh(p):
+        return hashlib.sha256(p.read_bytes()).hexdigest()[:12] if p.is_file() else ""
+    pull = {}
+    lp = BRO / "meta/last_pull.json"
+    if lp.is_file():
+        try:
+            pull = json.loads(lp.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    md = BRO / "MD_CONTEXT.md"
+    return "ctx bundle=%s sync=%s walk=%s md=%s" % (
+        pull.get("bundle_sha256", sh(BRO / "meta/bundle.sha256"))[:12],
+        (pull.get("synced_at") or "")[:19],
+        (BRO / "meta/walk_digest.txt").read_text(encoding="utf-8", errors="replace")[:12] if (BRO / "meta/walk_digest.txt").is_file() else "",
+        sh(md),
+    )
+
+#!/usr/bin/env python3
+import json, os, sys, time
+from pathlib import Path
+BRO = Path.home() / "broccoli"
+sys.path.insert(0, str(BRO / "lib"))
+from broccoli_log import append_log
+from broccoli_notif import notify, recv_from_grok_notif
+
+LOG = BRO / "reports/infinite.log"
+STATE, INBOX = BRO / "state", BRO / "inbox"
+POLL = float(os.environ.get("BROCCOLI_POLL_SEC", "45"))
+
+def log(m):
+    append_log(LOG, m)
+
+def task():
+    p = INBOX / "prompt.txt"
+    if p.exists() and p.read_text(encoding="utf-8", errors="replace").strip():
+        return p.read_text(encoding="utf-8", errors="replace").strip()
+    return "BROCC_TASK reply exactly: LOOP_OK"
+
+def round_once():
+    try:
+        from broccoli_adb_ui import full_round_adb
+        return full_round_adb(task())
+    except Exception as e:
+        return {"ok": False, "error": str(e)[:200]}
+
+def main():
+    log("INFINITE_START debugged single_instance poll=%s" % POLL)
+    notify("Broccoli", "loop started (Send/Pause/Resume)")
+    while not (STATE / "STOP").exists():
+        if (STATE / "PAUSE").exists():
+            time.sleep(2)
+            continue
+        if (INBOX / "trigger").exists() or True:
+            try:
+                INBOX.joinpath("trigger").unlink(missing_ok=True)
+            except Exception:
+                pass
+            t = task()
+            log("ROUND task_len=%d" % len(t))
+            r = round_once()
+            if not r.get("reply") and r.get("ok") is False:
+                nr, _ = recv_from_grok_notif(max_wait=12)
+                if nr:
+                    r["reply"] = nr
+                    r["ok"] = "LOOP_OK" in nr or len(nr) > 6
+            log("RESULT %s" % json.dumps({k: r.get(k) for k in ("ok", "stage", "loop_ok", "reply_head", "error")})[:400])
+            notify("Broccoli", str(r.get("reply_head") or r.get("reply") or r.get("error") or "done")[:80])
+        time.sleep(POLL)
+
+if __name__ == "__main__":
+    main()
+
+
+
+===== TIER0: tools/broccoli_rish_wire.sh =====
+\
+#!/data/data/com.termux/files/usr/bin/bash
+# Source from ~/.bashrc:  source ~/broccoli/tools/broccoli_rish_wire.sh
+export BRO="${BRO:-$HOME/broccoli}"
+brocc-ask() { "$BRO/tools/rish_grok_round.sh" "$*"; }
+brocc-round() { "$BRO/tools/rish_grok_round.sh" "$*"; }
+brocc-pull-last() {
+  B="$(ls -t /sdcard/Broccoli/pull/bundle_* 2>/dev/null | head -1)"
+  echo "$B"; test -n "$B" && cat "$B"
+}
+brocc-report-last() { tail -60 "$BRO/reports/rish_round.log" 2>/dev/null; tail -40 "$BRO/reports/latest.txt" 2>/dev/null; }
+
+
+
+===== TIER0: tools/chat_focus_rish.py =====
+\
+"""Call broccoli_agentic_chat if it exposes open/focus chat. Patched when discovery finds real APIs."""
+import sys
+from pathlib import Path
+BRO = Path.home() / "broccoli"
+mode = (sys.argv[1] if len(sys.argv) > 1 else "reuse")
+rish = BRO / "broccoli_agentic_chat.py"
+if not rish.exists():
+    raise SystemExit(2)
+import importlib.util
+spec = importlib.util.spec_from_file_location("broccoli_agentic_chat", rish)
+m = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(m)
+
+# Try common names — discovery will replace with real ones
+for name in (
+    "focus_grok_chat", "open_grok_chat", "ensure_chat_focus",
+    "open_chat", "focus_chat", "start_grok_foreground",
+):
+    fn = getattr(m, name, None)
+    if callable(fn):
+        fn(new=(mode == "new"))
+        print("OK", name, mode)
+        raise SystemExit(0)
+
+# Module-level run hooks
+for name in ("main", "focus", "open"):
+    fn = getattr(m, name, None)
+    if callable(fn):
+        fn()
+        print("OK", name)
+        raise SystemExit(0)
+
+raise SystemExit(1)
+
+
+
+===== TIER0: tools/consume_response.sh =====
+#!/data/data/com.termux/files/usr/bin/bash
+set -eu
+B="$HOME/broccoli"
+python3 <<'PY'
+import json, time, subprocess
+from pathlib import Path
+B = Path.home() / "broccoli"
+dump = B / "reports/ui_dump.xml"
+r = subprocess.run(["python3", str(B / "tools/parse_grok_ui.py"), str(dump)], capture_output=True, text=True)
+if r.returncode != 0:
+    raise SystemExit(0)
+d = json.loads(r.stdout or "{}")
+lines = d.get("visible_text") or []
+if not lines:
+    raise SystemExit(0)
+last = lines[-1][:2000]
+rec = {"ts": time.time(), "role": "assistant", "text": last}
+with (B / "thread/conversation.jsonl").open("a") as f:
+    f.write(json.dumps(rec) + "\n")
+(B / "thread/rolling_summary.txt").write_text(last[:800])
+PY
+
+
+
+===== TIER0: tools/extract_chat_from_xml.py =====
+#!/usr/bin/env python3
+import re, sys
+from pathlib import Path
+p = Path("/data/local/tmp/broccoli_ui.xml")
+if not p.is_file():
+    p = Path.home() / "broccoli/ui/last_ui.xml"
+xml = p.read_text(encoding="utf-8", errors="replace") if p.is_file() else ""
+skip = re.compile(r'^(Ask|Send|Grok|Imagine|Explore|Home|Settings|\s*)$', re.I)
+for m in re.finditer(r'text="([^"]{2,500})"', xml):
+    t = m.group(1).strip()
+    if not t or skip.match(t) or t.startswith("Reply with only"):
+        continue
+    if "PONG" in t or len(t) > 8:
+        print(t)
+
+
+
+===== TIER0: tools/find_send_tap.py =====
+#!/usr/bin/env python3
+import json, subprocess, sys
+from pathlib import Path
+p = Path.home() / "broccoli/meta/send_pick.txt"
+if p.is_file():
+    a = p.read_text().split()
+    if len(a) >= 2:
+        x,y=int(a[0]),int(a[1])
+        subprocess.run(["bash","-c",f'printf "input tap {x} {y}\\n" | rish'], check=False)
+        print(json.dumps({"tap":[x,y],"why":"send_pick"}))
+        sys.exit(0)
+print(json.dumps({"err":"no_pick"})); sys.exit(2)
+
+
+
+===== TIER0: tools/grok_foreground_then.sh =====
+#!/data/data/com.termux/files/usr/bin/bash
+set -eu
+export PATH="$HOME/bin:$PATH:/data/data/com.termux/files/usr/bin"
+LOG="$HOME/broccoli/reports/foreground.log"
+GROK_PKG=ai.x.grok
+bash "$HOME/aim_rish_ensure.sh" 2>/dev/null || true
+log(){ echo "$(date -Iseconds) $*" | tee -a "$LOG"; }
+log "1 launch Grok native"
+bash "$HOME/broccoli/lib/launch_grok_native.sh"
+sleep 5
+log "2 dump UI (rish)"
+printf 'uiautomator dump --compressed /data/local/tmp/broccoli_ui.xml\nwc -c /data/local/tmp/broccoli_ui.xml\n' | rish 2>&1 | tail -3 | tee -a "$LOG"
+cp -f /data/local/tmp/broccoli_ui.xml "$HOME/broccoli/ui/last_ui.xml" 2>/dev/null || true
+PKG="$(grep -o 'package="[^"]*"' /data/local/tmp/broccoli_ui.xml 2>/dev/null | sort -u | head -5 | tr '\n' ' ')"
+log "3 packages in dump: $PKG"
+if ! grep -q 'ai.x.grok' /data/local/tmp/broccoli_ui.xml 2>/dev/null; then
+  log "WARN Grok not in dump — tap Grok app on screen, wait 3s, re-dump"
+  sleep 3
+  printf 'uiautomator dump --compressed /data/local/tmp/broccoli_ui.xml\n' | rish
+  cp -f /data/local/tmp/broccoli_ui.xml "$HOME/broccoli/ui/last_ui.xml" 2>/dev/null || true
+fi
+CMD="${1:-status}"
+shift || true
+case "$CMD" in
+  status) wc -c "$HOME/broccoli/ui/last_ui.xml" 2>/dev/null; tail -5 "$LOG" ;;
+  pong)
+    log "4 send PONG"
+    termux-clipboard-set <<< 'Reply with one word: PONG'
+    GROK_PKG=ai.x.grok python3 "$HOME/broccoli/lib/grok_send_tap.py" 'Reply with one word: PONG' 2>&1 | tee -a "$LOG"
+    sleep 8
+    log "5 poll dump for reply"
+    printf 'uiautomator dump --compressed /data/local/tmp/broccoli_ui.xml\n' | rish
+    cp -f /data/local/tmp/broccoli_ui.xml "$HOME/broccoli/ui/last_ui.xml"
+    grep -oi pong /data/local/tmp/broccoli_ui.xml | head -3 | tee -a "$LOG" || log "no PONG in xml yet"
+    ;;
+  ask)
+    MSG="${*:-Reply with one word: PONG}"
+    log "4 ask: $MSG"
+    termux-clipboard-set <<< "$MSG"
+    GROK_PKG=ai.x.grok python3 "$HOME/broccoli/lib/grok_send_tap.py" "$MSG" 2>&1 | tee -a "$LOG"
+    sleep 10
+    printf 'uiautomator dump --compressed /data/local/tmp/broccoli_ui.xml\n' | rish
+    python3 "$HOME/broccoli/tools/extract_chat_from_xml.py" 2>/dev/null | tee -a "$LOG" || grep -i text= /data/local/tmp/broccoli_ui.xml | tail -8 | tee -a "$LOG"
+    ;;
+  paste-termux)
+    log "Termux foreground — copy code block on PC/phone first"
+    termux-clipboard-get
+    ;;
+esac
+
+
+
+===== TIER0: tools/parse_grok_ui.py =====
+#!/usr/bin/env python3
+import json, re, sys
+from pathlib import Path
+p = Path(sys.argv[1] if len(sys.argv) > 1 else Path.home() / "broccoli/reports/ui_dump.xml")
+x = p.read_text(errors="replace") if p.is_file() else ""
+o = {"bytes": len(x), "package": None, "composer": None, "send": None, "ok": False}
+if "NO_RISH" in x:
+    print(json.dumps(o)); raise SystemExit(0)
+m = re.search(r'package="([^"]+)"', x)
+if m: o["package"] = m.group(1)
+best = None
+for m in re.finditer(r'class="android\.widget\.EditText"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', x):
+    y1 = int(m.group(2))
+    if best is None or y1 > best[0]: best = (y1, m)
+if best:
+    g = best[1]
+    o["composer"] = {"x": (int(g[0])+int(g[2]))//2, "y": (int(g[1])+int(g[3]))//2}
+m = re.search(r'text="Send"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', x, re.I)
+if m:
+    o["send"] = {"x": (int(m.group(1))+int(m.group(3)))//2, "y": (int(m.group(2))+int(m.group(4)))//2}
+o["ok"] = bool(o.get("package") and "grok" in o["package"].lower() and o["bytes"] >= 5000 and o["composer"])
+print(json.dumps(o))
+
+
+
+===== TIER0: tools/rish_grok_once.sh =====
+#!/data/data/com.termux/files/usr/bin/bash
+export BRO="${BRO:-$HOME/broccoli}"
+export PYTHONPATH="$BRO/lib"
+export RISH_APPLICATION_ID="${RISH_APPLICATION_ID:-com.termux}"
+TASK="${1:-BROCC_TASK reply exactly: LOOP_OK}"
+termux-clipboard-set "$TASK" 2>/dev/null || true
+printf '%s\n' "$TASK" > "$BRO/inbox/prompt.txt"
+python3 -c "
+import sys, json
+sys.path.insert(0, '$BRO/lib')
+from broccoli_rish_ui import send_task
+print(json.dumps(send_task('$TASK'), indent=2))
+"
+
+
+
+===== TIER0: tools/rish_grok_round.sh =====
+\
+#!/data/data/com.termux/files/usr/bin/bash
+set -euo pipefail
+BRO="${BRO:-$HOME/broccoli}"
+REPORT="$BRO/reports/rish_round.log"
+PULL_DIR="${BROCCOLI_PULL_DIR:-/sdcard/Broccoli/pull}"
+PROMPT="${1:-}"
+if [[ -z "$PROMPT" ]]; then
+  [[ -n "${BROCCOLI_PROMPT:-}" ]] && PROMPT="$BROCCOLI_PROMPT"
+  [[ -z "$PROMPT" && -f "$BRO/inbox/prompt.txt" ]] && PROMPT="$(<"$BRO/inbox/prompt.txt")"
+fi
+[[ -n "$PROMPT" ]] || { echo "FAIL: no prompt" >&2; exit 2; }
+
+mkdir -p "$BRO/reports" "$BRO/inbox" "$PULL_DIR"
+
+# === CHAT FIRST (required context) ===
+FOCUS_OUT="$("$BRO/tools/chat_focus_first.sh" "${BROCCOLI_CHAT_MODE:-reuse}")" || true
+echo "$FOCUS_OUT" >>"$REPORT"
+echo "$FOCUS_OUT"
+if ! echo "$FOCUS_OUT" | grep -q 'CHAT_FOCUS_OK'; then
+  echo "FAIL: chat not focused — fix open/focus before clip" >>"$REPORT"
+  echo "FAIL: chat focus" >&2
+  exit 5
+fi
+
+echo "$(date -Iseconds 2>/dev/null || date) ROUND_START len=${#PROMPT}" >>"$REPORT"
+printf '%s' "$PROMPT" >"$BRO/inbox/prompt.txt"
+
+# Clip staging (codev expects it) — cleared after round
+command -v termux-clipboard-set >/dev/null 2>&1 && termux-clipboard-set "$PROMPT" || true
+export BRO BROCCOLI_PROMPT="$PROMPT"
+cd "$BRO"
+OUT="$(brocc agent codev start 2>&1)" || true
+printf '%s\n' "$OUT" | tee -a "$REPORT"
+
+BUNDLE=""
+# Prefer path brocc already reported (fixes false "no bundle")
+BUNDLE="$(printf '%s\n' "$OUT" | grep -E 'PULL_RISH_OK' | tail -1 | awk '{print $NF}')"
+[[ -z "$BUNDLE" || ! -f "$BUNDLE" ]] && BUNDLE="$(printf '%s\n' "$OUT" | grep -oE '/sdcard/Broccoli/pull/bundle_[0-9_]+' | tail -1)"
+# Wait up to 15s for file
+for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+  [[ -n "$BUNDLE" && -f "$BUNDLE" ]] && break
+  sleep 1
+  BUNDLE="$(ls -t "$PULL_DIR"/bundle_* 2>/dev/null | head -1 || true)"
+done
+
+if [[ -z "$BUNDLE" || ! -f "$BUNDLE" ]]; then
+  echo "$(date -Iseconds 2>/dev/null || date) FAIL no bundle dir=$PULL_DIR" >>"$REPORT"
+  echo "FAIL: no bundle (pull line was in log above)" >&2
+  exit 4
+fi
+
+cp -f "$BUNDLE" "$BRO/inbox/grok_last_bundle.txt"
+# Normalize reply for agent (no manual copy)
+python3 - "$BUNDLE" "$BRO/inbox/grok_reply.txt" <<'PYIN'
+import sys, pathlib
+src, dst = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2])
+text = src.read_text(encoding="utf-8", errors="replace").strip()
+dst.write_text(text, encoding="utf-8")
+print("wrote", dst, "bytes", len(text.encode()))
+PYIN
+
+echo "$(date -Iseconds 2>/dev/null || date) OK BUNDLE=$BUNDLE" >>"$REPORT"
+echo "BUNDLE=$BUNDLE"
+echo "REPLY_FILE=$BRO/inbox/grok_reply.txt"
+head -c 6000 "$BRO/inbox/grok_reply.txt"
+echo ""
+
+# Unstick clipboard — do not leave prompt on clip for next cycle
+command -v termux-clipboard-set >/dev/null 2>&1 && termux-clipboard-set "" || true
+echo "CLIP_CLEARED" >>"$REPORT"
+
+# Feed running agent if hook exists
+if [[ -x "$BRO/tools/grok_pull_to_agent.sh" ]]; then
+  "$BRO/tools/grok_pull_to_agent.sh" || true
+fi
+exit 0
+
+
+
+===== TIER0: tools/run_infinite.sh =====
+#!/data/data/com.termux/files/usr/bin/bash
+export BRO="${BRO:-$HOME/broccoli}"
+export PATH="$PREFIX/bin:$BRO/bin:$BRO/tools:$PATH"
+export PYTHONPATH="$BRO/lib"
+export RISH_APPLICATION_ID=com.termux
+export BROCCOLI_GROK_PKG=ai.x.grok
+export BROCCOLI_NO_ENTER=1
+export BROCCOLI_SEND_MODE=sibling_first
+export BROCCOLI_POLL_SEC="${BROCCOLI_POLL_SEC:-45}"
+LOCK="$BRO/state/infinite.lock"
+mkdir -p "$BRO/state"
+exec 9>"$LOCK"
+flock -n 9 || { echo "already running"; pgrep -af broccoli_infinite_dev_loop; exit 0; }
+rm -f "$BRO/state/STOP"
+exec python3 "$BRO/tools/broccoli_infinite_dev_loop.py"
+
+
+
+===== TIER0: tools/send_now.sh =====
+#!/data/data/com.termux/files/usr/bin/bash
+export BRO=~/broccoli PYTHONPATH=$BRO/lib RISH_APPLICATION_ID=com.termux
+export BROCCOLI_GROK_PKG=ai.x.grok BROCCOLI_NO_ENTER=1 BROCCOLI_SEND_MODE=sibling_first
+TASK="${1:-BROCC_TASK reply exactly: LOOP_OK}"
+termux-clipboard-set "$TASK"
+python3 -c "
+import sys,json,os
+sys.path.insert(0,'$BRO/lib')
+os.environ['BROCCOLI_NO_ENTER']='1'
+from broccoli_core_round import full_round
+print(json.dumps(full_round('$TASK'), indent=2))
+"
+grep -E 'send_adb|inject|round ok' "$BRO/reports/infinite.log" | tail -8
+
+
+
+===== TIER0: tools/wire_loop_full.sh =====
+#!/data/data/com.termux/files/usr/bin/bash
+# Grok <-> Termux: send queue head, dump, extract code, run newest block — no manual ~ $ paste.
+set -eu
+export PATH="$HOME/bin:$PATH:/data/data/com.termux/files/usr/bin"
+export BROCC_NO_CHROME=1
+LOG="$HOME/broccoli/reports/wire_loop.log"
+POLL=2
+MAX_WAIT=14
+log(){ echo "$(date -Iseconds) $*" | tee -a "$LOG"; }
+
+dump(){ bash "$HOME/broccoli/lib/ui_dump_rish.sh" >/dev/null; }
+launch(){ bash "$HOME/broccoli/lib/launch_grok_native.sh"; sleep 1; }
+
+grok_fg(){
+  grep -q 'package="ai.x.grok"' "$HOME/broccoli/ui/last_ui.xml" 2>/dev/null
+}
+
+send_msg(){
+  MSG="$1"
+  termux-clipboard-set <<< "$MSG"
+  bash "$HOME/broccoli/tools/codevel_wire_fast.sh" out "$MSG" 2>&1 | tee -a "$LOG" | tail -8
+}
+
+read_in(){
+  bash "$HOME/broccoli/tools/codevel_wire_fast.sh" in 2>&1 | tee -a "$LOG" | tail -12
+}
+
+extract_and_run(){
+  python3 "$HOME/broccoli/tools/extract_grok_code.py" 2>&1 | tee -a "$LOG"
+  NEWEST="$(ls -t "$HOME/broccoli/sandbox/from_grok"/block_*.sh 2>/dev/null | head -1)"
+  if [ -n "$NEWEST" ] && [ -s "$NEWEST" ]; then
+    log "RUN $NEWEST"
+    bash "$NEWEST" 2>&1 | tee -a "$LOG" | tail -25
+    return 0
+  fi
+  log "no code block in dump yet"
+  return 1
+}
+
+one_round(){
+  LINE="$(grep -v '^#' "$HOME/broccoli/queue/pending.txt" 2>/dev/null | head -1)"
+  case "$LINE" in ASK|*) PROMPT="${LINE#ASK|}" ;; *) PROMPT="${LINE:-Continue broccoli co-dev: UI dump only; fix rish dump path; no Chrome}" ;; esac
+  launch
+  dump
+  if ! grok_fg; then
+    bash "$HOME/broccoli/tools/toast_user.sh" "Foreground Grok (ai.x.grok) for wire" 2>/dev/null || true
+    return 2
+  fi
+  BEFORE="$(python3 "$HOME/broccoli/tools/ui_dump_chat.py" last 2>/dev/null || true)"
+  send_msg "$PROMPT"
+  t=0
+  while [ "$t" -lt "$MAX_WAIT" ]; do
+    sleep "$POLL"
+    dump
+    AFTER="$(python3 "$HOME/broccoli/tools/ui_dump_chat.py" last 2>/dev/null || true)"
+    if [ -n "$AFTER" ] && [ "$AFTER" != "$BEFORE" ] && [ "${#AFTER}" -gt 3 ]; then
+      log "reply_seen"
+      break
+    fi
+    t=$((t+POLL))
+  done
+  read_in
+  extract_and_run || true
+  echo "ROUND_OK"
+}
+
+case "${1:-once}" in
+  once) one_round ;;
+  loop)
+    log "LOOP start"
+    while true; do one_round 2>/dev/null || sleep 5; sleep 6; done
+    ;;
+  show)
+    bash "$HOME/broccoli/tools/show_queue.sh"
+    cat "$HOME/broccoli/TASK_LIST.md" 2>/dev/null
+    ;;
+  *)
+    echo "usage: wire_loop_full.sh once|loop|show"
+    exit 2
+    ;;
+esac
+
+
+
+===== TIER0: tools/wire_send_fast.sh =====
+#!/data/data/com.termux/files/usr/bin/bash
+set -eu
+export PATH="$HOME/bin:$PATH:/data/data/com.termux/files/usr/bin"
+MSG="$1"
+LOG="$HOME/broccoli/reports/wire_send.log"
+[ -n "$MSG" ] || exit 2
+log(){ echo "$(date -Iseconds) $*" | tee -a "$LOG"; }
+log "SEND start len=${#MSG}"
+date +%s > "$HOME/broccoli/meta/automation_lock.ts"
+
+launch(){ timeout 8 bash "$HOME/broccoli/lib/launch_grok_native.sh" >/dev/null 2>&1 || true; sleep 1.2; }
+
+tap_ask(){
+  python3 <<'PY'
+import re, subprocess
+from pathlib import Path
+p = Path.home() / "broccoli/ui/last_ui.xml"
+if not p.is_file(): raise SystemExit(0)
+xml = p.read_text(errors="replace")
+for m in re.finditer(r'text="([^"]*)"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml):
+    if m.group(1).strip().lower() == "ask":
+        x,y=(int(m.group(2))+int(m.group(4)))//2,(int(m.group(3))+int(m.group(5)))//2
+        subprocess.run(["bash","-c",f'printf "input tap {x} {y}\\n" | rish'], check=False, timeout=8)
+        print("tap_ask", x, y); break
+PY
+}
+
+focus_paste_send(){
+  python3 <<'PY'
+import re, subprocess, os
+from pathlib import Path
+xml = Path.home().joinpath("broccoli/ui/last_ui.xml").read_text(errors="replace")
+comp = None
+for m in re.finditer(r'resource-id="([^"]*chat_text_input[^"]*)"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml):
+    comp = tuple(map(int, m.groups()[1:5])); break
+if not comp:
+    for m in re.finditer(r'class="[^"]*EditText"[^>]*package="ai\.x\.grok"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml):
+        comp = tuple(map(int, m.groups())); break
+if not comp:
+    print("NO_COMPOSER"); raise SystemExit(1)
+x,y=(comp[0]+comp[2])//2,(comp[1]+comp[3])//2
+subprocess.run(["bash","-c",f'printf "input tap {x} {y}\\n" | rish'], check=False, timeout=8)
+cy=(comp[1]+comp[3])//2
+send=None
+for m in re.finditer(r'clickable="true"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml):
+    y1,y2=int(m.group(2)),int(m.group(4))
+    if (y1+y2)//2 < cy-50: continue
+    if re.search(r'send|submit|ImageButton', xml[m.start():m.start()+400], re.I):
+        send=((int(m.group(1))+int(m.group(3)))//2,(y1+y2)//2); break
+print("COMP", x, y, "SEND", send)
+PY
+  termux-clipboard-set <<< "$MSG"
+  timeout 5 bash "$HOME/broccoli/lib/adb_rish.sh" "input keyevent 279" >/dev/null 2>&1 || true
+  sleep 0.35
+  timeout 5 bash "$HOME/broccoli/lib/adb_rish.sh" "input keyevent 279" >/dev/null 2>&1 || true
+  sleep 0.25
+  python3 <<'PY2'
+import re, subprocess
+from pathlib import Path
+xml = Path.home().joinpath("broccoli/ui/last_ui.xml").read_text(errors="replace")
+cy=0
+for m in re.finditer(r'chat_text_input[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml):
+    cy=(int(m.group(2))+int(m.group(4)))//2; break
+for m in re.finditer(r'clickable="true"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml):
+    if (int(m.group(2))+int(m.group(4)))//2 < cy-50: continue
+    if re.search(r'send|submit', xml[m.start():m.start()+350], re.I):
+        x,y=(int(m.group(1))+int(m.group(3)))//2,(int(m.group(2))+int(m.group(4)))//2
+        subprocess.run(["bash","-c",f'printf "input tap {x} {y}\\n" | rish'], check=False, timeout=8)
+        print("send_tap"); raise SystemExit(0)
+subprocess.run(["bash","-c",'printf "input keyevent 66\\n" | rish'], check=False, timeout=8)
+print("send_enter")
+PY2
+}
+
+launch
+for i in 1 2 3; do
+  bash "$HOME/broccoli/lib/ui_dump_rish.sh" >/dev/null || true
+  grep -q chat_text_input "$HOME/broccoli/ui/last_ui.xml" 2>/dev/null && break
+  tap_ask 2>/dev/null || true
+  sleep 0.8
+done
+if ! focus_paste_send 2>>"$LOG"; then
+  log "fallback grok_send_tap"
+  GROK_PKG=ai.x.grok timeout 25 python3 "$HOME/broccoli/lib/grok_send_tap.py" "$MSG" >>"$LOG" 2>&1 || true
+fi
+log "SEND done"
+date +%s > "$HOME/broccoli/meta/automation_lock.ts"
+
+
+
+===== TIER0: tools/wire_send_immediate.sh =====
+#!/data/data/com.termux/files/usr/bin/bash
+set -euo pipefail
+B="$HOME/broccoli"
+export PATH="$HOME/bin:$PATH:/data/data/com.termux/files/usr/bin"
+source "$B/meta/wire_coords.env" 2>/dev/null || true
+PKG="${GROK_PKG:-com.ai.x.grok}"
+MSG="${1:?msg}"
+LOG="$B/reports/agent_loop.log"
+XML="$B/reports/ui_dump.xml"
+MARK="$(echo "$MSG" | head -c 48)"
+log(){ echo "$(date -Iseconds) $*" >>"$LOG"; }
+rish -c "am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p $PKG" >/dev/null 2>&1 || true
+sleep 0.35
+rish -c uiautomator dump /data/local/tmp/broccoli_ui.xml >/dev/null 2>&1 || true
+rish -c cat /data/local/tmp/broccoli_ui.xml >"$XML" 2>/dev/null || true
+[ -s "$XML" ] || { log FAIL dump_empty; exit 1; }
+log OK dump_bytes=$(wc -c <"$XML")
+printf '%s' "$MSG" | termux-clipboard-set
+rish -c "input tap ${COMPOSER_X:-540} ${COMPOSER_Y:-2180}"; sleep 0.15
+rish -c "input keyevent 279"; sleep 0.2
+rish -c "input tap ${SEND_X:-980} ${SEND_Y:-2180}"; sleep 0.25
+rish -c "input tap ${SEND_X:-980} ${SEND_Y:-2180}"; sleep 0.4
+rish -c uiautomator dump /data/local/tmp/broccoli_ui.xml >/dev/null 2>&1 || true
+rish -c cat /data/local/tmp/broccoli_ui.xml >"$XML" 2>/dev/null || true
+if grep -qF "$MARK" "$XML" 2>/dev/null; then log OK sent_verified mark="$MARK"; exit 0; fi
+rish -c "input keyevent 66"; sleep 0.35
+rish -c uiautomator dump /data/local/tmp/broccoli_ui.xml >/dev/null 2>&1 || true
+rish -c cat /data/local/tmp/broccoli_ui.xml >"$XML" 2>/dev/null || true
+grep -qF "$MARK" "$XML" 2>/dev/null && { log OK sent_verified_enter mark="$MARK"; exit 0; }
+log FAIL send_not_in_dump mark="$MARK"
+exit 1
+
+
+
+===== TIER0: tools/wire_send_ui.sh =====
+#!/data/data/com.termux/files/usr/bin/bash
+set -e
+B="$HOME/broccoli"
+export PATH="$HOME/bin:$PATH:/data/data/com.termux/files/usr/bin"
+LOG="$B/reports/wire_send.log"
+P="${1:-}"; [ -n "$P" ] || exit 1
+source "$B/meta/wire_coords.env"
+source "$B/lib/rish_ui.sh"
+log() { echo "$(date -Iseconds) $*" >>"$LOG"; }
+log "SEND len=${#P}"
+command -v rish >/dev/null || { log ERR_no_rish; exit 1; }
+grep -qi "$GROK_PKG" "$B/reports/ui_dump.xml" 2>/dev/null || { open_grok; sleep 1.2; }
+ui_dump >>"$LOG" 2>&1 || { log dump_fail; exit 1; }
+J=$(python3 "$B/tools/parse_grok_ui.py" "$B/reports/ui_dump.xml")
+log "$J"
+OK=$(echo "$J" | python3 -c "import sys,json; print(json.load(sys.stdin).get('ok'))")
+if [ "$OK" != "True" ]; then
+  tap "$COMPOSER_X" "$COMPOSER_Y"; sleep 0.35
+  ui_dump >>"$LOG" 2>&1 || true
+  J=$(python3 "$B/tools/parse_grok_ui.py" "$B/reports/ui_dump.xml")
+  OK=$(echo "$J" | python3 -c "import sys,json; print(json.load(sys.stdin).get('ok'))")
+fi
+[ "$OK" = "True" ] || { log no_composer; exit 1; }
+CX=$(echo "$J" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['composer']['x'])")
+CY=$(echo "$J" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['composer']['y'])")
+tap "$CX" "$CY"
+command -v termux-clipboard-set >/dev/null && termux-clipboard-set "$P" >>"$LOG" 2>&1 || true
+keyev 279; sleep 0.25
+SX=$(echo "$J" | python3 -c "import sys,json; d=json.load(sys.stdin); s=d.get('send'); print(s['x'] if s else '')" 2>/dev/null || true)
+SY=$(echo "$J" | python3 -c "import sys,json; d=json.load(sys.stdin); s=d.get('send'); print(s['y'] if s else '')" 2>/dev/null || true)
+if [ -n "$SX" ]; then tap "$SX" "$SY"; else tap "$SEND_X" "$SEND_Y"; fi
+date +%s > "$B/meta/last_wire_ts"
+log send_ok
+
+
+
+===== TIER1: tools/agentic_run_once.py =====
+#!/usr/bin/env python3
+import sys, json, os
+from pathlib import Path
+BRO = Path.home() / "broccoli"
+sys.path.insert(0, str(BRO/"lib"))
+from broccoli_agentic_chat import send_prompt_agentic
+print(json.dumps(send_prompt_agentic(), indent=2))
+
+
+
+===== TIER1: tools/broccoli_entry.sh =====
+#!/data/data/com.termux/files/usr/bin/bash
+set -eu
+export PATH="$HOME/bin:$PATH:/data/data/com.termux/files/usr/bin"
+B="$HOME/broccoli"
+prepare_mac_bundle(){
+  OUT="$B/reports/DEVICE_OUTPUT_FOR_MAC.txt"
+  PKG=""
+  [ -f "$B/reports/ui_dump.xml" ] && PKG="$(grep -o 'package="[^"]*"' "$B/reports/ui_dump.xml" | head -1 || true)"
+  {
+    echo "===== BROCCOLI DEVICE OUTPUT $(date -Iseconds) ====="
+    echo "## DAEMONS"; pgrep -af 'agent_daemon|heal_supervisor' 2>/dev/null || true
+    echo ""; echo "## QUEUE"; cat "$B/queue/pending.txt" 2>/dev/null || true
+    echo ""; echo "## AGENT_ITERATION"; cat "$B/meta/agent_iteration.json" 2>/dev/null || true
+    echo ""; echo "## GROK_LAST"; tail -8 "$B/thread/grok_last.txt" 2>/dev/null || true
+    echo ""; echo "## DUMP_PKG"; echo "${PKG:-no_dump}"
+    echo ""; echo "## WIRE_LOG"; tail -25 "$B/reports/wire_send.log" 2>/dev/null || true
+    echo ""; echo "## AGENT_TICK"; tail -12 "$B/reports/agent_tick.log" 2>/dev/null || true
+    echo "===== END ====="
+  } > "$OUT"
+}
+deliver_mac(){
+  prepare_mac_bundle
+  BODY="$(head -c 3800 "$B/reports/DEVICE_OUTPUT_FOR_MAC.txt")"
+  { echo ""; echo "--- DEVICE_OUTPUT $(date -Iseconds) ---"; cat "$B/reports/DEVICE_OUTPUT_FOR_MAC.txt"; echo "---"; } >> "$B/thread/to_chat.md"
+  command -v termux-clipboard-set >/dev/null 2>&1 && termux-clipboard-set <<< "$BODY" || true
+  echo "===== PASTE TO MAC GROK ====="
+  head -c 4000 "$B/reports/DEVICE_OUTPUT_FOR_MAC.txt"
+  echo ""; echo "===== END ====="
+}
+cmd_wire(){
+  P="${1:-Reply exactly one word: WIRE_OK}"
+  REPLY="$(bash "$B/tools/wire_send_ui.sh" "$P" 2>>"$B/reports/wire_send.log" || true)"
+  echo "reply=${REPLY:-empty}"
+  [ -n "$REPLY" ] && printf '%s\n' "$REPLY" >> "$B/thread/grok_last.txt"
+  bash "$B/lib/ui_dump_rish.sh" >/dev/null 2>&1 || true
+  grep -o 'package="[^"]*"' "$B/reports/ui_dump.xml" 2>/dev/null | sort -u | head -5 || true
+  [ -x "$B/tools/agent_consume_iteration.sh" ] && bash "$B/tools/agent_consume_iteration.sh" "$P" "${REPLY:-}" >>"$B/reports/agent_consume.log" 2>&1 || true
+  deliver_mac
+}
+case "${1:-help}" in
+  wire) shift; cmd_wire "$@" ;;
+  pull) deliver_mac ;;
+  status) prepare_mac_bundle; head -35 "$B/reports/DEVICE_OUTPUT_FOR_MAC.txt" ;;
+  *) echo "broccoli_entry.sh wire|pull|status";;
+esac
+
+
+
+===== TIER1: tools/heal_wire_fallback.sh =====
+#!/data/data/com.termux/files/usr/bin/bash
+# Known-good fallback wire: short msg, ENTER-first, Grok FG, phrase receive.
+set -eu
+export PATH="$HOME/bin:$PATH:/data/data/com.termux/files/usr/bin"
+MSG="${1:-Reply exactly one word: HEAL_OK}"
+LOG="$HOME/broccoli/reports/heal_wire.log"
+log(){ echo "$(date -Iseconds) $*" | tee -a "$LOG"; }
+export HEAL_FALLBACK=1
+log "fallback send: $MSG"
+bash "$HOME/broccoli/lib/fg_grok_only.sh" >/dev/null 2>&1 || bash "$HOME/broccoli/lib/launch_grok_native.sh" >/dev/null 2>&1 || true
+bash "$HOME/broccoli/lib/ui_dump_rish.sh" >/dev/null 2>&1 || true
+[ -x "$HOME/broccoli/tools/dump_send_row.sh" ] && bash "$HOME/broccoli/tools/dump_send_row.sh" >/dev/null 2>&1 || true
+
+if [ -x "$HOME/broccoli/tools/wire_send_ui.sh" ]; then
+  REPLY="$(bash "$HOME/broccoli/tools/wire_send_ui.sh" "$MSG" 2>>"$LOG")" && { log "ok $REPLY"; echo "$REPLY"; exit 0; }
+fi
+log "fallback fail"
+exit 1
+
+
+
+===== DIFFLOG (tier2/3 signatures) =====
+3	769a03ab69268f28	603	HANDOFF.md	# Broccoli HANDOFF
+3	db58cfaa6ebff67e	2013	INSTRUCTIONS.md	# Broccoli (on-device)
+3	eac5959ec929c56c	231	PROJECT.md	# Broccoli
+3	f89d1458997fee82	394	TASK_LIST.md	# Broccoli co-dev task list (active)
+3	f340dd3343388b8c	944	a11y-apk/BUILD_ON_PC.md	# Build Broccoli A11y APK (one time on PC)
+3	97f894131a654e04	3169	agent/context_20260707_154228.json	{
+3	ca1af0fe33668f7d	3169	agent/context_20260707_154229.json	{
+3	2db9ffb3708b8660	110	archive/rounds/result_20260707T221504.json	{
+3	7403ee7cde70b418	1037	bin/brocc	#!/data/data/com.termux/files/usr/bin/bash
+3	044539b361849e95	336	bin/killall_broccoli	#!/data/data/com.termux/files/usr/bin/bash
+3	4aff0a058b1265e7	881	boot/reboot_first_job.sh	#!/data/data/com.termux/files/usr/bin/bash
+3	5f8c733a788a8bec	669	branch/dev-env-v2/LESSONS.md	# Lessons (conversation history)
+3	13c1ac2d11529ab5	604	branch/dev-env-v2/PROTOCOL.md	# dev-env-v2 protocol
+3	f2a7aa89a49610a3	2639	brocc_legacy_hooks.sh	#!/data/data/com.termux/files/usr/bin/bash
+3	34b88221314e848f	336	broccoli_meta_heal.py	#!/usr/bin/env python3
+3	85d0b95fe09cb03e	741	broccoli_secondary_display.py	#!/usr/bin/env python3
+3	dc14067e24b24ac6	978	broccoli_task_queue.py	#!/usr/bin/env python3
+3	32acc8ccaeb89e3a	482	collab_rish_loop.sh	#!/data/data/com.termux/files/usr/bin/bash
+3	b22664eb8fcbbca9	681	daemon_idle_loop.py	#!/usr/bin/env python3
+3	36e07d20b9100d3c	26	docs/ENGINEERING.md	# see chat ENGINEERING.md
+3	bc63eef4d095776f	216	docs/GEMINI_RESEARCH_RUNBOOK.md	# Gemini research
+3	44f75527160d4d4b	938	docs/HEAL_CODEV_AGENT.md	
+3	f8dcb55564b48ffd	1182	docs/MAC_GROK_UI_WIRE.md	
+3	89a5f8ceefee61ec	380	docs/RESEARCH_LOG.md	# Research log (RV3 → V4.1 RWA / Broccoli)
+3	b49ee2d295931d5b	205	docs/RISH_AUTOMATION.md	---
+3	9394b56c7054cc46	451	docs/RUTO_BRIDGE.md	# RUTO + rish wire (Broccoli)
+3	802a54de1b52b77f	462	docs/TOOLS.json	{
+3	31f5b5bc70b3e1de	1305	docs/TOOLS.md	# Broccoli TOOLS.md
+3	b6ee8cc3e62ae04d	531	docs/TOOLS_COMMIT.json	{
+3	ac8f255941bc5bd9	1180	docs/UI_DUMP_LOOP.md	# UI dump loop (Broccoli / Grok / Mac)
+3	e3b0c44298fc1c14	0	inbox/fix_wire_rish.sh	
+3	71be8fa7d0bea9c1	9417	inbox/patch.sh	#!/data/data/com.termux/files/usr/bin/bash
+3	0f2092e1a8699340	14690	inbox/patch_alive.sh	#!/data/data/com.termux/files/usr/bin/bash
+3	ea5330f92263122d	17388	inbox/patch_one.sh	#!/data/data/com.termux/files/usr/bin/bash
+3	424a4719e892a52b	9883	inbox/patch_turbo.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	781b29d17a33b5fd	4873	lib/_pinned_from_walk/broccoli_agentic_chat.py	import os, time, json, subprocess
+2	906da8426e3e9347	2711	lib/_pinned_from_walk/broccoli_input.py	import os, re, time, subprocess
+2	66fdf74352ebd2e2	5049	lib/_pinned_from_walk/broccoli_ui_dump.py	import os, re, time, xml.etree.ElementTree as ET
+2	255b4b188e2079d2	195	lib/adb_rish.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	471808529a7468ba	4926	lib/agent_loop.py	#!/usr/bin/env python3
+2	20625222a508cb53	145	lib/brocc_toast.py	import subprocess
+2	781b29d17a33b5fd	4873	lib/broccoli_agentic_chat.py	import os, time, json, subprocess
+2	42edbc7ed27451f8	456	lib/broccoli_core_round.py	import os, subprocess
+2	906da8426e3e9347	2711	lib/broccoli_input.py	import os, re, time, subprocess
+2	a93c6dc4161a6dff	234	lib/broccoli_log.py	import time
+2	7ef8047fd0e6bbc6	1097	lib/broccoli_manual.py	"""Manual-send mode: clip + focus only; user taps send."""
+2	1dbec27f98f1bc02	179	lib/broccoli_manual_mode.py	import os
+2	649e678e7696abdc	2273	lib/broccoli_notif.py	import json, os, subprocess, time
+2	cc2291d6bfc0485c	5441	lib/broccoli_operator.py	#!/usr/bin/env python3
+2	8a8fc58a42153b71	2908	lib/broccoli_recv_copy_rish.py	import os, re, time
+2	028fc92619812a57	894	lib/broccoli_selftest.py	import json, time
+2	5fc26d7d7d252f22	1035	lib/broccoli_strategy.py	import json, time
+2	66fdf74352ebd2e2	5049	lib/broccoli_ui_dump.py	import os, re, time, xml.etree.ElementTree as ET
+2	aea3b9c8679fe69a	1317	lib/broccoli_wait.py	#!/usr/bin/env python3
+2	2a011b2daf6f50f8	1884	lib/broccoli_xml_sanitize.py	import re
+2	41490b801542decf	1086	lib/chat_context.py	"""Build Grok/Broccoli chat prefix from task queue + last reports."""
+2	8fd6f3824b617149	578	lib/clip.py	#!/usr/bin/env python3
+2	e3e7502130056772	1824	lib/code_from_chat.py	"""Extract and return code blocks from Grok assistant text."""
+2	a823a53435a92db7	204	lib/disk_gate.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	580262bed8296260	1115	lib/display_context.py	"""Where is automation running? Primary vs secondary / virtual display."""
+2	bda55f49f33a4a43	2122	lib/display_lane.py	"""Secondary lane: user keeps phone; automation when idle or forced."""
+2	b4125b9271470cb7	896	lib/dump_ui_fallback.py	from pathlib import Path
+2	fd44ebc6b4145d47	276	lib/fg_grok_only.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	e12a8b98bb96ecf1	260	lib/focus_pkg.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	77e65eb7ac8be140	5116	lib/grok_chat_foreground.py	#!/usr/bin/env python3
+2	6a6971d7ae172be4	3906	lib/grok_open_loop.py	#!/usr/bin/env python3
+2	b63d322f449fc808	5141	lib/grok_send_tap.py	#!/usr/bin/env python3
+2	1a529ffdcad7af3a	1601	lib/grok_takeover.py	#!/usr/bin/env python3
+2	dbaf5e4f4772e1ea	1045	lib/grok_xml_parse.py	import re
+2	dfa6694ba6c67408	1265	lib/idle_takeover.py	#!/usr/bin/env python3
+2	62dee5f457087d43	437	lib/input_snapshot.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	fcfd28df131b83c8	236	lib/notify.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	399ca6696e1c0f77	6043	lib/recursive_impl.py	#!/usr/bin/env python3
+2	0da6dcaf34702ab2	1964	lib/smoke_autoheal.py	import json, re, subprocess, time
+2	aecd036cf4fc6077	3957	lib/task_complete.py	"""Decide task complete from UI dumps + quarry + reply text (agent logic)."""
+2	40b59135427305a5	3131	lib/task_current.py	"""Auto-update current task from queue + chat."""
+2	e8c5430a649d19b9	5336	lib/task_queue.py	"""Broccoli task queue log — durable across daemon iterations."""
+2	d3b486896d559ad9	286	lib/timing.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	b3ba6e1946a25a37	916	lib/toast.py	import subprocess, shutil, os
+2	070e7e953e892852	51	lib/user_idle_sec.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	78fca95f4a68fcee	2349	lib/user_task_wait.py	#!/usr/bin/env python3
+3	bc2545e6b1ce2125	92	meta/README.md	
+3	b6ee8cc3e62ae04d	531	meta/TOOLS_COMMIT.json	{
+3	a4fcf1d63830a11f	49	meta/active_branch.json	{
+3	8b09f2e95669b8a9	146	meta/active_project.json	{"slug":"codev-20260707","path":"/data/data/com.termux/files/home/broccoli/projects/codev-20260707","since":"2026-07-07 
+3	3298f4da19d54ccf	227	meta/active_stack.json	{
+3	ead7c5fc12a235c1	234	meta/agent_feedback_latest.json	{
+3	a57762d6d2e95a2b	198	meta/agent_handoff.md	INVARIANT: On non-empty agent_task.txt → dump → paste → TAP SEND → re-dump → verify mark in XML → then clear queue. Neve
+3	998f6bf87568f0df	345	meta/agent_health.json	{
+3	ea057b60b6b28668	163	meta/agent_iteration.json	{
+3	97091379d91d4ce5	106	meta/agent_state.json	{
+3	c32a6ac1bd43cd46	371	meta/autoheal_latest.json	{
+3	aa6c38442ab072b1	76	meta/autoheal_state.json	{
+3	80f0adae837caeb3	2076	meta/brocc_live_wire.py	
+3	7ecdd3616939b7b5	2230	meta/brocc_live_wire.sh	#!/data/data/com.termux/files/usr/bin/bash
+3	5b0090a831aafb67	2862	meta/brocc_loop_emit.py	
+3	0b4c47850359598d	1633	meta/brocc_loop_emit.sh	#!/data/data/com.termux/files/usr/bin/bash
+3	3926b27aa5f7b499	1327	meta/brocc_state.py	
+3	473a7b3a5fe88d0f	1489	meta/brocc_watch.py	
+3	b407d3f1bb11baa9	2803	meta/broccoli_storage_sync.py	
+3	1fd94fbbb2d839ba	84	meta/clip_last_good.json	{
+3	e37648d991aab7a1	281	meta/codev_window.json	{
+3	011d88847041b5de	225	meta/current_task.json	{
+3	a5b1e9fe52edb4e7	1102	meta/current_task.md	# Broccoli continuous agent loop (UI-driven completion)
+3	12143439945bf901	222	meta/display_policy.json	{
+3	4c7f801c06a4d39b	483	meta/drift_report.json	{
+3	6ad2042eafa5c02d	140	meta/google_secondary_test.json	{
+3	fa03b799d62f4aa7	234	meta/grok_activity.json	{
+3	14b791229db2b1e1	51	meta/grok_pkg.json	{
+3	bfe0ee0694b70d91	207	meta/heal_ladder.json	{
+3	c2ddd6feb17896a2	58	meta/heal_state.json	{
+3	7f8327a5877a1cdd	611	meta/idle_policy.json	{
+3	0d7a5639ac76bbcb	460	meta/inbox/to_mac/loop_packet.json	{
+3	33d7c1e82de1ba6b	342	meta/iter_loop.json	{
+3	2db9ffb3708b8660	110	meta/last_round.json	{
+3	554da43cf18b043b	129	meta/last_send_adb.json	{
+3	e49aaf5a48b0d7d9	77	meta/last_task.json	{
+3	0519551e0333508c	136	meta/loop_gate_pass.json	{
+3	0d7a5639ac76bbcb	460	meta/loop_packet.json	{
+3	06acc9475fb56e69	262	meta/loop_state.json	{
+3	0286b69eb9062666	161	meta/mac_gemini_pull.md	MAC: rsync phone ~/broccoli/reports/research/ ; grep GEMINI_RESEARCH_MD consume_response ; run Gemini in Workspace if Gr
+3	2a25f7bc81db1ab0	305	meta/mac_handoff.md	MAC_AGENT: Read `docs/UI_DUMP_LOOP.md`, `reports/ui_snapshot.json`.
+3	aae83d6a73bc2b3e	16277	meta/notif_mine_index.json	{
+3	98474c941d5e7fd5	294	meta/perf_config.json	{
+3	fa0b4c86086e0d00	150	meta/perf_state.json	{
+3	c5462076dde9d517	509	meta/recursive_policy.json	{
+3	65836e2b165b503c	339	meta/task_completion_rules.json	{
+3	032ff7c90e40e0c3	842	meta/task_queue_snapshot.json	{
+3	965f98c276724523	209	meta/version_manifest.json	{
+3	480e9b6e0219b13a	167	meta/workflow_order.json	{
+3	516dde2f9c4cd876	1104	meta/working_paths.json	{
+3	a2907f5c95681b18	374	meta/working_registry.json	{
+3	144f1406da0aad80	184	projects/codev-20260707/docs/PROTOCOL.md	# Codev agentic AI mode
+3	8840bd6beffe0e57	102	projects/codev-20260707/docs/TASKS.md	# Tasks
+3	b1e2072295b3afc1	12	projects/codevelop-20260707/docs/PROTOCOL.md	# codevelop
+3	094e403423c38e44	25	projects/codevelop-20260707/docs/TASKS.md	# Tasks
+3	b83ddda716d4594e	347	quarry_framework.json	{
+3	2c53b9e785bf1e77	8339	quarry_iter.py	#!/usr/bin/env python3
+3	b87dc6320079c592	316	quarry_run.sh	#!/data/data/com.termux/files/usr/bin/bash
+3	ab0f1c16a5ec9466	1295	reboot_bootstrap.py	#!/usr/bin/env python3
+3	833470a764f6fa49	11295	reports/ARCHITECTURE_RECON.json	{
+3	5db145af9e653c58	9527	reports/ARCHITECTURE_RECON.md	# Broccoli architecture (device recon)
+3	214c9aea5b57655f	38006	reports/CODE_EXAM.md	# CODE_EXAM (device)
+3	ee89de71b114ed21	28531	reports/FS_DISCOVERY.md	# Filesystem discovery
+3	155a9cfada82d843	449605	reports/GROK_CODEBASE_FEED.md	# Codebase feed for Grok
+3	832a1cee122a20e4	4200	reports/INVENTORY_REPORT.md	# Broccoli inventory
+3	88fc90691b84d426	3718	reports/INVESTIGATION_REPORT.md	# Broccoli system investigation
+3	28a721324fdec207	400	reports/SANITIZED_PROMPT.md	You are Broccoli on this phone. One concrete step. Short.
+3	f2e2691ffbdecdfc	7793	reports/bin_research.json	{
+3	d350d6e0e48fbdf4	88	reports/display_after_chat_fg.json	{
+3	d350d6e0e48fbdf4	88	reports/display_at_chat_fg.json	{
+3	29fcfd08bc0702ab	1812	reports/heal_debug_last.json	{
+3	2f0cb735d6976c99	15487	reports/inventory.json	{
+3	8c12fc41b5b8584b	11219	reports/investigation.json	{
+3	26db6b0da9adabc1	613	reports/mac_context_audit.json	{
+3	0879d8177ecc1197	228553	reports/notif_codebase_search.json	{
+3	d350d6e0e48fbdf4	88	reports/quarry_display.json	{
+3	4ff820781c56d6d9	1991	reports/quarry_last.json	{
+3	bb034f00cb3674dd	101	reports/research/gemini_rwa_v41_SEED.md	# Seed on phone — Mac may overwrite after Grok
+3	35ade13fead8b67b	436	reports/selftest_last.json	{
+3	df8469584c339557	860	reports/smoke_compare.json	{
+3	18201235ddac29cc	46	reports/ui_send_targets.json	{
+3	697d39138d88b634	188	reports/ui_snapshot.json	{
+3	ca2bea0a36104d83	215	reports/version_walk_result.json	{
+3	2dcdde4ca561916f	49	reports/wire_context.json	{
+3	55b9037618e9ad67	760	research/notes.md	# Android UI Automation Research Notes
+3	3749d6d1efdc0e72	1971	smoke_fast.py	#!/usr/bin/env python3
+3	464e4c5d0acef25e	4246	smoke_lesson_foreground.py	#!/usr/bin/env python3
+3	9f5cda5239e3d2da	296	spec/BUILD_SPEC.md	AIM_RISH wait try=1/8 (start Shizuku + Rish on device)
+3	781b29d17a33b5fd	4873	state/walk_stage/broccoli_agentic_chat.py	import os, time, json, subprocess
+3	dafb70d2322d38d3	7766	state/walk_stage/broccoli_core_round.py	"""One full round: clip -> inject (no clear) -> send -> recv. Rish only."""
+3	906da8426e3e9347	2711	state/walk_stage/broccoli_input.py	import os, re, time, subprocess
+3	66fdf74352ebd2e2	5049	state/walk_stage/broccoli_ui_dump.py	import os, re, time, xml.etree.ElementTree as ET
+3	781b29d17a33b5fd	4873	state/walk_stage_0/broccoli_agentic_chat.py	import os, time, json, subprocess
+3	906da8426e3e9347	2711	state/walk_stage_0/broccoli_input.py	import os, re, time, subprocess
+3	7ef8047fd0e6bbc6	1097	state/walk_stage_0/broccoli_manual.py	"""Manual-send mode: clip + focus only; user taps send."""
+3	1dbec27f98f1bc02	179	state/walk_stage_0/broccoli_manual_mode.py	import os
+3	cc2291d6bfc0485c	5441	state/walk_stage_0/broccoli_operator.py	#!/usr/bin/env python3
+3	028fc92619812a57	894	state/walk_stage_0/broccoli_selftest.py	import json, time
+3	5fc26d7d7d252f22	1035	state/walk_stage_0/broccoli_strategy.py	import json, time
+3	66fdf74352ebd2e2	5049	state/walk_stage_0/broccoli_ui_dump.py	import os, re, time, xml.etree.ElementTree as ET
+3	aea3b9c8679fe69a	1317	state/walk_stage_0/broccoli_wait.py	#!/usr/bin/env python3
+3	781b29d17a33b5fd	4873	state/walk_stage_1/broccoli_agentic_chat.py	import os, time, json, subprocess
+3	906da8426e3e9347	2711	state/walk_stage_1/broccoli_input.py	import os, re, time, subprocess
+3	cc2

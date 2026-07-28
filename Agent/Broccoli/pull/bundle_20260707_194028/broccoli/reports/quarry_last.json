@@ -1,0 +1,75 @@
+{
+  "at": "2026-07-06 01:06:31",
+  "passed": 10,
+  "total": 11,
+  "score_pct": 90.9,
+  "results": [
+    {
+      "probe": "reboot_bootstrap",
+      "pass": true,
+      "elapsed_s": 5.74,
+      "detail": "stop 2>/dev/null; true\nREBOOT python3 \"/data/data/com.termux/files/home/broccoli_bootstrap.py\" --help 2>&1 | head -5 || python3 \"/data/data/com.termux/files/home/broccoli_bootstrap.py\" 2>&1 | head -3\n"
+    },
+    {
+      "probe": "paths_and_bins",
+      "pass": true,
+      "elapsed_s": 0.0,
+      "detail": "all core paths ok"
+    },
+    {
+      "probe": "display_primary",
+      "pass": true,
+      "elapsed_s": 0.16,
+      "detail": "grok_focus=False"
+    },
+    {
+      "probe": "launch_grok",
+      "pass": true,
+      "elapsed_s": 0.26,
+      "detail": "unknown launch_grok\n"
+    },
+    {
+      "probe": "chat_foreground",
+      "pass": false,
+      "elapsed_s": 0.26,
+      "detail": "rc=1 composer=no"
+    },
+    {
+      "probe": "dump_ui",
+      "pass": true,
+      "elapsed_s": 0.0,
+      "detail": "reuse last_ui.xml from chat_foreground"
+    },
+    {
+      "probe": "smoke_parse_B",
+      "pass": true,
+      "elapsed_s": 0.03,
+      "detail": "hit='GROK_SMOKE_OK'"
+    },
+    {
+      "probe": "smoke_heal_C",
+      "pass": true,
+      "elapsed_s": 0.23,
+      "detail": "K_SMOKE_OK\",\n    \"healed_at\": 1783314369.273696,\n    \"reason\": \"autoheal\"\n  }\n}\n cache=PASS"
+    },
+    {
+      "probe": "workflow_front",
+      "pass": true,
+      "elapsed_s": 18.19,
+      "detail": "us\": \"PASS\",\n    \"reply\": \"GROK_SMOKE_OK\",\n    \"healed_at\": 1783314382.372551,\n    \"reason\": \"autoheal\"\n  }\n}\nTASK_READY"
+    },
+    {
+      "probe": "task_queue",
+      "pass": true,
+      "elapsed_s": 0.19,
+      "detail": "=== BROCCOLI TASK QUEUE (auto-generated) ===\nUpdated: 2026-07-06 01:06:12\n\nACTIV"
+    },
+    {
+      "probe": "idle_gate_dry",
+      "pass": true,
+      "elapsed_s": 0.1,
+      "detail": "import ok"
+    }
+  ],
+  "winner_smoke": "B+C"
+}

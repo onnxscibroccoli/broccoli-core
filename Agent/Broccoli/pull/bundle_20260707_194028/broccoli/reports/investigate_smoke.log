@@ -1,0 +1,19 @@
+STEP launch_grok
+STEP dump_ui
+  file_bytes 0
+  FAIL: no hierarchy in file  # BROCC: retry full dump
+  file_bytes 0
+FAIL send: no composer
+=== BROCCOLI_DONE === grok FAIL: send
+unknown smoke
+PASS cached
+STEP launch_grok
+STEP dump_ui
+  file_bytes 0
+  FAIL: no hierarchy in file  # BROCC: retry full dump
+  file_bytes 0
+FAIL send: no composer
+=== BROCCOLI_DONE === grok FAIL: send
+/data/data/com.termux/files/home/broccoli/tools/run_grok_smoke.sh: 8: [[: not found
+/data/data/com.termux/files/home/broccoli/tools/run_grok_smoke.sh: 8: [[: not found
+PASS GROK_SMOKE_OK

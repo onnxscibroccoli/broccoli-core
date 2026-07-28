@@ -1,0 +1,23 @@
+{
+  "time": 1784049238.6292603,
+  "results": [
+    {
+      "cmd": "test -x bin/brocc",
+      "ok": true,
+      "out": "",
+      "err": ""
+    },
+    {
+      "cmd": "python3 agent/context.py >/dev/null",
+      "ok": true,
+      "out": "",
+      "err": ""
+    },
+    {
+      "cmd": "python3 agent/planner.py >/dev/null",
+      "ok": true,
+      "out": "",
+      "err": ""
+    }
+  ]
+}

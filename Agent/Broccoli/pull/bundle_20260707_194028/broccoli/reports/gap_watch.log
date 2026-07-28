@@ -1,0 +1,109 @@
+## Broccoli wire gap (auto)
+- time: 2026-07-06T23:18:26-04:00
+- grok foreground: True
+- packages: ai.x.grok
+- prompt (frag): 
+
+### What script tried
+- 2026-07-06T22:57:18-04:00 send_tap miss attempt=3 — enter
+- 2026-07-06T22:58:10-04:00 send_tap miss attempt=4 — enter
+- 2026-07-06T22:59:05-04:00 reply=DAEMON start, then ROUND start / send_tap ok / reply=
+- 2026-07-06T23:15:17-04:00 send_tap miss attempt=1 — enter
+- 2026-07-06T23:16:04-04:00 send_tap miss attempt=2 — enter
+
+### What failed / uncertain
+- (none)
+
+### What user likely did (not script)
+
+### Chat tail (dump)
+- user_touch_watch
+- BASH
+- Copy
+- Paste to_chat.md (or the Send controls section) back here—that’s the fix list for find_send_tap.py without guessing bounds.
+- Analyze UI dump patterns
+- Explore accessibility services
+
+**Fix target:** `~/broccoli/tools/find_send_tap.py` and `wire_send_ui.sh` confirm step.
+## Broccoli wire gap (auto)
+- time: 2026-07-06T23:19:46-04:00
+- grok foreground: True
+- packages: ai.x.grok
+- prompt (frag): 
+
+### What script tried
+- 2026-07-06T22:57:18-04:00 send_tap miss attempt=3 — enter
+- 2026-07-06T22:58:10-04:00 send_tap miss attempt=4 — enter
+- 2026-07-06T22:59:05-04:00 reply=DAEMON start, then ROUND start / send_tap ok / reply=
+- 2026-07-06T23:15:17-04:00 send_tap miss attempt=1 — enter
+- 2026-07-06T23:16:04-04:00 send_tap miss attempt=2 — enter
+
+### What failed / uncertain
+- (none)
+
+### What user likely did (not script)
+
+### Chat tail (dump)
+- bash ~/broccoli/tools/gap_enqueue_chat.sh
+- Thoughts
+- Explain wire daemon architecture
+- Describe Termux environment setup
+
+**Fix target:** `~/broccoli/tools/find_send_tap.py` and `wire_send_ui.sh` confirm step.
+## Broccoli wire gap (auto)
+- time: 2026-07-06T23:28:51-04:00
+- grok foreground: False
+- packages: com.termux
+- prompt (frag): 
+
+### What script tried
+- 2026-07-06T22:57:18-04:00 send_tap miss attempt=3 — enter
+- 2026-07-06T22:58:10-04:00 send_tap miss attempt=4 — enter
+- 2026-07-06T22:59:05-04:00 reply=DAEMON start, then ROUND start / send_tap ok / reply=
+- 2026-07-06T23:15:17-04:00 send_tap miss attempt=1 — enter
+- 2026-07-06T23:16:04-04:00 send_tap miss attempt=2 — enter
+
+### What failed / uncertain
+- (none)
+
+### What user likely did (not script)
+- foreground was not ai.x.grok during dump — user may have switched app or dump ran on wrong window
+
+### Send controls in last UI dump
+- `com.termux:id/terminal_view` 
+
+### Chat tail (dump)
+- HOME
+- END
+- PGUP
+- CTRL
+- ALT
+- PGDN
+
+**Fix target:** `~/broccoli/tools/find_send_tap.py` and `wire_send_ui.sh` confirm step.
+## Broccoli wire gap (auto)
+- time: 2026-07-06T23:29:52-04:00
+- grok foreground: True
+- packages: ai.x.grok
+- prompt (frag): BROCCOLI_AGENT: ## Findings (priori
+
+### What script tried
+- 2026-07-06T22:57:18-04:00 send_tap miss attempt=3 — enter
+- 2026-07-06T22:58:10-04:00 send_tap miss attempt=4 — enter
+- 2026-07-06T22:59:05-04:00 reply=DAEMON start, then ROUND start / send_tap ok / reply=
+- 2026-07-06T23:15:17-04:00 send_tap miss attempt=1 — enter
+- 2026-07-06T23:16:04-04:00 send_tap miss attempt=2 — enter
+
+### What failed / uncertain
+- (none)
+
+### What user likely did (not script)
+
+### Chat tail (dump)
+- ┌─────────────────────────────────────────────────────────┐&#10;│  agent_daemon (idle ≥3s)                                 │&#10;│    └─ agent_tick                                         │&#10;│     
+- Right
+- You paste INVESTIGATION_REPORT.md into Mac chat
+- report_to_queue.sh → wire_send_ui.sh
+- wire_daemon only drains queue you fill by hand
+
+**Fix target:** `~/broccoli/tools/find_send_tap.py` and `wire_send_ui.sh` confirm step.

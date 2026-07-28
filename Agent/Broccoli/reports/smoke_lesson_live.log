@@ -1,0 +1,26 @@
+[00:23:47] LESSON START (foreground)
+[00:23:52] RESULT D_log_replay: PASS=True 0.0s len=251987
+[00:23:55] CMD python3 "/data/data/com.termux/files/home/broccoli/broccoli_meta_heal.py"
+[00:23:55] RESULT C_autoheal: PASS=True 0.2s {
+  "smoke": {
+    "status": "PASS",
+    "reply": "GROK_SMOKE_OK",
+    "healed_a
+[00:23:58] CMD python3 "/data/data/com.termux/files/home/broccoli_bootstrap.py" launch_grok
+[00:23:58] CMD python3 "/data/data/com.termux/files/home/broccoli_bootstrap.py" scroll_chat_end
+[00:23:58] CMD python3 "/data/data/com.termux/files/home/broccoli_bootstrap.py" dump_ui
+[00:23:58] RESULT B_dump_parse: PASS=True 0.4s hit='GROK_SMOKE_OK'
+[00:24:01] CMD python3 "/data/data/com.termux/files/home/broccoli/workflow_front.py"
+[00:24:11] RESULT E_workflow_front: PASS=True 10.2s front
+[00:24:13] CMD python3 "/data/data/com.termux/files/home/broccoli_bootstrap.py" grok-smoke 2>&1
+[00:26:09] RESULT A_grok_smoke: PASS=True 115.5s poller
+[00:26:10] === SUMMARY ===
+[00:26:10]   D_log_replay: PASS (0.0s)
+[00:26:10]   C_autoheal: PASS (0.2s)
+[00:26:10]   B_dump_parse: PASS (0.4s)
+[00:26:10]   E_workflow_front: PASS (10.2s)
+[00:26:10]   A_grok_smoke: PASS (115.5s)
+[00:26:10] RECOMMENDED: B_dump_parse + C_autoheal
+]   E_workflow_front: PASS (10.2s)
+[00:26:10]   A_grok_smoke: PASS (115.5s)
+[00:26:10] RECOMMENDED: B_dump_parse + C_autoheal

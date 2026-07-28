@@ -1,0 +1,10 @@
+secrets/
+logs/
+*.log
+.env
+.env.*
+cold_storage/
+__pycache__/
+*.pyc
+.pytest_cache/
+.termux/

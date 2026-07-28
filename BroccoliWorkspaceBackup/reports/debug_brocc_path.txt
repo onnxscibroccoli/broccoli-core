@@ -1,0 +1,10 @@
+=== brocc path + worker fix ===
+command -v brocc: /data/data/com.termux/files/home/brocc
+-rwxr-xr-x. 1 u0_a347 u0_a347 2639 Jul  6 00:08 /data/data/com.termux/files/home/brocc
+/data/data/com.termux/files/home/brocc: a /data/data/com.termux/files/usr/bin/bash script, ASCII text executable
+#!/data/data/com.termux/files/usr/bin/bash
+ROOT="$HOME/broccoli"
+case "${1:-}" in
+symlink: /data/data/com.termux/files/home/broccoli/brocc -> /data/data/com.termux/files/home/brocc
+bootstrap: False /data/data/com.termux/files/home/broccoli/broccoli_bootstrap.py
+patched worker -> /data/data/com.termux/files/home/brocc

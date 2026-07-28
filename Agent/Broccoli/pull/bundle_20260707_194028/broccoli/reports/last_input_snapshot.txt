@@ -1,0 +1,68 @@
+2026-07-06T23:29:46-04:00
+dumpsys input (tail)
+      mNumSkippedSlowEvents = 0
+  InputTracer: Disabled
+
+Input Manager Service (Java) State:
+  Gesture Monitors (implemented as spy windows):
+    0: name='[Gesture Monitor] PalmMotion', inputChannelToken=android.os.BinderProxy@b871dae displayId=0
+    1: name='[Gesture Monitor] secinputdev', inputChannelToken=android.os.BinderProxy@8a52d68 displayId=0
+  mAdditionalDisplayInputProperties:
+    <none>
+  BatteryController:
+    State: Polling = false, Interactive = true
+    Listeners: 0 battery listeners
+    Device Monitors: 0 monitors
+  KbdBacklightController: 0 keyboard backlights
+  KeyboardLedController: 0 keyboard mic mute lights
+  KeyboardLayoutManager:
+      "KeyboardLayout Bulgarian - Android keyboard, descriptor: com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_bulgarian, priority: 0, locales: [bg__#Cyrl], layout type: undefined, vendorId: -1, productId: -1": com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_bulgarian
+    "KeyboardLayout Bulgarian, Phonetic - Android keyboard, descriptor: com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_bulgarian_phonetic, priority: 0, locales: [bg__#Cyrl], layout type: extended, vendorId: -1, productId: -1": com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_bulgarian_phonetic
+    "KeyboardLayout Italian, Qwerty style - Android keyboard, descriptor: com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_italian, priority: 0, locales: [it__#Latn], layout type: qwerty, vendorId: -1, productId: -1": com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_italian
+    "KeyboardLayout Danish, Qwerty style - Android keyboard, descriptor: com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_danish, priority: 0, locales: [da__#Latn], layout type: qwerty, vendorId: -1, productId: -1": com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_danish
+    "KeyboardLayout Norwegian, Qwerty style - Android keyboard, descriptor: com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_norwegian, priority: 0, locales: [nb__#Latn], layout type: qwerty, vendorId: -1, productId: -1": com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_norwegian
+    "KeyboardLayout Swedish, Qwerty style - Android keyboard, descriptor: com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_swedish, priority: 0, locales: [sv__#Latn], layout type: qwerty, vendorId: -1, productId: -1": com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_swedish
+    "KeyboardLayout Finnish, Qwerty style - Android keyboard, descriptor: com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_finnish, priority: 0, locales: [fi__#Latn], layout type: qwerty, vendorId: -1, productId: -1": com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_finnish
+    "KeyboardLayout Croatian, Qwertz style - Android keyboard, descriptor: com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_croatian, priority: 0, locales: [hr__#Latn], layout type: qwertz, vendorId: -1, productId: -1": com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_croatian
+    "KeyboardLayout Czech, Qwertz style - Android keyboard, descriptor: com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_czech, priority: 0, locales: [cs__#Latn], layout type: qwertz, vendorId: -1, productId: -1": com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_czech
+    "KeyboardLayout Czech, Qwerty style - Android keyboard, descriptor: com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_czech_qwerty, priority: 0, locales: [cs__#Latn], layout type: qwerty, vendorId: -1, productId: -1": com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_czech_qwerty
+    "KeyboardLayout Estonian, Qwerty style - Android keyboard, descriptor: com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_estonian, priority: 0, locales: [et__#Latn], layout type: qwerty, vendorId: -1, productId: -1": com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_estonian
+    "KeyboardLayout Hungarian, Qwertz style - Android keyboard, descriptor: com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_hungarian, priority: 0, locales: [hu__#Latn], layout type: qwertz, vendorId: -1, productId: -1": com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_hungarian
+    "KeyboardLayout Icelandic, Qwerty style - Android keyboard, descriptor: com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_icelandic, priority: 0, locales: [is__#Latn], layout type: qwerty, vendorId: -1, productId: -1": com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_icelandic
+    "KeyboardLayout Brazilian, Qwerty style - Android keyboard, descriptor: com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_brazilian, priority: 0, locales: [pt_BR_#Latn], layout type: qwerty, vendorId: -1, productId: -1": com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_brazilian
+    "KeyboardLayout Portuguese, Qwerty style - Android keyboard, descriptor: com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_portuguese, priority: 0, locales: [pt_PT_#Latn], layout type: qwerty, vendorId: -1, productId: -1": com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_portuguese
+    "KeyboardLayout Slovak, Qwerty style - Android keyboard, descriptor: com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_slovak, priority: 0, locales: [sk__#Latn], layout type: qwerty, vendorId: -1, productId: -1": com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_slovak
+    "KeyboardLayout Slovenian, Qwertz style - Android keyboard, descriptor: com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_slovenian, priority: 0, locales: [sl__#Latn], layout type: qwertz, vendorId: -1, productId: -1": com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_slovenian
+    "KeyboardLayout Turkish - Android keyboard, descriptor: com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_turkish, priority: 0, locales: [tr__#Latn], layout type: turkish_q, vendorId: -1, productId: -1": com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_turkish
+    "KeyboardLayout Turkish F - Android keyboard, descriptor: com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_turkish_f, priority: 0, locales: [tr__#Latn], layout type: turkish_f, vendorId: -1, productId: -1": com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_turkish_f
+    "KeyboardLayout Ukrainian - Android keyboard, descriptor: com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_ukrainian, priority: 0, locales: [uk__#Cyrl], layout type: undefined, vendorId: -1, productId: -1": com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_ukrainian
+    "KeyboardLayout Arabic - Android keyboard, descriptor: com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_arabic, priority: 0, locales: [ar__#Arab], layout type: undefined, vendorId: -1, productId: -1": com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_arabic
+    "KeyboardLayout Greek - Android keyboard, descriptor: com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_greek, priority: 0, locales: [el__#Grek], layout type: undefined, vendorId: -1, productId: -1": com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_greek
+    "KeyboardLayout Hebrew - Android keyboard, descriptor: com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_hebrew, priority: 0, locales: [he__#Hebr], layout type: undefined, vendorId: -1, productId: -1": com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/keyboard_layout_hebrew
+  
+dumpsys activity top (tail)
+        mBatchedInputEventPending: false
+        mOutboundQueue:
+          <empty>
+        
+    Choreographer:
+      mFrameScheduled=false
+      mLastFrameTime=30209784 (16622 ms ago)
+    InsetsController:
+        InsetsState
+          mDisplayFrame=Rect(0, 0 - 1080, 2408)
+          mDisplayCutout=DisplayCutout{insets=Rect(0, 64 - 0, 0) waterfall=Insets{left=0, top=0, right=0, bottom=0} boundingRect={Bounds=[Rect(0, 0 - 0, 0), Rect(468, 0 - 612, 64), Rect(0, 0 - 0, 0), Rect(0, 0 - 0, 0)]} cutoutPathParserInfo={CutoutPathParserInfo{displayWidth=1080 displayHeight=2408 physicalDisplayWidth=1080 physicalDisplayHeight=2408 density={2.8125} cutoutSpec={M 0,0 H -25.6‬ V 22.75555555555556 H 25.6‬ V 0 H 0 Z @dp} rotation={0} scale={1.0} physicalPixelDisplaySizeRatio={1.0}}} sideOverrides={}}
+          mRoundedCorners=RoundedCorners{[RoundedCorner{position=TopLeft, radius=105, center=Point(105, 105)}, RoundedCorner{position=TopRight, radius=105, center=Point(975, 105)}, RoundedCorner{position=BottomRight, radius=105, center=Point(975, 2303)}, RoundedCorner{position=BottomLeft, radius=105, center=Point(105, 2303)}]}
+          mRoundedCornerFrame=Rect(0, 0 - 1080, 2408)
+          mPrivacyIndicatorBounds=PrivacyIndicatorBounds {static bounds=Rect(964, 0 - 1080, 64) rotation=0}
+          mDisplayShape=DisplayShape{ spec=-311912193 displayWidth=1080 displayHeight=2408 physicalPixelDisplaySizeRatio=1.0 rotation=0 offsetX=0 offsetY=0 scale=1.0}
+            InsetsSource id=8a670001 type=navigationBars frame=[0,2282][1080,2408] visible=true flags= sideHint=BOTTOM boundingRects=null
+            InsetsSource id=8a670004 type=systemGestures frame=[0,0][0,0] visible=true flags= sideHint=NONE boundingRects=null
+            InsetsSource id=8a670005 type=mandatorySystemGestures frame=[0,2282][1080,2408] visible=true flags= sideHint=BOTTOM boundingRects=null
+            InsetsSource id=8a670006 type=tappableElement frame=[0,2282][1080,2408] visible=true flags= sideHint=BOTTOM boundingRects=null
+            InsetsSource id=8a670024 type=systemGestures frame=[0,0][0,0] visible=true flags= sideHint=NONE boundingRects=null
+            InsetsSource id=aeb10000 type=statusBars frame=[0,0][1080,64] visible=true flags= sideHint=TOP boundingRects=null
+            InsetsSource id=aeb10005 type=mandatorySystemGestures frame=[0,0][1080,96] visible=true flags= sideHint=TOP boundingRects=null
+            InsetsSource id=aeb10006 type=tappableElement frame=[0,0][1080,64] visible=true flags= sideHint=TOP boundingRects=null
+            InsetsSource id=3 type=ime frame=[0,0][0,0] visibleFrame=[0,1417][1080,2408] visible=false flags= sideHint=NONE boundingRects=null
+            InsetsSource id=27 type=displayCutout frame=[0,0][1080,64] visible=true flags= sideHint=TOP boundingRects=null

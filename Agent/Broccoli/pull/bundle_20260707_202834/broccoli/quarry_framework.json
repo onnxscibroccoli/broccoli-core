@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "name": "broccoli_script_quarry",
+  "order": [
+    "reboot_bootstrap",
+    "paths_and_bins",
+    "display_primary",
+    "launch_grok",
+    "chat_foreground",
+    "dump_ui",
+    "smoke_parse_B",
+    "smoke_heal_C",
+    "workflow_front",
+    "task_queue",
+    "idle_gate_dry"
+  ],
+  "fail_fast": false,
+  "between_probe_sec": 1
+}

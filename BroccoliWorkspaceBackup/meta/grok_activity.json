@@ -1,0 +1,10 @@
+{
+  "package": "ai.x.grok",
+  "activities_tried": [
+    "ai.x.grok/.MainActivity",
+    "ai.x.grok/.ui.main.MainActivity",
+    "ai.x.grok/com.xai.grok.MainActivity"
+  ],
+  "launcher_intent": true,
+  "open_method": "rish_adb_am_start"
+}

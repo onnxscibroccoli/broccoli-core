@@ -1,0 +1,11 @@
+#!/data/data/com.termux/files/usr/bin/bash
+B="${BROCCOLI_DIR:-$HOME/broccoli}"
+export BROCCOLI_DIR="$B"
+while true; do
+  python3 "$B/broccoli_host.py" --build-outbox-only >>"$B/chat_loop.log" 2>&1
+  bash "$B/chat_inject.sh" >>"$B/chat_loop.log" 2>&1 || true
+  [ -x "$B/wait_reply.sh" ] && bash "$B/wait_reply.sh" >>"$B/chat_loop.log" 2>&1 || sleep 45
+  [ -x "$B/chat_copy_fetch.sh" ] && bash "$B/chat_copy_fetch.sh" >"$B/inbox_response.txt" 2>>"$B/chat_loop.log" || true
+  python3 "$B/broccoli_host.py" --execute-inbox-only >>"$B/chat_loop.log" 2>&1 || true
+  sleep "${BROCCOLI_CYCLE_SLEEP:-50}"
+done

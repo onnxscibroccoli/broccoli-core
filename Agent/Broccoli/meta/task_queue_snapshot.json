@@ -1,0 +1,37 @@
+{
+  "updated_at": 1783402039.6492662,
+  "updated_human": "2026-07-07 01:27:19",
+  "active": {
+    "task": "workflow_front",
+    "ts": "2026-07-07 01:27:19",
+    "detail": "launch+smoke heal"
+  },
+  "pending": [
+    {
+      "task": "pilot_smoke_acceptance",
+      "ts": "2026-07-06 00:19:27",
+      "detail": "meta/smoke_cache PASS + notes>=5"
+    },
+    {
+      "task": "workflow_front_first",
+      "ts": "2026-07-06 00:19:27",
+      "detail": "toasts, launch Grok, smoke_fast"
+    }
+  ],
+  "recent_done": [
+    {
+      "task": "pilot_smoke_acceptance",
+      "ts": "2026-07-06 00:27:03",
+      "status": "ok"
+    }
+  ],
+  "recent_failed": [],
+  "last_event": {
+    "ts": 1783402039.6448472,
+    "ts_human": "2026-07-07 01:27:19",
+    "kind": "started",
+    "task": "workflow_front",
+    "detail": "launch+smoke heal",
+    "status": ""
+  }
+}

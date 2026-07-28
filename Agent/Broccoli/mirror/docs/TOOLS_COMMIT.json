@@ -1,0 +1,24 @@
+{
+  "schema": "broccoli-tools-commit-v1",
+  "committed_ts": "2026-07-07 18:54:05",
+  "verified_clip": "CLIP_V2_184914",
+  "persistent_loop": true,
+  "mode": "codev",
+  "brocc_verbs": [
+    "agent",
+    "agent-loop-on",
+    "agent-loop-off",
+    "agent-loop-once",
+    "codevelop",
+    "codevelop-sync",
+    "codevelop-apply",
+    "clip-test",
+    "loop-gate",
+    "tools-commit"
+  ],
+  "entrypoints": {
+    "clip": "~/broccoli_clipboard.py",
+    "agent_loop": "~/broccoli_agent_loop.py",
+    "gate": "~/broccoli_loop_gate.py"
+  }
+}

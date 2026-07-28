@@ -1,0 +1,86 @@
+# BROCC_DIAG 2026-07-13T23:33:00.432624
+
+## which_brocc
+/data/data/com.termux/files/home/broccoli/bin/brocc
+-rwxr-xr-x. 1 u0_a347 u0_a347 659 Jul 13 23:07 bin/brocc
+#!/data/data/com.termux/files/usr/bin/bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
+## screen_state
+{
+  "fg_package": "com.termux",
+  "on_grok": false,
+  "screen": "not_grok_ui",
+  "can_inject": false,
+  "chat_text_input": false,
+  "has_ask_anything": false,
+  "has_send": false,
+  "input_xy": null,
+  "send_xy": null
+}
+
+## grok_launch
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": true,
+  "has_send": false,
+  "input_xy": [
+    540,
+    2139
+  ],
+  "send_xy": null
+}
+
+## screen_after_launch
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": true,
+  "has_send": false,
+  "input_xy": [
+    540,
+    2139
+  ],
+  "send_xy": null
+}
+
+## launch_grok_native
+ERR Command 'timeout 30 bash launch_grok_native.sh 2>&1 | tail -20' timed out after 25 seconds
+
+## fg_focus
+fg= com.termux on_grok= False inject= False input_xy= None send_xy= None
+
+## tap_send_dry
+SEND_ABORT fg= com.termux
+
+## inject_cycle
+CONTEXT_SKIP
+CYCLE_FAIL_NOT_ON_GROK
+
+## reports
+5 research/notes.md
+  8 reports/latest.txt
+ 13 total
+=== BROCCOLI REPORT ===
+time: 2026-07-05 23:52:16
+provider: grok
+job: grok-ask
+status: OK
+reply: Compare Ruto with Android Virtual Display
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+
+## capture
+GROK_SMOKE_OK
+
+## smoke_grep
+ui/last_capture.txt:GROK_SMOKE_OK

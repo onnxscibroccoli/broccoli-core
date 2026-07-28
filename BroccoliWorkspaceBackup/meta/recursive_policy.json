@@ -1,0 +1,18 @@
+{
+  "auto_update_task": true,
+  "auto_extract_code": true,
+  "auto_apply_code": true,
+  "auto_test_after_apply": true,
+  "test_command": "python3 \"$HOME/broccoli/quarry_iter.py\"",
+  "max_rounds_per_run": 8,
+  "poll_reply_sec": 2,
+  "poll_reply_max": 12,
+  "code_block_langs_prefer": [
+    "bash",
+    "sh",
+    "python",
+    "python3"
+  ],
+  "apply_dir": "/data/data/com.termux/files/home/broccoli/sandbox/applied",
+  "current_task_file": "/data/data/com.termux/files/home/broccoli/meta/current_task.json"
+}

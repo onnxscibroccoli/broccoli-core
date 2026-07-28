@@ -1,0 +1,84 @@
+=== broccoli investigation 2026-07-06T02:55:48-04:00 ===
+--- entrypoints ---
+-rwxr-xr-x. 1 u0_a347 u0_a347  1148 Jul  6 02:20 /data/data/com.termux/files/home/brocc
+-rwxr-xr-x. 1 u0_a347 u0_a347  3514 Jul  6 01:08 /data/data/com.termux/files/home/brocc-extras
+lrwxrwxrwx. 1 u0_a347 u0_a347    38 Jul  6 01:36 /data/data/com.termux/files/home/broccoli/brocc -> /data/data/com.termux/files/home/brocc
+-rwxr-xr-x. 1 u0_a347 u0_a347 16211 Jul  6 02:20 /data/data/com.termux/files/home/broccoli_bootstrap.py
+--- brocc head ---
+#!/data/data/com.termux/files/usr/bin/bash
+set -euo pipefail
+export PATH="$HOME/bin:$PATH:/data/data/com.termux/files/usr/bin"
+CMD="${1:-}"
+shift || true
+case "$CMD" in
+  health|launch-grok|grok-dump|grok-recon|grok-fill-test|grok-smoke|run-once|watch)
+    exec python3 "$HOME/broccoli_bootstrap.py" "$CMD" "$@"
+    ;;
+  grok-send|grok-ask)
+    exec python3 "$HOME/broccoli_bootstrap.py" "$CMD" "$@"
+    ;;
+  smoke)
+    exec python3 "$HOME/broccoli_bootstrap.py" grok-smoke "$@"
+    ;;
+  send)
+    exec python3 "$HOME/broccoli_bootstrap.py" grok-send "$@"
+    ;;
+  ask)
+    exec python3 "$HOME/broccoli_bootstrap.py" grok-ask "$@"
+--- bootstrap subcommands ---
+4:Complete paths: launch, compose, send, deliver reply, smoke, queue.
+179:def ensure_ask_tab(xml: str) -> str:
+187:                log("STEP ensure_ask_tab tap Ask")
+224:    xml = ensure_ask_tab(dump_ui())
+259:    xml = ensure_ask_tab(dump_ui())
+295:def _smoke_ok(xml: str) -> bool:
+351:        if want_token and _smoke_ok(xml):
+371:def grok_ask(message: str, timeout: int = DEFAULT_ASK_TIMEOUT) -> int:
+374:    log("STEP grok_ask poll")
+384:def grok_smoke() -> int:
+389:    log("STEP grok_smoke poll")
+392:        if _smoke_ok(xml):
+425:def grok_dump() -> int:
+450:def run_task_line(line: str) -> int:
+458:        return grok_smoke()
+460:        return grok_dump()
+464:        return grok_ask(arg or "Say hello in one short sentence.")
+467:    log("unknown task", line)
+481:    rc = run_task_line(first)
+483:    # remove only first matching pending task
+493:    (META / "last_task.json").write_text(
+494:        json.dumps({"task": first, "rc": rc, "ts": time.time()}, indent=2),
+524:            "health | launch-grok | grok-dump | grok-recon | grok-fill-test | "
+525:            "grok-send TEXT | grok-ask TEXT | grok-smoke | run-once | watch"
+534:    if a == "grok-dump":
+535:        return grok_dump()
+538:    if a == "grok-fill-test":
+543:    if a == "grok-ask":
+545:        return grok_ask(msg)
+546:    if a == "grok-smoke":
+547:        return grok_smoke()
+--- XML sizes on disk (truth) ---
+ 79048 /data/data/com.termux/files/home/broccoli/ui/last_ui.xml
+ 23442 /data/data/com.termux/files/home/broccoli/ui/last.xml
+  4096 /data/data/com.termux/files/home/broccoli/reports/last_ui_dump.xml
+ 12288 /data/data/com.termux/files/home/grok_ui_dump.xml
+ 19309 /data/data/com.termux/files/home/broccoli_ui_live.xml
+  9905 /sdcard/broccoli_ui.xml
+148088 total
+--- fresh dump + sdcard wc ---
+9905 /sdcard/broccoli_ui.xml
+--- bootstrap grok-dump pipe (cap test) ---
+115
+--- smoke paths ---
+--- reply artifacts ---
+ls: cannot access '/data/data/com.termux/files/home/broccoli/reports/last_grok_reply.txt': No such file or directory
+-rw-------. 1 u0_a347 u0_a347 267 Jul  6 01:46 /data/data/com.termux/files/home/broccoli/reports/ask_smoke.log
+-rw-------. 1 u0_a347 u0_a347 218 Jul  6 02:11 /data/data/com.termux/files/home/broccoli/reports/smoke_last.log
+--- meta/queue ---
+{
+  "task": "ASK|Reply with one word: PONG",
+  "rc": 1,
+  "ts": 1783320207.2348316
+}# ASK|What is 2+2?
+# SMOKE
+grok FAIL: xAI Competitor Analysis

@@ -1,0 +1,1 @@
+NEXT_STEP one line. TERMINUX: echo READY. TEST: echo OK. REPORT_FOR_MAC: 4 lines. Min 80 chars in reply.

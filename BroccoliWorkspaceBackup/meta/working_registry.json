@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "chat_focus": {
+    "method": null,
+    "pkg": null,
+    "activity": null,
+    "score": 0
+  },
+  "pull": {
+    "dir": "/sdcard/Broccoli/pull",
+    "ok_count": 0
+  },
+  "clip": {
+    "pattern": "CLIP_V2",
+    "ok_count": 0
+  },
+  "codev": {
+    "entry": "brocc agent codev start",
+    "ok_count": 0
+  },
+  "packages_tried": [],
+  "last_good_round": null
+}

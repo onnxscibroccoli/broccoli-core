@@ -1,0 +1,10 @@
+768cecfca2b43ff947c4d496e311cbeba0c58ec082e73f641dc565d7b9ed9344  /data/data/com.termux/files/home/broccoli/lib/ui_dump_rish.sh
+d57f189efb5e446357c17dcfa287aa3400dc1c2f413979b6f733d785b86fcaa1  /data/data/com.termux/files/home/broccoli_bootstrap.py
+1d7f47e3af2a01730a0368cb41140d6040c2b575b739773cacc78159a401c8db  /data/data/com.termux/files/home/broccoli/tools/wire_send_ui.sh
+d57f189efb5e446357c17dcfa287aa3400dc1c2f413979b6f733d785b86fcaa1  /data/data/com.termux/files/home/broccoli_bootstrap.py
+73b35dbf270e34feaeda49620e4dcd7eaddc9f2c64b44704ce1d23eb9ae747bf  /data/data/com.termux/files/home/broccoli/tools/parse_grok_ui.py
+d57f189efb5e446357c17dcfa287aa3400dc1c2f413979b6f733d785b86fcaa1  /data/data/com.termux/files/home/broccoli_bootstrap.py
+58014df1429f5d643be8491abb56e1502ed42220931791e47c2e7c9c631e2c26  /data/data/com.termux/files/home/broccoli/tools/collab_rish_loop.sh
+d57f189efb5e446357c17dcfa287aa3400dc1c2f413979b6f733d785b86fcaa1  /data/data/com.termux/files/home/broccoli_bootstrap.py
+c8e6ff1094edc1f4c614e7cf5bb1a8f780b48ae0d9102f4fd347dc044b42d23a  /data/data/com.termux/files/home/broccoli/tools/agent_tick.sh
+d57f189efb5e446357c17dcfa287aa3400dc1c2f413979b6f733d785b86fcaa1  /data/data/com.termux/files/home/broccoli_bootstrap.py

@@ -1,0 +1,173 @@
+{
+  "hits": [
+    {
+      "file": "/data/data/com.termux/files/home/broccoli_bootstrap.py",
+      "line": 81,
+      "text": "# Clipper broadcast fallback"
+    },
+    {
+      "file": "/data/data/com.termux/files/home/broccoli_bootstrap.py",
+      "line": 83,
+      "text": "f'am broadcast -a clipper.set -e text \"{esc}\" 2>/dev/null || true',"
+    },
+    {
+      "file": "/data/data/com.termux/files/home/broccoli_bootstrap.py",
+      "line": 162,
+      "text": "package=attr(\"package\"),"
+    },
+    {
+      "file": "/data/data/com.termux/files/home/gemini_bootstrap.py",
+      "line": 27,
+      "text": "rish(\"am start -W -n \" + COMP, t=60)"
+    },
+    {
+      "file": "/data/data/com.termux/files/home/google_ai_bootstrap.py",
+      "line": 15,
+      "text": "log(\"launch_google\"); rish(\"am start -W -n \"+SEARCH,45); time.sleep(2.5)"
+    },
+    {
+      "file": "/data/data/com.termux/files/home/google_ai_bootstrap.py",
+      "line": 17,
+      "text": "if not ok: rish('am start -a android.intent.action.VIEW -d \"'+URL+'\" -p '+PKG,45); time.sleep(3); ok,f=focus()"
+    },
+    {
+      "file": "/data/data/com.termux/files/home/broccoli/lib/rish_adb.py",
+      "line": 9,
+      "text": "\"\"\"cmd = raw shell string for device (am start, dumpsys, ...)\"\"\""
+    },
+    {
+      "file": "/data/data/com.termux/files/home/broccoli/lib/rish_adb.py",
+      "line": 42,
+      "text": "f\"am start -W -n {comp}\","
+    },
+    {
+      "file": "/data/data/com.termux/files/home/broccoli/lib/rish_adb.py",
+      "line": 44,
+      "text": "f\"am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p {pkg}\","
+    },
+    {
+      "file": "/data/data/com.termux/files/home/broccoli/lib/rish_run.py",
+      "line": 25,
+      "text": "# am broadcast fallback"
+    },
+    {
+      "file": "/data/data/com.termux/files/home/broccoli/lib/rish_run.py",
+      "line": 33,
+      "text": "\"am\", \"broadcast\", \"--user\", \"0\","
+    },
+    {
+      "file": "/data/data/com.termux/files/home/broccoli/lib/broccoli_agentic_chat.py",
+      "line": 25,
+      "text": "shell(f\"am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p {GROK} 2>/dev/null\")"
+    },
+    {
+      "file": "/data/data/com.termux/files/home/broccoli/lib/broccoli_a11y_rish.py",
+      "line": 14,
+      "text": "def _am_broadcast(extra_args):"
+    },
+    {
+      "file": "/data/data/com.termux/files/home/broccoli/lib/broccoli_a11y_rish.py",
+      "line": 15,
+      "text": "cmd = f'am broadcast -a {A11Y_ACTION} -p {A11Y_PKG} ' + \" \".join(extra_args)"
+    },
+    {
+      "file": "/data/data/com.termux/files/home/broccoli/lib/broccoli_a11y_rish.py",
+      "line": 29,
+      "text": "rc, out = _am_broadcast(["
+    },
+    {
+      "file": "/data/data/com.termux/files/home/broccoli/lib/broccoli_a11y_rish.py",
+      "line": 39,
+      "text": "rc, out = _am_broadcast(["
+    },
+    {
+      "file": "/data/data/com.termux/files/home/broccoli/lib/broccoli_a11y_rish.py",
+      "line": 49,
+      "text": "# escape for shell: use file + content provider pattern via broadcast chunks"
+    },
+    {
+      "file": "/data/data/com.termux/files/home/broccoli/lib/broccoli_a11y_rish.py",
+      "line": 51,
+      "text": "rc, out = _am_broadcast(["
+    },
+    {
+      "file": "/data/data/com.termux/files/home/broccoli/lib/broccoli_a11y_rish.py",
+      "line": 66,
+      "text": "rc, out = _am_broadcast(op)"
+    },
+    {
+      "file": "/data/data/com.termux/files/home/broccoli/lib/broccoli_a11y_rish.py",
+      "line": 81,
+      "text": "shell(\"am start -a android.settings.ACCESSIBILITY_SETTINGS\")"
+    },
+    {
+      "file": "/data/data/com.termux/files/home/broccoli/lib/broccoli_a11y_send.py",
+      "line": 46,
+      "text": "# a11y text click attempts without APK (broadcast no-op if missing)"
+    },
+    {
+      "file": "/data/data/com.termux/files/home/broccoli/lib/broccoli_device.py",
+      "line": 27,
+      "text": "cmd = f\"am start -n {component}\""
+    },
+    {
+      "file": "/data/data/com.termux/files/home/broccoli/lib/broccoli_device.py",
+      "line": 33,
+      "text": "return shell(f'am start -a android.intent.action.VIEW -d \"{url}\"')"
+    },
+    {
+      "file": "/data/data/com.termux/files/home/broccoli/tools/gap_analyze.py",
+      "line": 19,
+      "text": "return sorted(set(re.findall(r'package=\"([^\"]+)\"', xml)))"
+    },
+    {
+      "file": "/data/data/com.termux/files/home/broccoli/tools/gap_analyze.py",
+      "line": 24,
+      "text": "r'EditText[^>]*package=\"ai\\.x\\.grok\"[^>]*text=\"([^\"]*)\"',"
+    },
+    {
+      "file": "/data/data/com.termux/files/home/broccoli/tools/investigate_system.py",
+      "line": 98,
+      "text": "pkgs = sorted(set(re.findall(r'package=\"([^\"]+)\"', xml)))"
+    },
+    {
+      "file": "/data/data/com.termux/files/home/broccoli/tools/broccoli_agent.py",
+      "line": 80,
+      "text": "rish(f\"am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p {pkg}\")"
+    },
+    {
+      "file": "/data/data/com.termux/files/home/broccoli/tools/broccoli_brain.py",
+      "line": 41,
+      "text": "rish(f\"am start -n {pkg}/{act}\")"
+    },
+    {
+      "file": "/data/data/com.termux/files/home/broccoli/tools/pull_wire_from_dump.py",
+      "line": 40,
+      "text": "f\"rish -c 'am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p {pkg}'\","
+    }
+  ],
+  "smoke": {
+    "rish": {
+      "code": 0,
+      "out": "RISH_OK"
+    },
+    "pm path ai.x.grok": {
+      "code": 0,
+      "out": "package:/data/app/~~4VngjQhADBtvxLCxNhmp-A==/ai.x.grok-RPHvnMxeUAfZ7lMuMn-2Nw==/base.apk\npackage:/data/app/~~4VngjQhADBtvxLCxNhmp-A==/ai.x.grok-RPHvnMxeUAfZ7lMuMn-2Nw==/split_config.arm64_v8a.apk\npackage:/data/app/~~4VngjQhADBtvxLCxNhmp-A==/ai.x.grok-RPHvnMxeUAfZ7lMuMn-2Nw==/split_config.en.apk\npackage:/data/app/~~4VngjQhADBtvxLCxNhmp-A==/ai.x.grok-RPHvnMxeUAfZ7lMuMn-2Nw==/split_config.xxhdpi.apk"
+    },
+    "cmd package resolve-activity --brief ai.": {
+      "code": 0,
+      "out": "No activity found"
+    },
+    "monkey -p ai.x.grok -c android.intent.ca": {
+      "code": 0,
+      "out": "bash arg: -p\n  bash arg: ai.x.grok\n  bash arg: -c"
+    },
+    "grep_error_phrase": "",
+    "ui_ensure": {
+      "code": 1,
+      "out": "Traceback (most recent call last):\n  File \"/data/data/com.termux/files/home/broccoli_ui.py\", line 78, in <module>\n    main()\n    ~~~~^^\n  File \"/data/data/com.termux/files/home/broccoli_ui.py\", line 61, in main\n    spec.loader.exec_module(bb)\n    ~~~~~~~~~~~~~~~~~~~~~~~^^^^\n  File \"<frozen importlib._bootstrap_external>\", line 1023, in exec_module\n  File \"<frozen importlib._bootstrap>\", line 488, in _call_with_frames_removed\n  File \"/data/data/com.termux/files/home/broccoli_bootstrap.py\", line 132, in <module>\n    @dataclass\n     ^^^^^^^^^\n  File \"/data/data/com.termux/files/usr/lib/python3.13"
+    },
+    "state_json": "{\n  \"ts\": 1783317525.9224405,\n  \"focus\": \"\",\n  \"fp\": \"9baef8a711090583\",\n  \"send\": null,\n  \"composer\": null,\n  \"xml_path\": \"/data/data/com.termux/files/home/broccoli/ui/last.xml\"\n}"
+  }
+}

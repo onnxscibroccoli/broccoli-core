@@ -1,0 +1,38 @@
+    topResumedActivity=ActivityRecord{786e58f u0 ai.x.grok/.main.GrokActivity t1572}
+  mCurrentFocus=Window{62e65d3 u0 ai.x.grok/ai.x.grok.main.GrokActivity}
+2026-07-06T23:35:54-04:00 ok grok bytes=29986 try=3
+    topResumedActivity=ActivityRecord{786e58f u0 ai.x.grok/.main.GrokActivity t1572}
+  mCurrentFocus=Window{62e65d3 u0 ai.x.grok/ai.x.grok.main.GrokActivity}
+2026-07-06T23:37:50-04:00 ok grok bytes=20349 try=2
+    topResumedActivity=ActivityRecord{786e58f u0 ai.x.grok/.main.GrokActivity t1572}
+  mCurrentFocus=Window{62e65d3 u0 ai.x.grok/ai.x.grok.main.GrokActivity}
+2026-07-06T23:39:16-04:00 ok grok bytes=8265 try=1
+2026-07-06T23:41:36-04:00 ok grok bytes=4444 try=4
+2026-07-06T23:42:41-04:00 no_grok try=1 pkgs=package="com.sec.android.app.launcher" 
+    topResumedActivity=ActivityRecord{786e58f u0 ai.x.grok/.main.GrokActivity t1572}
+  mCurrentFocus=Window{6309953 u0 ai.x.grok/ai.x.grok.main.GrokActivity}
+2026-07-06T23:47:53-04:00 ok grok bytes=8210 try=1
+    topResumedActivity=ActivityRecord{786e58f u0 ai.x.grok/.main.GrokActivity t1572}
+  mCurrentFocus=Window{5fff65f u0 ai.x.grok/ai.x.grok.main.GrokActivity}
+2026-07-06T23:49:08-04:00 ok grok bytes=8265 try=1
+2026-07-06T23:49:32-04:00 reject termux-only try=4
+    topResumedActivity=ActivityRecord{786e58f u0 ai.x.grok/.main.GrokActivity t1572}
+  mCurrentFocus=Window{c35f1be u0 ai.x.grok/ai.x.grok.main.GrokActivity}
+    topResumedActivity=ActivityRecord{786e58f u0 ai.x.grok/.main.GrokActivity t1572}
+  mCurrentFocus=Window{c35f1be u0 ai.x.grok/ai.x.grok.main.GrokActivity}
+2026-07-06T23:51:03-04:00 ok grok bytes=24509 try=1
+2026-07-06T23:51:47-04:00 ok grok bytes=24574 try=3
+    topResumedActivity=ActivityRecord{786e58f u0 ai.x.grok/.main.GrokActivity t1572}
+  mCurrentFocus=Window{c35f1be u0 ai.x.grok/ai.x.grok.main.GrokActivity}
+2026-07-06T23:53:04-04:00 no_grok try=8 pkgs=package="com.sec.android.app.launcher" 
+2026-07-06T23:54:07-04:00 ok grok bytes=20036 try=3
+    topResumedActivity=ActivityRecord{786e58f u0 ai.x.grok/.main.GrokActivity t1572}
+2026-07-06T23:55:22-04:00 ok grok bytes=16402 try=10
+2026-07-07T00:05:13-04:00 FAIL
+2026-07-07T00:06:29-04:00 FAIL
+2026-07-07T00:09:10-04:00 FAIL
+    topResumedActivity=ActivityRecord{786e58f u0 ai.x.grok/.main.GrokActivity t1572}
+    topResumedActivity=ActivityRecord{786e58f u0 ai.x.grok/.main.GrokActivity t1572}
+    topResumedActivity=ActivityRecord{786e58f u0 ai.x.grok/.main.GrokActivity t1572}
+    topResumedActivity=ActivityRecord{786e58f u0 ai.x.grok/.main.GrokActivity t1572}
+2026-07-07T01:21:21-04:00 FAIL

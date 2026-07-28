@@ -1,0 +1,5 @@
+# Paste into Tasker / RISH / adb am — each line is self-contained:
+python3 ~/broccoli/lib/operator.py autopilot
+python3 ~/broccoli/lib/operator.py set-next-task "Your task one line"
+python3 ~/broccoli/lib/operator.py clip
+python3 ~/broccoli/lib/rish_run.py python3 ~/broccoli/lib/operator.py restart

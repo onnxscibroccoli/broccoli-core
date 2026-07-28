@@ -1,0 +1,1 @@
+Read tasks/current/TASK.md. One NEXT_STEP + TERMINUX + TEST. If all acceptance met, say TASK_COMPLETE: <summary>.

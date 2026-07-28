@@ -1,0 +1,14 @@
+{
+  "ts": 1783403399.3861697,
+  "avail_mb": "1862",
+  "collab": [
+    "21529 bash /data/data/com.termux/files/home/broccoli/tools/collab_rish_loop.sh"
+  ],
+  "daemon": [
+    "21526 bash /data/data/com.termux/files/home/broccoli/tools/broccoli-daemon.sh"
+  ],
+  "dump_ok": true,
+  "dump_bytes": 16384,
+  "composer": true,
+  "task_queued": false
+}

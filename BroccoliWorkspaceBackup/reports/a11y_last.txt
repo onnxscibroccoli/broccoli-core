@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "<string>", line 5, in <module>
+    print(json.dumps(full_round_a11y('BROCC_TASK reply exactly: LOOP_OK'), indent=2)[:4000])
+                     ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/home/broccoli/lib/broccoli_a11y_send.py", line 57, in full_round_a11y
+    from broccoli_agentic_chat import open_grok
+  File "/data/data/com.termux/files/home/broccoli/lib/broccoli_agentic_chat.py", line 7, in <module>
+    from broccoli_selftest import run_selftest
+  File "/data/data/com.termux/files/home/broccoli/lib/broccoli_selftest.py", line 3, in <module>
+    from broccoli_rish_shell import rish_ok, shell
+ImportError: cannot import name 'rish_ok' from 'broccoli_rish_shell' (/data/data/com.termux/files/home/broccoli/lib/broccoli_rish_shell.py)

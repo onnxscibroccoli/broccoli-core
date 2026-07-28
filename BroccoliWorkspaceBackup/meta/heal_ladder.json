@@ -1,0 +1,6 @@
+{
+  "send": ["enter_first", "cached_send_pick", "find_send_tap", "enter_again"],
+  "fg": ["fg_grok_only", "launch_grok_native", "home_then_grok"],
+  "daemon": ["agent_daemon", "wire_daemon"],
+  "level": 0
+}

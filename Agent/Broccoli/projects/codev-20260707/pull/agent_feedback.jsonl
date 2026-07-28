@@ -1,0 +1,167 @@
+{"ts": "2026-07-07 18:46:30", "slug": "codev-20260707", "step": "sync", "rc": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 18:46:30", "slug": "codev-20260707", "step": "apply", "rc": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 18:46:44", "slug": "codev-20260707", "step": "agent", "rc": 0, "out_tail": "SMOKE_SKIP\nclip 0 PASS CLIP_V2_184630\n\npull 0 PULL_RISH_OK 561 /sdcard/Broccoli/pull/bundle_20260707_184637\n\n"}
+{"ts": "2026-07-07 18:48:15", "slug": "codev-20260707", "step": "sync", "rc": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 18:48:15", "slug": "codev-20260707", "step": "apply", "rc": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 18:48:30", "slug": "codev-20260707", "step": "agent", "rc": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_184815\n\npull 0 PULL_RISH_OK 561 /sdcard/Broccoli/pull/bundle_20260707_184822\n\n"}
+{"ts": "2026-07-07 18:49:19", "slug": "codev-20260707", "step": "sync", "rc": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 18:49:19", "slug": "codev-20260707", "step": "apply", "rc": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 18:49:33", "slug": "codev-20260707", "step": "agent", "rc": 0, "out_tail": "SMOKE_SKIP\nclip 0 PASS CLIP_V2_184919\n\npull 0 PULL_RISH_OK 561 /sdcard/Broccoli/pull/bundle_20260707_184925\n\n"}
+{"ts": "2026-07-07 18:50:00", "slug": "codev-20260707", "step": "sync", "rc": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 18:50:00", "slug": "codev-20260707", "step": "apply", "rc": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 18:50:14", "slug": "codev-20260707", "step": "agent", "rc": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_185000\n\npull 0 PULL_RISH_OK 562 /sdcard/Broccoli/pull/bundle_20260707_185006\n\n"}
+{"ts": "2026-07-07 18:51:44", "slug": "codev-20260707", "step": "sync", "rc": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 18:51:44", "slug": "codev-20260707", "step": "apply", "rc": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 18:57:29", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 18:57:29", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 18:57:35", "slug": "codev-20260707", "step": "clip", "rc": 0, "ms": 0, "out_tail": "PASS CLIP_V2_185729\n"}
+{"ts": "2026-07-07 18:57:49", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 PASS CLIP_V2_185735\n\npull 0 PULL_RISH_OK 570 /sdcard/Broccoli/pull/bundle_20260707_185740\n\n"}
+{"ts": "2026-07-07 19:09:44", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 19:09:44", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:09:50", "slug": "codev-20260707", "step": "clip", "rc": 0, "ms": 0, "out_tail": "PASS CLIP_V2_190944\n"}
+{"ts": "2026-07-07 19:10:04", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 PASS CLIP_V2_190950\n\npull 0 PULL_RISH_OK 570 /sdcard/Broccoli/pull/bundle_20260707_190956\n\n"}
+{"ts": "2026-07-07 19:11:04", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:11:18", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 PASS CLIP_V2_191105\n\npull 0 PULL_RISH_OK 570 /sdcard/Broccoli/pull/bundle_20260707_191110\n\n"}
+{"ts": "2026-07-07 19:12:18", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 19:12:18", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:12:32", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 PASS CLIP_V2_191218\n\npull 0 PULL_RISH_OK 570 /sdcard/Broccoli/pull/bundle_20260707_191224\n\n"}
+{"ts": "2026-07-07 19:13:32", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:13:48", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 PASS CLIP_V2_191333\n\npull 0 PULL_RISH_OK 570 /sdcard/Broccoli/pull/bundle_20260707_191339\n\n"}
+{"ts": "2026-07-07 19:14:48", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 19:14:49", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:14:54", "slug": "codev-20260707", "step": "clip", "rc": 0, "ms": 0, "out_tail": "PASS CLIP_V2_191449\n"}
+{"ts": "2026-07-07 19:15:08", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 PASS CLIP_V2_191454\n\npull 0 PULL_RISH_OK 570 /sdcard/Broccoli/pull/bundle_20260707_191459\n\n"}
+{"ts": "2026-07-07 19:16:08", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:17:11", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0     ...<2 lines>...\n            stderr=b''.join(stderr_seq) if stderr_seq else None)\nsubprocess.TimeoutExpired: Command 'termux-toast -s 'Broccoli: clipboard FAIL verify'' timed out after 5 seconds\n\npull 0 PULL_RISH_OK 570 /sdcard/Broccoli/pull/bundle_20260707_191631\n\n"}
+{"ts": "2026-07-07 19:18:12", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 19:18:12", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:18:28", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_191812\n\npull 0 PULL_RISH_OK 570 /sdcard/Broccoli/pull/bundle_20260707_191819\n\n"}
+{"ts": "2026-07-07 19:19:28", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:19:43", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_191928\n\npull 0 PULL_RISH_OK 570 /sdcard/Broccoli/pull/bundle_20260707_191934\n\n"}
+{"ts": "2026-07-07 19:20:43", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 19:20:44", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:20:50", "slug": "codev-20260707", "step": "clip", "rc": 0, "ms": 0, "out_tail": "FAIL CLIP_V2_192044\n"}
+{"ts": "2026-07-07 19:21:04", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_192051\n\npull 0 PULL_RISH_OK 570 /sdcard/Broccoli/pull/bundle_20260707_192056\n\n"}
+{"ts": "2026-07-07 19:22:04", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:22:18", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_192205\n\npull 0 PULL_RISH_OK 570 /sdcard/Broccoli/pull/bundle_20260707_192210\n\n"}
+{"ts": "2026-07-07 19:23:18", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 19:23:18", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:23:39", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_192318\n\npull 0 PULL_RISH_OK 570 /sdcard/Broccoli/pull/bundle_20260707_192326\n\n"}
+{"ts": "2026-07-07 19:24:40", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:25:01", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_192440\n\npull 0 PULL_RISH_OK 570 /sdcard/Broccoli/pull/bundle_20260707_192447\n\n"}
+{"ts": "2026-07-07 19:26:01", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 19:26:02", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:26:09", "slug": "codev-20260707", "step": "clip", "rc": 0, "ms": 0, "out_tail": "FAIL CLIP_V2_192602\n"}
+{"ts": "2026-07-07 19:26:29", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_192610\n\npull 0 PULL_RISH_OK 570 /sdcard/Broccoli/pull/bundle_20260707_192617\n\n"}
+{"ts": "2026-07-07 19:27:29", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:27:48", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_192729\n\npull 0 PULL_RISH_OK 570 /sdcard/Broccoli/pull/bundle_20260707_192736\n\n"}
+{"ts": "2026-07-07 19:28:49", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 19:28:49", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:29:09", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_192849\n\npull 0 PULL_RISH_OK 570 /sdcard/Broccoli/pull/bundle_20260707_192856\n\n"}
+{"ts": "2026-07-07 19:30:09", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:30:29", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_193009\n\npull 0 PULL_RISH_OK 570 /sdcard/Broccoli/pull/bundle_20260707_193017\n\n"}
+{"ts": "2026-07-07 19:31:29", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 19:31:29", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:31:37", "slug": "codev-20260707", "step": "clip", "rc": 0, "ms": 0, "out_tail": "FAIL CLIP_V2_193129\n"}
+{"ts": "2026-07-07 19:31:56", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_193137\n\npull 0 PULL_RISH_OK 570 /sdcard/Broccoli/pull/bundle_20260707_193144\n\n"}
+{"ts": "2026-07-07 19:32:56", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:33:12", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_193257\n\npull 0 PULL_RISH_OK 570 /sdcard/Broccoli/pull/bundle_20260707_193303\n\n"}
+{"ts": "2026-07-07 19:34:12", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 19:34:12", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:37:47", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 19:37:47", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:37:53", "slug": "codev-20260707", "step": "clip", "rc": 0, "ms": 0, "out_tail": "PASS CLIP_V2_193748\n"}
+{"ts": "2026-07-07 19:38:07", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 PASS CLIP_V2_193753\n\npull 0 PULL_RISH_OK 570 /sdcard/Broccoli/pull/bundle_20260707_193758\n\n"}
+{"ts": "2026-07-07 19:41:17", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 19:41:17", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:41:30", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 PASS CLIP_V2_194117\n\npull 0 PULL_RISH_OK 570 /sdcard/Broccoli/pull/bundle_20260707_194122\n\n"}
+{"ts": "2026-07-07 19:43:40", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 19:43:41", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:43:49", "slug": "codev-20260707", "step": "clip", "rc": 0, "ms": 0, "out_tail": "PASS CLIP_V2_194341\n"}
+{"ts": "2026-07-07 19:44:06", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 PASS CLIP_V2_194349\n\npull 0 PULL_RISH_OK 571 /sdcard/Broccoli/pull/bundle_20260707_194355\n\n"}
+{"ts": "2026-07-07 19:45:06", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:45:35", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 PASS CLIP_V2_194507\n\npull 0 PULL_RISH_OK 571 /sdcard/Broccoli/pull/bundle_20260707_194516\n\n"}
+{"ts": "2026-07-07 19:46:36", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 19:46:36", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:47:08", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_194636\n\npull 0 PULL_RISH_OK 571 /sdcard/Broccoli/pull/bundle_20260707_194646\n\n"}
+{"ts": "2026-07-07 19:48:08", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 19:48:08", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:48:41", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 PASS CLIP_V2_194808\n\npull 0 PULL_RISH_OK 571 /sdcard/Broccoli/pull/bundle_20260707_194820\n\n"}
+{"ts": "2026-07-07 19:49:42", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 19:49:42", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 19:50:09", "slug": "codev-20260707", "step": "clip", "rc": 0, "ms": 0, "out_tail": "            stderr=b''.join(stderr_seq) if stderr_seq else None)\nsubprocess.TimeoutExpired: Command 'termux-toast -s 'Broccoli: clipboard FAIL verify'' timed out after 5 seconds\n"}
+{"ts": "2026-07-07 19:50:56", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0     ...<2 lines>...\n            stderr=b''.join(stderr_seq) if stderr_seq else None)\nsubprocess.TimeoutExpired: Command 'termux-clipboard-get' timed out after 10 seconds\n\npull 0 PULL_RISH_OK 571 /sdcard/Broccoli/pull/bundle_20260707_195027\n\n"}
+{"ts": "2026-07-07 19:51:57", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 19:51:57", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 20:26:07", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 20:26:07", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 20:26:20", "slug": "codev-20260707", "step": "clip", "rc": 0, "ms": 0, "out_tail": "FAIL CLIP_V2_202608\n"}
+{"ts": "2026-07-07 20:26:52", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_202621\n\npull 0 PULL_RISH_OK 572 /sdcard/Broccoli/pull/bundle_20260707_202630\n\n"}
+{"ts": "2026-07-07 20:28:15", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 20:28:15", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 20:28:59", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0     ...<2 lines>...\n            stderr=b''.join(stderr_seq) if stderr_seq else None)\nsubprocess.TimeoutExpired: Command 'termux-clipboard-get' timed out after 10 seconds\n\npull 0 PULL_RISH_OK 572 /sdcard/Broccoli/pull/bundle_20260707_202834\n\n"}
+{"ts": "2026-07-07 20:48:48", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 20:48:48", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 20:48:55", "slug": "codev-20260707", "step": "clip", "rc": 0, "ms": 0, "out_tail": "PASS CLIP_V2_204848\n"}
+{"ts": "2026-07-07 20:49:10", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 PASS CLIP_V2_204855\n\npull 0 PULL_RISH_OK 587 /sdcard/Broccoli/pull/bundle_20260707_204900\n\n"}
+{"ts": "2026-07-07 20:50:11", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 20:50:44", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_205011\n\npull 0 PULL_RISH_OK 587 /sdcard/Broccoli/pull/bundle_20260707_205026\n\n"}
+{"ts": "2026-07-07 20:51:45", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 20:51:45", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 20:52:14", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_205145\n\npull 0 PULL_RISH_OK 587 /sdcard/Broccoli/pull/bundle_20260707_205153\n\n"}
+{"ts": "2026-07-07 20:53:15", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 20:53:54", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_205315\n\npull 0 PULL_RISH_OK 587 /sdcard/Broccoli/pull/bundle_20260707_205329\n\n"}
+{"ts": "2026-07-07 20:54:55", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 20:54:55", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 20:55:03", "slug": "codev-20260707", "step": "clip", "rc": 0, "ms": 0, "out_tail": "FAIL CLIP_V2_205455\n"}
+{"ts": "2026-07-07 20:55:38", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_205503\n\npull 0 PULL_RISH_OK 587 /sdcard/Broccoli/pull/bundle_20260707_205515\n\n"}
+{"ts": "2026-07-07 20:56:38", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 20:56:39", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 20:57:14", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 PASS CLIP_V2_205639\n\npull 0 PULL_RISH_OK 589 /sdcard/Broccoli/pull/bundle_20260707_205650\n\n"}
+{"ts": "2026-07-07 20:58:15", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 20:58:15", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 20:58:53", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 PASS CLIP_V2_205815\n\npull 0 PULL_RISH_OK 589 /sdcard/Broccoli/pull/bundle_20260707_205829\n\n"}
+{"ts": "2026-07-07 20:59:53", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 20:59:54", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 21:00:29", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 PASS CLIP_V2_205954\n\npull 0 PULL_RISH_OK 589 /sdcard/Broccoli/pull/bundle_20260707_210006\n\n"}
+{"ts": "2026-07-07 21:01:30", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 21:01:31", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 21:01:50", "slug": "codev-20260707", "step": "clip", "rc": 0, "ms": 0, "out_tail": "            stderr=b''.join(stderr_seq) if stderr_seq else None)\nsubprocess.TimeoutExpired: Command 'termux-clipboard-get' timed out after 10 seconds\n"}
+{"ts": "2026-07-07 21:02:57", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0     ...<2 lines>...\n            stderr=b''.join(stderr_seq) if stderr_seq else None)\nsubprocess.TimeoutExpired: Command '['termux-clipboard-set']' timed out after 20 seconds\n\npull 0 PULL_RISH_OK 589 /sdcard/Broccoli/pull/bundle_20260707_210212\n\n"}
+{"ts": "2026-07-07 21:03:58", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 21:03:58", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 21:04:53", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_210359\n\npull 0 PULL_RISH_OK 589 /sdcard/Broccoli/pull/bundle_20260707_210428\n\n"}
+{"ts": "2026-07-07 21:05:54", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 21:05:54", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 21:06:42", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_210554\n\npull 0 PULL_RISH_OK 589 /sdcard/Broccoli/pull/bundle_20260707_210606\n\n"}
+{"ts": "2026-07-07 21:07:43", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 21:07:43", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 21:07:59", "slug": "codev-20260707", "step": "clip", "rc": 0, "ms": 0, "out_tail": "FAIL CLIP_V2_210744\n"}
+{"ts": "2026-07-07 21:08:34", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 PASS CLIP_V2_210800\n\npull 0 PULL_RISH_OK 597 /sdcard/Broccoli/pull/bundle_20260707_210812\n\n"}
+{"ts": "2026-07-07 21:09:34", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 21:09:34", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 21:10:03", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_210935\n\npull 0 PULL_RISH_OK 597 /sdcard/Broccoli/pull/bundle_20260707_210946\n\n"}
+{"ts": "2026-07-07 21:11:03", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 21:11:36", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_211103\n\npull 0 PULL_RISH_OK 597 /sdcard/Broccoli/pull/bundle_20260707_211115\n\n"}
+{"ts": "2026-07-07 21:12:36", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 21:12:36", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 21:13:11", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 PASS CLIP_V2_211236\n\npull 0 PULL_RISH_OK 600 /sdcard/Broccoli/pull/bundle_20260707_211249\n\n"}
+{"ts": "2026-07-07 21:14:12", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 21:14:12", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 21:14:26", "slug": "codev-20260707", "step": "clip", "rc": 0, "ms": 0, "out_tail": "FAIL CLIP_V2_211413\n"}
+{"ts": "2026-07-07 21:15:01", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_211427\n\npull 0 PULL_RISH_OK 600 /sdcard/Broccoli/pull/bundle_20260707_211437\n\n"}
+{"ts": "2026-07-07 21:16:01", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 21:16:02", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 21:16:32", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 PASS CLIP_V2_211602\n\npull 0 PULL_RISH_OK 607 /sdcard/Broccoli/pull/bundle_20260707_211616\n\n"}
+{"ts": "2026-07-07 21:17:33", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 21:17:34", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 22:15:05", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-07 22:15:05", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-07 22:15:13", "slug": "codev-20260707", "step": "clip", "rc": 0, "ms": 0, "out_tail": "FAIL CLIP_V2_221505\n"}
+{"ts": "2026-07-07 22:15:42", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 FAIL CLIP_V2_221513\n\npull 0 PULL_RISH_OK 739 /sdcard/Broccoli/pull/bundle_20260707_221522\n\n"}
+{"ts": "2026-07-09 18:24:23", "slug": "codev-20260707", "step": "sync", "rc": 0, "ms": 0, "out_tail": "CODEVELOP_SYNC_OK /sdcard/Broccoli/projects/codev-20260707/pull/snapshot.md\n"}
+{"ts": "2026-07-09 18:24:23", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-09 18:24:33", "slug": "codev-20260707", "step": "clip", "rc": 0, "ms": 0, "out_tail": "PASS CLIP_V2_182423\n"}
+{"ts": "2026-07-09 18:25:22", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 PASS CLIP_V2_182433\n\npull 0 PULL_RISH_OK 1525 /sdcard/Broccoli/pull/bundle_20260709_182444\n\n"}
+{"ts": "2026-07-09 18:25:32", "slug": "codev-20260707", "step": "apply", "rc": 0, "ms": 0, "out_tail": "NO_PATCH\n"}
+{"ts": "2026-07-09 18:26:00", "slug": "codev-20260707", "step": "agent", "rc": 0, "ms": 0, "out_tail": "SMOKE_SKIP\nclip 0 PASS CLIP_V2_182533\n\npull 0   File \"/data/data/com.termux/files/usr/lib/p

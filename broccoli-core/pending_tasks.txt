@@ -1,0 +1,31 @@
+- [ ] **Local-model module** — Gemma Nano via MediaPipe LLM inference; first-class swap from MiniMax. (PRs wanted.)
+- [ ] **Onboarding tutorial** — gesture-by-gesture intro for the rose-amulet, spine, PTT, alerts.
+- [ ] **Plugin SDK** — third-party tools as Android Services discovered at runtime; Mythara loads them with permission gates.
+- [ ] **Watch face + complications** — the rose lives on your Wear OS face and pulses with your HR.
+- [ ] **Foldable tabletop layout** — when the Pixel Fold is half-open, Mythara routes face mesh to the top half and chat composer to the bottom.
+- [ ] **Pin the README hero** — already shipped (`d376125`).
+- [ ] **GitHub repo topics** — already set (`agentic-ai`, `local-first`, etc.).
+- [ ] **Repo description** — already set (M.Y.T.H.A.R.A backronym).
+- [ ] **Issue templates** — add bug + feature templates so first-time visitors can file proper issues. ~10 min in `gh repo edit` UI.
+- [ ] **CONTRIBUTING.md** — already in wiki; add a stub at repo root linking to it.
+- [ ] **LICENSE file** — confirm `LICENSE` (MIT) is at repo root.
+- [ ] **Releases tab** — tag a `v0.1.0` release with the current commit so visitors see a download. `gh release create v0.1.0 --notes "Initial public release."` + attach the debug APK.
+- [ ] **Discussions tab** — enable in repo settings → Features → Discussions. Doubles as your community forum.
+  - - [ ] **Local-model module** — Gemma Nano via MediaPipe LLM inference; first-class swap from MiniMax. (PRs wanted.)
+  - - [ ] **Onboarding tutorial** — gesture-by-gesture intro for the rose-amulet, spine, PTT, alerts.
+  - - [ ] **Plugin SDK** — third-party tools as Android Services discovered at runtime; Mythara loads them with permission gates.
+  - - [ ] **Watch face + complications** — the rose lives on your Wear OS face and pulses with your HR.
+  - - [ ] **Local-model module** — Gemma Nano via MediaPipe LLM inference; first-class swap from MiniMax. (PRs wanted.)
+  - - [ ] **Onboarding tutorial** — gesture-by-gesture intro for the rose-amulet, spine, PTT, alerts.
+  - - [ ] **Plugin SDK** — third-party tools as Android Services discovered at runtime; Mythara loads them with permission gates.
+  - - [ ] **Watch face + complications** — the rose lives on your Wear OS face and pulses with your HR.
+- [ ] If you have local diffs: run `python3 -m py_compile broccoli_pulse.py`
+- [ ] Wire imports if core lives in `modules/core.py` (re-export `build_prompt`)
+- [ ] Increase timeout only for known-long jobs; never block on notify
+- [ ] `bash scripts/broccoli_storage_healer.sh`
+- [ ] `git init && git add -A` (confirm secrets/ not tracked)
+- [ ] `python3 broccoli_bootstrap.py grok-smoke`
+- [ ] codev loop
+- [ ] Mac pulls snapshot + feedback
+- [ ] Agent loop running
+- [ ] First patch.jsonl from Mac

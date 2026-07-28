@@ -1,0 +1,362 @@
+STEP launch_grok
+STEP dump_ui fallback early 36428 /sdcard/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 36428 /sdcard/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 36428 /sdcard/broccoli_ui.xml
+STEP grok_send keyevent ENTER
+OK sent
+2026-07-07T02:29:52-04:00 AGENT_SENT ok bytes=653
+STEP launch_grok
+STEP dump_ui fallback early 36428 /sdcard/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 36428 /sdcard/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 36428 /sdcard/broccoli_ui.xml
+STEP grok_send keyevent ENTER
+OK sent
+2026-07-07T02:32:51-04:00 AGENT_SENT ok bytes=152
+STEP launch_grok
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 589, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 550, in main
+    return 0 if grok_send_text(msg) == 0 else 1
+                ~~~~~~~~~~~~~~^^^^^
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 265, in grok_send_text
+    launch_grok()
+    ~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 91, in launch_grok
+    subprocess.run(["bash", str(Path.home() / "broccoli/lib/launch_grok_native.sh")], check=False, timeout=20)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 556, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 1222, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 2178, in _communicate
+    self.wait(timeout=self._remaining_time(endtime))
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 1280, in wait
+    return self._wait(timeout=timeout)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 2075, in _wait
+    raise TimeoutExpired(self.args, timeout)
+subprocess.TimeoutExpired: Command '['bash', '/data/data/com.termux/files/home/broccoli/lib/launch_grok_native.sh']' timed out after 20 seconds
+STEP launch_grok
+STEP dump_ui fallback early 36428 /sdcard/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 36428 /sdcard/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 36428 /sdcard/broccoli_ui.xml
+STEP grok_send keyevent ENTER
+OK sent
+2026-07-07T02:37:06-04:00 AGENT_SENT ok bytes=168
+STEP launch_grok
+STEP dump_ui fallback early 36428 /sdcard/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 36428 /sdcard/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 36428 /sdcard/broccoli_ui.xml
+STEP grok_send keyevent ENTER
+OK sent
+2026-07-07T02:42:16-04:00 AGENT_SENT ok bytes=277
+STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07T02:44:46-04:00 AGENT_SENT ok bytes=42
+STEP launch_grok
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 589, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 550, in main
+    return 0 if grok_send_text(msg) == 0 else 1
+                ~~~~~~~~~~~~~~^^^^^
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 265, in grok_send_text
+    launch_grok()
+    ~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 91, in launch_grok
+    subprocess.run(["bash", str(Path.home() / "broccoli/lib/launch_grok_native.sh")], check=False, timeout=20)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 556, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 1222, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 2178, in _communicate
+    self.wait(timeout=self._remaining_time(endtime))
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 1280, in wait
+    return self._wait(timeout=timeout)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 2075, in _wait
+    raise TimeoutExpired(self.args, timeout)
+subprocess.TimeoutExpired: Command '['bash', '/data/data/com.termux/files/home/broccoli/lib/launch_grok_native.sh']' timed out after 20 seconds
+STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07T02:47:43-04:00 AGENT_SENT ok bytes=39
+STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07T02:51:54-04:00 AGENT_SENT ok bytes=76
+STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07T02:57:44-04:00 AGENT_SENT ok bytes=239
+STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07T03:07:05-04:00 AGENT_SENT ok bytes=124
+STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07T03:10:25-04:00 AGENT_SENT ok bytes=120
+STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07T03:13:12-04:00 AGENT_SENT ok bytes=713
+STEP launch_grok
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 589, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 550, in main
+    return 0 if grok_send_text(msg) == 0 else 1
+                ~~~~~~~~~~~~~~^^^^^
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 265, in grok_send_text
+    launch_grok()
+    ~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 91, in launch_grok
+    subprocess.run(["bash", str(Path.home() / "broccoli/lib/launch_grok_native.sh")], check=False, timeout=20)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 556, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 1222, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 2178, in _communicate
+    self.wait(timeout=self._remaining_time(endtime))
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 1280, in wait
+    return self._wait(timeout=timeout)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 2075, in _wait
+    raise TimeoutExpired(self.args, timeout)
+subprocess.TimeoutExpired: Command '['bash', '/data/data/com.termux/files/home/broccoli/lib/launch_grok_native.sh']' timed out after 20 seconds
+STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07T03:24:37-04:00 AGENT_SENT ok bytes=87
+STEP launch_grok
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 589, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 550, in main
+    return 0 if grok_send_text(msg) == 0 else 1
+                ~~~~~~~~~~~~~~^^^^^
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 265, in grok_send_text
+    launch_grok()
+    ~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 91, in launch_grok
+    subprocess.run(["bash", str(Path.home() / "broccoli/lib/launch_grok_native.sh")], check=False, timeout=20)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 556, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 1222, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 2178, in _communicate
+    self.wait(timeout=self._remaining_time(endtime))
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 1280, in wait
+    return self._wait(timeout=timeout)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 2075, in _wait
+    raise TimeoutExpired(self.args, timeout)
+subprocess.TimeoutExpired: Command '['bash', '/data/data/com.termux/files/home/broccoli/lib/launch_grok_native.sh']' timed out after 20 seconds
+STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07T03:27:36-04:00 AGENT_SENT ok bytes=87
+STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07T03:33:38-04:00 AGENT_SENT ok bytes=800
+STEP launch_grok
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 589, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 550, in main
+    return 0 if grok_send_text(msg) == 0 else 1
+                ~~~~~~~~~~~~~~^^^^^
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 265, in grok_send_text
+    launch_grok()
+    ~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 91, in launch_grok
+    subprocess.run(["bash", str(Path.home() / "broccoli/lib/launch_grok_native.sh")], check=False, timeout=20)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 556, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 1222, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 2178, in _communicate
+    self.wait(timeout=self._remaining_time(endtime))
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 1280, in wait
+    return self._wait(timeout=timeout)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 2075, in _wait
+    raise TimeoutExpired(self.args, timeout)
+subprocess.TimeoutExpired: Command '['bash', '/data/data/com.termux/files/home/broccoli/lib/launch_grok_native.sh']' timed out after 20 seconds
+STEP launch_grok
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 589, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 550, in main
+    return 0 if grok_send_text(msg) == 0 else 1
+                ~~~~~~~~~~~~~~^^^^^
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 265, in grok_send_text
+    launch_grok()
+    ~~~~~~~~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 91, in launch_grok
+    subprocess.run(["bash", str(Path.home() / "broccoli/lib/launch_grok_native.sh")], check=False, timeout=20)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 556, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 1222, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 2178, in _communicate
+    self.wait(timeout=self._remaining_time(endtime))
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 1280, in wait
+    return self._wait(timeout=timeout)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/subprocess.py", line 2075, in _wait
+    raise TimeoutExpired(self.args, timeout)
+subprocess.TimeoutExpired: Command '['bash', '/data/data/com.termux/files/home/broccoli/lib/launch_grok_native.sh']' timed out after 20 seconds
+STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07T03:54:39-04:00 AGENT_SENT ok bytes=411
+CANNOT LINK EXECUTABLE "sleep": library "libcrypto.so.3" not found: needed by main executable
+CANNOT LINK EXECUTABLE "sleep": library "libcrypto.so.3" not found: needed by main executable
+CANNOT LINK EXECUTABLE "sleep": library "libcrypto.so.3" not found: needed by main executable
+CANNOT LINK EXECUTABLE "sleep": library "libcrypto.so.3" not found: needed by main executable
+CANNOT LINK EXECUTABLE "sleep": library "libcrypto.so.3" not found: needed by main executable
+CANNOT LINK EXECUTABLE "sleep": library "libcrypto.so.3" not found: needed by main executable
+CANNOT LINK EXECUTABLE "sleep": library "libcrypto.so.3" not found: needed by main executable
+CANNOT LINK EXECUTABLE "sleep": library "libcrypto.so.3" not found: needed by main executable

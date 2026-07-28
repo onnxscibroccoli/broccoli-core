@@ -1,0 +1,4 @@
+Research concisely with sources cited:
+Use Google AI Mode on this phone to research: Android UI automation patterns (Shizuku, Termux, accessibility).
+Each OK answer: worker merges reply into ~/broccoli/research/notes.md.
+Grok jobs only for NEXT_STEP and patching Broccoli.

@@ -1,0 +1,25 @@
+{
+  "default": "grok",
+  "apps": {
+    "grok": {
+      "label": "Grok",
+      "package": "ai.x.grok",
+      "launch": "am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p ai.x.grok"
+    },
+    "chatgpt": {
+      "label": "ChatGPT",
+      "package": "com.openai.chatgpt",
+      "launch": "am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p com.openai.chatgpt"
+    },
+    "gemini": {
+      "label": "Gemini",
+      "package": "com.google.android.apps.bard",
+      "launch": "am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p com.google.android.apps.bard"
+    },
+    "gemini_google": {
+      "label": "Gemini (alt pkg)",
+      "package": "com.google.android.apps.gemini",
+      "launch": "am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p com.google.android.apps.gemini"
+    }
+  }
+}

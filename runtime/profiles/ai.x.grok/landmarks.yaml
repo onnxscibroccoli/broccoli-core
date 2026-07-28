@@ -1,0 +1,5 @@
+composer:
+  class: EditText
+
+send_button:
+  class: ImageButton

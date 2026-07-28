@@ -1,0 +1,44 @@
+{"ts": 1783311567.5572336, "ts_human": "2026-07-06 00:19:27", "kind": "queued", "task": "pilot_smoke_acceptance", "detail": "meta/smoke_cache PASS + notes>=5", "status": ""}
+{"ts": 1783311567.5586205, "ts_human": "2026-07-06 00:19:27", "kind": "queued", "task": "workflow_front_first", "detail": "toasts, launch Grok, smoke_fast", "status": ""}
+{"ts": 1783311567.5595036, "ts_human": "2026-07-06 00:19:27", "kind": "note", "task": "system", "detail": "Task queue log installed; ask in chat: what is in the Broccoli task queue?", "status": ""}
+{"ts": 1783311842.8013663, "ts_human": "2026-07-06 00:24:02", "kind": "started", "task": "workflow_front", "detail": "launch+smoke heal", "status": ""}
+{"ts": 1783312023.7202659, "ts_human": "2026-07-06 00:27:03", "kind": "done", "task": "pilot_smoke_acceptance", "detail": "B+C winners from smoke_lesson", "status": "ok"}
+{"ts": 1783312023.72288, "ts_human": "2026-07-06 00:27:03", "kind": "note", "task": "system", "detail": "Official smoke: launch+scroll+dump+parse, then meta_heal", "status": ""}
+{"ts": 1783312395.2959442, "ts_human": "2026-07-06 00:33:15", "kind": "started", "task": "workflow_front", "detail": "launch+smoke heal", "status": ""}
+{"ts": 1783312402.5450144, "ts_human": "2026-07-06 00:33:22", "kind": "note", "task": "system", "detail": "grok_takeover completed", "status": ""}
+{"ts": 1783312695.0501916, "ts_human": "2026-07-06 00:38:15", "kind": "started", "task": "workflow_front", "detail": "launch+smoke heal", "status": ""}
+{"ts": 1783312709.0895748, "ts_human": "2026-07-06 00:38:29", "kind": "started", "task": "workflow_front", "detail": "launch+smoke heal", "status": ""}
+{"ts": 1783312719.3475785, "ts_human": "2026-07-06 00:38:39", "kind": "note", "task": "system", "detail": "quarry 10/11", "status": ""}
+{"ts": 1783312931.7363038, "ts_human": "2026-07-06 00:42:11", "kind": "started", "task": "workflow_front", "detail": "launch+smoke heal", "status": ""}
+{"ts": 1783312945.7757351, "ts_human": "2026-07-06 00:42:25", "kind": "started", "task": "workflow_front", "detail": "launch+smoke heal", "status": ""}
+{"ts": 1783312955.9684408, "ts_human": "2026-07-06 00:42:35", "kind": "note", "task": "system", "detail": "quarry 11/11", "status": ""}
+{"ts": 1783313094.3321733, "ts_human": "2026-07-06 00:44:54", "kind": "started", "task": "workflow_front", "detail": "launch+smoke heal", "status": ""}
+{"ts": 1783313138.421103, "ts_human": "2026-07-06 00:45:38", "kind": "started", "task": "workflow_front", "detail": "launch+smoke heal", "status": ""}
+{"ts": 1783313244.6443415, "ts_human": "2026-07-06 00:47:24", "kind": "started", "task": "workflow_front", "detail": "launch+smoke heal", "status": ""}
+{"ts": 1783313775.1285481, "ts_human": "2026-07-06 00:56:15", "kind": "queued", "task": "broccoli_agent_loop_v1", "detail": "Broccoli continuous agent loop (UI-driven completion)", "status": ""}
+{"ts": 1783313775.1318111, "ts_human": "2026-07-06 00:56:15", "kind": "started", "task": "broccoli_agent_loop_v1", "detail": "defined as current task", "status": ""}
+{"ts": 1783313775.133222, "ts_human": "2026-07-06 00:56:15", "kind": "note", "task": "system", "detail": "CURRENT TASK SET: Broccoli continuous agent loop (UI-driven completion)", "status": ""}
+{"ts": 1783313807.9648676, "ts_human": "2026-07-06 00:56:47", "kind": "queued", "task": "broccoli_agent_loop_v1", "detail": "Broccoli continuous agent loop (UI-driven completion)", "status": ""}
+{"ts": 1783313807.968711, "ts_human": "2026-07-06 00:56:47", "kind": "started", "task": "broccoli_agent_loop_v1", "detail": "defined as current task", "status": ""}
+{"ts": 1783313807.9718657, "ts_human": "2026-07-06 00:56:47", "kind": "note", "task": "system", "detail": "CURRENT TASK SET: Broccoli continuous agent loop (UI-driven completion)", "status": ""}
+{"ts": 1783314043.964293, "ts_human": "2026-07-06 01:00:43", "kind": "started", "task": "workflow_front", "detail": "launch+smoke heal", "status": ""}
+{"ts": 1783314058.2504187, "ts_human": "2026-07-06 01:00:58", "kind": "started", "task": "workflow_front", "detail": "launch+smoke heal", "status": ""}
+{"ts": 1783314068.7827659, "ts_human": "2026-07-06 01:01:08", "kind": "note", "task": "system", "detail": "quarry 11/11", "status": ""}
+{"ts": 1783314101.9275274, "ts_human": "2026-07-06 01:01:41", "kind": "started", "task": "workflow_front", "detail": "launch+smoke heal", "status": ""}
+{"ts": 1783314120.7685616, "ts_human": "2026-07-06 01:02:00", "kind": "started", "task": "workflow_front", "detail": "launch+smoke heal", "status": ""}
+{"ts": 1783314131.1390727, "ts_human": "2026-07-06 01:02:11", "kind": "note", "task": "system", "detail": "quarry 11/11", "status": ""}
+{"ts": 1783314150.2703795, "ts_human": "2026-07-06 01:02:30", "kind": "started", "task": "workflow_front", "detail": "launch+smoke heal", "status": ""}
+{"ts": 1783314160.5299919, "ts_human": "2026-07-06 01:02:40", "kind": "note", "task": "system", "detail": "quarry 10/11", "status": ""}
+{"ts": 1783314179.6909664, "ts_human": "2026-07-06 01:02:59", "kind": "started", "task": "workflow_front", "detail": "launch+smoke heal", "status": ""}
+{"ts": 1783314189.9462452, "ts_human": "2026-07-06 01:03:09", "kind": "note", "task": "system", "detail": "quarry 10/11", "status": ""}
+{"ts": 1783314210.0474198, "ts_human": "2026-07-06 01:03:30", "kind": "started", "task": "workflow_front", "detail": "launch+smoke heal", "status": ""}
+{"ts": 1783314252.8605957, "ts_human": "2026-07-06 01:04:12", "kind": "note", "task": "system", "detail": "quarry 10/11", "status": ""}
+{"ts": 1783314286.622353, "ts_human": "2026-07-06 01:04:46", "kind": "started", "task": "workflow_front", "detail": "launch+smoke heal", "status": ""}
+{"ts": 1783314303.6191332, "ts_human": "2026-07-06 01:05:03", "kind": "note", "task": "system", "detail": "quarry 10/11", "status": ""}
+{"ts": 1783314331.2437756, "ts_human": "2026-07-06 01:05:31", "kind": "started", "task": "workflow_front", "detail": "launch+smoke heal", "status": ""}
+{"ts": 1783314346.4056854, "ts_human": "2026-07-06 01:05:46", "kind": "note", "task": "system", "detail": "quarry 10/11", "status": ""}
+{"ts": 1783314372.8229198, "ts_human": "2026-07-06 01:06:12", "kind": "started", "task": "workflow_front", "detail": "launch+smoke heal", "status": ""}
+{"ts": 1783314391.804536, "ts_human": "2026-07-06 01:06:31", "kind": "note", "task": "system", "detail": "quarry 10/11", "status": ""}
+{"ts": 1783314629.4307933, "ts_human": "2026-07-06 01:10:29", "kind": "note", "task": "system", "detail": "HANDOFF.md updated for new Mac chat", "status": ""}
+{"ts": 1783401974.908692, "ts_human": "2026-07-07 01:26:14", "kind": "started", "task": "workflow_front", "detail": "launch+smoke heal", "status": ""}
+{"ts": 1783402039.6448472, "ts_human": "2026-07-07 01:27:19", "kind": "started", "task": "workflow_front", "detail": "launch+smoke heal", "status": ""}

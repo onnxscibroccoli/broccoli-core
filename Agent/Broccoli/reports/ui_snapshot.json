@@ -1,0 +1,11 @@
+{
+  "ts": "2026-07-07T16:51:28Z",
+  "queue_bytes": 0,
+  "dump_changed": true,
+  "foreground_grok": true,
+  "wire_context": {
+    "package": "",
+    "composer": null,
+    "send": null
+  }
+}

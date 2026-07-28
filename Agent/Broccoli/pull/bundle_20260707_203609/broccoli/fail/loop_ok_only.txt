@@ -1,0 +1,4 @@
+OUTPUT CONTRACT: line 1 must be LOOP_OK only.
+Then NEXT_STEP: one line.
+Then REPORT_FOR_MAC: 4 short lines.
+No BROCCOLI CONTEXT. No quoting user prompt.

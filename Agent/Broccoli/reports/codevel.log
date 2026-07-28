@@ -1,0 +1,4 @@
+=== codevel 2026-07-06T22:15:58-04:00 ===
+AIM_RISH ok try=1
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] pkg=ai.x.grok }
+/data/data/com.termux/files/home/broccoli/tools/open_codevel.sh: line 11: monkey: command not found

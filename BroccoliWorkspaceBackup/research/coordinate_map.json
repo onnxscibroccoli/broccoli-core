@@ -1,0 +1,6 @@
+{
+  "form_objects": {
+    "security_toggle": {"x": 540, "y": 1200, "blob_anchor": "security_flags", "offset": 64, "length": 4},
+    "pin_field": {"x": 540, "y": 800, "blob_anchor": "pin_hash", "offset": 128, "length": 32}
+  }
+}

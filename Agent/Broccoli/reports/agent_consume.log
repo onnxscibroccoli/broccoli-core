@@ -1,0 +1,6 @@
+2026-07-06T23:58:27-04:00 consume prompt_len=4 reply_len=7
+2026-07-06T23:58:27-04:00 action=QUEUE|Broccoli agent: last reply received. Reply with one short ASK line for next wire step only.
+2026-07-07T00:08:12-04:00 consume prompt_len=7 reply_len=7
+2026-07-07T00:08:12-04:00 action=QUEUE|Wire probe: reply one word WIRE_OK
+2026-07-07T00:09:47-04:00 consume prompt_len=7 reply_len=7
+2026-07-07T00:09:48-04:00 action=QUEUE|Wire probe: reply one word WIRE_OK

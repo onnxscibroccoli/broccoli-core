@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "taps": [],
+  "submit_keys": [],
+  "use_tab_before_enter": false,
+  "ui_send_fallback": {
+    "x": 1001,
+    "y": 2203,
+    "label": "Send message"
+  },
+  "note": "from successful inject.log (getevent was empty)"
+}

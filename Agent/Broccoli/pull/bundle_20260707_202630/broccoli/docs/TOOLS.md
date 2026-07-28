@@ -1,0 +1,60 @@
+# Broccoli TOOLS.md
+
+- brocc agent
+- brocc health-full
+- brocc repair
+- brocc mac-ingest
+- brocc agent-context
+- brocc pull-rish
+- brocc pull-clip
+- brocc pull-report
+- brocc pulse
+- brocc pulse-start
+- brocc pulse-stop
+- brocc clip-test
+- brocc launch-grok
+- brocc smoke
+- brocc google-smoke
+- brocc google-ask
+- brocc a11y-dump
+- brocc loop-on
+- brocc loop-off
+- brocc loop-once
+- brocc sync-storage
+- brocc pull-report
+- brocc loop-on
+- brocc loop-off
+- brocc loop-once
+- brocc pulse-start
+- brocc pulse-stop
+- brocc launch-grok
+- brocc smoke
+- ~/broccoli_a11y.py
+- ~/broccoli_accept.py
+- ~/broccoli_agent.py
+- ~/broccoli_agent_context.py
+- ~/broccoli_bootstrap.py
+- ~/broccoli_brocc.py
+- ~/broccoli_clean_stdout.py
+- ~/broccoli_clip_prompt.py
+- ~/broccoli_clipboard.py
+- ~/broccoli_clipboard_test.py
+- ~/broccoli_compose.py
+- ~/broccoli_docs_build.py
+- ~/broccoli_google_job.py
+- ~/broccoli_google_smoke.py
+- ~/broccoli_grok_send_doc.py
+- ~/broccoli_mac_ingest.py
+- ~/broccoli_phone_grok_send.py
+- ~/broccoli_pull_clip.py
+- ~/broccoli_pulse.py
+- ~/broccoli_reply_ok.py
+- ~/broccoli_report.py
+- ~/broccoli_research.py
+- ~/broccoli_rish_pull.py
+- ~/broccoli_secondary_display.py
+- ~/broccoli_storage_sync.py
+- ~/broccoli_task.py
+- ~/broccoli_thread_append.py
+- ~/broccoli_ui.py
+- ~/broccoli_user_wait.py

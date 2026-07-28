@@ -1,0 +1,3 @@
+Reply in under 10 lines. Start with NEXT_STEP:
+One fix for Broccoli (Termux+Shizuku): clear_composer was too slow; send tap 1001,1338 not Enter.
+Give one Termux patch idea and one test: python3 ~/broccoli_bootstrap.py grok-smoke

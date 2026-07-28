@@ -1,0 +1,4 @@
+# Mission: recursive wire until DONE in reply
+Run inventory and deliver device output to Mac co-dev
+Wire probe: reply one word WIRE_OK
+Fix INVESTIGATION critical: Grok FG dump only (no Termux FG)

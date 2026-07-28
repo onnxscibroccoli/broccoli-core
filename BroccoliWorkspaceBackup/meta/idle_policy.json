@@ -1,0 +1,32 @@
+{
+  "idle_seconds_before_takeover": 10,
+  "countdown_seconds": [
+    3,
+    2,
+    1
+  ],
+  "poll_interval_sec": 1,
+  "abort_if_user_active_within_sec": 1.5,
+  "takeover_message": "Broccoli \u2192 Grok",
+  "grok_takeover": {
+    "enabled": true,
+    "mandatory_after_idle": true,
+    "package": "ai.x.grok",
+    "steps": [
+      "launch_grok",
+      "focus",
+      "workflow_front",
+      "meta_heal"
+    ]
+  },
+  "run_when": {
+    "screen_on_required": true,
+    "block_if_keyguard": true
+  },
+  "security": {
+    "never_automate_packages": [
+      "com.android.vending"
+    ]
+  },
+  "between_cycles_sec": 25
+}

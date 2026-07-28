@@ -1,0 +1,17 @@
+{"phase": "agent_start"}
+{"phase": "iter", "n": 1}
+{"phase": "verdict", "n": 1, "complete": false, "should_continue": true, "confidence": 0.0, "reasons": [], "ui_state": "UNKNOWN", "ui_meta": {"err": "No module named 'ui_state'"}, "reply_head": "QUARRY: patch dump_ui reuse last_ui.xml; then collab on idle+rish", "quarry_ok": true}
+{"phase": "iter", "n": 2}
+{"phase": "verdict", "n": 2, "complete": false, "should_continue": true, "confidence": 0.0, "reasons": [], "ui_state": "UNKNOWN", "ui_meta": {"err": "No module named 'ui_state'"}, "reply_head": "QUARRY: patch dump_ui reuse last_ui.xml; then collab on idle+rish", "quarry_ok": true}
+{"phase": "iter", "n": 3}
+{"phase": "verdict", "n": 3, "complete": false, "should_continue": true, "confidence": 0.5, "reasons": ["quarry:has_fail"], "ui_state": "UNKNOWN", "ui_meta": {"err": "No module named 'ui_state'"}, "reply_head": "QUARRY: patch dump_ui reuse last_ui.xml; then collab on idle+rish", "quarry_ok": false}
+{"phase": "iter", "n": 4}
+{"phase": "verdict", "n": 4, "complete": false, "should_continue": true, "confidence": 0.5, "reasons": ["quarry:has_fail"], "ui_state": "UNKNOWN", "ui_meta": {"err": "No module named 'ui_state'"}, "reply_head": "QUARRY: patch dump_ui reuse last_ui.xml; then collab on idle+rish", "quarry_ok": false}
+{"phase": "iter", "n": 5}
+{"phase": "verdict", "n": 5, "complete": false, "should_continue": true, "confidence": 0.5, "reasons": ["quarry:has_fail"], "ui_state": "UNKNOWN", "ui_meta": {"err": "No module named 'ui_state'"}, "reply_head": "QUARRY: patch dump_ui reuse last_ui.xml; then collab on idle+rish", "quarry_ok": false}
+{"phase": "iter", "n": 6}
+{"phase": "verdict", "n": 6, "complete": false, "should_continue": true, "confidence": 0.5, "reasons": ["quarry:has_fail"], "ui_state": "UNKNOWN", "ui_meta": {"err": "No module named 'ui_state'"}, "reply_head": "QUARRY: patch dump_ui reuse last_ui.xml; then collab on idle+rish", "quarry_ok": false}
+{"phase": "iter", "n": 7}
+{"phase": "verdict", "n": 7, "complete": false, "should_continue": true, "confidence": 0.5, "reasons": ["quarry:has_fail"], "ui_state": "UNKNOWN", "ui_meta": {"err": "No module named 'ui_state'"}, "reply_head": "QUARRY: patch dump_ui reuse last_ui.xml; then collab on idle+rish", "quarry_ok": false}
+{"phase": "iter", "n": 8}
+{"phase": "verdict", "n": 8, "complete": false, "should_continue": true, "confidence": 0.5, "reasons": ["quarry:has_fail"], "ui_state": "UNKNOWN", "ui_meta": {"err": "No module named 'ui_state'"}, "reply_head": "QUARRY: patch dump_ui reuse last_ui.xml; then collab on idle+rish", "quarry_ok": false}

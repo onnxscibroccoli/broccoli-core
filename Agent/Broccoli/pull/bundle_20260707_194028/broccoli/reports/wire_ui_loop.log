@@ -1,0 +1,7 @@
+2026-07-06T22:46:37-04:00 wait grok_fg t=0 OK
+2026-07-06T22:47:09-04:00 wait grok_fg t=0 OK
+2026-07-06T22:47:35-04:00 wait composer t=0 OK
+2026-07-06T22:49:47-04:00 wait composer t=4 OK
+2026-07-06T22:50:59-04:00 wait msg_sent t=0 OK
+2026-07-06T22:52:01-04:00 wait fp_not t=0 OK
+2026-07-06T22:54:11-04:00 wait msg_sent t=12 TIMEOUT

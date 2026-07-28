@@ -1,0 +1,4 @@
+#!/data/data/com.termux/files/usr/bin/bash
+export PATH="$HOME:$PATH"
+[ -f "$HOME/.broccoli_codev.env" ] && . "$HOME/.broccoli_codev.env"
+exec python3 "$HOME/broccoli_brocc.py" "$@"

@@ -1,0 +1,105 @@
+{
+  "app": "grok",
+  "chat_package": "ai.x.grok",
+  "assistant_bottom_weight": 0.48,
+  "min_message_chars": 12,
+  "ignore_text_substrings": [
+    "Send",
+    "Message",
+    "Grok",
+    "Imagine",
+    "DeepSearch",
+    "Attach",
+    "Copy",
+    "Share",
+    "Regenerate",
+    "New chat",
+    "Ask anything",
+    "SuperGrok",
+    "Voice",
+    "Menu",
+    "Settings",
+    "Sign in"
+  ],
+  "prefer_resource_id_substrings": [
+    "message",
+    "markdown",
+    "bubble",
+    "assistant",
+    "response",
+    "content"
+  ],
+  "inject": {
+    "CHAT_PACKAGE": "ai.x.grok",
+    "CHAT_ACTIVITY": "ai.x.grok/.main.GrokActivity",
+    "CHAT_INPUT_X": 540,
+    "CHAT_INPUT_Y": 2139,
+    "CHAT_SEND_X": 1001,
+    "CHAT_SEND_Y": 2203,
+    "POST_LAUNCH_SLEEP": 1.8,
+    "POST_PASTE_SLEEP": 0.6,
+    "SUBMIT_METHOD": "tap_send_after_paste"
+  },
+  "scrape_mode": "copy_chip_first",
+  "copy_chip": {
+    "text_equals": [
+      "Copy",
+      "copy"
+    ],
+    "content_desc_substrings": [
+      "copy",
+      "Copy",
+      "clipboard"
+    ],
+    "min_center_y_fraction": 0.25,
+    "max_center_y_fraction": 0.92,
+    "post_tap_sleep_sec": 0.45,
+    "clipboard_read_retries": 5,
+    "clipboard_read_delay_sec": 0.25,
+    "last_calibrated_x": 191,
+    "last_calibrated_y": 1462
+  },
+  "launch": {
+    "mode": "soft"
+  },
+  "screen_height": 2408,
+  "submit_fallback": {
+    "tab_then_enter": true
+  },
+  "learned": {
+    "ok": true,
+    "taps": [],
+    "submit_keys": [],
+    "use_tab_before_enter": false
+  },
+  "input": {
+    "x": 540,
+    "y": 1195
+  },
+  "menu": {
+    "x": 72,
+    "y": 168
+  },
+  "conversation_items": [
+    {
+      "x": 420,
+      "y": 300
+    }
+  ],
+  "scroll_down": {
+    "x": 980,
+    "y": 1180
+  },
+  "send": {
+    "x": 995,
+    "y": 1383
+  },
+  "send_keyboard_up": {
+    "x": 995,
+    "y": 1383
+  },
+  "send_keyboard_down": {
+    "x": 995,
+    "y": 2222
+  }
+}

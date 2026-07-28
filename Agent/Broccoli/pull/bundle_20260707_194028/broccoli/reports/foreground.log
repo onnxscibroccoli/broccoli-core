@@ -1,0 +1,408 @@
+2026-07-06T22:11:05-04:00 1 launch Grok native
+2026-07-06T22:11:05-04:00 1 launch Grok native
+2026-07-06T22:11:15-04:00 1 launch Grok native
+2026-07-06T22:13:14-04:00 1 launch Grok native
+2026-07-06T22:13:53-04:00 1 launch Grok native
+2026-07-06T22:14:26-04:00 1 launch Grok native
+2026-07-06T22:15:11-04:00 1 launch Grok native
+2026-07-06T22:15:53-04:00 1 launch Grok native
+2026-07-06T22:16:32-04:00 1 launch Grok native
+2026-07-06T22:17:06-04:00 1 launch Grok native
+2026-07-06T22:17:48-04:00 1 launch Grok native
+2026-07-06T22:18:21-04:00 1 launch Grok native
+2026-07-06T22:19:00-04:00 1 launch Grok native
+2026-07-06T22:19:09-04:00 1 launch Grok native
+2026-07-06T22:21:01-04:00 1 launch Grok native
+2026-07-06T22:21:35-04:00 1 launch Grok native
+2026-07-06T22:22:08-04:00 1 launch Grok native
+2026-07-06T22:22:44-04:00 1 launch Grok native
+2026-07-06T22:23:17-04:00 1 launch Grok native
+2026-07-06T22:23:49-04:00 1 launch Grok native
+2026-07-06T22:23:56-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+33646 /data/local/tmp/broccoli_ui.xml
+2026-07-06T22:24:02-04:00 3 packages in dump: package="[^" package="ai.x.grok" package="ai\.x\.grok" 
+2026-07-06T22:24:10-04:00 1 launch Grok native
+2026-07-06T22:24:17-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+24209 /data/local/tmp/broccoli_ui.xml
+2026-07-06T22:24:23-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T22:24:23-04:00 4 ask: Continue broccoli co-dev: UI dump only; fix rish dump path; no Chrome
+Starting: Intent { act=android.intent.action.VIEW dat=https://grok.com/... pkg=com.android.chrome }
+sent_tap Start Grok Voice  android.widget.ImageView 
+2026-07-06T22:27:17-04:00 1 launch Grok native
+2026-07-06T22:27:25-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+7060 /data/local/tmp/broccoli_ui.xml
+2026-07-06T22:27:30-04:00 3 packages in dump: package="com.termux" 
+2026-07-06T22:27:30-04:00 WARN Grok not in dump — tap Grok app on screen, wait 3s, re-dump
+2026-07-06T22:27:43-04:00 1 launch Grok native
+2026-07-06T22:27:52-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+25499 /data/local/tmp/broccoli_ui.xml
+2026-07-06T22:27:58-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T22:27:58-04:00 4 ask: Continue broccoli co-dev: UI dump only; fix rish dump path; no Chrome
+Starting: Intent { act=android.intent.action.VIEW dat=https://grok.com/... pkg=com.android.chrome }
+sent_tap Start Grok Voice  android.widget.ImageView 
+Also need to fix show queue Continue broccoli co-dev: UI dump only; fix rish dump path; no Chrome&#10;
+Paste at Termux ~ $:
+2026-07-06T22:31:31-04:00 1 launch Grok native
+2026-07-06T22:31:55-04:00 2 dump UI (rish)
+Request timeout. The connection between the current app (com.termux) and Shizuku app may be blocked by your system. Please disable all battery optimization features for both current app (com.termux) and Shizuku app.
+2026-07-06T22:32:03-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T22:32:31-04:00 1 launch Grok native
+2026-07-06T22:32:49-04:00 2 dump UI (rish)
+25374 /data/local/tmp/broccoli_ui.xml
+2026-07-06T22:33:05-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T22:33:40-04:00 1 launch Grok native
+2026-07-06T22:33:55-04:00 1 launch Grok native
+2026-07-06T22:34:12-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+28518 /data/local/tmp/broccoli_ui.xml
+2026-07-06T22:34:18-04:00 3 packages in dump: package="[^" package="ai.x.grok" 
+2026-07-06T22:34:18-04:00 4 ask: Continue broccoli co-dev: UI dump only; fix rish dump path; no Chrome
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+sent_tap Start Grok Voice  android.widget.ImageView 
+Task list (now): cat ~/broccoli/TASK_LIST.md&#10;Queue: ./brocc show-queue or show-queue&#10;No Chrome launch: GROK_COMPONENT=ai.x.grok/.main.GrokActivity&#10;One automated round (send → dump → extract code): ./brocc start-dev&#10;Do not paste markdown — Termux ran 6. God-mode and ```bash as commands; copy script lines only.
+If launch still fails, paste output of:
+Inspect UI dump XML structure
+Explore Termux API notifications
+Remove markdown formatting from script
+Ask anything
+2026-07-06T22:36:05-04:00 1 launch Grok native
+2026-07-06T22:36:35-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+25802 /data/local/tmp/broccoli_ui.xml
+2026-07-06T22:36:45-04:00 3 packages in dump: package="[^" package="ai.x.grok" 
+2026-07-06T22:37:05-04:00 1 launch Grok native
+2026-07-06T22:37:22-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+25940 /data/local/tmp/broccoli_ui.xml
+2026-07-06T22:37:29-04:00 3 packages in dump: package="[^" package="ai.x.grok" 
+2026-07-06T22:37:29-04:00 4 ask: Continue broccoli co-dev: UI dump only; fix rish dump path; no Chrome
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+sent_tap Send message input_send_button android.widget.ImageView 
+Task list (now): cat ~/broccoli/TASK_LIST.md&#10;Queue: ./brocc show-queue or show-queue&#10;No Chrome launch: GROK_COMPONENT=ai.x.grok/.main.GrokActivity&#10;One automated round (send → dump → extract code): ./brocc start-dev&#10;Do not paste markdown — Termux ran 6. God-mode and ```bash as commands; copy script lines only.
+If launch still fails, paste output of:
+Inspect UI dump XML structure
+Explore Termux API notifications
+Remove markdown formatting from script
+2026-07-06T22:40:41-04:00 1 launch Grok native
+2026-07-06T22:41:05-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+19528 /data/local/tmp/broccoli_ui.xml
+2026-07-06T22:41:11-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T22:41:40-04:00 1 launch Grok native
+2026-07-06T22:41:57-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+7306 /data/local/tmp/broccoli_ui.xml
+2026-07-06T22:42:03-04:00 3 packages in dump: package="com.termux" 
+2026-07-06T22:42:03-04:00 WARN Grok not in dump — tap Grok app on screen, wait 3s, re-dump
+2026-07-06T22:42:15-04:00 1 launch Grok native
+2026-07-06T22:42:32-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+32309 /data/local/tmp/broccoli_ui.xml
+2026-07-06T22:42:37-04:00 3 packages in dump: package="ai.x.grok" package="ai\.x\.grok" 
+2026-07-06T22:42:37-04:00 4 ask: Continue broccoli co-dev: UI dump only; fix rish dump path; no Chrome
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+sent_tap Start Grok Voice  android.widget.ImageView 
+It seems like it's opening the chat and hanging.The script is responsible for passing things back-and-forth, not the user.Ask mac if you have any questions
+Chat opens then stalls because am start -W blocks, send never finishes, or the daemon waits forever with no step timeouts. Paste only this block into Termux (no markdown wrapper):
+Ask anything
+2026-07-06T22:44:17-04:00 1 launch Grok native
+2026-07-06T22:44:38-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+31552 /data/local/tmp/broccoli_ui.xml
+2026-07-06T22:44:44-04:00 3 packages in dump: package="ai.x.grok" package="ai\.x\.grok" 
+2026-07-06T22:45:13-04:00 1 launch Grok native
+2026-07-06T22:45:30-04:00 2 dump UI (rish)
+31552 /data/local/tmp/broccoli_ui.xml
+2026-07-06T22:45:46-04:00 3 packages in dump: package="ai.x.grok" package="ai\.x\.grok" 
+2026-07-06T22:46:15-04:00 1 launch Grok native
+2026-07-06T22:46:35-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+40347 /data/local/tmp/broccoli_ui.xml
+2026-07-06T22:46:41-04:00 3 packages in dump: package="ai.x.grok" package="ai\.x\.grok" 
+2026-07-06T22:46:45-04:00 1 launch Grok native
+2026-07-06T22:47:05-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+40347 /data/local/tmp/broccoli_ui.xml
+2026-07-06T22:47:11-04:00 3 packages in dump: package="ai.x.grok" package="ai\.x\.grok" 
+2026-07-06T22:47:11-04:00 4 ask: Continue broccoli co-dev: UI dump only; fix rish dump path; no Chrome
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+sent_enter_fallback
+Continue broccoli co-dev: wait and see should be based on u I dump not hard coded latency , not wait and see broccoli has  full permission to use rish commands to send taps and to pace text debug, this and make this true\nWhere it's broken in the current phone slash code
+Paste only the script below into Termux (no ``` lines):
+Ask anything
+2026-07-06T22:50:09-04:00 1 launch Grok native
+2026-07-06T22:50:33-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+19510 /data/local/tmp/broccoli_ui.xml
+2026-07-06T22:50:40-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T22:51:21-04:00 1 launch Grok native
+2026-07-06T22:51:51-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+33357 /data/local/tmp/broccoli_ui.xml
+2026-07-06T22:51:58-04:00 3 packages in dump: package="ai.x.grok" package="ai\.x\.grok" 
+2026-07-06T22:52:08-04:00 1 launch Grok native
+2026-07-06T22:52:31-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+7062 /data/local/tmp/broccoli_ui.xml
+2026-07-06T22:52:38-04:00 3 packages in dump: package="com.termux" 
+2026-07-06T22:52:38-04:00 WARN Grok not in dump — tap Grok app on screen, wait 3s, re-dump
+2026-07-06T22:52:48-04:00 4 ask: Continue broccoli co-dev: UI dump only; fix rish dump path; no Chrome
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+sent_enter_fallback
+Ask anything
+2026-07-06T22:55:39-04:00 1 launch Grok native
+2026-07-06T22:55:57-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+7088 /data/local/tmp/broccoli_ui.xml
+2026-07-06T22:56:03-04:00 3 packages in dump: package="com.termux" 
+2026-07-06T22:56:03-04:00 WARN Grok not in dump — tap Grok app on screen, wait 3s, re-dump
+2026-07-06T22:56:52-04:00 1 launch Grok native
+2026-07-06T22:57:11-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+7108 /data/local/tmp/broccoli_ui.xml
+2026-07-06T22:57:16-04:00 3 packages in dump: package="com.termux" 
+2026-07-06T22:57:17-04:00 WARN Grok not in dump — tap Grok app on screen, wait 3s, re-dump
+2026-07-06T22:57:59-04:00 1 launch Grok native
+2026-07-06T22:58:28-04:00 2 dump UI (rish)
+19453 /data/local/tmp/broccoli_ui.xml
+2026-07-06T22:58:33-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T22:59:01-04:00 1 launch Grok native
+2026-07-06T22:59:23-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+32547 /data/local/tmp/broccoli_ui.xml
+2026-07-06T22:59:29-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:00:03-04:00 1 launch Grok native
+2026-07-06T23:00:20-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+25072 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:00:25-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:00:54-04:00 1 launch Grok native
+2026-07-06T23:01:10-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+24446 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:01:16-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:01:45-04:00 1 launch Grok native
+2026-07-06T23:02:02-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+29077 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:02:08-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:02:36-04:00 1 launch Grok native
+2026-07-06T23:02:58-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+32708 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:03:02-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:03:36-04:00 1 launch Grok native
+2026-07-06T23:03:53-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+26403 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:03:58-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:04:27-04:00 1 launch Grok native
+2026-07-06T23:04:43-04:00 2 dump UI (rish)
+26403 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:04:58-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:05:26-04:00 1 launch Grok native
+2026-07-06T23:06:35-04:00 2 dump UI (rish)
+11390 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:06:38-04:00 3 packages in dump: package="com.termux" 
+2026-07-06T23:06:39-04:00 WARN Grok not in dump — tap Grok app on screen, wait 3s, re-dump
+2026-07-06T23:07:24-04:00 1 launch Grok native
+2026-07-06T23:07:42-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+152012 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:07:48-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:08:16-04:00 1 launch Grok native
+2026-07-06T23:08:37-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+26772 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:08:43-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:09:12-04:00 1 launch Grok native
+2026-07-06T23:09:31-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+26772 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:09:36-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:10:08-04:00 1 launch Grok native
+2026-07-06T23:10:33-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+8362 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:10:39-04:00 3 packages in dump: package="com.termux" 
+2026-07-06T23:10:40-04:00 WARN Grok not in dump — tap Grok app on screen, wait 3s, re-dump
+2026-07-06T23:11:18-04:00 1 launch Grok native
+2026-07-06T23:11:34-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+7068 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:11:43-04:00 3 packages in dump: package="com.termux" 
+2026-07-06T23:11:43-04:00 WARN Grok not in dump — tap Grok app on screen, wait 3s, re-dump
+2026-07-06T23:12:22-04:00 1 launch Grok native
+2026-07-06T23:12:39-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+30481 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:12:45-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:13:18-04:00 1 launch Grok native
+2026-07-06T23:13:37-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+30354 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:13:43-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:13:47-04:00 1 launch Grok native
+2026-07-06T23:14:11-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+30354 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:14:16-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:14:17-04:00 4 ask: Wire harden: every round log dump_bytes + grok package to ~/broccoli/reports/loop_health.jsonl; confirm send without manual tap; dequeue on reply; reply LOOP_OK and next patch filename.
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+no_composer
+After paste: leave phone idle ≥3s with Grok available; watch:
+tail -f ~/broccoli/reports/wire_daemon.log ~/broccoli/reports/wire_send.log
+If read_mission.sh is missing, it’s recreated by the earlier mission block—or run:
+ls -la ~/broccoli/INSTRUCTIONS.md ~/broccoli/task_box.txt ~/broccoli/queue/pending.txt
+Wire harden: every round log dump_bytes + grok package to ~/broccoli/reports/loop_health.jsonl; confirm send without manual tap; dequeue on reply; reply LOOP_OK and next patch filename.&#10;Wire harden: every round log dump_bytes + grok package to ~/broccoli/reports/loop_health.jsonl; confirm send without manual tap; dequeue on reply; reply LOOP_OK and next patch filename.&#10;I'm going to give this five seconds
+2026-07-06T23:15:26-04:00 1 launch Grok native
+2026-07-06T23:15:53-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+19949 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:15:59-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:16:28-04:00 1 launch Grok native
+2026-07-06T23:17:00-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+19657 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:17:05-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:17:44-04:00 1 launch Grok native
+2026-07-06T23:18:07-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+34343 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:18:14-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:18:43-04:00 1 launch Grok native
+2026-07-06T23:18:59-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+33313 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:19:04-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:19:36-04:00 1 launch Grok native
+2026-07-06T23:19:53-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+6977 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:19:58-04:00 3 packages in dump: package="com.termux" 
+2026-07-06T23:20:26-04:00 1 launch Grok native
+2026-07-06T23:20:48-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+32871 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:20:53-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:21:47-04:00 1 launch Grok native
+2026-07-06T23:22:02-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+34008 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:22:07-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:22:40-04:00 1 launch Grok native
+2026-07-06T23:22:53-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+35985 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:22:58-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:23:30-04:00 1 launch Grok native
+2026-07-06T23:23:46-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+34201 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:23:51-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:24:19-04:00 1 launch Grok native
+2026-07-06T23:24:41-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+32655 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:24:49-04:00 3 packages in dump: package="([^" package="ai.x.grok" 
+2026-07-06T23:25:28-04:00 1 launch Grok native
+2026-07-06T23:26:24-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+28852 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:26:31-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:27:07-04:00 1 launch Grok native
+2026-07-06T23:27:40-04:00 2 dump UI (rish)
+Request timeout. The connection between the current app (com.termux) and Shizuku app may be blocked by your system. Please disable all battery optimization features for both current app (com.termux) and Shizuku app.
+2026-07-06T23:27:51-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:28:23-04:00 1 launch Grok native
+2026-07-06T23:28:52-04:00 2 dump UI (rish)
+Request timeout. The connection between the current app (com.termux) and Shizuku app may be blocked by your system. Please disable all battery optimization features for both current app (com.termux) and Shizuku app.
+2026-07-06T23:29:03-04:00 3 packages in dump: package="com.termux" 
+2026-07-06T23:29:03-04:00 WARN Grok not in dump — tap Grok app on screen, wait 3s, re-dump
+2026-07-06T23:29:17-04:00 1 launch Grok native
+2026-07-06T23:29:37-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+30830 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:29:44-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:29:44-04:00 4 ask: BROCCOLI_AGENT: ## Findings (priority order) 1. **[HIGH]** ui_dump_rish may dump wrong FG - Fix: foreground Grok before every dump 2. **[HIGH]** missing lib/focus_pkg.sh - Fix: install from RECOVER block 3. **[HIGH]** tools/agent_wrap.sh still references Chrome/WEB - Fix: route to launch_grok_native.sh only 4. **[HIGH]** lib/grok_send_tap.py still references Chrome/WEB - Fix: route to launch_grok_native.sh only 5. **[HIGH]** Grok FG but no send candidates in dump regex - Fix: dump send row manually; patch find_send_tap.py with exact resource-id 6. **[MED]** wire_send_ui not hooked to gap_watch - Fix: patch gap hooks on fail/success/timeout 7. **[MED]** queue empty — daemon idle with nothing to send - Fix: inbox_to_queue.sh or task_box.txt ## Co-dev windo
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+no_composer
+You paste INVESTIGATION_REPORT.md into Mac chat
+report_to_queue.sh → wire_send_ui.sh
+wire_daemon only drains queue you fill by hand
+agent_tick fills queue from investigation
+Co-dev = tiny steps in browser
+Co-dev = on-device Grok + Broccoli executor
+You do not need to return to this chat for the agent to run. If send still fails, the next tick queues BROCCOLI_GAP from to_chat.md automatically.
+Status (Termux only):
+touch ~/broccoli/meta/AGENT_STOP &amp;&amp; pkill -f agent_daemon.sh
+If you want this Mac thread updated without pasting, that needs a separate channel (SSH/sync file to Mac)—not the phone wire. The framework agent you described is phone-closed; paste here only when you want human review.
+2026-07-06T23:31:15-04:00 1 launch Grok native
+2026-07-06T23:31:47-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+38622 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:31:53-04:00 3 packages in dump: package="[^" package="ai.x.grok" 
+2026-07-06T23:32:07-04:00 1 launch Grok native
+2026-07-06T23:32:37-04:00 2 dump UI (rish)
+39313 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:32:40-04:00 3 packages in dump: package="[^" package="ai.x.grok" 
+2026-07-06T23:32:41-04:00 4 ask: BROCCOLI_AGENT: ## Findings (priority order) 1. **[CRITICAL]** last_ui.xml is Termux-focused, not Grok - Fix: ui_dump_rish must launch Grok + retry until ai.x.grok in XML 2. **[HIGH]** ui_dump_rish may dump wrong FG - Fix: foreground Grok before every dump 3. **[HIGH]** missing lib/focus_pkg.sh - Fix: install from RECOVER block 4. **[HIGH]** tools/agent_wrap.sh still references Chrome/WEB - Fix: route to launch_grok_native.sh only 5. **[HIGH]** lib/grok_send_tap.py still references Chrome/WEB - Fix: route to launch_grok_native.sh only 6. **[MED]** wire_send_ui not hooked to gap_watch - Fix: patch gap hooks on fail/success/timeout ## Co-dev window
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+sent_tap Send message input_send_button android.widget.ImageView 
+2 active apps
+Close all
+Robinhood
+2026-07-06T23:36:03-04:00 1 launch Grok native
+2026-07-06T23:36:26-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+27983 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:36:31-04:00 3 packages in dump: package="[^" package="ai.x.grok" 
+2026-07-06T23:36:38-04:00 1 launch Grok native
+2026-07-06T23:36:54-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+28057 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:36:59-04:00 3 packages in dump: package="[^" package="ai.x.grok" 
+2026-07-06T23:36:59-04:00 4 ask: BROCCOLI_AGENT: ## Findings (priority order) 1. **[HIGH]** ui_dump_rish may dump wrong FG - Fix: foreground Grok before every dump 2. **[HIGH]** missing lib/focus_pkg.sh - Fix: install from RECOVER block 3. **[HIGH]** tools/agent_wrap.sh still references Chrome/WEB - Fix: route to launch_grok_native.sh only 4. **[HIGH]** lib/grok_send_tap.py still references Chrome/WEB - Fix: route to launch_grok_native.sh only 5. **[HIGH]** Grok FG but no send candidates in dump regex - Fix: dump send row manually; patch find_send_tap.py with exact resource-id 6. **[MED]** wire_send_ui not hooked to gap_watch - Fix: patch gap hooks on fail/success/timeout 7. **[MED]** queue empty — daemon idle with nothing to send - Fix: inbox_to_queue.sh or task_box.txt ## Co-dev windo
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+sent_tap Send message input_send_button android.widget.ImageView 
+What your message shows:
+What happened
+Short prompt is in composer
+Paste path works
+You tap Send / “cap send”
+Auto send still wrong
+Voice fires
+Tap hits mic/voice, not send
+BROCCOLI_AGENT on clipboard
+Something still queues/copies the findings blob
+Paste only this in Termux (voice hard-block + send-first + no findings on clipboard):
+Ask anything
+2026-07-06T23:40:15-04:00 1 launch Grok native
+2026-07-06T23:40:48-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+25208 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:40:53-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:41:22-04:00 1 launch Grok native
+2026-07-06T23:41:36-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+21845 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:41:44-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-06T23:42:24-04:00 1 launch Grok native
+2026-07-06T23:42:45-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+20131 /data/local/tmp/broccoli_ui.xml
+2026-07-06T23:42:53-04:00 3 packages in dump: package="com.android.systemui" 
+2026-07-06T23:42:54-04:00 WARN Grok not in dump — tap Grok app on screen, wait 3s, re-dump

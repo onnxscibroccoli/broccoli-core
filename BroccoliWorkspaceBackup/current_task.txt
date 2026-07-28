@@ -1,0 +1,1 @@
+Initialize Broccoli: run self_test.sh, ensure chat_profile inject coords, then report TASK_COMPLETE when done.

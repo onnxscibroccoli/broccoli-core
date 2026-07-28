@@ -1,0 +1,17 @@
+BROCCOLI_PING
+time=2026-07-13T22:20:39-04:00
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": true,
+  "has_send": false,
+  "input_xy": [
+    540,
+    1274
+  ],
+  "send_xy": null
+}
+REPLY: CMD:cd /data/data/com.termux/files/home/broccoli && brocc cycle

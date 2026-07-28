@@ -1,0 +1,95 @@
+Broccoli Status
+================
+Sat Jul 18 02:59:39 EDT 2026
+
+PWD: /data/data/com.termux/files/home/broccoli
+
+Disk:
+Filesystem        Size Used Avail Use% Mounted on
+/dev/block/dm-8   5.3G 5.3G     0 100% /
+tmpfs             1.7G 3.7M  1.7G   1% /dev
+tmpfs             1.7G    0  1.7G   0% /mnt
+/dev/block/dm-18   22M  20M  1.9M  91% /mnt/asec/org.breezyweather-STBlm7r1oG4sfZcd
+/dev/block/dm-19  4.0M 2.8M  1.0M  74% /mnt/asec/github.daisukikaffuchino.rebootnya-qdhuMpFOfBMse7lF
+/dev/block/dm-20  160M 152M  4.8M  97% /mnt/asec/com.google.android.apps.photos-JqZiCg3s9qmQ677l
+/dev/block/dm-21  152M 145M  3.4M  98% /mnt/asec/com.facebook.katana-SIo2ielxFvYd2GWu
+/dev/block/dm-30  1.9M 128K  1.8M   7% /mnt/asec/com.equifax.myequifax-9cQ9fnskxP2cZ52J
+/dev/block/dm-32  111M 107M  2.3M  98% /mnt/asec/com.instagram.android-cM9nMFkB3xO45Hk2
+/dev/block/dm-37   52M  49M  2.2M  96% /mnt/asec/com.brahmadeo.supertonic.tts-tfOcGtPpWQNGmOju
+/dev/block/dm-38  102M  98M  2.6M  98% /mnt/asec/com.google.android.apps.recorder-vW9IdadB3Z5HUerV
+/dev/block/dm-40   14M  12M  1.7M  88% /mnt/asec/moe.reimu.catshare-JeUTbZcATNFXeMIR
+/dev/block/dm-41  1.9M 188K  1.7M  10% /mnt/asec/org.chromium.webapk.a050dab1670cfef62_v2-VkaC9T5vs50RAfpH
+/dev/block/dm-42   14M  13M  1.2M  91% /mnt/asec/dev.zwander.installwithoptions-rYsrhXdMPBdxF2Ps
+/dev/block/dm-45   28M  26M  1.7M  94% /mnt/asec/com.bigos.androdumpper-uNYnS0gTwtiwyRbS
+/dev/block/dm-46  5.0M 3.4M  1.4M  71% /mnt/asec/dev.shadoe.delta-c6AHxdTotbhpKWxW
+/dev/block/dm-47   14M  12M  1.6M  89% /mnt/asec/com.netvor.settings.database.editor-4g468OklccsMCQBN
+/dev/block/dm-9   399M 399M     0 100% /system_ext
+/dev/block/dm-10  1.1G 1.1G     0 100% /vendor
+/dev/block/dm-11  1.6G 1.6G     0 100% /product
+/dev/block/dm-12  1.9M 1.9M     0 100% /odm
+/dev/block/dm-13   33M  33M     0 100% /vendor_dlkm
+/dev/block/dm-14   40K  40K     0 100% /odm_dlkm
+/dev/block/dm-16  242M 155M   82M  66% /prism
+/dev/block/dm-17   19M 1.0M   18M   6% /optics
+tmpfs             1.7G  48K  1.7G   1% /apex
+/dev/block/dm-56   37M  37M     0 100% /apex/com.android.mediaprovider@371766930
+/dev/block/dm-57   11M  11M     0 100% /apex/com.android.adbd@371766700
+/dev/block/loop13 232K 112K  116K  50% /apex/com.android.apex.cts.shim@1
+/dev/block/loop11  22M  22M     0 100% /apex/com.android.btservices@352090000
+/dev/block/loop4  7.4M 7.4M     0 100% /apex/com.android.wifi@352090000
+/dev/block/loop26 4.3M 4.3M     0 100% /apex/com.android.uwb@352090000
+/dev/block/loop20  39M  39M     0 100% /apex/com.android.vndk.v31@1
+/dev/block/dm-58   41M  41M     0 100% /apex/com.android.media.swcodec@371766810
+/dev/block/loop21 232K 168K   60K  74% /apex/com.android.devicelock@1
+/dev/block/loop19 5.0M 5.0M     0 100% /apex/com.google.android.widevine@190241014
+/dev/block/loop35  12M  12M     0 100% /apex/com.android.runtime@1
+/dev/block/dm-43  3.2M 3.2M     0 100% /apex/com.android.os.statsd@361420820
+/dev/block/dm-23  1.1M 1.0M   12K  99% /apex/com.android.sdkext@371739000
+/dev/block/dm-36   23M  23M     0 100% /apex/com.android.cellbroadcast@371766830
+/dev/block/dm-49  4.2M 4.2M     0 100% /apex/com.android.appsearch@371766750
+/dev/block/loop9   38M  38M     0 100% /apex/com.android.i18n@1
+/dev/block/loop14 232K  24K  204K  11% /apex/com.samsung.android.camera.unihal@352408080
+/dev/block/loop15 596K 568K   16K  98% /apex/com.android.profiling@352090000
+/dev/block/loop16 1.1M 1.1M  8.0K 100% /apex/com.android.rkpd@352090000
+/dev/block/dm-33  6.0M 6.0M     0 100% /apex/com.android.extservices@371766693
+/dev/block/dm-26   29M  29M     0 100% /apex/com.android.permission@371766830
+/dev/block/loop7  312K 280K   28K  91% /apex/com.android.virt@2
+/dev/block/dm-53  788K 756K   16K  98% /apex/com.android.tzdata@361157000
+/dev/block/dm-44  7.2M 7.2M     0 100% /apex/com.android.media@371766810
+/dev/block/dm-35  7.8M 7.8M     0 100% /apex/com.android.neuralnetworks@371766700
+/dev/block/dm-39   24M  24M     0 100% /apex/com.android.adservices@360918020
+/dev/block/loop38 232K  56K  172K  25% /apex/com.samsung.android.lifeguard@332017701
+/dev/block/dm-54  7.9M 7.8M     0 100% /apex/com.android.conscrypt@371766970
+/dev/block/loop43 2.3M 2.3M     0 100% /apex/com.samsung.android.spqr@432
+/dev/block/loop34 336K 304K   28K  92% /apex/com.samsung.android.shell@342601131
+/dev/block/loop40 232K  24K  204K  11% /apex/com.samsung.android.vital@340000000
+/dev/block/loop27 232K 164K   64K  72% /apex/com.android.hardware.cas@1
+/dev/block/dm-34   43M  43M     0 100% /apex/com.android.art@371766910
+/dev/block/dm-28  836K 808K   12K  99% /apex/com.android.ipsec@371766700
+/dev/block/dm-29   16M  16M     0 100% /apex/com.android.healthfitness@371728010
+/dev/block/dm-27   14M  13M     0 100% /apex/com.android.ondevicepersonalization@360918020
+/dev/block/dm-22   33M  33M     0 100% /apex/com.android.tethering@371744010
+/dev/block/dm-24  232K 104K  124K  46% /apex/com.android.scheduling@371766780
+/dev/block/dm-25  232K  24K  204K  11% /apex/com.android.resolv@371744010
+/dev/block/loop39 2.1M 2.0M     0 100% /apex/com.google.mainline.primary.libs@351165000
+/dev/block/dm-31  5.4M 5.4M     0 100% /apex/com.android.configinfrastructure@371766830
+tmpfs             1.7G 4.0K  1.7G   1% /bootstrap-apex
+/dev/block/loop0   38M  38M     0 100% /bootstrap-apex/com.android.i18n@1
+/dev/block/loop2  788K 756K   16K  98% /bootstrap-apex/com.android.tzdata@360527580
+/dev/block/loop1   12M  12M     0 100% /bootstrap-apex/com.android.runtime@1
+tmpfs             1.7G 776K  1.7G   1% /linkerconfig
+tmpfs             1.7G    0  1.7G   0% /tmp
+/dev/block/sdc53  730M  24M  691M   4% /cache
+/dev/block/sdc3   2.9M 468K  2.2M  17% /efs
+/dev/fuse          48G  45G  3.1G  94% /storage/emulated
+/dev/fuse         117G 114G  2.9G  98% /storage/0008-00A0
+
+Drive:
+Total:   15 GiB
+Used:    8.011 GiB
+Free:    6.980 GiB
+Trashed: 7.612 MiB
+Other:   9.937 MiB
+
+Python:
+['__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__', 'harvest_payload', 'hashlib', 'json', 'os', 'precondition', 'run', 'save', 'thread_id', 'time']

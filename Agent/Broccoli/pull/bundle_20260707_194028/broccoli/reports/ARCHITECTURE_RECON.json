@@ -1,0 +1,545 @@
+{
+  "ts": "2026-07-07T07:21:45.641496+00:00",
+  "which_brocc": "/data/data/com.termux/files/home/brocc",
+  "which_rish": "/data/data/com.termux/files/usr/bin/rish",
+  "grok_packages": "package:ai.x.grok",
+  "tools": {
+    "agent_apply_reply.sh": {
+      "lines": 14,
+      "brocc": true,
+      "rish": false
+    },
+    "agent_consume_iteration.sh": {
+      "lines": 7,
+      "brocc": true,
+      "rish": true
+    },
+    "agent_daemon.sh": {
+      "lines": 47,
+      "brocc": true,
+      "rish": true
+    },
+    "agent_ensure_running.sh": {
+      "lines": 15,
+      "brocc": true,
+      "rish": false
+    },
+    "agent_git_vault.sh": {
+      "lines": 46,
+      "brocc": true,
+      "rish": false
+    },
+    "agent_handler.sh": {
+      "lines": 45,
+      "brocc": true,
+      "rish": true
+    },
+    "agent_health.sh": {
+      "lines": 31,
+      "brocc": true,
+      "rish": true
+    },
+    "agent_loop.sh": {
+      "lines": 3,
+      "brocc": true,
+      "rish": false
+    },
+    "agent_research_private.sh": {
+      "lines": 8,
+      "brocc": true,
+      "rish": false
+    },
+    "agent_should_wire.sh": {
+      "lines": 4,
+      "brocc": true,
+      "rish": false
+    },
+    "agent_tick.sh": {
+      "lines": 22,
+      "brocc": true,
+      "rish": false
+    },
+    "agent_watch_grok_chat.sh": {
+      "lines": 32,
+      "brocc": true,
+      "rish": true
+    },
+    "agent_wire_rish.sh": {
+      "lines": 10,
+      "brocc": true,
+      "rish": true
+    },
+    "agent_wrap.sh": {
+      "lines": 68,
+      "brocc": true,
+      "rish": true
+    },
+    "apply_inbox_patch.sh": {
+      "lines": 10,
+      "brocc": true,
+      "rish": false
+    },
+    "b_cli.sh": {
+      "lines": 24,
+      "brocc": true,
+      "rish": true
+    },
+    "brocc_loop.sh": {
+      "lines": 9,
+      "brocc": true,
+      "rish": false
+    },
+    "broccoli-daemon.sh": {
+      "lines": 2,
+      "brocc": true,
+      "rish": false
+    },
+    "broccoli_agent.py": {
+      "lines": 134,
+      "brocc": true,
+      "rish": true
+    },
+    "broccoli_brain.py": {
+      "lines": 89,
+      "brocc": true,
+      "rish": true
+    },
+    "broccoli_entry.sh": {
+      "lines": 45,
+      "brocc": true,
+      "rish": true
+    },
+    "broccoli_pull.sh": {
+      "lines": 32,
+      "brocc": true,
+      "rish": false
+    },
+    "broccoli_supervisor.sh": {
+      "lines": 16,
+      "brocc": true,
+      "rish": false
+    },
+    "broccoli_supervisor_loop.sh": {
+      "lines": 3,
+      "brocc": true,
+      "rish": false
+    },
+    "broccoli_worker.sh": {
+      "lines": 7,
+      "brocc": true,
+      "rish": false
+    },
+    "build_repair_wire_prompt.sh": {
+      "lines": 6,
+      "brocc": true,
+      "rish": true
+    },
+    "codev_loop.sh": {
+      "lines": 28,
+      "brocc": true,
+      "rish": false
+    },
+    "codevel_boot.sh": {
+      "lines": 8,
+      "brocc": true,
+      "rish": false
+    },
+    "codevel_wire.sh": {
+      "lines": 153,
+      "brocc": true,
+      "rish": true
+    },
+    "codevel_wire_fast.sh": {
+      "lines": 147,
+      "brocc": true,
+      "rish": true
+    },
+    "collab_rish_loop.sh": {
+      "lines": 2,
+      "brocc": true,
+      "rish": false
+    },
+    "consume_response.sh": {
+      "lines": 21,
+      "brocc": true,
+      "rish": false
+    },
+    "coordinator_run.sh": {
+      "lines": 20,
+      "brocc": true,
+      "rish": false
+    },
+    "debug_send_dump.sh": {
+      "lines": 5,
+      "brocc": true,
+      "rish": true
+    },
+    "deliver_to_mac.sh": {
+      "lines": 18,
+      "brocc": true,
+      "rish": false
+    },
+    "detect_interject.sh": {
+      "lines": 13,
+      "brocc": true,
+      "rish": false
+    },
+    "discover_directories.sh": {
+      "lines": 49,
+      "brocc": true,
+      "rish": true
+    },
+    "dismiss_tos_grok.sh": {
+      "lines": 53,
+      "brocc": true,
+      "rish": true
+    },
+    "dump_send_row.sh": {
+      "lines": 27,
+      "brocc": true,
+      "rish": true
+    },
+    "extract_chat_from_xml.py": {
+      "lines": 14,
+      "brocc": true,
+      "rish": false
+    },
+    "extract_grok_code.py": {
+      "lines": 16,
+      "brocc": true,
+      "rish": false
+    },
+    "find_send_tap.py": {
+      "lines": 12,
+      "brocc": true,
+      "rish": true
+    },
+    "gap_analyze.py": {
+      "lines": 148,
+      "brocc": true,
+      "rish": false
+    },
+    "gap_enqueue_chat.sh": {
+      "lines": 9,
+      "brocc": true,
+      "rish": false
+    },
+    "gap_watch.sh": {
+      "lines": 9,
+      "brocc": true,
+      "rish": true
+    },
+    "go_install.sh": {
+      "lines": 7,
+      "brocc": true,
+      "rish": false
+    },
+    "google_secondary_test.py": {
+      "lines": 27,
+      "brocc": true,
+      "rish": false
+    },
+    "grok_foreground_then.sh": {
+      "lines": 49,
+      "brocc": true,
+      "rish": true
+    },
+    "grok_smoke_validate.py": {
+      "lines": 21,
+      "brocc": true,
+      "rish": false
+    },
+    "heal_cycle.sh": {
+      "lines": 9,
+      "brocc": true,
+      "rish": true
+    },
+    "heal_research.sh": {
+      "lines": 12,
+      "brocc": true,
+      "rish": false
+    },
+    "heal_supervisor.sh": {
+      "lines": 9,
+      "brocc": true,
+      "rish": false
+    },
+    "heal_wire_fallback.sh": {
+      "lines": 18,
+      "brocc": true,
+      "rish": true
+    },
+    "inbox_to_queue.sh": {
+      "lines": 10,
+      "brocc": true,
+      "rish": false
+    },
+    "inventory_md_tasks.py": {
+      "lines": 98,
+      "brocc": true,
+      "rish": false
+    },
+    "inventory_md_tasks.sh": {
+      "lines": 152,
+      "brocc": true,
+      "rish": false
+    },
+    "investigate_system.py": {
+      "lines": 257,
+      "brocc": true,
+      "rish": true
+    },
+    "investigate_system.sh": {
+      "lines": 18,
+      "brocc": true,
+      "rish": false
+    },
+    "media_housekeeping.sh": {
+      "lines": 257,
+      "brocc": true,
+      "rish": false
+    },
+    "notify_from_dump.sh": {
+      "lines": 20,
+      "brocc": true,
+      "rish": true
+    },
+    "notify_persistent_agent.sh": {
+      "lines": 8,
+      "brocc": true,
+      "rish": true
+    },
+    "notify_status.sh": {
+      "lines": 33,
+      "brocc": true,
+      "rish": false
+    },
+    "notify_toast.sh": {
+      "lines": 4,
+      "brocc": true,
+      "rish": false
+    },
+    "notify_watch.sh": {
+      "lines": 46,
+      "brocc": true,
+      "rish": true
+    },
+    "open_codevel.sh": {
+      "lines": 22,
+      "brocc": true,
+      "rish": true
+    },
+    "parse_grok_ui.py": {
+      "lines": 22,
+      "brocc": true,
+      "rish": false
+    },
+    "phrase_grok_dump.py": {
+      "lines": 51,
+      "brocc": true,
+      "rish": false
+    },
+    "prepare_mac_bundle.sh": {
+      "lines": 26,
+      "brocc": true,
+      "rish": false
+    },
+    "prepare_mac_bundle_redacted.sh": {
+      "lines": 16,
+      "brocc": true,
+      "rish": false
+    },
+    "pull_mac_output.sh": {
+      "lines": 32,
+      "brocc": true,
+      "rish": false
+    },
+    "pull_spec_gemini.sh": {
+      "lines": 47,
+      "brocc": true,
+      "rish": true
+    },
+    "push_chat_lines_to_inbox.sh": {
+      "lines": 28,
+      "brocc": true,
+      "rish": false
+    },
+    "read_mission.sh": {
+      "lines": 18,
+      "brocc": true,
+      "rish": false
+    },
+    "redact.sh": {
+      "lines": 8,
+      "brocc": true,
+      "rish": false
+    },
+    "reinit_agent.sh": {
+      "lines": 16,
+      "brocc": true,
+      "rish": true
+    },
+    "reply_to_next_action.py": {
+      "lines": 128,
+      "brocc": true,
+      "rish": true
+    },
+    "report_to_queue.sh": {
+      "lines": 2,
+      "brocc": true,
+      "rish": false
+    },
+    "run_doc.sh": {
+      "lines": 21,
+      "brocc": false,
+      "rish": false
+    },
+    "run_grok_smoke.sh": {
+      "lines": 19,
+      "brocc": true,
+      "rish": false
+    },
+    "safe_wire_message.sh": {
+      "lines": 4,
+      "brocc": false,
+      "rish": false
+    },
+    "setup_vault_interactive.sh": {
+      "lines": 19,
+      "brocc": true,
+      "rish": false
+    },
+    "setup_wizard.sh": {
+      "lines": 56,
+      "brocc": true,
+      "rish": false
+    },
+    "show_queue.sh": {
+      "lines": 18,
+      "brocc": true,
+      "rish": false
+    },
+    "smoke_boot.sh": {
+      "lines": 23,
+      "brocc": true,
+      "rish": true
+    },
+    "start_dev_task.sh": {
+      "lines": 23,
+      "brocc": true,
+      "rish": true
+    },
+    "termux_disk_clean.sh": {
+      "lines": 40,
+      "brocc": true,
+      "rish": false
+    },
+    "termux_disk_investigate.sh": {
+      "lines": 96,
+      "brocc": true,
+      "rish": false
+    },
+    "toast_user.sh": {
+      "lines": 8,
+      "brocc": false,
+      "rish": true
+    },
+    "ui_dump_chat.py": {
+      "lines": 59,
+      "brocc": true,
+      "rish": false
+    },
+    "ui_dump_loop.py": {
+      "lines": 133,
+      "brocc": true,
+      "rish": true
+    },
+    "ui_snapshot_save.sh": {
+      "lines": 7,
+      "brocc": true,
+      "rish": false
+    },
+    "ui_state.py": {
+      "lines": 179,
+      "brocc": true,
+      "rish": false
+    },
+    "user_touch_watch.sh": {
+      "lines": 12,
+      "brocc": true,
+      "rish": false
+    },
+    "version_manager.sh": {
+      "lines": 43,
+      "brocc": true,
+      "rish": false
+    },
+    "wire_build_prompt.sh": {
+      "lines": 7,
+      "brocc": true,
+      "rish": false
+    },
+    "wire_daemon.sh": {
+      "lines": 37,
+      "brocc": true,
+      "rish": true
+    },
+    "wire_diag.sh": {
+      "lines": 8,
+      "brocc": true,
+      "rish": true
+    },
+    "wire_latency_test.sh": {
+      "lines": 11,
+      "brocc": true,
+      "rish": false
+    },
+    "wire_loop_full.sh": {
+      "lines": 81,
+      "brocc": true,
+      "rish": true
+    },
+    "wire_send_fast.sh": {
+      "lines": 87,
+      "brocc": true,
+      "rish": true
+    },
+    "wire_send_immediate.sh": {
+      "lines": 31,
+      "brocc": true,
+      "rish": true
+    },
+    "wire_send_ui.sh": {
+      "lines": 33,
+      "brocc": true,
+      "rish": true
+    },
+    "wire_ui_loop.sh": {
+      "lines": 48,
+      "brocc": true,
+      "rish": true
+    },
+    "write_sanitized_prompt.sh": {
+      "lines": 4,
+      "brocc": true,
+      "rish": false
+    }
+  },
+  "pgrep": "7981 python3 /data/data/com.termux/files/home/broccoli/tools/ui_dump_loop.py\n18129 bash /data/data/com.termux/files/home/broccoli/tools/broccoli_supervisor_loop.sh\n20061 python3 /data/data/com.termux/files/home/broccoli/tools/broccoli_brain.py",
+  "queue_bytes": 0,
+  "wire_coords": "GROK_PKG=com.ai.x.grok\nCOLLAB_POLL_SEC=0\nTYPING_IDLE_SEC=1\nWIRE_COOLDOWN_SEC=0\nWIRE_MODE=ask",
+  "agent_log_tail": [
+    "2026-07-07T03:11:20 OK wire_brocc",
+    "2026-07-07T03:11:20 OK queue_cleared",
+    "2026-07-07T03:12:00 TRY queue_bytes=714",
+    "2026-07-07T03:12:00 STEP foreground_grok pkg=com.ai.x.grok",
+    "2026-07-07T03:12:03 TRY queue_bytes=714",
+    "2026-07-07T03:12:03 STEP foreground_grok pkg=com.ai.x.grok",
+    "2026-07-07T03:12:20 OK foreground_rish_am_start",
+    "2026-07-07T03:12:20 TRY brocc_ask len=714",
+    "2026-07-07T03:13:10 brocc rc=0 tail=one of the infrastructures in order to do this === BROCCOLI_DONE === grok OK Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok } ",
+    "2026-07-07T03:13:10 OK wire_brocc",
+    "2026-07-07T03:13:10 OK queue_cleared",
+    "2026-07-07T03:21:40 OK broccoli_brain started WIRE_MODE=ask"
+  ]
+}

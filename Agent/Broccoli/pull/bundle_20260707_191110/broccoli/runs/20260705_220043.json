@@ -1,0 +1,5 @@
+{
+  "prompt": "Reply in under 10 lines. Start with NEXT_STEP:\nOne fix for Broccoli (Termux+Shizuku): clear_composer was too slow; send tap 1001,1338 not Enter.\nGive one Termux patch idea and one test: python3 ~/broccoli_bootstrap.py grok-smoke",
+  "reply": "",
+  "ts": "20260705_220043"
+}

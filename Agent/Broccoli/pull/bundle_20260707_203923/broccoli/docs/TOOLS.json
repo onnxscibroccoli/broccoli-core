@@ -1,0 +1,27 @@
+{
+  "schema": "broccoli-tools-v1",
+  "generated_ts": "2026-07-07 17:33:12",
+  "brocc_commands": [
+    "a11y-dump",
+    "agent",
+    "agent-context",
+    "clip-test",
+    "google-ask",
+    "google-smoke",
+    "health-full",
+    "launch-grok",
+    "loop-off",
+    "loop-on",
+    "loop-once",
+    "mac-ingest",
+    "pull-clip",
+    "pull-report",
+    "pull-rish",
+    "pulse",
+    "pulse-start",
+    "pulse-stop",
+    "repair",
+    "smoke",
+    "sync-storage"
+  ]
+}

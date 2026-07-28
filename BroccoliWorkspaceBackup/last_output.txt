@@ -1,0 +1,24 @@
+PASS: dir_writable
+PASS: rish_wrapper
+PASS: host_py
+PASS: chat_scraper
+PASS: chat_profile
+PASS: profile_json
+PASS: state_rw
+FAIL: ui_dump
+FAIL: scrape_once
+PASS: termux_clipboard
+PASS: copy_fetch_sh
+FAIL: rish_echo
+FAIL=3
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=ai.x.grok/.main.GrokActivity }
+--- inject.log ---
+[2026-07-08T01:52:54-04:00] clipboard 8260 bytes
+[2026-07-08T01:53:30-04:00] focus chat_text_input 540 2139
+[2026-07-08T01:53:36-04:00] submit keyevent 66 (ENTER)
+[2026-07-08T01:53:40-04:00] done
+[2026-07-08T01:55:06-04:00] clipboard 8260 bytes
+[2026-07-08T01:58:18-04:00] clipboard 28 bytes
+[2026-07-08T01:58:33-04:00] clipboard 28 bytes
+[2026-07-08T01:58:54-04:00] clipboard 28 bytes
+--- last_cmd cleared ---

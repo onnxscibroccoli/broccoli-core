@@ -1,0 +1,74 @@
+{
+  "ts": "2026-07-07 18:51:46",
+  "issues": [
+    {
+      "file": "broccoli_agent_context.py",
+      "issue": "importlib_bootstrap",
+      "fix": "use subprocess"
+    },
+    {
+      "file": "broccoli_bootstrap.py",
+      "issue": "sleep_3",
+      "line": "time.sleep(3)"
+    },
+    {
+      "file": "broccoli_bootstrap.py",
+      "issue": "sleep_2",
+      "line": "time.sleep(2)"
+    },
+    {
+      "file": "broccoli_bootstrap.py",
+      "issue": "smoke_timeout_120"
+    },
+    {
+      "file": "broccoli_bootstrap.py",
+      "issue": "many_subprocess",
+      "count": 9
+    },
+    {
+      "file": "broccoli_brocc.py",
+      "issue": "importlib_bootstrap",
+      "fix": "use subprocess"
+    },
+    {
+      "file": "broccoli_brocc.py",
+      "issue": "sleep_2",
+      "line": "time.sleep(2)"
+    },
+    {
+      "file": "broccoli_clipboard_test.py",
+      "issue": "importlib_bootstrap",
+      "fix": "use subprocess"
+    },
+    {
+      "file": "broccoli_grok_send_doc.py",
+      "issue": "sleep_2.0",
+      "line": "time.sleep(2.0)"
+    },
+    {
+      "file": "broccoli_perf_scan.py",
+      "issue": "importlib_bootstrap",
+      "fix": "use subprocess"
+    },
+    {
+      "file": "broccoli_perf_scan.py",
+      "issue": "smoke_timeout_120"
+    },
+    {
+      "file": "broccoli_phone_grok_send.py",
+      "issue": "sleep_2.5",
+      "line": "time.sleep(2.5)"
+    },
+    {
+      "file": "broccoli_pull_clip.py",
+      "issue": "importlib_bootstrap",
+      "fix": "use subprocess"
+    },
+    {
+      "file": "broccoli_ui.py",
+      "issue": "importlib_bootstrap",
+      "fix": "use subprocess"
+    }
+  ],
+  "count": 14
+}

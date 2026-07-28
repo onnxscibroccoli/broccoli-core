@@ -1,0 +1,7 @@
+Continue until TASK_COMPLETE. UI verdict: not done yet.
+Reasons: quarry:has_fail
+Previous output:
+
+Test:
+
+Reply with fix as one code block, or ITER_OK / TASK_COMPLETE when done.

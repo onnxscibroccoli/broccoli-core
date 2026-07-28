@@ -1,0 +1,147 @@
+Broccoli Core Verification Report
+Run Date: Thu Jul 23 21:48:31 EDT 2026
+------------------------------------------------
+
+--- Unit TESTS ---
+test_01_runtime_startup (test_core.TestBroccoliCore.test_01_runtime_startup) ... ERROR
+test_02_event_bus (test_core.TestBroccoliCore.test_02_event_bus) ... ok
+test_03_scheduler (test_core.TestBroccoliCore.test_03_scheduler) ... ok
+test_04_governor (test_core.TestBroccoliCore.test_04_governor) ... ERROR
+test_05_accessibility_driver (test_core.TestBroccoliCore.test_05_accessibility_driver) ... ok
+test_06_semantic_parser (test_core.TestBroccoliCore.test_06_semantic_parser) ... ok
+test_07_planner (test_core.TestBroccoliCore.test_07_planner) ... ok
+test_08_workflow_executor (test_core.TestBroccoliCore.test_08_workflow_executor) ... ok
+test_09_provider_manager (test_core.TestBroccoliCore.test_09_provider_manager) ... ok
+test_10_knowledge_graph (test_core.TestBroccoliCore.test_10_knowledge_graph) ... ok
+test_11_agent_coordinator (test_core.TestBroccoliCore.test_11_agent_coordinator) ... ok
+test_12_plugin_loader (test_core.TestBroccoliCore.test_12_plugin_loader) ... ok
+
+======================================================================
+ERROR: test_01_runtime_startup (test_core.TestBroccoliCore.test_01_runtime_startup)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli-core/tests/test_core.py", line 15, in test_01_runtime_startup
+    main = safe_import("main")
+  File "/data/data/com.termux/files/home/broccoli-core/tests/test_core.py", line 9, in safe_import
+    return importlib.import_module(module_name)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.14/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1406, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1342, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 938, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "/data/data/com.termux/files/home/broccoli-core/runtime/main.py", line 9, in <module>
+    from governor.engine import Governor
+  File "/data/data/com.termux/files/home/broccoli-core/governor/engine.py", line 67
+    def __init__(self):
+IndentationError: unexpected indent
+
+======================================================================
+ERROR: test_04_governor (test_core.TestBroccoliCore.test_04_governor)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli-core/tests/test_core.py", line 30, in test_04_governor
+    engine = safe_import("governor.engine")
+  File "/data/data/com.termux/files/home/broccoli-core/tests/test_core.py", line 9, in safe_import
+    return importlib.import_module(module_name)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.14/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1406, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1342, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 938, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 755, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 893, in get_code
+  File "<frozen importlib._bootstrap_external>", line 823, in source_to_code
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "/data/data/com.termux/files/home/broccoli-core/governor/engine.py", line 67
+    def __init__(self):
+IndentationError: unexpected indent
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.229s
+
+FAILED (errors=2)
+
+--- Integration TESTS ---
+test_bus_to_scheduler_wiring (test_integration.TestSystemIntegration.test_bus_to_scheduler_wiring) ... ERROR
+test_governor_supervision (test_integration.TestSystemIntegration.test_governor_supervision) ... ERROR
+
+======================================================================
+ERROR: test_bus_to_scheduler_wiring (test_integration.TestSystemIntegration.test_bus_to_scheduler_wiring)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli-core/integration/test_integration.py", line 16, in setUp
+    self.governor = safe_import("governor.engine")
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/home/broccoli-core/integration/test_integration.py", line 8, in safe_import
+    return importlib.import_module(module_name)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.14/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1406, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1342, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 938, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 755, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 893, in get_code
+  File "<frozen importlib._bootstrap_external>", line 823, in source_to_code
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "/data/data/com.termux/files/home/broccoli-core/governor/engine.py", line 67
+    def __init__(self):
+IndentationError: unexpected indent
+
+======================================================================
+ERROR: test_governor_supervision (test_integration.TestSystemIntegration.test_governor_supervision)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli-core/integration/test_integration.py", line 16, in setUp
+    self.governor = safe_import("governor.engine")
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/home/broccoli-core/integration/test_integration.py", line 8, in safe_import
+    return importlib.import_module(module_name)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.14/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1406, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1342, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 938, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 755, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 893, in get_code
+  File "<frozen importlib._bootstrap_external>", line 823, in source_to_code
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "/data/data/com.termux/files/home/broccoli-core/governor/engine.py", line 67
+    def __init__(self):
+IndentationError: unexpected indent
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.022s
+
+FAILED (errors=2)
+
+--- Simulation & Stress TESTS ---
+test_01_event_flood (test_stress.TestSystemSimulation.test_01_event_flood)
+Test system behavior under massive event load. ... ok
+test_02_thread_safety (test_stress.TestSystemSimulation.test_02_thread_safety)
+Verify thread safety in concurrent access scenarios. ... ok
+test_03_memory_leak (test_stress.TestSystemSimulation.test_03_memory_leak)
+Detect memory leaks during simulated continuous operation. ... ok
+test_04_recovery_and_failover (test_stress.TestSystemSimulation.test_04_recovery_and_failover)
+Simulate a component crash and verify governor recovery mechanism. ... ok
+test_05_long_duration_stability (test_stress.TestSystemSimulation.test_05_long_duration_stability)
+Simulate uptime stability over continuous cycles. ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.136s
+
+OK
+STATUS: FAILED

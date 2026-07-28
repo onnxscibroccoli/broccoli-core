@@ -1,0 +1,7 @@
+{
+  "status": "RUNNING",
+  "round": 0,
+  "phase": "research",
+  "reason": "post_reboot_resume",
+  "user_done_note": "user-done"
+}

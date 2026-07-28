@@ -1,0 +1,65 @@
+#!/data/data/com.termux/files/usr/bin/bash
+set -euo pipefail
+export PATH="$HOME/bin:$PATH:/data/data/com.termux/files/usr/bin"
+CMD="${1:-}"
+shift || true
+case "$CMD" in
+  health|launch-grok|grok-dump|grok-recon|grok-fill-test|grok-smoke|run-once|watch)
+    exec python3 "$HOME/broccoli_bootstrap.py" "$CMD" "$@"
+    ;;
+  grok-send|grok-ask)
+    exec python3 "$HOME/broccoli_bootstrap.py" "$CMD" "$@"
+    ;;
+  smoke)
+    exec python3 "$HOME/broccoli_bootstrap.py" grok-smoke "$@"
+    ;;
+  send)
+    exec python3 "$HOME/broccoli_bootstrap.py" grok-send "$@"
+    ;;
+  ask)
+    exec python3 "$HOME/broccoli_bootstrap.py" grok-ask "$@"
+    ;;
+  fill-test)
+    exec python3 "$HOME/broccoli_bootstrap.py" grok-fill-test "$@"
+    ;;
+  queue-add)
+    mkdir -p "$HOME/broccoli/queue"
+    echo "$*" >> "$HOME/broccoli/queue/pending.txt"
+    echo "queued: $*"
+    ;;
+  *)
+    echo "brocc: health | launch-grok | fill-test | send '...' | ask '...' | smoke | dump | recon | run-once | watch | queue-add ASK|..."
+    exec python3 "$HOME/broccoli_bootstrap.py" "${CMD:-health}" "$@" 2>/dev/null || true
+    python3 "$HOME/broccoli_bootstrap.py" health
+    ;;
+esac
+
+case "${1:-}" in
+  show-queue|show_queue|queue) exec bash "$HOME/broccoli/tools/show_queue.sh" ;;
+  start-dev|start|wire-once) exec bash "$HOME/broccoli/tools/wire_loop_full.sh" once ;;
+  wire-in) exec bash "$HOME/broccoli/tools/codevel_wire_fast.sh" in ;;
+  wire-out) shift; exec bash "$HOME/broccoli/tools/codevel_wire_fast.sh" out "$@" ;;
+  wire-dump|ui-dump) bash "$HOME/broccoli/lib/ui_dump_rish.sh"; exec python3 "$HOME/broccoli/tools/ui_dump_chat.py" report ;;
+esac
+
+mac-ingest)
+  python3 "$HOME/broccoli_mac_ingest.py" ;;
+agent-context)
+  python3 "$HOME/broccoli_agent_context.py" collect ;;
+agent)
+  python3 "$HOME/broccoli_agent.py" cycle ;;
+health-full)
+  python3 "$HOME/broccoli_agent.py" health-full ;;
+repair)
+  python3 "$HOME/broccoli_agent.py" repair ;;
+pulse)
+  python3 "$HOME/broccoli_pulse.py" once ;;
+pulse-start)
+  nohup python3 "$HOME/broccoli_pulse.py" loop 7 >>"$HOME/broccoli/daemon.log" 2>&1 &
+  termux-toast -s "Broccoli pulse 7s" ;;
+pulse-stop)
+  python3 "$HOME/broccoli_pulse.py" stop ;;
+manual-on)
+  touch "$HOME/broccoli/user/MANUAL_ONLY"; termux-toast -s "MANUAL_ONLY on" ;;
+manual-off)
+  rm -f "$HOME/broccoli/user/MANUAL_ONLY"; termux-toast -s "agent auto on" ;;

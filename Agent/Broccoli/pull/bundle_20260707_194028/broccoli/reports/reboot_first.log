@@ -1,0 +1,60 @@
+=== reboot_first 2026-07-06T21:39:06-04:00 ===
+cmd: Failure calling service settings: Failed transaction (2147483646)
+Starting: Intent { act=android.settings.WIFI_SETTINGS }
+{
+  "bssid": "02:00:00:00:00:00",
+  "frequency_mhz": -1,
+  "ip": "0.0.0.0",
+  "link_speed_mbps": -1,
+  "mac_address": "02:00:00:00:00:00",
+  "network_id": -1,
+  "rssi": -127,
+  "ssid": "<unknown ssid>",
+  "ssid_hidden": false,
+  "supplicant_state": "DISCONNECTED"
+}
+Starting: Intent { act=android.settings.APPLICATION_DEVELOPMENT_SETTINGS }
+Starting: Intent { cmp=com.termux/.app.TermuxActivity }
+AIM_RISH ok try=1
+=== reboot_first end ===
+=== reboot_first 2026-07-06T21:42:05-04:00 ===
+cmd: Failure calling service settings: Failed transaction (2147483646)
+Starting: Intent { act=android.settings.WIFI_SETTINGS }
+{
+  "bssid": "02:00:00:00:00:00",
+  "frequency_mhz": -1,
+  "ip": "0.0.0.0",
+  "link_speed_mbps": -1,
+  "mac_address": "02:00:00:00:00:00",
+  "network_id": -1,
+  "rssi": -127,
+  "ssid": "<unknown ssid>",
+  "ssid_hidden": false,
+  "supplicant_state": "DISCONNECTED"
+}
+Starting: Intent { act=android.settings.APPLICATION_DEVELOPMENT_SETTINGS }
+Starting: Intent { cmp=moe.shizuku.privileged.api/.management.ManagementActivity }
+Starting: Intent { act=android.intent.action.VIEW dat=shizuku://management/... }
+Starting: Intent { cmp=com.termux/.app.TermuxActivity }
+AIM_RISH ok try=1
+=== reboot_first end ===
+Terminated                 nohup bash "$HOME/broccoli/tools/brocc_loop.sh" >> "$HOME/broccoli/reports/loop.log" 2>&1
+Terminated                 nohup bash "$HOME/broccoli/tools/brocc_loop.sh" >> "$HOME/broccoli/reports/loop.log" 2>&1
+=== codevel_reinit 2026-07-06T21:48:24-04:00 ===
+Starting: Intent { cmp=com.termux/.app.TermuxActivity }
+AIM_RISH ok try=1
+uid=2000(shell) gid=2000(shell) groups=2000(shell),1004(input),1007(log),1011(adb),1015(sdcard_rw),1028(sdcard_r),1078(ext_data_rw),1079(ext_obb_rw),3001(net_bt_admin),3002(net_bt),3003(inet),3006(net_bw_stats),3009(readproc),3011(uhid),3012(readtracefs) context=u:r:shell:s0
+=== codevel_reinit end ===
+=== codevel_reinit 2026-07-06T22:10:46-04:00 ===
+Starting: Intent { cmp=com.termux/.app.TermuxActivity }
+AIM_RISH wait try=1/8 (start Shizuku + Rish on device)
+AIM_RISH ok try=2
+=== codevel_reinit end ===
+=== codevel_reinit 2026-07-07T01:33:15-04:00 ===
+Starting: Intent { cmp=com.termux/.app.TermuxActivity }
+AIM_RISH ok try=1
+=== codevel_reinit end ===
+[?2004h[0;32m~/broccoli/boot[0m [0;97m$[0m echo "=== codevel_reinit $(date -Iseconds) ==="
+[?2004l=== codevel_reinit 2026-07-07T11:49:54-04:00 ===
+[?2004h[0;32m~/broccoli/boot[0m [0;97m$[0m am start -n com.termux/com.termux.app.TermuxActivity 2>/dev
+[?2004lbash: /dev: Is a directory

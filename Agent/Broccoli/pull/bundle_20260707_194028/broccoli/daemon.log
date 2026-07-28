@@ -1,0 +1,961 @@
+daemon 14931 Sun Jul  5 22:10:43 EDT 2026
+=== worker Sun Jul  5 22:10:43 EDT 2026 ===
+--- grok 00_project_bootstrap.txt ---
+=== BROCCOLI REPORT ===
+time: 2026-07-05 22:12:54
+provider: grok
+job: 00_project_bootstrap.txt
+status: OK
+reply: STEP launch_grok
+  focus: mCurrentFocus=Window{f6e5de u0 ai.x.grok/ai.x.grok.main.GrokActivity}
+STEP dump_ui
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?><hierarchy rotation="0"><node index="0" text="" resource-id="" class="android.widget.FrameLayout" package="ai.x.grok" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" bounds="[0,0][1080,2408]"><node index="0" text="" resource-id="" class="android.widget.LinearLayout" package="ai.x.grok" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" bounds="[0,0][1080,2408]"><node index="0" text="" resource-id="" class="android.widget.FrameLayout" package="ai.x.grok" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" bounds="[0,0][1080,2408]"><node index="0" text="" resource-id="ai.x.grok:id/action_bar_root" class="android.widget.LinearLayout" package="ai.x.grok" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" bounds="[0,0][1080,2408]"><node index="0" text="" resource-id="android:id/content" class="android.widget.FrameLayout" package="ai.x.grok" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" bounds="[0,0][1080,2408]"><node index="0" text="" resource-id="" class="androidx.compose.ui.platform.ComposeView" package="ai.x.grok" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusab
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+=== idle Sun Jul  5 22:13:04 EDT 2026 ===
+=== worker Sun Jul  5 22:13:19 EDT 2026 ===
+=== idle Sun Jul  5 22:13:24 EDT 2026 ===
+=== worker Sun Jul  5 22:13:39 EDT 2026 ===
+=== idle Sun Jul  5 22:13:44 EDT 2026 ===
+=== worker Sun Jul  5 22:13:59 EDT 2026 ===
+=== idle Sun Jul  5 22:14:02 EDT 2026 ===
+=== worker Sun Jul  5 22:14:17 EDT 2026 ===
+=== idle Sun Jul  5 22:14:20 EDT 2026 ===
+=== worker Sun Jul  5 22:14:35 EDT 2026 ===
+=== idle Sun Jul  5 22:14:40 EDT 2026 ===
+=== worker Sun Jul  5 22:14:55 EDT 2026 ===
+=== idle Sun Jul  5 22:15:00 EDT 2026 ===
+=== worker Sun Jul  5 22:15:15 EDT 2026 ===
+=== idle Sun Jul  5 22:15:18 EDT 2026 ===
+=== worker Sun Jul  5 22:15:33 EDT 2026 ===
+=== idle Sun Jul  5 22:15:36 EDT 2026 ===
+=== worker Sun Jul  5 22:15:52 EDT 2026 ===
+=== idle Sun Jul  5 22:15:55 EDT 2026 ===
+=== worker Sun Jul  5 22:16:11 EDT 2026 ===
+--- grok 1783304154.txt ---
+Re-queue jobs with brocc ask grok '…'; compose already merges PROJECT + latest + thread.
+=== BROCCOLI REPORT ===
+time: 2026-07-05 22:18:02
+provider: grok
+job: grok-ask
+status: OK
+reply: Re-queue jobs with brocc ask grok '…'; compose already merges PROJECT + latest + thread.
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+Re-queue jobs with brocc ask grok '…'; compose already merges PROJECT + latest + thread.
+=== BROCCOLI REPORT ===
+time: 2026-07-05 22:18:08
+provider: grok
+job: 1783304154.txt
+status: OK
+reply: Re-queue jobs with brocc ask grok '…'; compose already merges PROJECT + latest + thread.
+=== BROCCOLI REPORT ===
+time: 2026-07-05 22:18:02
+provider: grok
+job: grok-ask
+status: OK
+reply: Re-queue jobs with brocc ask grok '…'; compose already merges PROJECT + latest + thread.
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+Re-queue jobs with brocc ask grok '…'; compose already merges PROJECT + latest + thread.
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+=== idle Sun Jul  5 22:18:19 EDT 2026 ===
+=== worker Sun Jul  5 22:18:34 EDT 2026 ===
+=== idle Sun Jul  5 22:18:36 EDT 2026 ===
+=== worker Sun Jul  5 22:18:51 EDT 2026 ===
+=== idle Sun Jul  5 22:18:54 EDT 2026 ===
+=== worker Sun Jul  5 22:19:09 EDT 2026 ===
+=== idle Sun Jul  5 22:19:12 EDT 2026 ===
+=== worker Sun Jul  5 22:19:27 EDT 2026 ===
+=== idle Sun Jul  5 22:19:32 EDT 2026 ===
+=== worker Sun Jul  5 22:19:47 EDT 2026 ===
+=== idle Sun Jul  5 22:19:52 EDT 2026 ===
+=== worker Sun Jul  5 22:20:07 EDT 2026 ===
+=== idle Sun Jul  5 22:20:13 EDT 2026 ===
+=== worker Sun Jul  5 22:20:28 EDT 2026 ===
+=== idle Sun Jul  5 22:20:34 EDT 2026 ===
+=== worker Sun Jul  5 22:20:49 EDT 2026 ===
+=== idle Sun Jul  5 22:20:54 EDT 2026 ===
+=== worker Sun Jul  5 22:21:09 EDT 2026 ===
+=== idle Sun Jul  5 22:21:13 EDT 2026 ===
+=== worker Sun Jul  5 22:21:28 EDT 2026 ===
+=== idle Sun Jul  5 22:21:32 EDT 2026 ===
+=== worker Sun Jul  5 22:21:47 EDT 2026 ===
+=== idle Sun Jul  5 22:21:50 EDT 2026 ===
+=== worker Sun Jul  5 22:22:05 EDT 2026 ===
+=== idle Sun Jul  5 22:22:08 EDT 2026 ===
+=== worker Sun Jul  5 22:22:24 EDT 2026 ===
+=== idle Sun Jul  5 22:22:30 EDT 2026 ===
+=== worker Sun Jul  5 22:22:45 EDT 2026 ===
+=== idle Sun Jul  5 22:22:50 EDT 2026 ===
+=== worker Sun Jul  5 22:23:05 EDT 2026 ===
+=== idle Sun Jul  5 22:23:09 EDT 2026 ===
+=== worker Sun Jul  5 22:23:24 EDT 2026 ===
+=== idle Sun Jul  5 22:23:28 EDT 2026 ===
+=== worker Sun Jul  5 22:23:43 EDT 2026 ===
+--- grok 1783304623.txt ---
+Next: wire grok_ask send tap from _UI_SEND after broccoli_ui.py ensure (if not already).
+=== BROCCOLI REPORT ===
+time: 2026-07-05 22:25:43
+provider: grok
+job: grok-ask
+status: OK
+reply: Next: wire grok_ask send tap from _UI_SEND after broccoli_ui.py ensure (if not already).
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+Next: wire grok_ask send tap from _UI_SEND after broccoli_ui.py ensure (if not already).
+=== BROCCOLI REPORT ===
+time: 2026-07-05 22:25:50
+provider: grok
+job: 1783304623.txt
+status: OK
+reply: Next: wire grok_ask send tap from _UI_SEND after broccoli_ui.py ensure (if not already).
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+=== idle Sun Jul  5 22:25:58 EDT 2026 ===
+=== worker Sun Jul  5 22:26:13 EDT 2026 ===
+=== idle Sun Jul  5 22:26:17 EDT 2026 ===
+=== worker Sun Jul  5 22:26:32 EDT 2026 ===
+=== idle Sun Jul  5 22:26:34 EDT 2026 ===
+=== worker Sun Jul  5 22:26:49 EDT 2026 ===
+=== idle Sun Jul  5 22:26:53 EDT 2026 ===
+=== worker Sun Jul  5 22:27:08 EDT 2026 ===
+=== idle Sun Jul  5 22:27:11 EDT 2026 ===
+=== worker Sun Jul  5 22:27:26 EDT 2026 ===
+=== idle Sun Jul  5 22:27:29 EDT 2026 ===
+=== worker Sun Jul  5 22:27:44 EDT 2026 ===
+=== idle Sun Jul  5 22:27:47 EDT 2026 ===
+=== worker Sun Jul  5 22:28:02 EDT 2026 ===
+=== idle Sun Jul  5 22:28:07 EDT 2026 ===
+=== worker Sun Jul  5 22:28:22 EDT 2026 ===
+=== idle Sun Jul  5 22:28:25 EDT 2026 ===
+=== worker Sun Jul  5 22:28:40 EDT 2026 ===
+=== idle Sun Jul  5 22:28:45 EDT 2026 ===
+=== worker Sun Jul  5 22:29:00 EDT 2026 ===
+=== idle Sun Jul  5 22:29:07 EDT 2026 ===
+=== worker Sun Jul  5 22:29:22 EDT 2026 ===
+=== idle Sun Jul  5 22:29:27 EDT 2026 ===
+=== worker Sun Jul  5 22:29:42 EDT 2026 ===
+=== idle Sun Jul  5 22:29:47 EDT 2026 ===
+=== worker Sun Jul  5 22:30:02 EDT 2026 ===
+=== idle Sun Jul  5 22:30:07 EDT 2026 ===
+=== worker Sun Jul  5 22:30:22 EDT 2026 ===
+=== idle Sun Jul  5 22:30:27 EDT 2026 ===
+=== worker Sun Jul  5 22:30:42 EDT 2026 ===
+=== idle Sun Jul  5 22:30:47 EDT 2026 ===
+=== worker Sun Jul  5 22:31:02 EDT 2026 ===
+=== idle Sun Jul  5 22:31:07 EDT 2026 ===
+=== worker Sun Jul  5 22:31:22 EDT 2026 ===
+=== idle Sun Jul  5 22:31:27 EDT 2026 ===
+=== worker Sun Jul  5 22:31:42 EDT 2026 ===
+=== idle Sun Jul  5 22:31:45 EDT 2026 ===
+=== worker Sun Jul  5 22:32:00 EDT 2026 ===
+=== idle Sun Jul  5 22:32:05 EDT 2026 ===
+=== worker Sun Jul  5 22:32:20 EDT 2026 ===
+/data/data/com.termux/files/home/broccoli_worker.sh: line 44: syntax error near unexpected token `then'
+/data/data/com.termux/files/home/broccoli_worker.sh: line 44: ` then'
+=== worker Sun Jul  5 22:32:38 EDT 2026 ===
+queued /data/data/com.termux/files/home/broccoli/inbox/grok/1783305160.txt
+=== idle Sun Jul  5 22:32:43 EDT 2026 ===
+=== worker Sun Jul  5 22:32:58 EDT 2026 ===
+--- grok 1783305160.txt ---
+Remove markdown fences from TERMINUX
+=== BROCCOLI REPORT ===
+time: 2026-07-05 22:34:46
+provider: grok
+job: grok-ask
+status: OK
+reply: Remove markdown fences from TERMINUX
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+Remove markdown fences from TERMINUX
+=== BROCCOLI REPORT ===
+time: 2026-07-05 22:34:52
+provider: grok
+job: 1783305160.txt
+status: OK
+reply: Remove markdown fences from TERMINUX
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+queued /data/data/com.termux/files/home/broccoli/inbox/grok/1783305299.txt
+=== idle Sun Jul  5 22:35:04 EDT 2026 ===
+=== worker Sun Jul  5 22:35:19 EDT 2026 ===
+--- grok 1783305299.txt ---
+Thoughts
+=== BROCCOLI REPORT ===
+time: 2026-07-05 22:37:34
+provider: grok
+job: grok-ask
+status: OK
+reply: Thoughts
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+Thoughts
+=== BROCCOLI REPORT ===
+time: 2026-07-05 22:37:40
+provider: grok
+job: 1783305299.txt
+status: OK
+reply: Thoughts
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+queued /data/data/com.termux/files/home/broccoli/inbox/grok/1783305466.txt
+=== idle Sun Jul  5 22:37:50 EDT 2026 ===
+=== worker Sun Jul  5 22:38:05 EDT 2026 ===
+--- grok 1783305466.txt ---
+REPLY patch + compose rule forbids one-word UI labels.
+=== BROCCOLI REPORT ===
+time: 2026-07-05 22:40:06
+provider: grok
+job: grok-ask
+status: OK
+reply: REPLY patch + compose rule forbids one-word UI labels.
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+REPLY patch + compose rule forbids one-word UI labels.
+=== BROCCOLI REPORT ===
+time: 2026-07-05 22:40:12
+provider: grok
+job: 1783305466.txt
+status: OK
+reply: REPLY patch + compose rule forbids one-word UI labels.
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+queued /data/data/com.termux/files/home/broccoli/inbox/grok/1783305617.txt
+=== idle Sun Jul  5 22:40:20 EDT 2026 ===
+=== worker Sun Jul  5 22:40:35 EDT 2026 ===
+--- grok 1783305617.txt ---
+
+=== BROCCOLI REPORT ===
+time: 2026-07-05 22:42:22
+provider: grok
+job: grok-ask
+status: OK
+reply: (empty reply)
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+=== BROCCOLI REPORT ===
+time: 2026-07-05 22:42:30
+provider: grok
+job: 1783305617.txt
+status: OK
+reply: (empty reply)
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+queued /data/data/com.termux/files/home/broccoli/inbox/grok/1783305757.txt
+=== idle Sun Jul  5 22:42:42 EDT 2026 ===
+=== worker Sun Jul  5 22:42:57 EDT 2026 ===
+--- grok 1783305757.txt ---
+
+=== BROCCOLI REPORT ===
+time: 2026-07-05 22:45:16
+provider: grok
+job: grok-ask
+status: OK
+reply: (empty reply)
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+=== BROCCOLI REPORT ===
+time: 2026-07-05 22:45:22
+provider: grok
+job: 1783305757.txt
+status: OK
+reply: (empty reply)
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+=== BROCCOLI REPORT ===
+time: 2026-07-05 22:45:26
+provider: grok
+job: 1783305757.txt
+status: OK
+reply: (empty reply)
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+/data/data/com.termux/files/home/broccoli_worker.sh: line 31: syntax error near unexpected token `else'
+/data/data/com.termux/files/home/broccoli_worker.sh: line 31: `  else'
+=== worker Sun Jul  5 22:45:45 EDT 2026 ===
+--- grok 1783305912.txt ---
+Mac: paste heredoc only in Termux; brocc report → clipboard → this chat.
+=== BROCCOLI REPORT ===
+time: 2026-07-05 22:48:08
+provider: grok
+job: 1783305912.txt
+status: OK
+reply: Mac: paste heredoc only in Termux; brocc report → clipboard → this chat.
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+queued /data/data/com.termux/files/home/broccoli/inbox/grok/1783306093.txt
+TASK_INCOMPLETE: grok-smoke fail; ui send missing; report ok
+=== idle Sun Jul  5 22:50:32 EDT 2026 ===
+=== worker Sun Jul  5 22:50:48 EDT 2026 ===
+--- grok 1783306093.txt ---
+Ask phone Grok for short LOOP_OK reply to shrink false positives from huge composed prompt text.
+=== BROCCOLI REPORT ===
+time: 2026-07-05 22:52:52
+provider: grok
+job: 1783306093.txt
+status: OK
+reply: Ask phone Grok for short LOOP_OK reply to shrink false positives from huge composed prompt text.
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+queued /data/data/com.termux/files/home/broccoli/inbox/grok/1783306375.txt
+TASK_INCOMPLETE: grok-smoke ok; ui send missing; report ok
+=== idle Sun Jul  5 22:54:53 EDT 2026 ===
+=== worker Sun Jul  5 22:55:08 EDT 2026 ===
+--- grok 1783306375.txt ---
+=== BROCCOLI REPORT ===
+time: 2026-07-05 22:57:16
+provider: grok
+job: 1783306375.txt
+status: FAIL
+reply: junk reply
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+queued /data/data/com.termux/files/home/broccoli/inbox/grok/1783306639.txt
+TASK_INCOMPLETE: grok-smoke fail; ui send missing; report ok
+=== idle Sun Jul  5 22:59:36 EDT 2026 ===
+=== worker Sun Jul  5 22:59:51 EDT 2026 ===
+--- grok 1783306639.txt ---
+mv: cannot stat '/data/data/com.termux/files/home/broccoli/inbox/grok/1783306639.txt': No such file or directory
+=== BROCCOLI REPORT ===
+time: 2026-07-05 23:01:58
+provider: grok
+job: 1783306639.txt
+status: FAIL
+reply: junk reply
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+--- grok loop_ok_only.txt ---
+mv: cannot stat '/data/data/com.termux/files/home/broccoli/inbox/grok/loop_ok_only.txt': No such file or directory
+=== BROCCOLI REPORT ===
+time: 2026-07-05 23:04:23
+provider: grok
+job: loop_ok_only.txt
+status: FAIL
+reply: junk reply
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+TASK_INCOMPLETE: grok-smoke fail; ui send missing; report ok
+=== idle Sun Jul  5 23:06:35 EDT 2026 ===
+=== worker Sun Jul  5 23:06:50 EDT 2026 ===
+--- grok 1783306948.txt ---
+=== BROCCOLI REPORT ===
+time: 2026-07-05 23:09:10
+provider: grok
+job: 1783306948.txt
+status: FAIL
+reply: junk reply
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+queued /data/data/com.termux/files/home/broccoli/inbox/grok/1783307354.txt
+TASK_INCOMPLETE: grok-smoke fail; ui send missing; report ok
+=== idle Sun Jul  5 23:11:08 EDT 2026 ===
+=== worker Sun Jul  5 23:11:23 EDT 2026 ===
+--- grok 1783307354.txt ---
+=== BROCCOLI REPORT ===
+time: 2026-07-05 23:13:15
+provider: grok
+job: 1783307354.txt
+status: FAIL
+reply: junk reply
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+queued /data/data/com.termux/files/home/broccoli/inbox/grok/1783307601.txt
+TASK_INCOMPLETE: grok-smoke fail; ui send missing; report ok
+/data/data/com.termux/files/home/broccoli_worker.sh: line 54: syntax error near unexpected token `else'
+/data/data/com.termux/files/home/broccoli_worker.sh: line 54: `  else'
+=== worker Sun Jul  5 23:16:01 EDT 2026 ===
+--- grok 1783307601.txt ---
+=== BROCCOLI REPORT ===
+time: 2026-07-05 23:18:12
+provider: grok
+job: 1783307601.txt
+status: FAIL
+reply: junk reply
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+queued /data/data/com.termux/files/home/broccoli/inbox/grok/1783307896.txt
+TASK_INCOMPLETE: grok-smoke fail; ui send missing; report ok; research notes thin
+/data/data/com.termux/files/home/broccoli_worker.sh: line 100: unexpected EOF while looking for matching `"'
+=== worker Sun Jul  5 23:20:38 EDT 2026 ===
+--- grok 1783307896.txt ---
+=== BROCCOLI REPORT ===
+time: 2026-07-05 23:23:16
+provider: grok
+job: 1783307896.txt
+status: FAIL
+reply: junk reply
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+queued /data/data/com.termux/files/home/broccoli/inbox/grok/1783308201.txt
+TASK_INCOMPLETE: grok-smoke ok; ui send missing; report ok; research notes ok
+=== idle Sun Jul  5 23:25:37 EDT 2026 ===
+=== worker Sun Jul  5 23:25:52 EDT 2026 ===
+--- grok 1783308201.txt ---
+=== BROCCOLI REPORT ===
+time: 2026-07-05 23:28:08
+provider: grok
+job: 1783308201.txt
+status: FAIL
+reply: junk reply
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+queued /data/data/com.termux/files/home/broccoli/inbox/grok/1783308492.txt
+TASK_INCOMPLETE: grok-smoke fail; ui send missing; report ok; research notes ok
+=== idle Sun Jul  5 23:30:24 EDT 2026 ===
+=== worker Sun Jul  5 23:30:39 EDT 2026 ===
+--- grok 1783308492.txt ---
+=== BROCCOLI REPORT ===
+time: 2026-07-05 23:33:09
+provider: grok
+job: 1783308492.txt
+status: FAIL
+reply: junk reply
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+queued /data/data/com.termux/files/home/broccoli/inbox/grok/1783308793.txt
+TASK_INCOMPLETE: grok-smoke ok; ui send missing; report ok; research notes ok
+=== idle Sun Jul  5 23:35:36 EDT 2026 ===
+=== worker Sun Jul  5 23:35:52 EDT 2026 ===
+--- grok 1783308793.txt ---
+=== BROCCOLI REPORT ===
+time: 2026-07-05 23:37:53
+provider: grok
+job: 1783308793.txt
+status: FAIL
+reply: junk reply
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+queued /data/data/com.termux/files/home/broccoli/inbox/grok/1783309076.txt
+TASK_INCOMPLETE: grok-smoke fail; ui send missing; report ok; research notes ok
+=== idle Sun Jul  5 23:39:58 EDT 2026 ===
+=== worker Sun Jul  5 23:40:14 EDT 2026 ===
+--- grok 1783309076.txt ---
+=== BROCCOLI REPORT ===
+time: 2026-07-05 23:42:47
+provider: grok
+job: 1783309076.txt
+status: FAIL
+reply: junk reply
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+queued /data/data/com.termux/files/home/broccoli/inbox/grok/1783309370.txt
+TASK_INCOMPLETE: grok-smoke fail; ui send missing; report ok; research notes ok
+=== idle Sun Jul  5 23:44:49 EDT 2026 ===
+=== worker Sun Jul  5 23:45:04 EDT 2026 ===
+--- grok 1783309370.txt ---
+=== BROCCOLI REPORT ===
+time: 2026-07-05 23:46:49
+provider: grok
+job: 1783309370.txt
+status: FAIL
+reply: junk reply
+extra: 
+log: ~/broccoli/daemon.log
+=== END REPORT ===
+queued /data/data/com.termux/files/home/broccoli/inbox/grok/1783309612.txt
+TASK_INCOMPLETE: grok-smoke ok; ui send missing; report ok; research notes ok
+=== idle Sun Jul  5 23:49:09 EDT 2026 ===
+=== worker Sun Jul  5 23:49:24 EDT 2026 ===
+--- grok 1783309612.txt ---
+daemon 29938 Mon Jul  6 00:15:05 EDT 2026
+/data/data/com.termux/files/home/broccoli-daemon.sh: line 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: No such file or directory
+/data/data/com.termux/files/home/broccoli-daemon.sh: line 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: No such file or directory
+/data/data/com.termux/files/home/broccoli-daemon.sh: line 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: No such file or directory
+/data/data/com.termux/files/home/broccoli-daemon.sh: line 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: No such file or directory
+/data/data/com.termux/files/home/broccoli-daemon.sh: line 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: No such file or directory
+/data/data/com.termux/files/home/broccoli-daemon.sh: line 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: No such file or directory
+/data/data/com.termux/files/home/broccoli-daemon.sh: line 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: No such file or directory
+/data/data/com.termux/files/home/broccoli-daemon.sh: line 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: No such file or directory
+/data/data/com.termux/files/home/broccoli-daemon.sh: line 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: No such file or directory
+/data/data/com.termux/files/home/broccoli-daemon.sh: line 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: No such file or directory
+/data/data/com.termux/files/home/broccoli-daemon.sh: line 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: No such file or directory
+/data/data/com.termux/files/home/broccoli-daemon.sh: line 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: No such file or directory
+/data/data/com.termux/files/home/broccoli-daemon.sh: line 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: No such file or directory
+/data/data/com.termux/files/home/broccoli-daemon.sh: line 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: No such file or directory
+daemon 3034 Mon Jul  6 01:13:01 EDT 2026
+/data/data/com.termux/files/home/broccoli-daemon.sh: 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 11: _run_front
+/data/data/com.termux/files/home/broccoli_worker.sh: not found
+nohup: ignoring input
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+/data/data/com.termux/files/home/broccoli-daemon.sh: 9: [[: not found
+  File "/data/data/com.termux/files/home/broccoli_pulse.py", line 54
+    loop(int(sys.argv[2]) if len(sys.argv) > 2 else 7))
+                                                      ^
+SyntaxError: unmatched ')'
+  File "/data/data/com.termux/files/home/broccoli_pulse.py", line 54
+    loop(int(sys.argv[2]) if len(sys.argv) > 2 else 7))
+                                                      ^
+SyntaxError: unmatched ')'
+google_job ask exc cannot unpack non-iterable CompletedProcess object
+google_job FAIL junk ''
+google_job clipboard fail
+  File "/data/data/com.termux/files/home/broccoli_worker.sh", line 4
+    mkdir -p "$(dirname "$LOCK")"
+             ^^^^^^^^^^^^
+SyntaxError: invalid syntax
+  File "/data/data/com.termux/files/home/broccoli_worker.sh", line 4
+    mkdir -p "$(dirname "$LOCK")"
+             ^^^^^^^^^^^^
+SyntaxError: invalid syntax
+  File "/data/data/com.termux/files/home/broccoli_worker.sh", line 4
+    mkdir -p "$(dirname "$LOCK")"
+             ^^^^^^^^^^^^
+SyntaxError: invalid syntax
+  File "/data/data/com.termux/files/home/broccoli_worker.sh", line 4
+    mkdir -p "$(dirname "$LOCK")"
+             ^^^^^^^^^^^^
+SyntaxError: invalid syntax
+  File "/data/data/com.termux/files/home/broccoli_worker.sh", line 4
+    mkdir -p "$(dirname "$LOCK")"
+             ^^^^^^^^^^^^
+SyntaxError: invalid syntax
