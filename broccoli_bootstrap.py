@@ -1,0 +1,75 @@
+import os; os.environ.setdefault("BROCC_NO_SELF_MUTATE", "1")
+try:
+    from lib.broccoli_guard import no_self_mutate, may_run_quarry
+except Exception:
+    no_self_mutate = lambda: True
+    may_run_quarry = lambda: False
+#!/usr/bin/env python3
+"""Broccoli bootstrap and acceptance tests."""
+from __future__ import annotations
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path("/data/data/com.termux/files/home/broccoli")
+
+def _run(cmd: list[str], timeout: float = 60.0) -> tuple[int, str]:
+    p = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, check=False)
+    out = (p.stdout or "") + (p.stderr or "")
+    return p.returncode, out
+
+def grok_smoke() -> int:
+    failures = []
+    # notes.md length
+    notes = ROOT / "research" / "notes.md"
+    if notes.exists():
+        n = len(notes.read_text(encoding="utf-8").splitlines())
+        if n < 5:
+            failures.append(f"notes.md lines={n} (<5)")
+    else:
+        failures.append("notes.md missing")
+
+    code, _ = _run(["bash", str(ROOT / "scripts" / "path_validate.sh")])
+    if code != 0:
+        failures.append("path_validate")
+
+    code, _ = _run([sys.executable, str(ROOT / "broccoli_pulse.py"), "once"], timeout=15)
+    if code != 0:
+        failures.append("pulse once")
+
+    # KXT xxd round-trip
+    sys.path.insert(0, str(ROOT))
+    try:
+        from modules.kxt_xxd import parse_xxd, dump_via_xxd
+        sample = b"\x01\x02\x03\x04" + bytes(range(16))
+        rt = parse_xxd(dump_via_xxd(sample))
+        if rt != sample:
+            failures.append("kxt_xxd roundtrip")
+    except Exception as e:
+        failures.append(f"kxt_xxd: {e}")
+
+    try:
+        from modules.offline_sanitizer import sanitize_obj
+        o = sanitize_obj({"email": "a@b.co"})
+        if "a@b.co" in str(o):
+            failures.append("sanitizer")
+    except Exception as e:
+        failures.append(f"sanitizer: {e}")
+
+    if failures:
+        print("FAIL", ", ".join(failures))
+        return 1
+    print("PASS")
+    return 0
+
+def main():
+    if len(sys.argv) < 2:
+        print("usage: broccoli_bootstrap.py grok-smoke")
+        return 2
+    if sys.argv[1] == "grok-smoke":
+        return grok_smoke()
+    print("unknown command")
+    return 2
+
+if __name__ == "__main__":
+    raise SystemExit(main())

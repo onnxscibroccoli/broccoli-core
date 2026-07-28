@@ -1,0 +1,12 @@
+#!/data/data/com.termux/files/usr/bin/bash
+BRO="${BRO:-$HOME/broccoli}"
+export BRO PYTHONPATH="$BRO/lib"
+case "${1:-now}" in
+  now) bash "$BRO/tools/start_agentic_now.sh" ;;
+  loop) nohup python3 "$BRO/tools/broccoli_agentic_loop.py" >>"$BRO/reports/agentic_loop.log" 2>&1 & echo pid=$! ;;
+  pause) touch "$BRO/state/PAUSE"; echo PAUSED ;;
+  resume) rm -f "$BRO/state/PAUSE"; echo RESUMED ;;
+  stop) touch "$BRO/state/STOP"; echo STOPPED ;;
+  send) python3 -c "import sys,json; sys.path.insert(0,'$BRO/lib'); from broccoli_agentic_chat import send_prompt_agentic; print(json.dumps(send_prompt_agentic(' '.join(sys.argv[1:])),indent=2))" "$@" ;;
+  *) bash "$BRO/tools/start_agentic_now.sh" ;;
+esac
