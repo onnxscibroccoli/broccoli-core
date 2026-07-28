@@ -1,0 +1,1 @@
+Research Android UI automation: Shizuku, Termux, accessibility services. Bullet points with sources. Keep under 800 words.

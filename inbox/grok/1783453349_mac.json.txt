@@ -1,0 +1,3 @@
+AGENT_CONTEXT: /data/data/com.termux/files/home/broccoli/agent/context_20260707_154229.json
+
+LOOP_OK line1. NEXT_STEP: one line. Given AGENT_CONTEXT, suggest one cal fix if needed.

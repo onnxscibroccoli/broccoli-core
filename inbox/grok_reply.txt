@@ -1,0 +1,5 @@
+AIM_RISH ok try=1
+UI hierchary dumped to: /sdcard/brocc_ui_dump.xml
+UI hierchary dumped to: /sdcard/brocc_ui_dump.xml
+UI_DUMP ok bytes=8192 path=/data/data/com.termux/files/home/broccoli/ui/last_ui.xml
+wait_disk / offload — scripts only.

@@ -1,0 +1,6 @@
+add device 1: /dev/input/event0
+  name:     "mtk-pmic-keys"
+add device 2: /dev/input/event7
+  name:     "mt6833-mt6359 Headset Jack"
+add device 3: /dev/input/event8
+  name:     "uinput-fpc"
