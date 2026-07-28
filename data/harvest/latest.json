@@ -1,0 +1,41 @@
+{
+  "ts": 1784330360.4786038,
+  "iso": "2026-07-17T19:19:20",
+  "thread_id": "09a4d6cc02d1bf11",
+  "state": {
+    "fg_package": "ai.x.grok",
+    "on_grok": true,
+    "screen": "not_grok_ui",
+    "input_xy": null,
+    "new_chat_focused": false
+  },
+  "line_count": 25,
+  "tail": "Search connectors…\nConnected\nGoogle Drive\nFeatured\nGmail\nConnect\nGoogle Calendar\nConnect\nCanva\nConnect\nGitHub\nConnect\nStripe\nConnect\nNotion\nConnect\nBox\nConnect\nProductivity\nCalendly\nConnect\nFigma\nConnect\nConnectors",
+  "lines": [
+    "Connectors let Grok use external tools and data sources.",
+    "Search connectors…",
+    "Connected",
+    "Google Drive",
+    "Featured",
+    "Gmail",
+    "Connect",
+    "Google Calendar",
+    "Connect",
+    "Canva",
+    "Connect",
+    "GitHub",
+    "Connect",
+    "Stripe",
+    "Connect",
+    "Notion",
+    "Connect",
+    "Box",
+    "Connect",
+    "Productivity",
+    "Calendly",
+    "Connect",
+    "Figma",
+    "Connect",
+    "Connectors"
+  ]
+}
