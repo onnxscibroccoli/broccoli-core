@@ -1,0 +1,1056 @@
+nohup: ignoring input
+nohup: failed to run command '/data/data/com.termux/files/home/broccoli/meta/brocc_watch.sh': No such file or directory
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+brocc_watch already running
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+stdout: STEP launch_grok
+stdout: unknown grok-paste-send
+stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+PHONE_GROK_PASTE OK
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+stdout: STEP launch_grok
+stdout: unknown grok-paste-send
+stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+PHONE_GROK_PASTE OK
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+stdout: STEP launch_grok
+stdout: unknown grok-paste-send
+stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+PHONE_GROK_PASTE OK
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+stdout: STEP launch_grok
+stdout: unknown grok-paste-send
+stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+PHONE_GROK_PASTE OK
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+stdout: STEP launch_grok
+stdout: unknown grok-paste-send
+stdout: STEP launch_grok
+stderr: Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 599, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 550, in main
+    return 0 if grok_send_text(msg) == 0 else 1
+                ~~~~~~~~~~~~~~^^^^^
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 265, in grok_send_text
+    launch_grok()
+    ~~~~~~~~~~~^^
+  File "/data/data/com.te
+stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+STEP grok_ask poll
+poll 1 elapsed 0 s
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.x
+stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+PHONE_GROK_PASTE OK
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+stdout: STEP launch_grok
+stdout: unknown grok-paste-send
+stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+PHONE_GROK_PASTE OK
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+stdout: STEP launch_grok
+stdout: unknown grok-paste-send
+stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+PHONE_GROK_PASTE OK
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+stdout: STEP launch_grok
+stdout: unknown grok-paste-send
+stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+PHONE_GROK_PASTE OK
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+stdout: STEP launch_grok
+stdout: unknown grok-paste-send
+stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+PHONE_GROK_PASTE OK
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+stdout: STEP launch_grok
+stdout: unknown grok-paste-send
+stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+PHONE_GROK_PASTE OK
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+stdout: STEP launch_grok
+stdout: unknown grok-paste-send
+stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+PHONE_GROK_PASTE OK
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+stdout: STEP launch_grok
+stdout: unknown grok-paste-send
+stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+PHONE_GROK_PASTE OK
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+stdout: STEP launch_grok
+stdout: unknown grok-paste-send
+stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+PHONE_GROK_PASTE OK
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+stdout: STEP launch_grok
+stdout: unknown grok-paste-send
+stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+PHONE_GROK_PASTE OK
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+stdout: STEP launch_grok
+stdout: unknown grok-paste-send
+stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+PHONE_GROK_PASTE OK
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+stdout: STEP launch_grok
+stdout: unknown grok-paste-send
+stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+PHONE_GROK_PASTE OK
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 100, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 97, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 100, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 97, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 100, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 97, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 100, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 97, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+EMIT_SKIP
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+brocc_watch already running
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 106, in <module>
+    sys.exit(main() or 0)
+             ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 103, in main
+    return interject(force=force)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 85, in interject
+    ok = clip_set(body, toast=True)
+  File "/data/data/com.termux/files/home/broccoli_clip_prompt.py", line 75, in clip_set
+    return mod.set(body, toast=toast, verify=True, verify_fail_toast=True)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: set() got an unexpected keyword argument 'verify_fail_toast'
+EMIT_OK /data/data/com.termux/files/home/broccoli/meta/loop_packet.json
