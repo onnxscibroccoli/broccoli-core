@@ -1,0 +1,8 @@
+{
+  "mode": "user_primary",
+  "idle_seconds": 8,
+  "force_secondary": false,
+  "ruto_installed": false,
+  "ruto_virtual_screen": null,
+  "notes": "True BG: Ruto-GLM virtual screen; v0 = idle-gated main-screen automation"
+}

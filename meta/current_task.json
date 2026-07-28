@@ -1,0 +1,7 @@
+{
+  "task_id": "broccoli_agent_loop_v1",
+  "task": "Broccoli continuous agent loop (UI-driven completion)",
+  "status": "running",
+  "started_at": 1783314629.4280462,
+  "detail": "HANDOFF synced; agent_loop is current task"
+}

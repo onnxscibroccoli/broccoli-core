@@ -1,0 +1,8 @@
+{
+  "ts": 1783310243.6540968,
+  "test": "google_ai_secondary",
+  "policy": {
+    "mode": "automation_secondary",
+    "idle_seconds": 8
+  }
+}

@@ -1,0 +1,253 @@
+2026-07-07 17:01:33 stdout: STEP launch_grok
+2026-07-07 17:01:34 stdout: STEP launch_grok
+2026-07-07 17:01:43 stdout: unknown grok-paste-send
+2026-07-07 17:01:44 stdout: unknown grok-paste-send
+2026-07-07 17:02:32 stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07 17:02:32 stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+2026-07-07 17:02:32 PHONE_GROK_PASTE OK
+2026-07-07 17:02:36 stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07 17:02:36 stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+2026-07-07 17:02:36 PHONE_GROK_PASTE OK
+2026-07-07 17:03:14 stdout: STEP launch_grok
+2026-07-07 17:03:23 stdout: unknown grok-paste-send
+2026-07-07 17:04:03 stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07 17:04:03 stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+2026-07-07 17:04:03 PHONE_GROK_PASTE OK
+2026-07-07 17:04:47 stdout: STEP launch_grok
+2026-07-07 17:04:56 stdout: unknown grok-paste-send
+2026-07-07 17:05:27 stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07 17:05:27 stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+2026-07-07 17:05:27 PHONE_GROK_PASTE OK
+2026-07-07 17:06:07 stdout: STEP launch_grok
+2026-07-07 17:06:15 stdout: unknown grok-paste-send
+2026-07-07 17:07:07 stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07 17:07:07 stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+2026-07-07 17:07:07 PHONE_GROK_PASTE OK
+2026-07-07 17:08:01 stdout: STEP launch_grok
+2026-07-07 17:08:11 stdout: unknown grok-paste-send
+2026-07-07 17:08:31 stdout: STEP launch_grok
+2026-07-07 17:08:31 stderr: Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 599, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 550, in main
+    return 0 if grok_send_text(msg) == 0 else 1
+                ~~~~~~~~~~~~~~^^^^^
+  File "/data/data/com.termux/files/home/broccoli_bootstrap.py", line 265, in grok_send_text
+    launch_grok()
+    ~~~~~~~~~~~^^
+  File "/data/data/com.te
+2026-07-07 17:09:19 stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+STEP grok_ask poll
+poll 1 elapsed 0 s
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.x
+2026-07-07 17:09:19 stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+2026-07-07 17:09:19 PHONE_GROK_PASTE OK
+2026-07-07 17:10:00 stdout: STEP launch_grok
+2026-07-07 17:10:09 stdout: unknown grok-paste-send
+2026-07-07 17:10:40 stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07 17:10:40 stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+2026-07-07 17:10:40 PHONE_GROK_PASTE OK
+2026-07-07 17:11:27 stdout: STEP launch_grok
+2026-07-07 17:11:36 stdout: unknown grok-paste-send
+2026-07-07 17:12:07 stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07 17:12:07 stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+2026-07-07 17:12:07 PHONE_GROK_PASTE OK
+2026-07-07 17:12:51 stdout: STEP launch_grok
+2026-07-07 17:12:59 stdout: unknown grok-paste-send
+2026-07-07 17:13:38 stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07 17:13:38 stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+2026-07-07 17:13:38 PHONE_GROK_PASTE OK
+2026-07-07 17:14:25 stdout: STEP launch_grok
+2026-07-07 17:14:34 stdout: unknown grok-paste-send
+2026-07-07 17:15:08 stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07 17:15:08 stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+2026-07-07 17:15:08 PHONE_GROK_PASTE OK
+2026-07-07 17:15:49 stdout: STEP launch_grok
+2026-07-07 17:15:57 stdout: unknown grok-paste-send
+2026-07-07 17:16:28 stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07 17:16:28 stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+2026-07-07 17:16:28 PHONE_GROK_PASTE OK
+2026-07-07 17:17:13 stdout: STEP launch_grok
+2026-07-07 17:17:21 stdout: unknown grok-paste-send
+2026-07-07 17:17:56 stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07 17:17:56 stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+2026-07-07 17:17:56 PHONE_GROK_PASTE OK
+2026-07-07 17:18:37 stdout: STEP launch_grok
+2026-07-07 17:18:46 stdout: unknown grok-paste-send
+2026-07-07 17:19:20 stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07 17:19:20 stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+2026-07-07 17:19:20 PHONE_GROK_PASTE OK
+2026-07-07 17:19:57 stdout: STEP launch_grok
+2026-07-07 17:20:06 stdout: unknown grok-paste-send
+2026-07-07 17:20:40 stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07 17:20:40 stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+2026-07-07 17:20:40 PHONE_GROK_PASTE OK
+2026-07-07 17:21:21 stdout: STEP launch_grok
+2026-07-07 17:21:29 stdout: unknown grok-paste-send
+2026-07-07 17:22:07 stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07 17:22:07 stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+2026-07-07 17:22:07 PHONE_GROK_PASTE OK
+2026-07-07 17:22:48 stdout: STEP launch_grok
+2026-07-07 17:22:56 stdout: unknown grok-paste-send
+2026-07-07 17:23:28 stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07 17:23:28 stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+2026-07-07 17:23:28 PHONE_GROK_PASTE OK
+2026-07-07 17:24:05 stdout: STEP launch_grok
+2026-07-07 17:24:14 stdout: unknown grok-paste-send
+2026-07-07 17:24:46 stdout: STEP launch_grok
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+no_composer
+STEP dump_ui fallback early 41699 /data/local/tmp/broccoli_ui.xml
+STEP grok_send tap send Send message
+OK sent
+2026-07-07 17:24:46 stderr: Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+2026-07-07 17:24:46 PHONE_GROK_PASTE OK

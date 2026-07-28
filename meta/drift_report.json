@@ -1,0 +1,20 @@
+{
+  "ts": "2026-07-07 17:55:11",
+  "missing": 0,
+  "stale": 0,
+  "ok": 520,
+  "orphan_mirror": 0,
+  "missing_sample": [],
+  "stale_sample": [],
+  "fixed_count": 3,
+  "fixed_sample": [
+    "docs/TOOLS.json",
+    "meta/broccoli_storage_sync.py",
+    "meta/inbox/to_mac/loop_packet.json"
+  ],
+  "skip_note": "volatile meta logs excluded from compare",
+  "mac_pull": [
+    "adb pull /sdcard/Broccoli/mirror_manifest.json .",
+    "adb pull /sdcard/Broccoli/pull/drift_report.json ."
+  ]
+}
