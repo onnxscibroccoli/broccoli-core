@@ -1,0 +1,33 @@
+[2026-07-08T02:30:58-04:00] ensure try 1/5
+/data/data/com.termux/files/home/broccoli/ensure_grok_window.sh: line 44: /tmp/broccoli_win.json: Permission denied
+[2026-07-08T02:31:12-04:00] wrong window: ? — relaunch
+[2026-07-08T02:31:16-04:00] ensure try 2/5
+[2026-07-08T02:31:25-04:00] FAIL not foreground
+[2026-07-08T02:31:26-04:00] ensure try 3/5
+/data/data/com.termux/files/home/broccoli/ensure_grok_window.sh: line 44: /tmp/broccoli_win.json: Permission denied
+[2026-07-08T02:31:42-04:00] wrong window: ? — relaunch
+[2026-07-08T02:31:45-04:00] ensure try 4/5
+/data/data/com.termux/files/home/broccoli/ensure_grok_window.sh: line 44: /tmp/broccoli_win.json: Permission denied
+[2026-07-08T02:32:02-04:00] wrong window: ? — relaunch
+[2026-07-08T02:32:05-04:00] ensure try 5/5
+[2026-07-08T02:32:15-04:00] resume ai.x.grok/.main.GrokActivity
+[2026-07-08T02:32:36-04:00] monkey fallback
+[2026-07-08T02:32:54-04:00] FAIL not foreground
+[2026-07-08T02:32:55-04:00] FAIL ensure_grok_window after 5 tries
+[2026-07-08T02:34:40-04:00] ensure try 1/5
+/data/data/com.termux/files/home/broccoli/ensure_grok_window.sh: line 44: /tmp/broccoli_win.json: Permission denied
+[2026-07-08T02:34:56-04:00] wrong window: ? — relaunch
+[2026-07-08T02:35:00-04:00] ensure try 2/5
+/data/data/com.termux/files/home/broccoli/ensure_grok_window.sh: line 44: /tmp/broccoli_win.json: Permission denied
+[2026-07-08T02:35:15-04:00] wrong window: ? — relaunch
+[2026-07-08T02:35:19-04:00] ensure try 3/5
+[2026-07-08T02:35:28-04:00] resume ai.x.grok/.main.GrokActivity
+[2026-07-08T02:35:46-04:00] monkey fallback
+[2026-07-08T02:36:03-04:00] FAIL not foreground
+[2026-07-08T02:36:04-04:00] ensure try 4/5
+[2026-07-08T02:36:07-04:00] resume ai.x.grok/.main.GrokActivity
+/data/data/com.termux/files/home/broccoli/ensure_grok_window.sh: line 44: /tmp/broccoli_win.json: Permission denied
+[2026-07-08T02:36:35-04:00] wrong window: ? — relaunch
+[2026-07-08T02:36:38-04:00] ensure try 5/5
+/data/data/com.termux/files/home/broccoli/ensure_grok_window.sh: line 44: /tmp/broccoli_win.json: Permission denied
+[2026-07-08T02:36:58-04:00] wrong window: ? — relaunch
