@@ -1,0 +1,9 @@
+#!/data/data/com.termux/files/usr/bin/bash
+B="${BROCCOLI_DIR:-$HOME/broccoli}"
+export BROCCOLI_DIR="$B"
+python3 "$B/broccoli_host.py" --build-outbox-only
+bash "$B/chat_inject.sh"; echo inject=$?
+[ -x "$B/wait_reply.sh" ] && bash "$B/wait_reply.sh"; echo wait=$?
+[ -x "$B/chat_copy_fetch.sh" ] && bash "$B/chat_copy_fetch.sh"; echo copy=$?
+wc -c "$B/inbox_response.txt" 2>/dev/null; head -c 200 "$B/inbox_response.txt" 2>/dev/null; echo
+python3 "$B/broccoli_host.py" --execute-inbox-only; echo execute=$?

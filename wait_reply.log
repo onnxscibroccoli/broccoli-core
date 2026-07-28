@@ -1,0 +1,148 @@
+[2026-07-08T02:29:36-04:00] wait: start max=180s
+[2026-07-08T02:29:36-04:00] ensure try 1/5
+/data/data/com.termux/files/home/broccoli/ensure_grok_window.sh: line 44: /tmp/broccoli_win.json: Permission denied
+[2026-07-08T02:29:49-04:00] wrong window: ? — relaunch
+[2026-07-08T02:29:51-04:00] ensure try 2/5
+[2026-07-08T02:29:59-04:00] resume ai.x.grok/.main.GrokActivity
+[2026-07-08T02:30:16-04:00] monkey fallback
+[2026-07-08T02:30:30-04:00] FAIL not foreground
+[2026-07-08T02:30:32-04:00] ensure try 3/5
+[2026-07-08T02:30:35-04:00] resume ai.x.grok/.main.GrokActivity
+[2026-07-08T02:30:41-04:00] monkey fallback
+[2026-07-08T02:30:51-04:00] FAIL not foreground
+[2026-07-08T02:30:52-04:00] ensure try 4/5
+[2026-07-08T02:30:54-04:00] resume ai.x.grok/.main.GrokActivity
+[2026-07-08T02:31:00-04:00] monkey fallback
+/data/data/com.termux/files/home/broccoli/ensure_grok_window.sh: line 44: /tmp/broccoli_win.json: Permission denied
+[2026-07-08T02:31:16-04:00] wrong window: ? — relaunch
+[2026-07-08T02:31:19-04:00] ensure try 5/5
+/data/data/com.termux/files/home/broccoli/ensure_grok_window.sh: line 44: /tmp/broccoli_win.json: Permission denied
+[2026-07-08T02:31:35-04:00] wrong window: ? — relaunch
+[2026-07-08T02:31:38-04:00] FAIL ensure_grok_window after 5 tries
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+[2026-07-08T02:31:48-04:00] wait: ready (Copy message visible)
+[2026-07-12T20:14:44-04:00] wait: start max=180s
+[2026-07-13T03:25:45-04:00] wait: start max=180s
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": false,
+  "has_send": false,
+  "input_xy": [
+    540,
+    1195
+  ],
+  "send_xy": null
+}
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+[2026-07-13T03:26:19-04:00] wait: ready (Copy message visible)
+[2026-07-13T03:26:39-04:00] wait: start max=180s
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": false,
+  "has_send": false,
+  "input_xy": [
+    540,
+    1195
+  ],
+  "send_xy": null
+}
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": true,
+  "has_send": false,
+  "input_xy": [
+    540,
+    2139
+  ],
+  "send_xy": null
+}
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": true,
+  "has_send": false,
+  "input_xy": [
+    540,
+    1274
+  ],
+  "send_xy": null
+}
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": false,
+  "has_send": false,
+  "input_xy": [
+    540,
+    1274
+  ],
+  "send_xy": null
+}
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": false,
+  "has_send": false,
+  "input_xy": [
+    540,
+    1274
+  ],
+  "send_xy": null
+}
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": false,
+  "has_send": false,
+  "input_xy": [
+    540,
+    1274
+  ],
+  "send_xy": null
+}
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": false,
+  "has_send": false,
+  "input_xy": [
+    540,
+    1274
+  ],
+  "send_xy": null
+}
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+[2026-07-13T03:30:43-04:00] wait: ready (Copy message visible)
