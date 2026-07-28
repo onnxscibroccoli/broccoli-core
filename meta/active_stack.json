@@ -1,0 +1,7 @@
+{
+  "bundle": "walk_stage_5 + adb_ui_sibling_only",
+  "ts": "2026-07-07T22:26:35",
+  "no_enter": true,
+  "send_mode": "sibling_only",
+  "winner_path": "/sdcard/Broccoli/pull/bundle_20260707_220654/broccoli/state/walk_stage_5"
+}

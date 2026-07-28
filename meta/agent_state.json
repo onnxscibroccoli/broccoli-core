@@ -1,0 +1,6 @@
+{
+  "status": "wire_fail",
+  "cycle": 1,
+  "last_action": "wire_failed",
+  "last_error": "send or reply"
+}

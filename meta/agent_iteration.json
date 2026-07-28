@@ -1,0 +1,8 @@
+{
+  "cycle": 3,
+  "last_prompt": "ITER_OK",
+  "last_reply": "ITER_OK",
+  "last_fp": "",
+  "status": "idle",
+  "next_prompt": "Wire probe: reply one word WIRE_OK"
+}
