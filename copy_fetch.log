@@ -1,0 +1,34 @@
+[2026-07-08T02:31:48-04:00] ensure try 1/5
+/data/data/com.termux/files/home/broccoli/ensure_grok_window.sh: line 44: /tmp/broccoli_win.json: Permission denied
+[2026-07-08T02:32:04-04:00] wrong window: ? — relaunch
+[2026-07-08T02:32:09-04:00] ensure try 2/5
+[2026-07-08T02:32:17-04:00] resume ai.x.grok/.main.GrokActivity
+[2026-07-08T02:32:39-04:00] monkey fallback
+[2026-07-08T02:33:03-04:00] FAIL not foreground
+[2026-07-08T02:33:04-04:00] ensure try 3/5
+/data/data/com.termux/files/home/broccoli/ensure_grok_window.sh: line 44: /tmp/broccoli_win.json: Permission denied
+[2026-07-08T02:33:23-04:00] wrong window: ? — relaunch
+[2026-07-08T02:33:27-04:00] ensure try 4/5
+[2026-07-08T02:33:29-04:00] resume ai.x.grok/.main.GrokActivity
+/data/data/com.termux/files/home/broccoli/ensure_grok_window.sh: line 44: /tmp/broccoli_win.json: Permission denied
+[2026-07-08T02:33:47-04:00] wrong window: ? — relaunch
+[2026-07-08T02:33:50-04:00] ensure try 5/5
+[2026-07-08T02:33:56-04:00] resume ai.x.grok/.main.GrokActivity
+[2026-07-08T02:34:22-04:00] FAIL not foreground
+[2026-07-08T02:34:23-04:00] FAIL ensure_grok_window after 5 tries
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": false,
+  "has_send": false,
+  "input_xy": [
+    540,
+    1195
+  ],
+  "send_xy": null
+}
+[2026-07-13T03:30:51-04:00] tap Copy 191 442
+[2026-07-13T03:31:35-04:00] empty clipboard

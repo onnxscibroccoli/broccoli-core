@@ -1,0 +1,5 @@
+{
+  "last_hash": "79274f68f867edbc6d1420b3e774db73529de7eac97c5657a53b3367e69585e4",
+  "last_message": "CMD:cd /data/data/com.termux/files/home/broccoli && export BROCCOLI_DIR=\"$PWD\" && python3 -c \"import json;from pathlib import Path;p=Path('chat_profile.json');d=json.loads(p.read_text()) if p.is_file() else {};i=d.setdefault('inject',{});i.update({'CHAT_PACKAGE':'ai.x.grok','CHAT_ACTIVITY':'ai.x.grok/.main.GrokActivity','SUBMIT_METHOD':'tap_after_paste','CHAT_INPUT_X':540,'CHAT_INPUT_Y':2139});d['screen_height']=2408;p.write_text(json.dumps(d,indent=2))\" && chmod +x chat_inject.sh 2>/dev/null; bash self_test.sh 2>&1 | tail -40; printf '%s\\n' 'CMD:echo broccoli_inject_ok' > outbox_context.txt && bash chat_inject.sh; echo '--- inject.log ---'; tail -12 inject.log 2>/dev/null; echo '--- last_cmd cleared ---'; printf '%s\\n' 'CMD:cd /data/data/com.termux/files/home/broccoli && bash self_test.sh' > last_cmd.txt",
+  "last_seen_ts": 1783490272
+}
