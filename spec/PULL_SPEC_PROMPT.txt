@@ -1,0 +1,8 @@
+GEMINI AI MODE ONLY. Do not search the web for images. Do not show puppies or pictures.
+
+Task: In my Google Drive, find my technical specification documents labeled v3 and v4.1 (broccoli / brocc / Termux automation). Merge into one markdown document titled BUILD_SPEC. v4.1 overrides v3 on conflicts.
+
+Output: full spec text only (no summary). End with a section:
+
+IMPLEMENTATION_TASKS
+1. ...

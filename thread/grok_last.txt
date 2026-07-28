@@ -1,0 +1,9 @@
+Start new chat
+ITER_OK
+Ask anything
+END
+Need full implementation
+Ask anything
+2.
+Clear AGENT_STOP / HEAL_STOP / WIRE_STOP — rm or agent_ensure_ru
+If you paste head -80 ~/broccoli/tools/open_grok.sh and whether wire_loop_full.sh sets OPEN_GROK by default on your tree, we can collapse steps 4–6 into one entrypoint (e.g. only broccoli_full_ready.sh or only wire_loop_full.sh) so the doc never mentions user Grok again.
