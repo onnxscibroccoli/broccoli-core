@@ -1,0 +1,217 @@
+#!/data/data/com.termux/files/usr/bin/env python3
+"""Closed loop v2"""
+from __future__ import annotations
+
+import hashlib
+import json
+import os
+import re
+import sqlite3
+import subprocess
+import sys
+import time
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Optional
+
+HOME = Path.home()
+BRO = HOME / "broccoli"
+INBOX = HOME / "brocc-inbox"
+DB = INBOX / "closed_loop.db"
+PAUSE = INBOX / "PAUSE"
+LOG = BRO / "reports" / "closed_loop.log"
+STATE = INBOX / "closed_loop_state.json"
+
+RISH_APP = os.environ.get("RISH_APPLICATION_ID", "com.termux")
+CHAT_APP = os.environ.get("BROCC_CHAT_APP", "grok")
+SEED = os.environ.get("BROCC_LOOP_SEED", "BROCC_TASK reply exactly: LOOP_OK")
+WAIT = int(os.environ.get("BROCCOLI_REPLY_WAIT", "40"))
+POLL = float(os.environ.get("BROCC_POLL_SEC", "5"))
+
+
+def log(m: str) -> None:
+    LOG.parent.mkdir(parents=True, exist_ok=True)
+    line = f"{datetime.now().astimezone().isoformat(timespec='seconds')} {m}\n"
+    with LOG.open("a", encoding="utf-8") as f:
+        f.write(line)
+    print(m, flush=True)
+
+
+def run(cmd: list[str], timeout: int = 120) -> tuple[int, str]:
+    env = {**os.environ, "RISH_APPLICATION_ID": RISH_APP, "BROCC_CHAT_APP": CHAT_APP}
+    try:
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, env=env, cwd=str(HOME))
+        return r.returncode, ((r.stdout or "") + (r.stderr or "")).strip()
+    except subprocess.TimeoutExpired:
+        return 124, "TIMEOUT"
+    except Exception as e:
+        return 1, str(e)
+
+
+def sh(script: str, *args: str, timeout: int = 180) -> tuple[int, str]:
+    p = BRO / "tools" / script if not script.startswith("/") else Path(script)
+    if script.endswith(".sh") and not str(p).startswith("/"):
+        p = BRO / "tools" / script
+    if not p.is_file():
+        p2 = BRO / "lib" / script
+        p = p2 if p2.is_file() else p
+    return run(["bash", str(p), *args], timeout=timeout)
+
+
+def ensure_rish() -> bool:
+    run(["bash", str(HOME / "aim_rish_ensure.sh")], timeout=30)
+    c, o = run(["rish", "-c", "echo RISH_OK"], timeout=15)
+    return c == 0 and "RISH_OK" in o
+
+
+def launch_chat() -> None:
+    sh("../lib/shizuku_apps.sh", CHAT_APP, "foreground", timeout=40)
+
+
+def recv_text() -> str:
+    c, o = sh("consume_response.sh", timeout=WAIT + 60)
+    for path in (BRO / "inbox" / "grok_reply.txt", INBOX / "last_grok_reply.txt"):
+        if path.is_file():
+            t = path.read_text(encoding="utf-8", errors="replace").strip()
+            if t:
+                return t
+    c2, t2 = run([sys.executable, str(BRO / "lib" / "a11y_automation.py"), "last"], timeout=60)
+    return t2 if c2 == 0 else ""
+
+
+def send_text(text: str) -> bool:
+    INBOX.mkdir(parents=True, exist_ok=True)
+    (INBOX / "prompt.txt").write_text(text, encoding="utf-8")
+    (BRO / "inbox" / "prompt.txt").write_text(text, encoding="utf-8")
+    try:
+        subprocess.run(["termux-clipboard-set"], input=text, text=True, timeout=8, check=False)
+    except Exception:
+        pass
+    launch_chat()
+    c, o = sh("a11y_send_round.sh", text[:12000], timeout=120)
+    if "ok" in o.lower() or "AUTOHEAL" in o:
+        return True
+    c2, o2 = sh("loop_ok_path.sh", text[:8000], timeout=WAIT + 120)
+    return "LOOP_OK_PASS" in o2 or c2 == 0
+
+
+def h(t: str) -> str:
+    return hashlib.sha256(t.encode("utf-8", errors="replace")).hexdigest()[:24]
+
+
+def extract_actions(text: str) -> list[dict]:
+    acts = []
+    for m in re.finditer(r"(?im)^BROCC_ACT\s+(?:shell|termux):\s*(.+)$", text):
+        acts.append({"type": "shell", "cmd": m.group(1).strip()})
+    for m in re.finditer(r"```(?:bash|sh)\s*\n(.*?)```", text, re.S | re.I):
+        b = m.group(1).strip()
+        if b and "rm -rf /" not in b:
+            acts.append({"type": "block", "cmd": b})
+    if re.search(r"(?i)LOOP_OK", text) and not acts:
+        acts.append({"type": "handshake"})
+    return acts[:10]
+
+
+def run_actions(acts: list[dict]) -> str:
+    chunks = []
+    for i, a in enumerate(acts, 1):
+        if a.get("type") == "handshake":
+            chunks.append(f"action[{i}] HANDSHAKE")
+            continue
+        cmd = a.get("cmd", "")
+        if "rm -rf /" in cmd:
+            chunks.append(f"action[{i}] BLOCKED")
+            continue
+        if a.get("type") == "block":
+            p = INBOX / f"_cl_{int(time.time())}.sh"
+            p.write_text("#!/bin/bash\nset -uo pipefail\n" + cmd + "\n", encoding="utf-8")
+            p.chmod(0o700)
+            c, o = run(["bash", str(p)], timeout=120)
+        else:
+            c, o = run(["bash", "-lc", cmd], timeout=120)
+        chunks.append(f"action[{i}] exit={c}\n{(o or '')[-3500:]}")
+    return "\n---\n".join(chunks) or "(no actions)"
+
+
+def wait_new(prev: str, budget: int) -> str:
+    end = time.time() + budget
+    while time.time() < end:
+        if PAUSE.exists():
+            return ""
+        launch_chat()
+        time.sleep(1.5)
+        msg = recv_text()
+        if msg and h(msg) != prev:
+            return msg
+        time.sleep(POLL)
+    return ""
+
+
+def one_round(n: int, seed: Optional[str] = None) -> str:
+    conn = sqlite3.connect(DB)
+    conn.execute("CREATE TABLE IF NOT EXISTS kv(k TEXT PRIMARY KEY, v TEXT)")
+    prev = conn.execute("SELECT v FROM kv WHERE k='last_hash'").fetchone()
+    prev = prev[0] if prev else ""
+
+    if n == 1 and seed:
+        if not send_text(seed):
+            return "send_fail"
+        msg = wait_new("", WAIT)
+    else:
+        msg = wait_new(prev, WAIT)
+
+    if not msg:
+        return "no_reply"
+
+    conn.execute("INSERT OR REPLACE INTO kv VALUES('last_hash',?)", (h(msg),))
+    conn.commit()
+    (BRO / "inbox" / "grok_reply.txt").write_text(msg, encoding="utf-8")
+
+    acts = extract_actions(msg)
+    result = run_actions(acts)
+    out = (
+        f"BROCC_RESULT round={n} app={CHAT_APP}\n{result}\n"
+        f"BROCC_TASK continue; use BROCC_ACT shell: ... or reply LOOP_OK when done."
+    )[:12000]
+
+    if not send_text(out):
+        return "send_fail"
+
+    if (re.search(r"(?i)LOOP_OK", msg) or is_catalog_ok(msg)) and any(a.get("type") == "handshake" for a in acts):
+        log("=== CLOSED_LOOP LOOP_OK ===")
+        return "loop_ok"
+    return "ok"
+
+
+def main(argv: list[str]) -> int:
+    cmd = argv[1] if len(argv) > 1 else "run"
+    seed = " ".join(argv[2:]) if len(argv) > 2 else SEED
+    if not ensure_rish():
+        log("FAIL shizuku/rish")
+        return 2
+    if cmd == "recv":
+        launch_chat()
+        print(recv_text()[:10000])
+        return 0
+    if cmd == "send" and len(argv) > 2:
+        ok = send_text(" ".join(argv[2:]))
+        return 0 if ok else 1
+    if cmd == "once":
+        return 0 if one_round(1, seed=seed) in ("ok", "loop_ok") else 1
+    if cmd == "run":
+        i = 0
+        while not PAUSE.exists():
+            i += 1
+            st = one_round(i, seed=seed if i == 1 else None)
+            log(f"round {i} {st}")
+            STATE.write_text(json.dumps({"round": i, "status": st, "app": CHAT_APP}), encoding="utf-8")
+            if st == "loop_ok":
+                return 0
+            time.sleep(3)
+        return 0
+    print("usage: closed_loop.py run|once|recv|send <text>")
+    return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv))
