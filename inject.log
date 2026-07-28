@@ -1,0 +1,351 @@
+[2026-07-12T19:31:30-04:00] goto
+[2026-07-12T20:18:39-04:00] goto
+[2026-07-13T03:24:02-04:00] goto
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": true,
+  "has_send": false,
+  "input_xy": [
+    540,
+    2139
+  ],
+  "send_xy": null
+}
+[2026-07-13T03:25:12-04:00] clip ok
+[2026-07-13T03:25:40-04:00] send 1001 2203
+[2026-07-13T03:25:45-04:00] done
+[2026-07-13T17:10:19-04:00] goto
+[2026-07-13T22:20:39-04:00] goto
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": true,
+  "has_send": false,
+  "input_xy": [
+    540,
+    1274
+  ],
+  "send_xy": null
+}
+[2026-07-13T22:20:50-04:00] clip ok
+[2026-07-13T22:21:04-04:00] send 1001 2203
+[2026-07-13T22:21:06-04:00] done
+[2026-07-13T22:56:00-04:00] goto
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": false,
+  "has_send": false,
+  "input_xy": [
+    540,
+    1240
+  ],
+  "send_xy": null
+}
+[2026-07-13T22:56:13-04:00] clip ok
+[2026-07-13T22:56:27-04:00] send 1001 2203
+[2026-07-13T22:56:29-04:00] done
+[2026-07-18T00:54:50-04:00] goto
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": true,
+  "has_send": false,
+  "input_xy": [
+    540,
+    2135
+  ],
+  "send_xy": null
+}
+[2026-07-18T00:55:27-04:00] clip ok
+[2026-07-18T00:55:48-04:00] send 1001 2203
+[2026-07-18T00:55:52-04:00] done
+[2026-07-18T00:56:04-04:00] goto
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": true,
+  "has_send": false,
+  "input_xy": [
+    540,
+    2135
+  ],
+  "send_xy": null
+}
+[2026-07-18T00:56:28-04:00] clip ok
+[2026-07-18T00:56:45-04:00] send 1001 2203
+[2026-07-18T00:56:48-04:00] done
+[2026-07-18T00:56:58-04:00] goto
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": false,
+  "has_send": false,
+  "input_xy": [
+    540,
+    1190
+  ],
+  "send_xy": null
+}
+[2026-07-18T00:57:13-04:00] clip ok
+[2026-07-18T00:57:38-04:00] send 1001 2203
+[2026-07-18T00:57:41-04:00] done
+[2026-07-18T00:57:52-04:00] goto
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": false,
+  "has_send": true,
+  "input_xy": [
+    540,
+    2055
+  ],
+  "send_xy": [
+    540,
+    2055
+  ]
+}
+[2026-07-18T00:58:05-04:00] clip ok
+[2026-07-18T00:58:19-04:00] send 1001 2203
+[2026-07-18T00:58:22-04:00] done
+[2026-07-18T00:58:33-04:00] goto
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": false,
+  "has_send": false,
+  "input_xy": [
+    540,
+    1190
+  ],
+  "send_xy": null
+}
+[2026-07-18T00:58:47-04:00] clip ok
+[2026-07-18T00:59:05-04:00] send 1001 2203
+[2026-07-18T00:59:07-04:00] done
+[2026-07-18T00:59:26-04:00] goto
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": false,
+  "has_send": false,
+  "input_xy": [
+    540,
+    1270
+  ],
+  "send_xy": null
+}
+[2026-07-18T00:59:41-04:00] clip ok
+[2026-07-18T00:59:59-04:00] send 1001 2203
+[2026-07-18T01:00:02-04:00] done
+[2026-07-18T01:00:13-04:00] goto
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": true,
+  "has_send": false,
+  "input_xy": [
+    540,
+    2135
+  ],
+  "send_xy": null
+}
+[2026-07-18T01:00:29-04:00] clip ok
+[2026-07-18T01:00:51-04:00] send 1001 2203
+[2026-07-18T01:00:54-04:00] done
+[2026-07-18T01:52:53-04:00] goto
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": true,
+  "has_send": false,
+  "input_xy": [
+    540,
+    2135
+  ],
+  "send_xy": null
+}
+[2026-07-18T01:53:10-04:00] clip ok
+[2026-07-18T01:53:27-04:00] send 1001 2203
+[2026-07-18T01:53:30-04:00] done
+[2026-07-18T01:53:41-04:00] goto
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": false,
+  "has_send": false,
+  "input_xy": [
+    540,
+    1190
+  ],
+  "send_xy": null
+}
+[2026-07-18T01:53:55-04:00] clip ok
+[2026-07-18T01:54:15-04:00] send 540 2055
+[2026-07-18T01:54:17-04:00] done
+[2026-07-18T01:54:28-04:00] goto
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": false,
+  "has_send": false,
+  "input_xy": [
+    540,
+    1190
+  ],
+  "send_xy": null
+}
+[2026-07-18T01:54:42-04:00] clip ok
+[2026-07-18T01:55:01-04:00] send 540 2055
+[2026-07-18T01:55:03-04:00] done
+[2026-07-18T01:55:14-04:00] goto
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": false,
+  "has_send": false,
+  "input_xy": [
+    540,
+    1190
+  ],
+  "send_xy": null
+}
+[2026-07-18T01:55:26-04:00] clip ok
+[2026-07-18T01:55:49-04:00] send 540 2055
+[2026-07-18T01:55:52-04:00] done
+[2026-07-18T01:56:04-04:00] goto
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": true,
+  "has_send": false,
+  "input_xy": [
+    540,
+    1270
+  ],
+  "send_xy": null
+}
+[2026-07-18T01:56:18-04:00] clip ok
+[2026-07-18T01:56:36-04:00] send 1001 2203
+[2026-07-18T01:56:39-04:00] goto
+[2026-07-18T01:56:39-04:00] done
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": true,
+  "has_send": false,
+  "input_xy": [
+    540,
+    1270
+  ],
+  "send_xy": null
+}
+[2026-07-18T01:57:06-04:00] clip ok
+[2026-07-18T01:57:21-04:00] send 1001 2203
+[2026-07-18T01:57:22-04:00] done
+[2026-07-18T01:57:33-04:00] goto
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": false,
+  "has_send": true,
+  "input_xy": [
+    540,
+    2055
+  ],
+  "send_xy": [
+    540,
+    2055
+  ]
+}
+[2026-07-18T01:57:44-04:00] clip ok
+[2026-07-18T01:57:59-04:00] send 540 2055
+[2026-07-18T01:58:01-04:00] done
+[2026-07-18T01:58:13-04:00] goto
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": false,
+  "has_send": false,
+  "input_xy": [
+    540,
+    1190
+  ],
+  "send_xy": null
+}
+[2026-07-18T01:58:30-04:00] clip ok
+[2026-07-18T01:58:46-04:00] send 1001 2203
+[2026-07-18T01:58:48-04:00] done
+[2026-07-18T01:58:59-04:00] goto
+{
+  "fg_package": "unknown",
+  "on_grok": false,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": false,
+  "has_send": false,
+  "input_xy": [
+    540,
+    1190
+  ],
+  "send_xy": null
+}
+[2026-07-18T01:59:19-04:00] clip ok
+[2026-07-18T01:59:45-04:00] send 1001 2203
+[2026-07-18T01:59:48-04:00] done

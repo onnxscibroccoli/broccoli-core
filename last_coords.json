@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "input": {
+    "x": 540,
+    "y": 1274,
+    "resource_id": "chat_text_input"
+  },
+  "send": null,
+  "send_method": "keyevent_66"
+}
