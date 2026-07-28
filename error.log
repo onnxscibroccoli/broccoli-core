@@ -1,0 +1,16 @@
+2026-07-08T05:11:11.581836+00:00 Broccoli host @ /data/data/com.termux/files/home/broccoli
+2026-07-08T05:11:11.582282+00:00 System prompt: cat /data/data/com.termux/files/home/broccoli/BROCCOLI_SYSTEM_PROMPT.md
+2026-07-08T05:11:11.582589+00:00 Cycle: cat /data/data/com.termux/files/home/broccoli/outbox_context.txt → chat → /data/data/com.termux/files/home/broccoli/inbox_response.txt
+2026-07-08T05:11:14.545903+00:00 Waiting: /data/data/com.termux/files/home/broccoli/inbox_response.txt
+2026-07-08T05:14:26.860801+00:00 Broccoli host @ /data/data/com.termux/files/home/broccoli
+2026-07-08T05:14:26.863526+00:00 System prompt: cat /data/data/com.termux/files/home/broccoli/BROCCOLI_SYSTEM_PROMPT.md
+2026-07-08T05:14:26.864146+00:00 Cycle: cat /data/data/com.termux/files/home/broccoli/outbox_context.txt → chat → /data/data/com.termux/files/home/broccoli/inbox_response.txt
+2026-07-08T05:14:30.068272+00:00 Waiting: /data/data/com.termux/files/home/broccoli/inbox_response.txt
+2026-07-08T05:19:34.878810+00:00 Broccoli host @ /data/data/com.termux/files/home/broccoli
+2026-07-08T05:19:34.879376+00:00 System prompt: cat /data/data/com.termux/files/home/broccoli/BROCCOLI_SYSTEM_PROMPT.md
+2026-07-08T05:19:34.879621+00:00 Cycle: cat /data/data/com.termux/files/home/broccoli/outbox_context.txt → chat → /data/data/com.termux/files/home/broccoli/inbox_response.txt
+2026-07-08T05:19:37.122894+00:00 Waiting: /data/data/com.termux/files/home/broccoli/inbox_response.txt
+2026-07-08T05:52:27.838296+00:00 EXEC: echo broccoli_inject_ok' > ~/broccoli/outbox_context.txt
+2026-07-08T05:52:30.966541+00:00 Waiting: /data/data/com.termux/files/home/broccoli/inbox_response.txt
+2026-07-08T05:57:53.639430+00:00 EXEC: cd /data/data/com.termux/files/home/broccoli && export BROCCOLI_DIR="$PWD" && python3 -c "import json;from pathlib import Path;p=Path('chat_profile.json');d=json.loads(p.read_text()) if p.is_file() else {};i=d.setdefault('inject',{});i.update({'CHAT_PACKAGE':'ai.x.grok','CHAT_ACTIVITY':'ai.x.grok/.main.GrokActivity','SUBMIT_METHOD':'tap_after_paste','CHAT_INPUT_X':540,'CHAT_INPUT_Y':2139});d['screen_height']=2408;p.write_text(json.dumps(d,indent=2))" && chmod +x chat_inject.sh 2>/dev/null; bash self_test.sh 2>&1 | tail -40; printf '%s\n' 'CMD:echo broccoli_inject_ok' > outbox_context.txt && bash chat_inject.sh; echo '--- inject.log ---'; tail -12 inject.log 2>/dev/null; echo '--- last_cmd cleared ---'; printf '%s\n' 'CMD:cd /data/data/com.termux/files/home/broccoli && bash self_test.sh' > last_cmd.txt
+2026-07-08T05:59:14.246850+00:00 Waiting: /data/data/com.termux/files/home/broccoli/inbox_response.txt

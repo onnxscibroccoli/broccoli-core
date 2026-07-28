@@ -83,17 +83,23 @@ for f in entries:
     local = REPO / rel
     local.parent.mkdir(parents=True,exist_ok=True)
 
-    print("COPY",rel)
+    print("COPY", rel)
 
-    run([
-        "rclone",
-        "copyto",
-        drive_root+"/"+rel,
-        str(local)
-    ])
+    try:
+        run([
+            "rclone",
+            "copyto",
+            drive_root + "/" + rel,
+            str(local)
+        ])
+    except Exception as e:
+        print("SKIP", rel, e)
+        with open("sync_failures.txt", "a") as f:
+            f.write(rel + "\\n")
+        continue
 
     count += 1
-    size += f.get("Size",0)
+    size += f.get("Size", 0)
 
     if count>=BATCH_FILES or size>=BATCH_MB*1024*1024:
 

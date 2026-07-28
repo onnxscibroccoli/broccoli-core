@@ -1,0 +1,176 @@
+[2026-07-08T01:42:13-04:00] launch ai.x.grok
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=ai.x.grok/.main.GrokActivity }
+Request timeout. The connection between the current app (com.termux) and Shizuku app may be blocked by your system. Please disable all battery optimization features for both current app (com.termux) and Shizuku app.
+[2026-07-08T01:42:34-04:00] fg: 
+[2026-07-08T01:42:34-04:00] retry monkey
+Events injected: 1
+[2026-07-08T01:42:47-04:00] ui_grok: attempt 1
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+[2026-07-08T01:42:55-04:00] ui_grok: OK bytes=9629 pkg_hits=1
+[2026-07-08T01:43:50-04:00] launch ai.x.grok
+ai.x.grok/.main.GrokActivity
+  bash arg: -p
+  bash arg: ai.x.grok
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+## Network stats: elapsed time=94ms (0ms mobile, 0ms wifi, 94ms not connected)
+Request timeout. The connection between the current app (com.termux) and Shizuku app may be blocked by your system. Please disable all battery optimization features for both current app (com.termux) and Shizuku app.
+[2026-07-08T01:44:21-04:00] fg: 
+[2026-07-08T01:44:21-04:00] retry monkey
+Request timeout. The connection between the current app (com.termux) and Shizuku app may be blocked by your system. Please disable all battery optimization features for both current app (com.termux) and Shizuku app.
+[2026-07-08T01:44:45-04:00] launch ai.x.grok
+ai.x.grok/.main.GrokActivity
+Events injected: 1
+Request timeout. The connection between the current app (com.termux) and Shizuku app may be blocked by your system. Please disable all battery optimization features for both current app (com.termux) and Shizuku app.
+[2026-07-08T01:45:13-04:00] fg: 
+[2026-07-08T01:45:13-04:00] retry monkey
+  bash arg: ai.x.grok
+  bash arg: android.intent.category.LAUNCHER
+Events injected: 1
+[2026-07-08T01:45:23-04:00] launch ai.x.grok
+Request timeout. The connection between the current app (com.termux) and Shizuku app may be blocked by your system. Please disable all battery optimization features for both current app (com.termux) and Shizuku app.
+Request timeout. The connection between the current app (com.termux) and Shizuku app may be blocked by your system. Please disable all battery optimization features for both current app (com.termux) and Shizuku app.
+[2026-07-08T01:46:04-04:00] fg:     topResumedActivity=ActivityRecord{2e170e u0 ai.x.grok/.main.GrokActivity t1803}
+[2026-07-08T01:46:05-04:00] ui_grok: attempt 1
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+[2026-07-08T01:46:12-04:00] ui_grok: OK bytes=31213 pkg_hits=1
+[2026-07-08T01:46:13-04:00] launch ai.x.grok
+Request timeout. The connection between the current app (com.termux) and Shizuku app may be blocked by your system. Please disable all battery optimization features for both current app (com.termux) and Shizuku app.
+Request timeout. The connection between the current app (com.termux) and Shizuku app may be blocked by your system. Please disable all battery optimization features for both current app (com.termux) and Shizuku app.
+[2026-07-08T01:46:57-04:00] fg:     topResumedActivity=ActivityRecord{a527bad u0 ai.x.grok/.main.GrokActivity t1804}
+[2026-07-08T01:46:58-04:00] ui_grok: attempt 1
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+[2026-07-08T01:47:08-04:00] ui_grok: OK bytes=27532 pkg_hits=1
+[2026-07-08T01:49:04-04:00] launch: resume ai.x.grok/.main.GrokActivity
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=ai.x.grok/.main.GrokActivity }
+[2026-07-08T01:49:14-04:00] launch: retry SINGLE_TOP
+[2026-07-08T01:49:20-04:00] launch: last resort monkey (no force-stop)
+  bash arg: -p
+  bash arg: ai.x.grok
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+## Network stats: elapsed time=105ms (0ms mobile, 0ms wifi, 105ms not connected)
+[2026-07-08T01:49:30-04:00] launch: OK foreground
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+[2026-07-08T01:49:37-04:00] ui: OK 33679
+[2026-07-08T01:52:05-04:00] launch: resume ai.x.grok/.main.GrokActivity
+[2026-07-08T01:52:19-04:00] launch: OK foreground
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+[2026-07-08T01:52:24-04:00] ui: OK 34192
+[2026-07-08T01:52:30-04:00] launch: resume ai.x.grok/.main.GrokActivity
+[2026-07-08T01:52:31-04:00] launch: resume ai.x.grok/.main.GrokActivity
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=ai.x.grok/.main.GrokActivity }
+[2026-07-08T01:52:37-04:00] launch: retry SINGLE_TOP
+[2026-07-08T01:52:45-04:00] launch: OK foreground
+[2026-07-08T01:52:47-04:00] launch: OK foreground
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+[2026-07-08T01:52:50-04:00] ui: OK 26590
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+[2026-07-08T01:52:52-04:00] ui: OK 26590
+[2026-07-08T01:52:57-04:00] launch: already foreground ai.x.grok
+[2026-07-08T01:53:02-04:00] launch: OK foreground
+[2026-07-08T01:53:06-04:00] launch: resume ai.x.grok/.main.GrokActivity
+[2026-07-08T01:53:13-04:00] launch: retry SINGLE_TOP
+[2026-07-08T01:53:25-04:00] launch: OK foreground
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+[2026-07-08T01:53:30-04:00] ui: OK 32929
+[2026-07-08T01:55:10-04:00] launch: resume ai.x.grok/.main.GrokActivity
+Request timeout. The connection between the current app (com.termux) and Shizuku app may be blocked by your system. Please disable all battery optimization features for both current app (com.termux) and Shizuku app.
+[2026-07-08T01:55:29-04:00] launch: retry SINGLE_TOP
+Starting: Intent { flg=0x20000000 cmp=ai.x.grok/.main.GrokActivity }
+[2026-07-08T01:55:37-04:00] launch: last resort monkey (no force-stop)
+Events injected: 1
+[2026-07-08T01:55:46-04:00] launch: OK foreground
+[2026-07-08T01:57:27-04:00] launch: resume ai.x.grok/.main.GrokActivity
+[2026-07-08T01:57:41-04:00] launch: OK foreground
+[2026-07-08T01:57:42-04:00] launch: already foreground ai.x.grok
+[2026-07-08T01:57:47-04:00] launch: OK foreground
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+[2026-07-08T01:57:52-04:00] ui: OK 23562
+[2026-07-08T01:57:58-04:00] launch: already foreground ai.x.grok
+[2026-07-08T01:57:59-04:00] launch: already foreground ai.x.grok
+[2026-07-08T01:58:04-04:00] launch: OK foreground
+[2026-07-08T01:58:04-04:00] launch: OK foreground
+[2026-07-08T01:58:07-04:00] launch: resume ai.x.grok/.main.GrokActivity
+[2026-07-08T01:58:08-04:00] launch: resume ai.x.grok/.main.GrokActivity
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=ai.x.grok/.main.GrokActivity }
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=ai.x.grok/.main.GrokActivity }
+[2026-07-08T01:58:15-04:00] launch: retry SINGLE_TOP
+[2026-07-08T01:58:17-04:00] launch: retry SINGLE_TOP
+[2026-07-08T01:58:21-04:00] launch: already foreground ai.x.grok
+[2026-07-08T01:58:27-04:00] launch: WARN: Grok not in foreground after launch
+[2026-07-08T01:58:30-04:00] launch: WARN: Grok not in foreground after launch
+[2026-07-08T01:58:31-04:00] launch: OK foreground
+[2026-07-08T01:58:37-04:00] launch: already foreground ai.x.grok
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+[2026-07-08T01:58:39-04:00] ui: OK 24681
+[2026-07-08T01:58:42-04:00] launch: WARN: Grok not in foreground after launch
+[2026-07-08T01:58:56-04:00] launch: resume ai.x.grok/.main.GrokActivity
+[2026-07-08T01:59:07-04:00] launch: OK foreground
+[2026-07-08T01:59:09-04:00] launch: already foreground ai.x.grok
+[2026-07-08T01:59:12-04:00] launch: WARN: Grok not in foreground after launch
+[2026-07-08T02:02:08-04:00] launch: resume ai.x.grok/.main.GrokActivity
+Starting: Intent { flg=0x20000000 cmp=ai.x.grok/.main.GrokActivity }
+[2026-07-08T02:02:16-04:00] launch: monkey-last-resort
+  bash arg: -p
+  bash arg: ai.x.grok
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+Events injected: 1
+## Network stats: elapsed time=59ms (0ms mobile, 0ms wifi, 59ms not connected)
+[2026-07-08T02:02:26-04:00] launch: OK
+[2026-07-08T02:02:28-04:00] launch: resume ai.x.grok/.main.GrokActivity
+Starting: Intent { flg=0x20000000 cmp=ai.x.grok/.main.GrokActivity }
+[2026-07-08T02:02:37-04:00] launch: WARN-not-fg
+[2026-07-08T02:04:23-04:00] launch: resume ai.x.grok/.main.GrokActivity
+Starting: Intent { flg=0x20000000 cmp=ai.x.grok/.main.GrokActivity }
+[2026-07-08T02:04:34-04:00] launch: OK
+[2026-07-08T02:04:36-04:00] launch: resume ai.x.grok/.main.GrokActivity
+Starting: Intent { flg=0x20000000 cmp=ai.x.grok/.main.GrokActivity }
+[2026-07-08T02:04:45-04:00] launch: OK
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+[2026-07-08T02:08:51-04:00] launch: resume ai.x.grok/.main.GrokActivity
+Starting: Intent { flg=0x20000000 cmp=ai.x.grok/.main.GrokActivity }
+[2026-07-08T02:09:00-04:00] launch: OK
+[2026-07-08T02:14:36-04:00] launch: resume ai.x.grok/.main.GrokActivity
+Starting: Intent { flg=0x20000000 cmp=ai.x.grok/.main.GrokActivity }
+[2026-07-08T02:14:48-04:00] launch: OK
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+[2026-07-08T02:15:54-04:00] launch: resume ai.x.grok/.main.GrokActivity
+Starting: Intent { flg=0x20000000 cmp=ai.x.grok/.main.GrokActivity }
+[2026-07-08T02:16:02-04:00] launch: WARN-not-fg
+[2026-07-08T02:16:46-04:00] launch: resume ai.x.grok/.main.GrokActivity
+Starting: Intent { flg=0x20000000 cmp=ai.x.grok/.main.GrokActivity }
+[2026-07-08T02:16:54-04:00] launch: OK
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+[2026-07-08T02:17:34-04:00] launch: resume ai.x.grok/.main.GrokActivity
+Starting: Intent { flg=0x20000000 cmp=ai.x.grok/.main.GrokActivity }
+[2026-07-08T02:17:43-04:00] launch: OK
+[2026-07-08T02:17:45-04:00] launch: resume ai.x.grok/.main.GrokActivity
+Starting: Intent { flg=0x20000000 cmp=ai.x.grok/.main.GrokActivity }
+[2026-07-08T02:17:53-04:00] launch: WARN-not-fg
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
+UI hierchary dumped to: /sdcard/broccoli_window_dump.xml
