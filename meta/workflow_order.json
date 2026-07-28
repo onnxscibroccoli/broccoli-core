@@ -1,0 +1,10 @@
+{
+  "order": [
+    "workflow_front",
+    "smoke_fast",
+    "meta_heal",
+    "research",
+    "daemon_rest"
+  ],
+  "skip": "bootstrap grok-smoke when smoke_cache PASS"
+}

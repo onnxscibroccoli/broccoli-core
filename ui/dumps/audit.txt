@@ -1,0 +1,43 @@
+dump audit start
+
+=== baseline_grok_foreground ===
+fg/on_grok: ai.x.grok True
+screen: grok_chat_composer
+input_xy: [540, 1274] send_xy: None
+NEW_CHAT: 3 hit(s)
+ASK_ANYTHING: 1 hit(s)
+EDIT: 1 hit(s)
+tap_plan dismiss_old -> (540,200)
+tap_plan send_target -> (987,1343)
+tap_plan input_mid -> (540,1274)
+snippet['new chat']: ...="Smoke rule: brocc smoke with BROCC_SKIP_LAUNCH=1 when you’re already in the thread under test — launch was the usual “new chat” suspect." resource-id="" class="android.widget.TextView" package="ai.x.grok" content-desc="" checkable="false" checked="false" clickable="false" enabl...
+snippet['send']: ...: grep NEW_CHAT\|SEND_ABORT\|dismiss_safe\|SEND_OK from smoke + one snippet['new chat'] line from ui/dumps/audit.txt if send still fails. Next change is coords only (e.g. BROCC_DISMISS_Y=1100 or send Y ±20), not new tap modes." resource-id="" class="android.widget.TextView" packa...
+snippet['Ask anything']: ...le="false" long-clickable="false" password="false" selected="false" bounds="[53,1144][1037,1270]"><node index="0" text="Ask anything" resource-id="" class="android.widget.TextView" package="ai.x.grok" content-desc="" checkable="false" checked="false" clickable="false" enabled="tr...
+
+=== after_launch ===
+fg/on_grok: ai.x.grok True
+screen: grok_chat_composer
+input_xy: [540, 1274] send_xy: None
+NEW_CHAT: 3 hit(s)
+ASK_ANYTHING: 1 hit(s)
+EDIT: 1 hit(s)
+tap_plan dismiss_old -> (540,200)
+tap_plan send_target -> (987,1343)
+tap_plan input_mid -> (540,1274)
+snippet['new chat']: ...="Smoke rule: brocc smoke with BROCC_SKIP_LAUNCH=1 when you’re already in the thread under test — launch was the usual “new chat” suspect." resource-id="" class="android.widget.TextView" package="ai.x.grok" content-desc="" checkable="false" checked="false" clickable="false" enabl...
+snippet['send']: ...: grep NEW_CHAT\|SEND_ABORT\|dismiss_safe\|SEND_OK from smoke + one snippet['new chat'] line from ui/dumps/audit.txt if send still fails. Next change is coords only (e.g. BROCC_DISMISS_Y=1100 or send Y ±20), not new tap modes." resource-id="" class="android.widget.TextView" packa...
+snippet['Ask anything']: ...le="false" long-clickable="false" password="false" selected="false" bounds="[53,1144][1037,1270]"><node index="0" text="Ask anything" resource-id="" class="android.widget.TextView" package="ai.x.grok" content-desc="" checkable="false" checked="false" clickable="false" enabled="tr...
+
+=== after_am_start ===
+fg/on_grok: ai.x.grok True
+screen: grok_chat_composer
+input_xy: [540, 1274] send_xy: None
+NEW_CHAT: 3 hit(s)
+ASK_ANYTHING: 1 hit(s)
+EDIT: 1 hit(s)
+tap_plan dismiss_old -> (540,200)
+tap_plan send_target -> (987,1343)
+tap_plan input_mid -> (540,1274)
+snippet['new chat']: ...="Smoke rule: brocc smoke with BROCC_SKIP_LAUNCH=1 when you’re already in the thread under test — launch was the usual “new chat” suspect." resource-id="" class="android.widget.TextView" package="ai.x.grok" content-desc="" checkable="false" checked="false" clickable="false" enabl...
+snippet['send']: ...: grep NEW_CHAT\|SEND_ABORT\|dismiss_safe\|SEND_OK from smoke + one snippet['new chat'] line from ui/dumps/audit.txt if send still fails. Next change is coords only (e.g. BROCC_DISMISS_Y=1100 or send Y ±20), not new tap modes." resource-id="" class="android.widget.TextView" packa...
+snippet['Ask anything']: ...le="false" long-clickable="false" password="false" selected="false" bounds="[53,1144][1037,1270]"><node index="0" text="Ask anything" resource-id="" class="android.widget.TextView" package="ai.x.grok" content-desc="" checkable="false" checked="false" clickable="false" enabled="tr...
