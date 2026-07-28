@@ -1,0 +1,84 @@
+{
+  "send": [
+    {
+      "method": "enter",
+      "ok": true
+    }
+  ],
+  "inject": [
+    {
+      "t": "2026-07-08T00:11:13",
+      "method": "paste_once_279",
+      "ok": false
+    },
+    {
+      "t": "2026-07-08T00:09:32",
+      "method": "clip_set_verify",
+      "ok": false,
+      "len": 33
+    },
+    {
+      "t": "2026-07-08T00:08:49",
+      "method": "paste_once_279",
+      "ok": false
+    },
+    {
+      "t": "2026-07-08T00:07:57",
+      "method": "clip_set_verify",
+      "ok": false,
+      "len": 33
+    },
+    {
+      "t": "2026-07-07T21:43:33",
+      "method": "clip_set_verify",
+      "ok": false,
+      "len": 33
+    },
+    {
+      "t": "2026-07-07T21:43:02",
+      "method": "clip_set_verify",
+      "ok": false,
+      "len": 13
+    },
+    {
+      "t": "2026-07-07T21:42:54",
+      "method": "paste_once_279",
+      "ok": false
+    },
+    {
+      "t": "2026-07-07T21:41:35",
+      "method": "clip_set_verify",
+      "ok": false,
+      "len": 33
+    },
+    {
+      "t": "2026-07-07T21:40:15",
+      "method": "clip_set_verify",
+      "ok": false,
+      "len": 13
+    },
+    {
+      "t": "2026-07-07T21:40:07",
+      "method": "paste_once_279",
+      "ok": false
+    },
+    {
+      "t": "2026-07-07T21:38:53",
+      "method": "clip_set_verify",
+      "ok": false,
+      "len": 33
+    },
+    {
+      "t": "2026-07-07T21:38:14",
+      "method": "paste_once_279",
+      "ok": false
+    },
+    {
+      "t": "2026-07-07T21:37:20",
+      "method": "clip_set_verify",
+      "ok": false,
+      "len": 33
+    }
+  ],
+  "recv": []
+}
