@@ -1,0 +1,33 @@
+[2026-07-12T16:57:20-04:00] === BROCCOLI auto: launch-grok → screen → ping ===
+[2026-07-12T16:57:20-04:00] step 1 launch-grok
+[2026-07-12T16:59:09-04:00] === BROCCOLI auto: launch-grok → screen → ping ===
+[2026-07-12T16:59:09-04:00] step 1 launch-grok
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": true,
+  "has_send": false,
+  "input_xy": [
+    540,
+    2139
+  ],
+  "send_xy": null
+}
+{
+  "fg_package": "ai.x.grok",
+  "on_grok": true,
+  "screen": "grok_chat_composer",
+  "can_inject": true,
+  "chat_text_input": true,
+  "has_ask_anything": true,
+  "has_send": false,
+  "input_xy": [
+    540,
+    2139
+  ],
+  "send_xy": null
+}
+grok_launch_ok

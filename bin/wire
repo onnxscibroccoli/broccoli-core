@@ -1,0 +1,14 @@
+#!/data/data/com.termux/files/usr/bin/bash
+export BRO=~/broccoli
+export PATH="$PREFIX/bin:$BRO/bin:$BRO/tools:$PATH"
+pkill -9 -f broccoli_infinite_dev_loop 2>/dev/null || true
+sleep 1
+if pgrep -f broccoli_infinite_dev_loop.py >/dev/null; then
+  echo "wire: loop already up"
+  pgrep -af broccoli_infinite_dev_loop
+  exit 0
+fi
+python3 "$BRO/tools/search_notif_codebase.py" | tail -30
+nohup "$BRO/tools/run_infinite.sh" >>"$BRO/reports/infinite_nohup.log" 2>&1 &
+sleep 2
+pgrep -af broccoli_infinite_dev_loop || tail -15 "$BRO/reports/infinite_nohup.log"

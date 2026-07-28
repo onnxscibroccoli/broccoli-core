@@ -1,0 +1,22 @@
+#!/data/data/com.termux/files/usr/bin/bash
+B="${BROCCOLI_DIR:-$HOME/broccoli}"
+export BROCCOLI_DIR="$B"
+INTERVAL="${BROCCOLI_INTERVAL_SEC:-180}"
+LOG="$B/logs/autoloop.log"
+
+log(){ echo "[$(date -Iseconds)] $*" | tee -a "$LOG"; }
+
+# Keep CPU awake while Termux is open (optional; helps some devices)
+command -v termux-wake-lock >/dev/null && termux-wake-lock || true
+
+log "AUTOLOOP start interval=${INTERVAL}s"
+while true; do
+  log "cycle begin"
+  if bash "$B/one_cycle.sh" >>"$LOG" 2>&1; then
+    log "cycle ok"
+  else
+    log "cycle fail exit=$? (continuing)"
+  fi
+  log "sleep ${INTERVAL}s"
+  sleep "$INTERVAL"
+done

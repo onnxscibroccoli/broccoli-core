@@ -1,0 +1,252 @@
+#!/usr/bin/env bash
+#
+# brocc
+#
+# Broccoli command router.
+#
+# Self-contained CLI dispatcher for the currently installed Phase 1
+# modules plus compatibility commands referenced by worker handoffs.
+#
+
+set -Eeuo pipefail
+
+ROOT="${BROCC_ROOT:-$HOME/broccoli}"
+
+export PATH="$ROOT/bin:$PATH"
+export PYTHONPATH="$ROOT${PYTHONPATH:+:$PYTHONPATH}"
+
+cmd="${1:-help}"
+shift || true
+
+report()
+{
+    local report_file="$ROOT/reports/latest.txt"
+
+    if [ ! -f "$report_file" ]; then
+        printf 'No report found: %s\n' "$report_file" >&2
+        return 1
+    fi
+
+    cat "$report_file"
+}
+
+show_log()
+{
+    local count="${1:-40}"
+
+    case "$count" in
+        ''|*[!0-9]*)
+            printf 'Usage: brocc log [line-count]\n' >&2
+            return 2
+            ;;
+    esac
+
+    local candidates=(
+        "$ROOT/logs/broccoli.log"
+        "$ROOT/logs/worker.log"
+        "$ROOT/broccoli.log"
+    )
+
+    local file
+
+    for file in "${candidates[@]}"; do
+        if [ -f "$file" ]; then
+            tail -n "$count" "$file"
+            return 0
+        fi
+    done
+
+    printf '%s\n' "No canonical log found. Recent files:"
+    find "$ROOT" \
+        -type f \
+        \( -name '*.log' -o -name '*.txt' \) \
+        -printf '%T@ %p\n' 2>/dev/null |
+        sort -nr |
+        head -n 10 |
+        cut -d' ' -f2-
+}
+
+user_done()
+{
+    local wait_file="$ROOT/WAITING_USER.txt"
+
+    if [ -e "$wait_file" ]; then
+        rm -f -- "$wait_file"
+        printf 'WAITING_USER cleared: %s\n' "$wait_file"
+    else
+        printf 'WAITING_USER already clear.\n'
+    fi
+
+    #
+    # Compatibility marker. This records the operator acknowledgement
+    # without inventing worker state or starting a send cycle.
+    #
+    mkdir -p "$ROOT/state"
+
+    {
+        printf 'timestamp=%s\n' "$(date -Iseconds)"
+        printf 'action=user-done\n'
+        printf 'pid=%s\n' "$$"
+    } > "$ROOT/state/user_done.marker"
+
+    printf 'User completion acknowledged.\n'
+}
+
+usage()
+{
+    cat <<'HELP'
+brocc probe
+brocc harvest [args...]
+brocc read
+brocc smoke
+brocc cycle
+brocc report
+brocc log [lines]
+brocc user-done
+brocc help
+
+Commands:
+  probe       inspect current Android/UI state
+  harvest     pull chat text into data/harvest/*.jsonl
+  read        read current thread
+  smoke       Phase 1 harvest smoke operation
+  cycle       disabled until harvest is stable
+  report      display reports/latest.txt
+  log         display recent Broccoli log information
+  user-done   clear WAITING_USER compatibility state
+HELP
+}
+
+case "$cmd" in
+
+    agent)
+        sub="${1:-help}"
+
+        case "$sub" in
+
+            scan)
+                exec python3 "$ROOT/agent/context.py"
+                ;;
+
+            plan)
+                exec python3 "$ROOT/agent/planner.py"
+                ;;
+
+            verify)
+                exec python3 "$ROOT/agent/verifier.py"
+                ;;
+
+            loop)
+                exec python3 "$ROOT/agent/loop.py"
+                ;;
+
+            handoff)
+                cat "$ROOT/prompts/next_prompt.md"
+                ;;
+
+            *)
+                echo "brocc agent scan|plan|verify|loop|handoff"
+                ;;
+        esac
+        ;;
+
+
+    sysdump)
+
+        sub="${1:-tail}"
+
+        case "$sub" in
+
+            start)
+
+                mkdir -p "$ROOT/logs"
+
+                nohup \
+                python3 \
+                "$ROOT/daemons/sysdumpd.py" \
+                >>"$ROOT/logs/sysdump.log" \
+                2>&1 &
+
+                echo "sysdump started"
+            ;;
+
+
+            tail)
+
+                tail -20 \
+                "$ROOT/data/sysdump/system.jsonl"
+            ;;
+
+
+            replay)
+
+                cd "$ROOT"
+
+                python3 \
+                -m modules.sysdump.replay \
+                "${2:-30}"
+            ;;
+
+        esac
+
+        ;;
+
+    probe)
+        exec python3 "$ROOT/modules/state_probe.py"
+        ;;
+
+    harvest)
+        exec python3 "$ROOT/modules/chat_harvest.py" "$@"
+        ;;
+
+    read)
+        export BROCC_NO_SCROLL="${BROCC_NO_SCROLL:-0}"
+
+        exec python3 -c "
+import json
+import sys
+
+sys.path.insert(0, '$ROOT')
+
+from modules.chat_reader import read_thread
+
+print(json.dumps(read_thread(), indent=2))
+"
+        ;;
+
+    smoke)
+        printf '%s\n' \
+            'Phase1: use brocc harvest (no send)'
+
+        exec python3 "$ROOT/modules/chat_harvest.py"
+        ;;
+
+    cycle)
+        printf '%s\n' \
+            'send cycle disabled until harvest stable; use: brocc harvest'
+
+        exit 0
+        ;;
+
+    report)
+        report
+        ;;
+
+    log)
+        show_log "${1:-40}"
+        ;;
+
+    user-done)
+        user_done
+        ;;
+
+    help|-h|--help)
+        usage
+        ;;
+
+    *)
+        printf 'unknown: %s\n\n' "$cmd" >&2
+        usage >&2
+        exit 1
+        ;;
+esac

@@ -1,0 +1,8 @@
+#!/data/data/com.termux/files/usr/bin/bash
+pkill -9 -f broccoli_infinite_dev_loop 2>/dev/null
+pkill -9 -f run_infinite 2>/dev/null
+pkill -9 -f 'bin/wire' 2>/dev/null
+rm -f ~/broccoli/state/infinite.lock ~/broccoli/state/round.lock
+touch ~/broccoli/state/STOP
+termux-notification-remove --id broccoli-ctl 2>/dev/null || true
+echo KILLED
