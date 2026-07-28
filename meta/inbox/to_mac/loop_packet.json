@@ -1,0 +1,16 @@
+{
+  "role": "brocc",
+  "ts": "2026-07-07 17:55:02",
+  "phase": "await_grok",
+  "summary": {
+    "missing": 1,
+    "stale": 7,
+    "ok": 568
+  },
+  "ask_grok": "Reply with grok_commands.sh lines only (brocc/python3). Mac: adb push to inbox/from_mac/grok_commands.sh",
+  "mac_pull": [
+    "adb pull /sdcard/Broccoli/mirror_manifest.json .",
+    "adb pull /sdcard/Broccoli/mirror ./Broccoli-mirror",
+    "adb pull /sdcard/Broccoli/pull/CLIPBOARD_LAST.txt ."
+  ]
+}

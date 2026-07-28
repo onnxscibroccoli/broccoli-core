@@ -1,0 +1,9 @@
+{
+  "phase": "await_grok",
+  "last_emit_hash": "53ea8f0ee8baf69b3b95f55299a1d7789a301c985ae8dd01baf1a09c57e33fa5",
+  "last_emit_ts": 1783461302.1638038,
+  "last_fingerprint": "28366029851",
+  "emit_min_interval_sec": 90,
+  "round": 3,
+  "last_activity_cmd": ""
+}

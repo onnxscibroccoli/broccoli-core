@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "max_loops_per_task": 0,
+  "poll_reply_sec": 2,
+  "poll_reply_max": 15,
+  "user_task_file": "/data/data/com.termux/files/home/broccoli/ui/user_next_task.txt",
+  "wait_poll_sec": 5,
+  "need_task_toast_interval_sec": 60,
+  "default_smoke_prompt": "Work on the current task until done. Reply ITER_OK when this step passes."
+}

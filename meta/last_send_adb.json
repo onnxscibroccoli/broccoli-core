@@ -1,0 +1,8 @@
+{
+  "method": "adb_tap",
+  "cx": 540,
+  "cy": 2060,
+  "label": "semantic",
+  "rid": "chat_text_input",
+  "strategy": "semantic"
+}
