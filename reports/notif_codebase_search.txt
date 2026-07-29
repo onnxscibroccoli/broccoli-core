@@ -1,0 +1,77 @@
+SEARCH @ 2026-07-07T23:06:10  files=5855
+
+ 55  /sdcard/Broccoli/pull/manifest.json
+      L58 [rish] "path": "/data/data/com.termux/files/home/broccoli_rish_pull.py",
+      L119 [rish] "path": "/data/data/com.termux/files/home/broccoli/__pycache__/broccoli_rish_ui.cpython-313.pyc",
+ 55  /sdcard/Broccoli/pull/manifest_latest.json
+      L58 [rish] "path": "/data/data/com.termux/files/home/broccoli_rish_pull.py",
+      L119 [rish] "path": "/data/data/com.termux/files/home/broccoli/__pycache__/broccoli_rish_ui.cpython-313.pyc",
+ 55  /sdcard/Broccoli/pull/manifest.json
+      L58 [rish] "path": "/data/data/com.termux/files/home/broccoli_rish_pull.py",
+      L119 [rish] "path": "/data/data/com.termux/files/home/broccoli/__pycache__/broccoli_rish_ui.cpython-313.pyc",
+ 55  /sdcard/Broccoli/pull/manifest_latest.json
+      L58 [rish] "path": "/data/data/com.termux/files/home/broccoli_rish_pull.py",
+      L119 [rish] "path": "/data/data/com.termux/files/home/broccoli/__pycache__/broccoli_rish_ui.cpython-313.pyc",
+ 20  /data/data/com.termux/files/home/broccoli/reports/GROK_CODEBASE_FEED.md
+      L218 [rish] /data/data/com.termux/files/home/broccoli/broccoli_rish_ui.py	2072
+      L698 [termux_send] command -v termux-notification >/dev/null 2>&1 || exit 0
+ 20  /data/data/com.termux/files/home/broccoli/reports/GROK_CHUNK_aa
+      L218 [rish] /data/data/com.termux/files/home/broccoli/broccoli_rish_ui.py	2072
+      L698 [termux_send] command -v termux-notification >/dev/null 2>&1 || exit 0
+ 20  /sdcard/Broccoli/reports/GROK_CODEBASE_FEED.md
+      L218 [rish] /data/data/com.termux/files/home/broccoli/broccoli_rish_ui.py	2072
+      L698 [termux_send] command -v termux-notification >/dev/null 2>&1 || exit 0
+ 20  /sdcard/Broccoli/reports/GROK_CHUNK_aa
+      L218 [rish] /data/data/com.termux/files/home/broccoli/broccoli_rish_ui.py	2072
+      L698 [termux_send] command -v termux-notification >/dev/null 2>&1 || exit 0
+ 20  /sdcard/Broccoli/mirror/reports/GROK_CODEBASE_FEED.md
+      L218 [rish] /data/data/com.termux/files/home/broccoli/broccoli_rish_ui.py	2072
+      L698 [termux_send] command -v termux-notification >/dev/null 2>&1 || exit 0
+ 20  /sdcard/Broccoli/mirror/reports/GROK_CHUNK_aa
+      L218 [rish] /data/data/com.termux/files/home/broccoli/broccoli_rish_ui.py	2072
+      L698 [termux_send] command -v termux-notification >/dev/null 2>&1 || exit 0
+ 20  /sdcard/Broccoli/pull/bundle_20260707_221522/broccoli/reports/GROK_CHUNK_aa
+      L218 [rish] /data/data/com.termux/files/home/broccoli/broccoli_rish_ui.py	2072
+      L698 [termux_send] command -v termux-notification >/dev/null 2>&1 || exit 0
+ 20  /sdcard/Broccoli/pull/bundle_20260707_221522/broccoli/reports/GROK_CODEBASE_FEED.md
+      L218 [rish] /data/data/com.termux/files/home/broccoli/broccoli_rish_ui.py	2072
+      L698 [termux_send] command -v termux-notification >/dev/null 2>&1 || exit 0
+ 20  /sdcard/Broccoli/pull/bundle_20260707_220654/broccoli/reports/GROK_CHUNK_aa
+      L218 [rish] /data/data/com.termux/files/home/broccoli/broccoli_rish_ui.py	2072
+      L698 [termux_send] command -v termux-notification >/dev/null 2>&1 || exit 0
+ 20  /sdcard/Broccoli/pull/bundle_20260707_220654/broccoli/reports/GROK_CODEBASE_FEED.md
+      L218 [rish] /data/data/com.termux/files/home/broccoli/broccoli_rish_ui.py	2072
+      L698 [termux_send] command -v termux-notification >/dev/null 2>&1 || exit 0
+ 20  /sdcard/Broccoli/pull/bundle_20260707_214342/broccoli/reports/GROK_CHUNK_aa
+      L218 [rish] /data/data/com.termux/files/home/broccoli/broccoli_rish_ui.py	2072
+      L698 [termux_send] command -v termux-notification >/dev/null 2>&1 || exit 0
+ 20  /sdcard/Broccoli/pull/bundle_20260707_214342/broccoli/reports/GROK_CODEBASE_FEED.md
+      L218 [rish] /data/data/com.termux/files/home/broccoli/broccoli_rish_ui.py	2072
+      L698 [termux_send] command -v termux-notification >/dev/null 2>&1 || exit 0
+ 20  /sdcard/Broccoli/pull/bundle_20260707_212854/broccoli/reports/GROK_CHUNK_aa
+      L218 [rish] /data/data/com.termux/files/home/broccoli/broccoli_rish_ui.py	2072
+      L698 [termux_send] command -v termux-notification >/dev/null 2>&1 || exit 0
+ 20  /sdcard/Broccoli/pull/bundle_20260707_212854/broccoli/reports/GROK_CODEBASE_FEED.md
+      L218 [rish] /data/data/com.termux/files/home/broccoli/broccoli_rish_ui.py	2072
+      L698 [termux_send] command -v termux-notification >/dev/null 2>&1 || exit 0
+ 20  /sdcard/Broccoli/pull/bundle_20260707_211749/broccoli/reports/GROK_CHUNK_aa
+      L218 [rish] /data/data/com.termux/files/home/broccoli/broccoli_rish_ui.py	2072
+      L698 [termux_send] command -v termux-notification >/dev/null 2>&1 || exit 0
+ 20  /sdcard/Broccoli/pull/bundle_20260707_211749/broccoli/reports/GROK_CODEBASE_FEED.md
+      L218 [rish] /data/data/com.termux/files/home/broccoli/broccoli_rish_ui.py	2072
+      L698 [termux_send] command -v termux-notification >/dev/null 2>&1 || exit 0
+ 20  /sdcard/Broccoli/pull/bundle_20260707_211616/broccoli/reports/GROK_CHUNK_aa
+      L218 [rish] /data/data/com.termux/files/home/broccoli/broccoli_rish_ui.py	2072
+      L698 [termux_send] command -v termux-notification >/dev/null 2>&1 || exit 0
+ 20  /sdcard/Broccoli/pull/bundle_20260707_211616/broccoli/reports/GROK_CODEBASE_FEED.md
+      L218 [rish] /data/data/com.termux/files/home/broccoli/broccoli_rish_ui.py	2072
+      L698 [termux_send] command -v termux-notification >/dev/null 2>&1 || exit 0
+ 20  /sdcard/Broccoli/pull/bundle_20260707_211437/broccoli/reports/GROK_CHUNK_aa
+      L218 [rish] /data/data/com.termux/files/home/broccoli/broccoli_rish_ui.py	2072
+      L698 [termux_send] command -v termux-notification >/dev/null 2>&1 || exit 0
+ 20  /sdcard/Broccoli/pull/bundle_20260707_211437/broccoli/reports/GROK_CODEBASE_FEED.md
+      L218 [rish] /data/data/com.termux/files/home/broccoli/broccoli_rish_ui.py	2072
+      L698 [termux_send] command -v termux-notification >/dev/null 2>&1 || exit 0
+ 20  /sdcard/Broccoli/pull/bundle_20260707_211249/broccoli/reports/GROK_CHUNK_aa
+      L218 [rish] /data/data/com.termux/files/home/broccoli/broccoli_rish_ui.py	2072
+      L698 [termux_send] command -v termux-notification >/dev/null 2>&1 || exit 0

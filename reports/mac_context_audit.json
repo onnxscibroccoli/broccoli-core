@@ -1,0 +1,32 @@
+{
+  "ts": "2026-07-07T22:58:13",
+  "device_id": "unknown",
+  "bundle_sha256": "",
+  "synced_at": null,
+  "walk_digest_head": "",
+  "ctx": {
+    "MD_CONTEXT.md": {
+      "sha16": "",
+      "bytes": 0
+    },
+    "PROJECT_CONTEXT.md": {
+      "sha16": "",
+      "bytes": 0
+    },
+    "meta/MD_CONTEXT.md": {
+      "sha16": "",
+      "bytes": 0
+    }
+  },
+  "log_awareness": {
+    "bundle_sha": false,
+    "walk_digest": false,
+    "MD_CONTEXT": false,
+    "ctx_md": false,
+    "project_context": false,
+    "synced_at": false,
+    "manifest": false
+  },
+  "log_mac_context_aware": false,
+  "infinite_log_lines": 32
+}

@@ -1,0 +1,1331 @@
+ath.home()/"rish"):
+        if c and Path(str(c)).is_file(): return str(c)
+    return shutil.which("rish")
+def shell(cmd, timeout=45):
+    env = os.environ.copy()
+    env.setdefault("RISH_APPLICATION_ID", "com.termux")
+    rish = rish_path()
+    if rish:
+        p = subprocess.run([rish, "-c", cmd], capture_output=True, text=True, timeout=timeout, env=env)
+        return p.returncode, (p.stdout or "") + (p.stderr or "")
+    p = subprocess.run(["sh", "-c", cmd], capture_output=True, text=True, timeout=timeout)
+    return p.returncode, (p.stdout or "") + (p.stderr or "")
+def wm_size():
+    rc, out = shell("wm size")
+    m = re.search(r"(\d+)x(\d+)", out)
+    return (int(m.group(1)), int(m.group(2))) if m else (1080, 2400)
+
+
+
+===== TIER0: state/walk_stage/broccoli_rish_ui.py =====
+"""Rish-only UI: dump a11y tree -> tap node bounds. No APK."""
+import os, re, time, json, xml.etree.ElementTree as ET
+from pathlib import Path
+from broccoli_rish_shell import shell
+
+GROK = os.environ.get("BROCCOLI_GROK_PKG", "ai.x.grok")
+BRO = Path.home() / "broccoli"
+
+def _bounds(b):
+    m = re.match(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", b or "")
+    if not m: return None
+    x1,y1,x2,y2 = map(int, m.groups())
+    return x1,y1,x2,y2,(x1+x2)//2,(y1+y2)//2
+
+def dump_xml():
+    remote = "/data/local/tmp/ui.xml"
+    for c in (
+        f"uiautomator dump --compressed {remote} 2>/dev/null; cat {remote}",
+        f"cmd uiautomator dump {remote} 2>/dev/null; cat {remote}",
+    ):
+        rc, out = shell(c, timeout=14)
+        if "<?xml" in out:
+            xml = out[out.find("<?xml"):]
+            (BRO/"ui/last_dump.xml").write_text(xml[:1_500_000], encoding="utf-8")
+            return xml
+    return ""
+
+def nodes(xml):
+    if not xml: return []
+    try:
+        root = ET.fromstring(xml.encode("utf-8", errors="replace"))
+    except ET.ParseError:
+        return []
+    out = []
+    for el in root.iter("node"):
+        b = _bounds(el.get("bounds"))
+        if not b: continue
+        x1,y1,x2,y2,cx,cy = b
+        out.append({
+            "text": (el.get("text") or "").strip(),
+            "desc": (el.get("content-desc") or "").strip(),
+            "rid": el.get("resource-id") or "",
+            "cls": el.get("class") or "",
+            "pkg": el.get("package") or "",
+            "clickable": el.get("clickable") == "true",
+            "focusable": el.get("focusable") == "true",
+            "cx": cx, "cy": cy, "x1": x1, "y1": y1, "x2": x2, "y2": y2,
+        })
+    return out
+
+def in_grok(n):
+    return GROK in (n.get("pkg") or "")
+
+def tap(cx, cy):
+    shell(f"input tap {int(cx)} {int(cy)}")
+    time.sleep(0.12)
+
+def paste_clip():
+    shell("input keyevent 279")
+    time.sleep(0.12)
+
+def enter():
+    shell("input keyevent 66")
+    time.sleep(0.2)
+
+def find_composer(ns):
+    pool = [n for n in ns if in_grok(n)] or ns
+    best, sc = None, -1
+    for n in pool:
+        blob = (n["text"]+" "+n["desc"]+" "+n["rid"]).lower()
+        s = 0
+        if "edittext" in n["cls"].lower(): s += 60
+        if n["focusable"]: s += 10
+        for k in ("ask","search","message","compose","prompt"):
+            if k in blob: s += 8
+        s += n["cy"] // 40
+        if s > sc: sc, best = s, n
+    return best
+
+def find_send(ns):
+    pool = [n for n in ns if in_grok(n) and n["clickable"]] or [n for n in ns if n["clickable"]]
+    ranked = []
+    for n in pool:
+        blob = (n["text"]+" "+n["desc"]+" "+n["rid"]).lower()
+        s = 0
+        if "send" in blob: s += 80
+        if "submit" in blob or "post" in blob: s += 40
+        if "send" in n["rid"].lower(): s += 70
+        if "image" in n["cls"].lower() or "button" in n["cls"].lower(): s += 15
+        s += n["cy"] // 50
+        if s > 10: ranked.append((s, n))
+    ranked.sort(key=lambda x: -x[0])
+    return ranked[0][1] if ranked else None
+
+def composer_text(ns, comp):
+    if not comp: return ""
+    parts = [comp.get("text") or "", comp.get("desc") or ""]
+    for n in ns:
+        if n.get("text") and abs(n["cy"]-comp["cy"]) < 100:
+            parts.append(n["text"])
+    return " ".join(parts)
+
+def last_assistant(ns):
+    skip = ("ask anything","search","send","menu","settings")
+    msgs = []
+    for n in ns:
+        if not in_grok(n): continue
+        t = n.get("text") or ""
+        if len(t) < 4 or "edittext" in n["cls"].lower(): continue
+        if any(s in t.lower() for s in skip) and len(t) < 40: continue
+        msgs.append(n)
+    msgs.sort(key=lambda n: n["cy"])
+    return msgs[-1]["text"] if msgs else ""
+
+def clip_set(text):
+    import subprocess
+    p = os.path.join(os.environ.get("PREFIX",""), "bin", "termux-clipboard-set")
+    if os.path.isfile(p):
+        subprocess.run([p, text], timeout=8)
+        return True
+    return False
+
+def open_grok():
+    shell(f"monkey -p {GROK} -c android.intent.category.LAUNCHER 1")
+    time.sleep(0.35)
+
+def send_task(task):
+    log = BRO/"reports/agentic.log"
+    def L(m):
+        log.write_text((log.read_text(encoding="utf-8", errors="replace") if log.exists() else "") +
+                       time.strftime("%H:%M:%S ")+m+"\n", encoding="utf-8")
+
+    task = task.strip()
+    open_grok()
+    clip_set(task)
+    ns = nodes(dump_xml())
+    comp = find_composer(ns)
+    if not comp:
+        L("no_composer"); return {"ok": False, "error": "no_composer"}
+
+    if task[:14] not in composer_text(ns, comp):
+        tap(comp["cx"], comp["cy"])
+        shell("input keyevent 122")
+        paste_clip()
+        L("pasted")
+    else:
+        L("skip_paste")
+
+    ns = nodes(dump_xml())
+    before = last_assistant(ns)
+    send_n = find_send(ns)
+    method = None
+    if send_n:
+        tap(send_n["cx"], send_n["cy"])
+        method = f"tap_send {send_n['cx']} {send_n['cy']}"
+        L(method)
+    tap(comp["cx"], comp["cy"])
+    enter()
+    L("enter")
+
+    ns2 = nodes(dump_xml())
+    if task[:12] in composer_text(ns2, find_composer(ns2) or comp):
+        if send_n:
+            tap(send_n["cx"], send_n["cy"])
+        enter()
+        L("retry_send")
+
+    t0 = time.time()
+    reply = ""
+    while time.time() - t0 < 25:
+        shell("input swipe 540 1500 540 800 200")
+        time.sleep(0.1)
+        ta = last_assistant(nodes(dump_xml()))
+        if ta and ta != before and len(ta) >= 3:
+            reply = ta
+            break
+        time.sleep(0.08)
+
+    if reply:
+        (BRO/"inbox/grok_reply.txt").write_text(reply, encoding="utf-8")
+        wp = BRO/"meta/working_paths.json"
+        d = json.loads(wp.read_text()) if wp.exists() else {"send":[]}
+        d.setdefault("send",[]).insert(0,{"method":method or "enter","ok":True})
+        wp.write_text(json.dumps(d,indent=2), encoding="utf-8")
+        L(f"done len={len(reply)}")
+        return {"ok": True, "method": method, "loop_ok": "LOOP_OK" in reply, "reply": reply[:300]}
+    L("no_reply")
+    return {"ok": False, "method": method}
+
+
+
+===== TIER0: state/walk_stage/broccoli_send.py =====
+import os, time
+from broccoli_rish_shell import shell, wm_size
+from broccoli_ui_dump import ui_dump, nodes, find_send, find_all_send_candidates, composer_has_text, find_grok_search_box
+from broccoli_strategy import log_path, best_send_method
+
+def tap_send_button(ns, pkg):
+    sends = find_all_send_candidates(ns, pkg)
+    for i, snd in enumerate(sends[:3]):
+        shell(f"input tap {snd['cx']} {snd['cy']}")
+        time.sleep(0.12)
+        xml = ui_dump()
+        ns2 = nodes(xml)
+        box = find_grok_search_box(ns2, pkg)
+        if box and not composer_has_text(ns2, box, "") or True:
+            log_path("send", f"tap_send_{i}", True, {"cx": snd["cx"], "cy": snd["cy"], "rid": snd.get("rid")})
+            return True, f"tap_send_{i}", xml
+    return False, None, xml if 'xml' in dir() else ui_dump()
+
+def send_enter():
+    shell("input keyevent 66")
+    time.sleep(0.1)
+    log_path("send", "keyevent_66", True)
+    return True, "keyevent_66", ui_dump()
+
+def send_near_composer(ns, pkg):
+    w, h = wm_size()
+    box = find_grok_search_box(ns, pkg)
+    if box:
+        tx = min(w - 40, box["x2"] + 60)
+        ty = box["cy"]
+        shell(f"input tap {int(tx)} {int(ty)}")
+        time.sleep(0.1)
+        log_path("send", "tap_right_of_box", True, {"cx": tx, "cy": ty})
+        return True, "tap_right_of_box", ui_dump()
+    shell(f"input tap {w-80} {int(h*0.88)}")
+    time.sleep(0.1)
+    log_path("send", "tap_bottom_right", True)
+    return True, "tap_bottom_right", ui_dump()
+
+def auto_send(pkg=None, xml_before=None):
+    pkg = pkg or os.environ.get("BROCCOLI_GROK_PKG", "ai.x.grok")
+    methods = []
+    pref = best_send_method()
+    if pref:
+        methods.append(pref)
+    methods += ["tap_send_0", "tap_send_1", "keyevent_66", "tap_right_of_box", "tap_bottom_right"]
+
+    seen = []
+    for m in methods:
+        if m in seen: continue
+        seen.append(m)
+        xml = xml_before or ui_dump()
+        ns = nodes(xml)
+        if m.startswith("tap_send"):
+            ok, name, xml2 = tap_send_button(ns, pkg)
+        elif m == "keyevent_66":
+            ok, name, xml2 = send_enter()
+        elif m in ("tap_right_of_box", "tap_bottom_right"):
+            ok, name, xml2 = send_near_composer(ns, pkg)
+        else:
+            snd = find_send(ns, pkg)
+            if snd:
+                shell(f"input tap {snd['cx']} {snd['cy']}")
+                time.sleep(0.1)
+                ok, name, xml2 = True, "find_send", ui_dump()
+            else:
+                ok, name, xml2 = False, m, xml
+        if ok:
+            return True, name, xml2
+    log_path("send", "all_failed", False)
+    return False, None, ui_dump()
+
+
+
+===== TIER0: state/walk_stage_0/broccoli_a11y_rish.py =====
+"""
+Accessibility-first automation via Rish + Broccoli A11y helper APK.
+Falls back to node-bounds click only if helper not installed.
+"""
+import os, re, time, json, subprocess
+from pathlib import Path
+from broccoli_rish_shell import shell, rish_path
+
+BRO = Path.home() / "broccoli"
+A11Y_PKG = os.environ.get("BROCCOLI_A11Y_PKG", "ai.broccoli.a11y")
+A11Y_ACTION = "com.broccoli.a11y.ACTION"
+GROK = os.environ.get("BROCCOLI_GROK_PKG", "ai.x.grok")
+
+def _am_broadcast(extra_args):
+    cmd = f'am broadcast -a {A11Y_ACTION} -p {A11Y_PKG} ' + " ".join(extra_args)
+    rc, out = shell(cmd, timeout=12)
+    return rc, out
+
+def a11y_installed():
+    rc, out = shell(f"pm path {A11Y_PKG}")
+    return rc == 0 and "package:" in out
+
+def a11y_service_enabled():
+    rc, out = shell("settings get secure enabled_accessibility_services")
+    return A11Y_PKG in (out or "")
+
+def a11y_click_text(text, pkg=None):
+    pkg = pkg or GROK
+    rc, out = _am_broadcast([
+        '--es op click_text',
+        f'--es target_pkg {pkg}',
+        f'--es text "{text}"',
+    ])
+    time.sleep(0.35)
+    return rc == 0, out
+
+def a11y_click_rid(resource_id, pkg=None):
+    pkg = pkg or GROK
+    rc, out = _am_broadcast([
+        '--es op click_rid',
+        f'--es target_pkg {pkg}',
+        f'--es rid "{resource_id}"',
+    ])
+    time.sleep(0.35)
+    return rc == 0, out
+
+def a11y_set_text(text, pkg=None):
+    pkg = pkg or GROK
+    # escape for shell: use file + content provider pattern via broadcast chunks
+    safe = text.replace('"', "'")[:4000]
+    rc, out = _am_broadcast([
+        '--es op set_text_focused',
+        f'--es target_pkg {pkg}',
+        f'--es text "{safe}"',
+    ])
+    time.sleep(0.25)
+    return rc == 0, out
+
+def a11y_click_send(pkg=None):
+    pkg = pkg or GROK
+    for op in (
+        ['--es op click_send', f'--es target_pkg {pkg}'],
+        ['--es op click_text', f'--es target_pkg {pkg}', '--es text Send'],
+        ['--es op click_desc', f'--es target_pkg {pkg}', '--es text send'],
+    ):
+        rc, out = _am_broadcast(op)
+        time.sleep(0.35)
+        if "OK" in out or rc == 0:
+            return True, out
+    return False, out
+
+def a11y_status():
+    return {
+        "installed": a11y_installed(),
+        "enabled": a11y_service_enabled(),
+        "rish": bool(rish_path()),
+        "pkg": A11Y_PKG,
+    }
+
+def open_accessibility_settings():
+    shell("am start -a android.settings.ACCESSIBILITY_SETTINGS")
+
+
+
+===== TIER0: state/walk_stage_0/broccoli_a11y_send.py =====
+"""Send Grok message: A11y helper -> Enter on focused field -> dump node click."""
+import os, time
+from broccoli_rish_shell import shell
+from broccoli_ui_dump import ui_dump, nodes, find_grok_search_box, last_reply_text
+from broccoli_a11y_rish import (
+    a11y_installed, a11y_service_enabled, a11y_click_send,
+    a11y_set_text, a11y_click_text, a11y_status, open_accessibility_settings,
+)
+from broccoli_strategy import log_path
+
+GROK = os.environ.get("BROCCOLI_GROK_PKG", "ai.x.grok")
+
+def task_still_visible(ns, task):
+    box = find_grok_search_box(ns, GROK)
+    if not box:
+        return False
+    blob = []
+    for n in ns:
+        if GROK not in (n.get("pkg") or ""): continue
+        if n.get("text") and abs(n.get("cy",0) - box["cy"]) < 140:
+            blob.append(n["text"])
+    s = " ".join(blob)
+    return task[:16] in s or "BROCC_TASK" in s
+
+def send_via_a11y(task, pkg=None):
+    pkg = pkg or GROK
+    st = a11y_status()
+    log_path("send", "a11y_status", st["enabled"], st)
+
+    if st["installed"] and st["enabled"]:
+        a11y_set_text(task, pkg)
+        time.sleep(0.2)
+        ok, out = a11y_click_send(pkg)
+        log_path("send", "a11y_click_send", ok, {"out": (out or "")[:120]})
+        if ok:
+            return True, "a11y_click_send"
+
+    # focused EditText + Enter (no coords)
+    shell("input keyevent 66")
+    time.sleep(0.3)
+    ns = nodes(ui_dump())
+    if not task_still_visible(ns, task):
+        log_path("send", "keyevent_66", True)
+        return True, "keyevent_66"
+
+    # a11y text click attempts without APK (broadcast no-op if missing)
+    for label in ("Send", "submit", "Go"):
+        a11y_click_text(label, pkg)
+        ns = nodes(ui_dump())
+        if not task_still_visible(ns, task):
+            log_path("send", f"a11y_text_{label}", True)
+            return True, f"a11y_text_{label}"
+
+    return False, "send_failed"
+
+def full_round_a11y(task):
+    from broccoli_agentic_chat import open_grok
+    from broccoli_input import clip_set, wait_for_search_box, task_already_in_composer
+    from pathlib import Path
+    BRO = Path.home() / "broccoli"
+
+    open_grok()
+    clip_set(task)
+    box, xml, _ = wait_for_search_box(GROK, 4.0)
+    if box and not task_already_in_composer(nodes(xml), box, task):
+        shell(f"input tap {int(box['cx'])} {int(box['cy'])}")
+        time.sleep(0.1)
+        shell("input keyevent 122")
+        shell("input keyevent 279")
+
+    before = last_reply_text(nodes(ui_dump()), GROK)
+    sent, method = send_via_a11y(task, GROK)
+
+    t0 = time.time()
+    last = ""
+    while time.time() - t0 < float(os.environ.get("BROCCOLI_RECV_MAX", "28")):
+        shell("input swipe 540 1500 540 800 200")
+        time.sleep(0.1)
+        ta = last_reply_text(nodes(ui_dump()), GROK)
+        if ta and ta != before and len(ta) >= 3:
+            (BRO / "inbox/grok_reply.txt").write_text(ta, encoding="utf-8")
+            return {"ok": True, "via": "a11y", "send_method": method, "reply": ta}
+        if len(ta) > len(last): last = ta
+        time.sleep(0.08)
+    return {"ok": sent, "partial": bool(last), "send_method": method, "reply": last}
+
+
+
+===== TIER0: state/walk_stage_0/broccoli_rish_shell.py =====
+import os, re, subprocess, shutil
+from pathlib import Path
+def rish_path():
+    for c in (os.environ.get("BROCCOLI_RISH"), Path(os.environ.get("PREFIX",""))/"bin/rish", Path.home()/"rish"):
+        if c and Path(str(c)).is_file(): return str(c)
+    return shutil.which("rish")
+def shell(cmd, timeout=45):
+    env = os.environ.copy()
+    env.setdefault("RISH_APPLICATION_ID", "com.termux")
+    rish = rish_path()
+    if rish:
+        p = subprocess.run([rish, "-c", cmd], capture_output=True, text=True, timeout=timeout, env=env)
+        return p.returncode, (p.stdout or "") + (p.stderr or "")
+    p = subprocess.run(["sh", "-c", cmd], capture_output=True, text=True, timeout=timeout)
+    return p.returncode, (p.stdout or "") + (p.stderr or "")
+def wm_size():
+    rc, out = shell("wm size")
+    m = re.search(r"(\d+)x(\d+)", out)
+    return (int(m.group(1)), int(m.group(2))) if m else (1080, 2400)
+
+
+
+===== TIER0: state/walk_stage_0/broccoli_rish_ui.py =====
+"""Rish-only UI: dump a11y tree -> tap node bounds. No APK."""
+import os, re, time, json, xml.etree.ElementTree as ET
+from pathlib import Path
+from broccoli_rish_shell import shell
+
+GROK = os.environ.get("BROCCOLI_GROK_PKG", "ai.x.grok")
+BRO = Path.home() / "broccoli"
+
+def _bounds(b):
+    m = re.match(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", b or "")
+    if not m: return None
+    x1,y1,x2,y2 = map(int, m.groups())
+    return x1,y1,x2,y2,(x1+x2)//2,(y1+y2)//2
+
+def dump_xml():
+    remote = "/data/local/tmp/ui.xml"
+    for c in (
+        f"uiautomator dump --compressed {remote} 2>/dev/null; cat {remote}",
+        f"cmd uiautomator dump {remote} 2>/dev/null; cat {remote}",
+    ):
+        rc, out = shell(c, timeout=14)
+        if "<?xml" in out:
+            xml = out[out.find("<?xml"):]
+            (BRO/"ui/last_dump.xml").write_text(xml[:1_500_000], encoding="utf-8")
+            return xml
+    return ""
+
+def nodes(xml):
+    if not xml: return []
+    try:
+        root = ET.fromstring(xml.encode("utf-8", errors="replace"))
+    except ET.ParseError:
+        return []
+    out = []
+    for el in root.iter("node"):
+        b = _bounds(el.get("bounds"))
+        if not b: continue
+        x1,y1,x2,y2,cx,cy = b
+        out.append({
+            "text": (el.get("text") or "").strip(),
+            "desc": (el.get("content-desc") or "").strip(),
+            "rid": el.get("resource-id") or "",
+            "cls": el.get("class") or "",
+            "pkg": el.get("package") or "",
+            "clickable": el.get("clickable") == "true",
+            "focusable": el.get("focusable") == "true",
+            "cx": cx, "cy": cy, "x1": x1, "y1": y1, "x2": x2, "y2": y2,
+        })
+    return out
+
+def in_grok(n):
+    return GROK in (n.get("pkg") or "")
+
+def tap(cx, cy):
+    shell(f"input tap {int(cx)} {int(cy)}")
+    time.sleep(0.12)
+
+def paste_clip():
+    shell("input keyevent 279")
+    time.sleep(0.12)
+
+def enter():
+    shell("input keyevent 66")
+    time.sleep(0.2)
+
+def find_composer(ns):
+    pool = [n for n in ns if in_grok(n)] or ns
+    best, sc = None, -1
+    for n in pool:
+        blob = (n["text"]+" "+n["desc"]+" "+n["rid"]).lower()
+        s = 0
+        if "edittext" in n["cls"].lower(): s += 60
+        if n["focusable"]: s += 10
+        for k in ("ask","search","message","compose","prompt"):
+            if k in blob: s += 8
+        s += n["cy"] // 40
+        if s > sc: sc, best = s, n
+    return best
+
+def find_send(ns):
+    pool = [n for n in ns if in_grok(n) and n["clickable"]] or [n for n in ns if n["clickable"]]
+    ranked = []
+    for n in pool:
+        blob = (n["text"]+" "+n["desc"]+" "+n["rid"]).lower()
+        s = 0
+        if "send" in blob: s += 80
+        if "submit" in blob or "post" in blob: s += 40
+        if "send" in n["rid"].lower(): s += 70
+        if "image" in n["cls"].lower() or "button" in n["cls"].lower(): s += 15
+        s += n["cy"] // 50
+        if s > 10: ranked.append((s, n))
+    ranked.sort(key=lambda x: -x[0])
+    return ranked[0][1] if ranked else None
+
+def composer_text(ns, comp):
+    if not comp: return ""
+    parts = [comp.get("text") or "", comp.get("desc") or ""]
+    for n in ns:
+        if n.get("text") and abs(n["cy"]-comp["cy"]) < 100:
+            parts.append(n["text"])
+    return " ".join(parts)
+
+def last_assistant(ns):
+    skip = ("ask anything","search","send","menu","settings")
+    msgs = []
+    for n in ns:
+        if not in_grok(n): continue
+        t = n.get("text") or ""
+        if len(t) < 4 or "edittext" in n["cls"].lower(): continue
+        if any(s in t.lower() for s in skip) and len(t) < 40: continue
+        msgs.append(n)
+    msgs.sort(key=lambda n: n["cy"])
+    return msgs[-1]["text"] if msgs else ""
+
+def clip_set(text):
+    import subprocess
+    p = os.path.join(os.environ.get("PREFIX",""), "bin", "termux-clipboard-set")
+    if os.path.isfile(p):
+        subprocess.run([p, text], timeout=8)
+        return True
+    return False
+
+def open_grok():
+    shell(f"monkey -p {GROK} -c android.intent.category.LAUNCHER 1")
+    time.sleep(0.35)
+
+def send_task(task):
+    log = BRO/"reports/agentic.log"
+    def L(m):
+        log.write_text((log.read_text(encoding="utf-8", errors="replace") if log.exists() else "") +
+                       time.strftime("%H:%M:%S ")+m+"\n", encoding="utf-8")
+
+    task = task.strip()
+    open_grok()
+    clip_set(task)
+    ns = nodes(dump_xml())
+    comp = find_composer(ns)
+    if not comp:
+        L("no_composer"); return {"ok": False, "error": "no_composer"}
+
+    if task[:14] not in composer_text(ns, comp):
+        tap(comp["cx"], comp["cy"])
+        shell("input keyevent 122")
+        paste_clip()
+        L("pasted")
+    else:
+        L("skip_paste")
+
+    ns = nodes(dump_xml())
+    before = last_assistant(ns)
+    send_n = find_send(ns)
+    method = None
+    if send_n:
+        tap(send_n["cx"], send_n["cy"])
+        method = f"tap_send {send_n['cx']} {send_n['cy']}"
+        L(method)
+    tap(comp["cx"], comp["cy"])
+    enter()
+    L("enter")
+
+    ns2 = nodes(dump_xml())
+    if task[:12] in composer_text(ns2, find_composer(ns2) or comp):
+        if send_n:
+            tap(send_n["cx"], send_n["cy"])
+        enter()
+        L("retry_send")
+
+    t0 = time.time()
+    reply = ""
+    while time.time() - t0 < 25:
+        shell("input swipe 540 1500 540 800 200")
+        time.sleep(0.1)
+        ta = last_assistant(nodes(dump_xml()))
+        if ta and ta != before and len(ta) >= 3:
+            reply = ta
+            break
+        time.sleep(0.08)
+
+    if reply:
+        (BRO/"inbox/grok_reply.txt").write_text(reply, encoding="utf-8")
+        wp = BRO/"meta/working_paths.json"
+        d = json.loads(wp.read_text()) if wp.exists() else {"send":[]}
+        d.setdefault("send",[]).insert(0,{"method":method or "enter","ok":True})
+        wp.write_text(json.dumps(d,indent=2), encoding="utf-8")
+        L(f"done len={len(reply)}")
+        return {"ok": True, "method": method, "loop_ok": "LOOP_OK" in reply, "reply": reply[:300]}
+    L("no_reply")
+    return {"ok": False, "method": method}
+
+
+
+===== TIER0: state/walk_stage_0/broccoli_send.py =====
+import os, time
+from broccoli_rish_shell import shell, wm_size
+from broccoli_ui_dump import ui_dump, nodes, find_send, find_all_send_candidates, composer_has_text, find_grok_search_box
+from broccoli_strategy import log_path, best_send_method
+
+def tap_send_button(ns, pkg):
+    sends = find_all_send_candidates(ns, pkg)
+    for i, snd in enumerate(sends[:3]):
+        shell(f"input tap {snd['cx']} {snd['cy']}")
+        time.sleep(0.12)
+        xml = ui_dump()
+        ns2 = nodes(xml)
+        box = find_grok_search_box(ns2, pkg)
+        if box and not composer_has_text(ns2, box, "") or True:
+            log_path("send", f"tap_send_{i}", True, {"cx": snd["cx"], "cy": snd["cy"], "rid": snd.get("rid")})
+            return True, f"tap_send_{i}", xml
+    return False, None, xml if 'xml' in dir() else ui_dump()
+
+def send_enter():
+    shell("input keyevent 66")
+    time.sleep(0.1)
+    log_path("send", "keyevent_66", True)
+    return True, "keyevent_66", ui_dump()
+
+def send_near_composer(ns, pkg):
+    w, h = wm_size()
+    box = find_grok_search_box(ns, pkg)
+    if box:
+        tx = min(w - 40, box["x2"] + 60)
+        ty = box["cy"]
+        shell(f"input tap {int(tx)} {int(ty)}")
+        time.sleep(0.1)
+        log_path("send", "tap_right_of_box", True, {"cx": tx, "cy": ty})
+        return True, "tap_right_of_box", ui_dump()
+    shell(f"input tap {w-80} {int(h*0.88)}")
+    time.sleep(0.1)
+    log_path("send", "tap_bottom_right", True)
+    return True, "tap_bottom_right", ui_dump()
+
+def auto_send(pkg=None, xml_before=None):
+    pkg = pkg or os.environ.get("BROCCOLI_GROK_PKG", "ai.x.grok")
+    methods = []
+    pref = best_send_method()
+    if pref:
+        methods.append(pref)
+    methods += ["tap_send_0", "tap_send_1", "keyevent_66", "tap_right_of_box", "tap_bottom_right"]
+
+    seen = []
+    for m in methods:
+        if m in seen: continue
+        seen.append(m)
+        xml = xml_before or ui_dump()
+        ns = nodes(xml)
+        if m.startswith("tap_send"):
+            ok, name, xml2 = tap_send_button(ns, pkg)
+        elif m == "keyevent_66":
+            ok, name, xml2 = send_enter()
+        elif m in ("tap_right_of_box", "tap_bottom_right"):
+            ok, name, xml2 = send_near_composer(ns, pkg)
+        else:
+            snd = find_send(ns, pkg)
+            if snd:
+                shell(f"input tap {snd['cx']} {snd['cy']}")
+                time.sleep(0.1)
+                ok, name, xml2 = True, "find_send", ui_dump()
+            else:
+                ok, name, xml2 = False, m, xml
+        if ok:
+            return True, name, xml2
+    log_path("send", "all_failed", False)
+    return False, None, ui_dump()
+
+
+
+===== TIER0: state/walk_stage_1/broccoli_rish_shell.py =====
+import os, re, subprocess, shutil
+from pathlib import Path
+
+def rish_path():
+    for c in (os.environ.get("BROCCOLI_RISH"), Path(os.environ["PREFIX"])/"bin/rish", Path.home()/"rish"):
+        if c and Path(str(c)).is_file():
+            return str(c)
+    return shutil.which("rish")
+
+def shell(cmd, timeout=45):
+    env = os.environ.copy()
+    env.setdefault("RISH_APPLICATION_ID", "com.termux")
+    rish = rish_path()
+    if rish:
+        p = subprocess.run([rish, "-c", cmd], capture_output=True, text=True, timeout=timeout, env=env)
+        return p.returncode, (p.stdout or "") + (p.stderr or "")
+    adb = shutil.which("adb")
+    if adb:
+        p = subprocess.run([adb, "shell", cmd], capture_output=True, text=True, timeout=timeout)
+        return p.returncode, (p.stdout or "") + (p.stderr or "")
+    p = subprocess.run(["sh", "-c", cmd], capture_output=True, text=True, timeout=timeout)
+    return p.returncode, (p.stdout or "") + (p.stderr or "")
+
+def rish_ok():
+    rc, out = shell("whoami; id")
+    return rc == 0 and ("shell" in out or "uid=" in out), out.strip()[:400]
+
+def wm_size():
+    rc, out = shell("wm size")
+    m = re.search(r"(\d+)x(\d+)", out)
+    return (int(m.group(1)), int(m.group(2))) if m else (1080, 2400)
+
+
+
+===== TIER0: state/walk_stage_1/broccoli_send.py =====
+import os, time
+from broccoli_rish_shell import shell, wm_size
+from broccoli_ui_dump import ui_dump, nodes, find_send, find_all_send_candidates, composer_has_text, find_grok_search_box
+from broccoli_strategy import log_path, best_send_method
+
+def tap_send_button(ns, pkg):
+    sends = find_all_send_candidates(ns, pkg)
+    for i, snd in enumerate(sends[:3]):
+        shell(f"input tap {snd['cx']} {snd['cy']}")
+        time.sleep(0.12)
+        xml = ui_dump()
+        ns2 = nodes(xml)
+        box = find_grok_search_box(ns2, pkg)
+        if box and not composer_has_text(ns2, box, "") or True:
+            log_path("send", f"tap_send_{i}", True, {"cx": snd["cx"], "cy": snd["cy"], "rid": snd.get("rid")})
+            return True, f"tap_send_{i}", xml
+    return False, None, xml if 'xml' in dir() else ui_dump()
+
+def send_enter():
+    shell("input keyevent 66")
+    time.sleep(0.1)
+    log_path("send", "keyevent_66", True)
+    return True, "keyevent_66", ui_dump()
+
+def send_near_composer(ns, pkg):
+    w, h = wm_size()
+    box = find_grok_search_box(ns, pkg)
+    if box:
+        tx = min(w - 40, box["x2"] + 60)
+        ty = box["cy"]
+        shell(f"input tap {int(tx)} {int(ty)}")
+        time.sleep(0.1)
+        log_path("send", "tap_right_of_box", True, {"cx": tx, "cy": ty})
+        return True, "tap_right_of_box", ui_dump()
+    shell(f"input tap {w-80} {int(h*0.88)}")
+    time.sleep(0.1)
+    log_path("send", "tap_bottom_right", True)
+    return True, "tap_bottom_right", ui_dump()
+
+def auto_send(pkg=None, xml_before=None):
+    pkg = pkg or os.environ.get("BROCCOLI_GROK_PKG", "ai.x.grok")
+    methods = []
+    pref = best_send_method()
+    if pref:
+        methods.append(pref)
+    methods += ["tap_send_0", "tap_send_1", "keyevent_66", "tap_right_of_box", "tap_bottom_right"]
+
+    seen = []
+    for m in methods:
+        if m in seen: continue
+        seen.append(m)
+        xml = xml_before or ui_dump()
+        ns = nodes(xml)
+        if m.startswith("tap_send"):
+            ok, name, xml2 = tap_send_button(ns, pkg)
+        elif m == "keyevent_66":
+            ok, name, xml2 = send_enter()
+        elif m in ("tap_right_of_box", "tap_bottom_right"):
+            ok, name, xml2 = send_near_composer(ns, pkg)
+        else:
+            snd = find_send(ns, pkg)
+            if snd:
+                shell(f"input tap {snd['cx']} {snd['cy']}")
+                time.sleep(0.1)
+                ok, name, xml2 = True, "find_send", ui_dump()
+            else:
+                ok, name, xml2 = False, m, xml
+        if ok:
+            return True, name, xml2
+    log_path("send", "all_failed", False)
+    return False, None, ui_dump()
+
+
+
+===== TIER0: state/walk_stage_2/broccoli_rish_shell.py =====
+import os, re, subprocess, shutil
+from pathlib import Path
+
+def rish_path():
+    for c in (os.environ.get("BROCCOLI_RISH"), Path(os.environ["PREFIX"])/"bin/rish", Path.home()/"rish"):
+        if c and Path(str(c)).is_file():
+            return str(c)
+    return shutil.which("rish")
+
+def shell(cmd, timeout=45):
+    env = os.environ.copy()
+    env.setdefault("RISH_APPLICATION_ID", "com.termux")
+    rish = rish_path()
+    if rish:
+        p = subprocess.run([rish, "-c", cmd], capture_output=True, text=True, timeout=timeout, env=env)
+        return p.returncode, (p.stdout or "") + (p.stderr or "")
+    adb = shutil.which("adb")
+    if adb:
+        p = subprocess.run([adb, "shell", cmd], capture_output=True, text=True, timeout=timeout)
+        return p.returncode, (p.stdout or "") + (p.stderr or "")
+    p = subprocess.run(["sh", "-c", cmd], capture_output=True, text=True, timeout=timeout)
+    return p.returncode, (p.stdout or "") + (p.stderr or "")
+
+def rish_ok():
+    rc, out = shell("whoami; id")
+    return rc == 0 and ("shell" in out or "uid=" in out), out.strip()[:400]
+
+def wm_size():
+    rc, out = shell("wm size")
+    m = re.search(r"(\d+)x(\d+)", out)
+    return (int(m.group(1)), int(m.group(2))) if m else (1080, 2400)
+
+
+
+===== TIER0: state/walk_stage_3/broccoli_a11y.py =====
+#!/usr/bin/env python3
+"""UI dump via uiautomator (system path) + optional node tap by text."""
+import subprocess, sys, re, json
+from pathlib import Path
+
+OUT = Path("/sdcard/Broccoli/ui/latest_a11y.xml")
+OUT.parent.mkdir(parents=True, exist_ok=True)
+TMP = "/sdcard/window_dump.xml"
+
+def sh(cmd, t=30):
+    return subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=t)
+
+def dump():
+    sh("shizuku -r sh -c 'uiautomator dump %s 2>/dev/null && cat %s'" % (TMP, TMP), 35)
+    r = sh("cat %s 2>/dev/null" % TMP, 10)
+    xml = r.stdout or ""
+    if len(xml) < 100:
+        r = sh("shizuku -r sh -c 'cmd accessibility dump 2>/dev/null'", 15)
+        xml = r.stdout or xml
+    OUT.write_text(xml[:500000])
+    also = Path.home() / "broccoli/ui/latest.xml"
+    also.parent.mkdir(parents=True, exist_ok=True)
+    also.write_text(xml[:500000])
+    print("DUMP", len(xml), str(OUT))
+    return xml
+
+def find_text(xml, needle):
+    hits = []
+    for m in re.finditer(r'text="([^"]*)"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml):
+        if needle.lower() in m.group(1).lower():
+            x1,y1,x2,y2 = map(int, m.groups()[1:])
+            hits.append((m.group(1), (x1+x2)//2, (y1+y2)//2))
+    return hits
+
+def tap(x, y):
+    sh("shizuku -r sh -c 'input tap %d %d'" % (x, y), 10)
+
+if __name__ == "__main__":
+    cmd = sys.argv[1] if len(sys.argv) > 1 else "dump"
+    if cmd == "dump":
+        dump()
+    elif cmd == "tap-text" and len(sys.argv) > 2:
+        xml = OUT.read_text() if OUT.is_file() else dump()
+        h = find_text(xml, sys.argv[2])
+        if not h:
+            sys.exit(1)
+        tap(h[0][1], h[0][2])
+        print("TAP", h[0])
+    else:
+        print("usage: dump | tap-text Send")
+
+
+
+===== TIER0: state/walk_stage_3/broccoli_rish_shell.py =====
+import os, re, subprocess, shutil
+from pathlib import Path
+def rish_path():
+    for c in (os.environ.get("BROCCOLI_RISH"), Path(os.environ.get("PREFIX",""))/"bin/rish", Path.home()/"rish"):
+        if c and Path(str(c)).is_file(): return str(c)
+    return shutil.which("rish")
+def shell(cmd, timeout=45):
+    env = os.environ.copy()
+    env.setdefault("RISH_APPLICATION_ID", "com.termux")
+    rish = rish_path()
+    if rish:
+        p = subprocess.run([rish, "-c", cmd], capture_output=True, text=True, timeout=timeout, env=env)
+        return p.returncode, (p.stdout or "") + (p.stderr or "")
+    p = subprocess.run(["sh", "-c", cmd], capture_output=True, text=True, timeout=timeout)
+    return p.returncode, (p.stdout or "") + (p.stderr or "")
+def wm_size():
+    rc, out = shell("wm size")
+    m = re.search(r"(\d+)x(\d+)", out)
+    return (int(m.group(1)), int(m.group(2))) if m else (1080, 2400)
+
+
+
+===== TIER0: state/walk_stage_4/broccoli_rish_shell.py =====
+import os, re, subprocess, shutil
+from pathlib import Path
+def rish_path():
+    for c in (os.environ.get("BROCCOLI_RISH"), Path(os.environ.get("PREFIX",""))/"bin/rish", Path.home()/"rish"):
+        if c and Path(str(c)).is_file(): return str(c)
+    return shutil.which("rish")
+def shell(cmd, timeout=45):
+    env = os.environ.copy()
+    env.setdefault("RISH_APPLICATION_ID", "com.termux")
+    rish = rish_path()
+    if rish:
+        p = subprocess.run([rish, "-c", cmd], capture_output=True, text=True, timeout=timeout, env=env)
+        return p.returncode, (p.stdout or "") + (p.stderr or "")
+    p = subprocess.run(["sh", "-c", cmd], capture_output=True, text=True, timeout=timeout)
+    return p.returncode, (p.stdout or "") + (p.stderr or "")
+def wm_size():
+    rc, out = shell("wm size")
+    m = re.search(r"(\d+)x(\d+)", out)
+    return (int(m.group(1)), int(m.group(2))) if m else (1080, 2400)
+
+
+
+===== TIER0: state/walk_stage_4/broccoli_rish_ui.py =====
+#!/usr/bin/env python3
+import re, subprocess, sys
+from pathlib import Path
+
+HOME = Path.home()
+DUMP_SD = '/data/local/tmp/broccoli_ui.xml'
+DUMP_LOCAL = HOME / "broccoli" / "reports" / "last_ui_dump.xml"
+BOOT = HOME / "broccoli_bootstrap.py"
+
+def rish_cat_dump():
+    script = f"""rm -f /data/local/tmp/broccoli_ui.xml 2>/dev/null
+uiautomator dump /data/local/tmp/broccoli_ui.xml 2>/dev/null || cmd uiautomator dump /data/local/tmp/broccoli_ui.xml 2>/dev/null
+cat /data/local/tmp/broccoli_ui.xml 2>/dev/null
+"""
+    p = subprocess.run(["rish"], input=script, capture_output=True, text=True, timeout=90)
+    raw = (p.stdout or "") + (p.stderr or "")
+    if "<?xml" in raw:
+        return raw[raw.find("<?xml"):]
+    if "<hierarchy" in raw:
+        return raw[raw.find("<hierarchy"):]
+    return raw.strip()
+
+def dump_via_bootstrap():
+    r = subprocess.run(
+        ["python3", str(BOOT), "grok-dump"],
+        capture_output=True, text=True, timeout=120,
+    )
+    t = (r.stdout or "") + (r.stderr or "")
+    if "<?xml" in t:
+        return t[t.find("<?xml"):]
+    return ""
+
+def dump_ui_full():
+    DUMP_LOCAL.parent.mkdir(parents=True, exist_ok=True)
+    for fn in (dump_via_bootstrap, rish_cat_dump):
+        x = fn()
+        if x and "<hierarchy" in x:
+            DUMP_LOCAL.write_text(x, encoding="utf-8", errors="replace")
+            return x
+    return ""
+
+def smoke_token(xml):
+    if not xml:
+        return ""
+    if re.search(r'text="GROK_SMOKE_OK"', xml) or re.search(r">GROK_SMOKE_OK<", xml):
+        return "GROK_SMOKE_OK"
+    return ""
+
+def main():
+    op = sys.argv[1] if len(sys.argv) > 1 else ""
+    x = dump_ui_full()
+    n = len(x)
+    print(f"file_bytes {n}", file=sys.stderr)
+    if op == "bytes":
+        print(n); sys.exit(0 if n > 2000 else 1)
+    if op == "smoke-check":
+        t = smoke_token(x)
+        if t:
+            print(t); sys.exit(0)
+        print("FAIL no_token", file=sys.stderr)
+        sys.exit(1)
+    if op == "dump":
+        print(x[:500]); sys.exit(0 if n > 2000 else 1)
+    sys.exit(2)
+
+if __name__ == "__main__":
+    main()
+
+
+
+===== TIER0: state/walk_stage_5/broccoli_rish_shell.py =====
+import os, re, subprocess, shutil
+from pathlib import Path
+def rish_path():
+    for c in (os.environ.get("BROCCOLI_RISH"), Path(os.environ.get("PREFIX",""))/"bin/rish", Path.home()/"rish"):
+        if c and Path(str(c)).is_file(): return str(c)
+    return shutil.which("rish")
+def shell(cmd, timeout=45):
+    env = os.environ.copy()
+    env.setdefault("RISH_APPLICATION_ID", "com.termux")
+    rish = rish_path()
+    if rish:
+        p = subprocess.run([rish, "-c", cmd], capture_output=True, text=True, timeout=timeout, env=env)
+        return p.returncode, (p.stdout or "") + (p.stderr or "")
+    p = subprocess.run(["sh", "-c", cmd], capture_output=True, text=True, timeout=timeout)
+    return p.returncode, (p.stdout or "") + (p.stderr or "")
+def wm_size():
+    rc, out = shell("wm size")
+    m = re.search(r"(\d+)x(\d+)", out)
+    return (int(m.group(1)), int(m.group(2))) if m else (1080, 2400)
+
+
+
+===== TIER0: state/walk_stage_5/broccoli_rish_ui.py =====
+"""Rish-only UI: dump a11y tree -> tap node bounds. No APK."""
+import os, re, time, json, xml.etree.ElementTree as ET
+from pathlib import Path
+from broccoli_rish_shell import shell
+
+GROK = os.environ.get("BROCCOLI_GROK_PKG", "ai.x.grok")
+BRO = Path.home() / "broccoli"
+
+def _bounds(b):
+    m = re.match(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", b or "")
+    if not m: return None
+    x1,y1,x2,y2 = map(int, m.groups())
+    return x1,y1,x2,y2,(x1+x2)//2,(y1+y2)//2
+
+def dump_xml():
+    remote = "/data/local/tmp/ui.xml"
+    for c in (
+        f"uiautomator dump --compressed {remote} 2>/dev/null; cat {remote}",
+        f"cmd uiautomator dump {remote} 2>/dev/null; cat {remote}",
+    ):
+        rc, out = shell(c, timeout=14)
+        if "<?xml" in out:
+            xml = out[out.find("<?xml"):]
+            (BRO/"ui/last_dump.xml").write_text(xml[:1_500_000], encoding="utf-8")
+            return xml
+    return ""
+
+def nodes(xml):
+    if not xml: return []
+    try:
+        root = ET.fromstring(xml.encode("utf-8", errors="replace"))
+    except ET.ParseError:
+        return []
+    out = []
+    for el in root.iter("node"):
+        b = _bounds(el.get("bounds"))
+        if not b: continue
+        x1,y1,x2,y2,cx,cy = b
+        out.append({
+            "text": (el.get("text") or "").strip(),
+            "desc": (el.get("content-desc") or "").strip(),
+            "rid": el.get("resource-id") or "",
+            "cls": el.get("class") or "",
+            "pkg": el.get("package") or "",
+            "clickable": el.get("clickable") == "true",
+            "focusable": el.get("focusable") == "true",
+            "cx": cx, "cy": cy, "x1": x1, "y1": y1, "x2": x2, "y2": y2,
+        })
+    return out
+
+def in_grok(n):
+    return GROK in (n.get("pkg") or "")
+
+def tap(cx, cy):
+    shell(f"input tap {int(cx)} {int(cy)}")
+    time.sleep(0.12)
+
+def paste_clip():
+    shell("input keyevent 279")
+    time.sleep(0.12)
+
+def enter():
+    shell("input keyevent 66")
+    time.sleep(0.2)
+
+def find_composer(ns):
+    pool = [n for n in ns if in_grok(n)] or ns
+    best, sc = None, -1
+    for n in pool:
+        blob = (n["text"]+" "+n["desc"]+" "+n["rid"]).lower()
+        s = 0
+        if "edittext" in n["cls"].lower(): s += 60
+        if n["focusable"]: s += 10
+        for k in ("ask","search","message","compose","prompt"):
+            if k in blob: s += 8
+        s += n["cy"] // 40
+        if s > sc: sc, best = s, n
+    return best
+
+def find_send(ns):
+    pool = [n for n in ns if in_grok(n) and n["clickable"]] or [n for n in ns if n["clickable"]]
+    ranked = []
+    for n in pool:
+        blob = (n["text"]+" "+n["desc"]+" "+n["rid"]).lower()
+        s = 0
+        if "send" in blob: s += 80
+        if "submit" in blob or "post" in blob: s += 40
+        if "send" in n["rid"].lower(): s += 70
+        if "image" in n["cls"].lower() or "button" in n["cls"].lower(): s += 15
+        s += n["cy"] // 50
+        if s > 10: ranked.append((s, n))
+    ranked.sort(key=lambda x: -x[0])
+    return ranked[0][1] if ranked else None
+
+def composer_text(ns, comp):
+    if not comp: return ""
+    parts = [comp.get("text") or "", comp.get("desc") or ""]
+    for n in ns:
+        if n.get("text") and abs(n["cy"]-comp["cy"]) < 100:
+            parts.append(n["text"])
+    return " ".join(parts)
+
+def last_assistant(ns):
+    skip = ("ask anything","search","send","menu","settings")
+    msgs = []
+    for n in ns:
+        if not in_grok(n): continue
+        t = n.get("text") or ""
+        if len(t) < 4 or "edittext" in n["cls"].lower(): continue
+        if any(s in t.lower() for s in skip) and len(t) < 40: continue
+        msgs.append(n)
+    msgs.sort(key=lambda n: n["cy"])
+    return msgs[-1]["text"] if msgs else ""
+
+def clip_set(text):
+    import subprocess
+    p = os.path.join(os.environ.get("PREFIX",""), "bin", "termux-clipboard-set")
+    if os.path.isfile(p):
+        subprocess.run([p, text], timeout=8)
+        return True
+    return False
+
+def open_grok():
+    shell(f"monkey -p {GROK} -c android.intent.category.LAUNCHER 1")
+    time.sleep(0.35)
+
+def send_task(task):
+    log = BRO/"reports/agentic.log"
+    def L(m):
+        log.write_text((log.read_text(encoding="utf-8", errors="replace") if log.exists() else "") +
+                       time.strftime("%H:%M:%S ")+m+"\n", encoding="utf-8")
+
+    task = task.strip()
+    open_grok()
+    clip_set(task)
+    ns = nodes(dump_xml())
+    comp = find_composer(ns)
+    if not comp:
+        L("no_composer"); return {"ok": False, "error": "no_composer"}
+
+    if task[:14] not in composer_text(ns, comp):
+        tap(comp["cx"], comp["cy"])
+        shell("input keyevent 122")
+        paste_clip()
+        L("pasted")
+    else:
+        L("skip_paste")
+
+    ns = nodes(dump_xml())
+    before = last_assistant(ns)
+    send_n = find_send(ns)
+    method = None
+    if send_n:
+        tap(send_n["cx"], send_n["cy"])
+        method = f"tap_send {send_n['cx']} {send_n['cy']}"
+        L(method)
+    tap(comp["cx"], comp["cy"])
+    enter()
+    L("enter")
+
+    ns2 = nodes(dump_xml())
+    if task[:12] in composer_text(ns2, find_composer(ns2) or comp):
+        if send_n:
+            tap(send_n["cx"], send_n["cy"])
+        enter()
+        L("retry_send")
+
+    t0 = time.time()
+    reply = ""
+    while time.time() - t0 < 25:
+        shell("input swipe 540 1500 540 800 200")
+        time.sleep(0.1)
+        ta = last_assistant(nodes(dump_xml()))
+        if ta and ta != before and len(ta) >= 3:
+            reply = ta
+            break
+        time.sleep(0.08)
+
+    if reply:
+        (BRO/"inbox/grok_reply.txt").write_text(reply, encoding="utf-8")
+        wp = BRO/"meta/working_paths.json"
+        d = json.loads(wp.read_text()) if wp.exists() else {"send":[]}
+        d.setdefault("send",[]).insert(0,{"method":method or "enter","ok":True})
+        wp.write_text(json.dumps(d,indent=2), encoding="utf-8")
+        L(f"done len={len(reply)}")
+        return {"ok": True, "method": method, "loop_ok": "LOOP_OK" in reply, "reply": reply[:300]}
+    L("no_reply")
+    return {"ok": False, "method": method}
+
+
+
+===== TIER0: state/walk_stage_5/broccoli_send.py =====
+import os, time
+from broccoli_rish_shell import shell, wm_size
+from broccoli_ui_dump import ui_dump, nodes, find_send, find_all_send_candidates, composer_has_text, find_grok_search_box
+from broccoli_strategy import log_path, best_send_method
+
+def tap_send_button(ns, pkg):
+    sends = find_all_send_candidates(ns, pkg)
+    for i, snd in enumerate(sends[:3]):
+        shell(f"input tap {snd['cx']} {snd['cy']}")
+        time.sleep(0.12)
+        xml = ui_dump()
+        ns2 = nodes(xml)
+        box = find_grok_search_box(ns2, pkg)
+        if box and not composer_has_text(ns2, box, "") or True:
+            log_path("send", f"tap_send_{i}", True, {"cx": snd["cx"], "cy": snd["cy"], "rid": snd.get("rid")})
+            return True, f"tap_send_{i}", xml
+    return False, None, xml if 'xml' in dir() else ui_dump()
+
+def send_enter():
+    shell("input keyevent 66")
+    time.sleep(0.1)
+    log_path("send", "keyevent_66", True)
+    return True, "keyevent_66", ui_dump()
+
+def send_near_composer(ns, pkg):
+    w, h = wm_size()
+    box = find_grok_search_box(ns, pkg)
+    if box:
+        tx = min(w - 40, box["x2"] + 60)
+        ty = box["cy"]
+        shell(f"input tap {int(tx)} {int(ty)}")
+        time.sleep(0.1)
+        log_path("send", "tap_right_of_box", True, {"cx": tx, "cy": ty})
+        return True, "tap_right_of_box", ui_dump()
+    shell(f"input tap {w-80} {int(h*0.88)}")
+    time.sleep(0.1)
+    log_path("send", "tap_bottom_right", True)
+    return True, "tap_bottom_right", ui_dump()
+
+def auto_send(pkg=None, xml_before=None):
+    pkg = pkg or os.environ.get("BROCCOLI_GROK_PKG", "ai.x.grok")
+    methods = []
+    pref = best_send_method()
+    if pref:
+        methods.append(pref)
+    methods += ["tap_send_0", "tap_send_1", "keyevent_66", "tap_right_of_box", "tap_bottom_right"]
+
+    seen = []
+   

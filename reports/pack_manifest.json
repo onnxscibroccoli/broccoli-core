@@ -1,0 +1,2372 @@
+[
+  {
+    "path": "HANDOFF.md",
+    "tier": 3,
+    "sha256": "769a03ab69268f28",
+    "bytes": 603
+  },
+  {
+    "path": "INSTRUCTIONS.md",
+    "tier": 3,
+    "sha256": "db58cfaa6ebff67e",
+    "bytes": 2013
+  },
+  {
+    "path": "PROJECT.md",
+    "tier": 3,
+    "sha256": "eac5959ec929c56c",
+    "bytes": 231
+  },
+  {
+    "path": "TASK_LIST.md",
+    "tier": 3,
+    "sha256": "f89d1458997fee82",
+    "bytes": 394
+  },
+  {
+    "path": "a11y-apk/BUILD_ON_PC.md",
+    "tier": 3,
+    "sha256": "f340dd3343388b8c",
+    "bytes": 944
+  },
+  {
+    "path": "agent/context_20260707_154228.json",
+    "tier": 3,
+    "sha256": "97f894131a654e04",
+    "bytes": 3169
+  },
+  {
+    "path": "agent/context_20260707_154229.json",
+    "tier": 3,
+    "sha256": "ca1af0fe33668f7d",
+    "bytes": 3169
+  },
+  {
+    "path": "archive/rounds/result_20260707T221504.json",
+    "tier": 3,
+    "sha256": "2db9ffb3708b8660",
+    "bytes": 110
+  },
+  {
+    "path": "bin/brocc",
+    "tier": 3,
+    "sha256": "7403ee7cde70b418",
+    "bytes": 1037
+  },
+  {
+    "path": "bin/killall_broccoli",
+    "tier": 3,
+    "sha256": "044539b361849e95",
+    "bytes": 336
+  },
+  {
+    "path": "bin/wire",
+    "tier": 0,
+    "sha256": "ecf2f554b09fd0af",
+    "bytes": 551
+  },
+  {
+    "path": "boot/reboot_first_job.sh",
+    "tier": 3,
+    "sha256": "4aff0a058b1265e7",
+    "bytes": 881
+  },
+  {
+    "path": "branch/dev-env-v2/LESSONS.md",
+    "tier": 3,
+    "sha256": "5f8c733a788a8bec",
+    "bytes": 669
+  },
+  {
+    "path": "branch/dev-env-v2/PROTOCOL.md",
+    "tier": 3,
+    "sha256": "13c1ac2d11529ab5",
+    "bytes": 604
+  },
+  {
+    "path": "brocc_legacy_hooks.sh",
+    "tier": 3,
+    "sha256": "f2a7aa89a49610a3",
+    "bytes": 2639
+  },
+  {
+    "path": "broccoli_meta_heal.py",
+    "tier": 3,
+    "sha256": "34b88221314e848f",
+    "bytes": 336
+  },
+  {
+    "path": "broccoli_rish_ui.py",
+    "tier": 0,
+    "sha256": "ae751d25fe0295f5",
+    "bytes": 2072
+  },
+  {
+    "path": "broccoli_secondary_display.py",
+    "tier": 3,
+    "sha256": "85d0b95fe09cb03e",
+    "bytes": 741
+  },
+  {
+    "path": "broccoli_task_queue.py",
+    "tier": 3,
+    "sha256": "dc14067e24b24ac6",
+    "bytes": 978
+  },
+  {
+    "path": "collab_rish_loop.sh",
+    "tier": 3,
+    "sha256": "32acc8ccaeb89e3a",
+    "bytes": 482
+  },
+  {
+    "path": "daemon_idle_loop.py",
+    "tier": 3,
+    "sha256": "b22664eb8fcbbca9",
+    "bytes": 681
+  },
+  {
+    "path": "docs/ENGINEERING.md",
+    "tier": 3,
+    "sha256": "36e07d20b9100d3c",
+    "bytes": 26
+  },
+  {
+    "path": "docs/GEMINI_RESEARCH_RUNBOOK.md",
+    "tier": 3,
+    "sha256": "bc63eef4d095776f",
+    "bytes": 216
+  },
+  {
+    "path": "docs/HEAL_CODEV_AGENT.md",
+    "tier": 3,
+    "sha256": "44f75527160d4d4b",
+    "bytes": 938
+  },
+  {
+    "path": "docs/MAC_GROK_UI_WIRE.md",
+    "tier": 3,
+    "sha256": "f8dcb55564b48ffd",
+    "bytes": 1182
+  },
+  {
+    "path": "docs/RESEARCH_LOG.md",
+    "tier": 3,
+    "sha256": "89a5f8ceefee61ec",
+    "bytes": 380
+  },
+  {
+    "path": "docs/RISH_AUTOMATION.md",
+    "tier": 3,
+    "sha256": "b49ee2d295931d5b",
+    "bytes": 205
+  },
+  {
+    "path": "docs/RUTO_BRIDGE.md",
+    "tier": 3,
+    "sha256": "9394b56c7054cc46",
+    "bytes": 451
+  },
+  {
+    "path": "docs/TOOLS.json",
+    "tier": 3,
+    "sha256": "802a54de1b52b77f",
+    "bytes": 462
+  },
+  {
+    "path": "docs/TOOLS.md",
+    "tier": 3,
+    "sha256": "31f5b5bc70b3e1de",
+    "bytes": 1305
+  },
+  {
+    "path": "docs/TOOLS_COMMIT.json",
+    "tier": 3,
+    "sha256": "b6ee8cc3e62ae04d",
+    "bytes": 531
+  },
+  {
+    "path": "docs/UI_DUMP_LOOP.md",
+    "tier": 3,
+    "sha256": "ac8f255941bc5bd9",
+    "bytes": 1180
+  },
+  {
+    "path": "inbox/fix_wire_rish.sh",
+    "tier": 3,
+    "sha256": "e3b0c44298fc1c14",
+    "bytes": 0
+  },
+  {
+    "path": "inbox/patch.sh",
+    "tier": 3,
+    "sha256": "71be8fa7d0bea9c1",
+    "bytes": 9417
+  },
+  {
+    "path": "inbox/patch_alive.sh",
+    "tier": 3,
+    "sha256": "0f2092e1a8699340",
+    "bytes": 14690
+  },
+  {
+    "path": "inbox/patch_one.sh",
+    "tier": 3,
+    "sha256": "ea5330f92263122d",
+    "bytes": 17388
+  },
+  {
+    "path": "inbox/patch_turbo.sh",
+    "tier": 3,
+    "sha256": "424a4719e892a52b",
+    "bytes": 9883
+  },
+  {
+    "path": "lib/_pinned_from_walk/broccoli_agentic_chat.py",
+    "tier": 2,
+    "sha256": "781b29d17a33b5fd",
+    "bytes": 4873
+  },
+  {
+    "path": "lib/_pinned_from_walk/broccoli_input.py",
+    "tier": 2,
+    "sha256": "906da8426e3e9347",
+    "bytes": 2711
+  },
+  {
+    "path": "lib/_pinned_from_walk/broccoli_rish_shell.py",
+    "tier": 0,
+    "sha256": "9a94e81bd0931956",
+    "bytes": 900
+  },
+  {
+    "path": "lib/_pinned_from_walk/broccoli_rish_ui.py",
+    "tier": 0,
+    "sha256": "8f3657dcb8edfd79",
+    "bytes": 6031
+  },
+  {
+    "path": "lib/_pinned_from_walk/broccoli_send.py",
+    "tier": 0,
+    "sha256": "4508ec903e0d6b6c",
+    "bytes": 2642
+  },
+  {
+    "path": "lib/_pinned_from_walk/broccoli_ui_dump.py",
+    "tier": 2,
+    "sha256": "66fdf74352ebd2e2",
+    "bytes": 5049
+  },
+  {
+    "path": "lib/adb_rish.sh",
+    "tier": 2,
+    "sha256": "255b4b188e2079d2",
+    "bytes": 195
+  },
+  {
+    "path": "lib/agent_loop.py",
+    "tier": 2,
+    "sha256": "471808529a7468ba",
+    "bytes": 4926
+  },
+  {
+    "path": "lib/brocc_toast.py",
+    "tier": 2,
+    "sha256": "20625222a508cb53",
+    "bytes": 145
+  },
+  {
+    "path": "lib/broccoli_a11y_rish.py",
+    "tier": 0,
+    "sha256": "c443700e5607d68b",
+    "bytes": 2424
+  },
+  {
+    "path": "lib/broccoli_a11y_send.py",
+    "tier": 0,
+    "sha256": "d177200eca3879c2",
+    "bytes": 3112
+  },
+  {
+    "path": "lib/broccoli_adb_ui.py",
+    "tier": 0,
+    "sha256": "d922aaa5c62de625",
+    "bytes": 11333
+  },
+  {
+    "path": "lib/broccoli_agentic_chat.py",
+    "tier": 2,
+    "sha256": "781b29d17a33b5fd",
+    "bytes": 4873
+  },
+  {
+    "path": "lib/broccoli_core_round.py",
+    "tier": 2,
+    "sha256": "42edbc7ed27451f8",
+    "bytes": 456
+  },
+  {
+    "path": "lib/broccoli_input.py",
+    "tier": 2,
+    "sha256": "906da8426e3e9347",
+    "bytes": 2711
+  },
+  {
+    "path": "lib/broccoli_log.py",
+    "tier": 2,
+    "sha256": "a93c6dc4161a6dff",
+    "bytes": 234
+  },
+  {
+    "path": "lib/broccoli_manual.py",
+    "tier": 2,
+    "sha256": "7ef8047fd0e6bbc6",
+    "bytes": 1097
+  },
+  {
+    "path": "lib/broccoli_manual_mode.py",
+    "tier": 2,
+    "sha256": "1dbec27f98f1bc02",
+    "bytes": 179
+  },
+  {
+    "path": "lib/broccoli_notif.py",
+    "tier": 2,
+    "sha256": "649e678e7696abdc",
+    "bytes": 2273
+  },
+  {
+    "path": "lib/broccoli_operator.py",
+    "tier": 2,
+    "sha256": "cc2291d6bfc0485c",
+    "bytes": 5441
+  },
+  {
+    "path": "lib/broccoli_recv_copy_rish.py",
+    "tier": 2,
+    "sha256": "8a8fc58a42153b71",
+    "bytes": 2908
+  },
+  {
+    "path": "lib/broccoli_rish_adb.py",
+    "tier": 0,
+    "sha256": "0b0bfa6179e245e7",
+    "bytes": 892
+  },
+  {
+    "path": "lib/broccoli_rish_shell.py",
+    "tier": 0,
+    "sha256": "9a94e81bd0931956",
+    "bytes": 900
+  },
+  {
+    "path": "lib/broccoli_rish_ui.py",
+    "tier": 0,
+    "sha256": "d56278700e2f9d5b",
+    "bytes": 4311
+  },
+  {
+    "path": "lib/broccoli_selftest.py",
+    "tier": 2,
+    "sha256": "028fc92619812a57",
+    "bytes": 894
+  },
+  {
+    "path": "lib/broccoli_send.py",
+    "tier": 0,
+    "sha256": "4508ec903e0d6b6c",
+    "bytes": 2642
+  },
+  {
+    "path": "lib/broccoli_strategy.py",
+    "tier": 2,
+    "sha256": "5fc26d7d7d252f22",
+    "bytes": 1035
+  },
+  {
+    "path": "lib/broccoli_ui_dump.py",
+    "tier": 2,
+    "sha256": "66fdf74352ebd2e2",
+    "bytes": 5049
+  },
+  {
+    "path": "lib/broccoli_wait.py",
+    "tier": 2,
+    "sha256": "aea3b9c8679fe69a",
+    "bytes": 1317
+  },
+  {
+    "path": "lib/broccoli_xml_sanitize.py",
+    "tier": 2,
+    "sha256": "2a011b2daf6f50f8",
+    "bytes": 1884
+  },
+  {
+    "path": "lib/chat_context.py",
+    "tier": 2,
+    "sha256": "41490b801542decf",
+    "bytes": 1086
+  },
+  {
+    "path": "lib/clip.py",
+    "tier": 2,
+    "sha256": "8fd6f3824b617149",
+    "bytes": 578
+  },
+  {
+    "path": "lib/code_from_chat.py",
+    "tier": 2,
+    "sha256": "e3e7502130056772",
+    "bytes": 1824
+  },
+  {
+    "path": "lib/disk_gate.sh",
+    "tier": 2,
+    "sha256": "a823a53435a92db7",
+    "bytes": 204
+  },
+  {
+    "path": "lib/display_context.py",
+    "tier": 2,
+    "sha256": "580262bed8296260",
+    "bytes": 1115
+  },
+  {
+    "path": "lib/display_lane.py",
+    "tier": 2,
+    "sha256": "bda55f49f33a4a43",
+    "bytes": 2122
+  },
+  {
+    "path": "lib/dump_ui_fallback.py",
+    "tier": 2,
+    "sha256": "b4125b9271470cb7",
+    "bytes": 896
+  },
+  {
+    "path": "lib/fg_grok_only.sh",
+    "tier": 2,
+    "sha256": "fd44ebc6b4145d47",
+    "bytes": 276
+  },
+  {
+    "path": "lib/focus_pkg.sh",
+    "tier": 2,
+    "sha256": "e12a8b98bb96ecf1",
+    "bytes": 260
+  },
+  {
+    "path": "lib/grok_chat_foreground.py",
+    "tier": 2,
+    "sha256": "77e65eb7ac8be140",
+    "bytes": 5116
+  },
+  {
+    "path": "lib/grok_foreground.sh",
+    "tier": 0,
+    "sha256": "22642aca0292b76d",
+    "bytes": 174
+  },
+  {
+    "path": "lib/grok_open_loop.py",
+    "tier": 2,
+    "sha256": "6a6971d7ae172be4",
+    "bytes": 3906
+  },
+  {
+    "path": "lib/grok_send_tap.py",
+    "tier": 2,
+    "sha256": "b63d322f449fc808",
+    "bytes": 5141
+  },
+  {
+    "path": "lib/grok_takeover.py",
+    "tier": 2,
+    "sha256": "1a529ffdcad7af3a",
+    "bytes": 1601
+  },
+  {
+    "path": "lib/grok_xml_parse.py",
+    "tier": 2,
+    "sha256": "dbaf5e4f4772e1ea",
+    "bytes": 1045
+  },
+  {
+    "path": "lib/idle_takeover.py",
+    "tier": 2,
+    "sha256": "dfa6694ba6c67408",
+    "bytes": 1265
+  },
+  {
+    "path": "lib/input_snapshot.sh",
+    "tier": 2,
+    "sha256": "62dee5f457087d43",
+    "bytes": 437
+  },
+  {
+    "path": "lib/launch_grok_native.sh",
+    "tier": 0,
+    "sha256": "2cac5b945396f371",
+    "bytes": 283
+  },
+  {
+    "path": "lib/notify.sh",
+    "tier": 2,
+    "sha256": "fcfd28df131b83c8",
+    "bytes": 236
+  },
+  {
+    "path": "lib/recursive_impl.py",
+    "tier": 2,
+    "sha256": "399ca6696e1c0f77",
+    "bytes": 6043
+  },
+  {
+    "path": "lib/rish_adb.py",
+    "tier": 0,
+    "sha256": "3d202bd27d390f89",
+    "bytes": 2032
+  },
+  {
+    "path": "lib/rish_run.py",
+    "tier": 0,
+    "sha256": "dc40771e2bc813a5",
+    "bytes": 1659
+  },
+  {
+    "path": "lib/rish_shell.sh",
+    "tier": 0,
+    "sha256": "854d9f3709209665",
+    "bytes": 288
+  },
+  {
+    "path": "lib/rish_ui.sh",
+    "tier": 0,
+    "sha256": "012531f6feefb92e",
+    "bytes": 719
+  },
+  {
+    "path": "lib/smoke_autoheal.py",
+    "tier": 2,
+    "sha256": "0da6dcaf34702ab2",
+    "bytes": 1964
+  },
+  {
+    "path": "lib/task_complete.py",
+    "tier": 2,
+    "sha256": "aecd036cf4fc6077",
+    "bytes": 3957
+  },
+  {
+    "path": "lib/task_current.py",
+    "tier": 2,
+    "sha256": "40b59135427305a5",
+    "bytes": 3131
+  },
+  {
+    "path": "lib/task_queue.py",
+    "tier": 2,
+    "sha256": "e8c5430a649d19b9",
+    "bytes": 5336
+  },
+  {
+    "path": "lib/timing.sh",
+    "tier": 2,
+    "sha256": "d3b486896d559ad9",
+    "bytes": 286
+  },
+  {
+    "path": "lib/toast.py",
+    "tier": 2,
+    "sha256": "b3ba6e1946a25a37",
+    "bytes": 916
+  },
+  {
+    "path": "lib/ui_dump_rish.sh",
+    "tier": 0,
+    "sha256": "2528d91b223fffc5",
+    "bytes": 97
+  },
+  {
+    "path": "lib/user_idle_sec.sh",
+    "tier": 2,
+    "sha256": "070e7e953e892852",
+    "bytes": 51
+  },
+  {
+    "path": "lib/user_task_wait.py",
+    "tier": 2,
+    "sha256": "78fca95f4a68fcee",
+    "bytes": 2349
+  },
+  {
+    "path": "meta/README.md",
+    "tier": 3,
+    "sha256": "bc2545e6b1ce2125",
+    "bytes": 92
+  },
+  {
+    "path": "meta/TOOLS_COMMIT.json",
+    "tier": 3,
+    "sha256": "b6ee8cc3e62ae04d",
+    "bytes": 531
+  },
+  {
+    "path": "meta/active_branch.json",
+    "tier": 3,
+    "sha256": "a4fcf1d63830a11f",
+    "bytes": 49
+  },
+  {
+    "path": "meta/active_project.json",
+    "tier": 3,
+    "sha256": "8b09f2e95669b8a9",
+    "bytes": 146
+  },
+  {
+    "path": "meta/active_stack.json",
+    "tier": 3,
+    "sha256": "3298f4da19d54ccf",
+    "bytes": 227
+  },
+  {
+    "path": "meta/agent_feedback_latest.json",
+    "tier": 3,
+    "sha256": "ead7c5fc12a235c1",
+    "bytes": 234
+  },
+  {
+    "path": "meta/agent_handoff.md",
+    "tier": 3,
+    "sha256": "a57762d6d2e95a2b",
+    "bytes": 198
+  },
+  {
+    "path": "meta/agent_health.json",
+    "tier": 3,
+    "sha256": "998f6bf87568f0df",
+    "bytes": 345
+  },
+  {
+    "path": "meta/agent_iteration.json",
+    "tier": 3,
+    "sha256": "ea057b60b6b28668",
+    "bytes": 163
+  },
+  {
+    "path": "meta/agent_state.json",
+    "tier": 3,
+    "sha256": "97091379d91d4ce5",
+    "bytes": 106
+  },
+  {
+    "path": "meta/autoheal_latest.json",
+    "tier": 3,
+    "sha256": "c32a6ac1bd43cd46",
+    "bytes": 371
+  },
+  {
+    "path": "meta/autoheal_state.json",
+    "tier": 3,
+    "sha256": "aa6c38442ab072b1",
+    "bytes": 76
+  },
+  {
+    "path": "meta/brocc_live_wire.py",
+    "tier": 3,
+    "sha256": "80f0adae837caeb3",
+    "bytes": 2076
+  },
+  {
+    "path": "meta/brocc_live_wire.sh",
+    "tier": 3,
+    "sha256": "7ecdd3616939b7b5",
+    "bytes": 2230
+  },
+  {
+    "path": "meta/brocc_loop_emit.py",
+    "tier": 3,
+    "sha256": "5b0090a831aafb67",
+    "bytes": 2862
+  },
+  {
+    "path": "meta/brocc_loop_emit.sh",
+    "tier": 3,
+    "sha256": "0b4c47850359598d",
+    "bytes": 1633
+  },
+  {
+    "path": "meta/brocc_state.py",
+    "tier": 3,
+    "sha256": "3926b27aa5f7b499",
+    "bytes": 1327
+  },
+  {
+    "path": "meta/brocc_watch.py",
+    "tier": 3,
+    "sha256": "473a7b3a5fe88d0f",
+    "bytes": 1489
+  },
+  {
+    "path": "meta/broccoli_storage_sync.py",
+    "tier": 3,
+    "sha256": "b407d3f1bb11baa9",
+    "bytes": 2803
+  },
+  {
+    "path": "meta/clip_last_good.json",
+    "tier": 3,
+    "sha256": "1fd94fbbb2d839ba",
+    "bytes": 84
+  },
+  {
+    "path": "meta/codev_window.json",
+    "tier": 3,
+    "sha256": "e37648d991aab7a1",
+    "bytes": 281
+  },
+  {
+    "path": "meta/current_task.json",
+    "tier": 3,
+    "sha256": "011d88847041b5de",
+    "bytes": 225
+  },
+  {
+    "path": "meta/current_task.md",
+    "tier": 3,
+    "sha256": "a5b1e9fe52edb4e7",
+    "bytes": 1102
+  },
+  {
+    "path": "meta/display_policy.json",
+    "tier": 3,
+    "sha256": "12143439945bf901",
+    "bytes": 222
+  },
+  {
+    "path": "meta/drift_report.json",
+    "tier": 3,
+    "sha256": "4c7f801c06a4d39b",
+    "bytes": 483
+  },
+  {
+    "path": "meta/google_secondary_test.json",
+    "tier": 3,
+    "sha256": "6ad2042eafa5c02d",
+    "bytes": 140
+  },
+  {
+    "path": "meta/grok_activity.json",
+    "tier": 3,
+    "sha256": "fa03b799d62f4aa7",
+    "bytes": 234
+  },
+  {
+    "path": "meta/grok_pkg.json",
+    "tier": 3,
+    "sha256": "14b791229db2b1e1",
+    "bytes": 51
+  },
+  {
+    "path": "meta/heal_ladder.json",
+    "tier": 3,
+    "sha256": "bfe0ee0694b70d91",
+    "bytes": 207
+  },
+  {
+    "path": "meta/heal_state.json",
+    "tier": 3,
+    "sha256": "c2ddd6feb17896a2",
+    "bytes": 58
+  },
+  {
+    "path": "meta/idle_policy.json",
+    "tier": 3,
+    "sha256": "7f8327a5877a1cdd",
+    "bytes": 611
+  },
+  {
+    "path": "meta/inbox/to_mac/loop_packet.json",
+    "tier": 3,
+    "sha256": "0d7a5639ac76bbcb",
+    "bytes": 460
+  },
+  {
+    "path": "meta/iter_loop.json",
+    "tier": 3,
+    "sha256": "33d7c1e82de1ba6b",
+    "bytes": 342
+  },
+  {
+    "path": "meta/last_round.json",
+    "tier": 3,
+    "sha256": "2db9ffb3708b8660",
+    "bytes": 110
+  },
+  {
+    "path": "meta/last_send_adb.json",
+    "tier": 3,
+    "sha256": "554da43cf18b043b",
+    "bytes": 129
+  },
+  {
+    "path": "meta/last_task.json",
+    "tier": 3,
+    "sha256": "e49aaf5a48b0d7d9",
+    "bytes": 77
+  },
+  {
+    "path": "meta/loop_gate_pass.json",
+    "tier": 3,
+    "sha256": "0519551e0333508c",
+    "bytes": 136
+  },
+  {
+    "path": "meta/loop_packet.json",
+    "tier": 3,
+    "sha256": "0d7a5639ac76bbcb",
+    "bytes": 460
+  },
+  {
+    "path": "meta/loop_state.json",
+    "tier": 3,
+    "sha256": "06acc9475fb56e69",
+    "bytes": 262
+  },
+  {
+    "path": "meta/mac_gemini_pull.md",
+    "tier": 3,
+    "sha256": "0286b69eb9062666",
+    "bytes": 161
+  },
+  {
+    "path": "meta/mac_handoff.md",
+    "tier": 3,
+    "sha256": "2a25f7bc81db1ab0",
+    "bytes": 305
+  },
+  {
+    "path": "meta/notif_mine_index.json",
+    "tier": 3,
+    "sha256": "aae83d6a73bc2b3e",
+    "bytes": 16277
+  },
+  {
+    "path": "meta/perf_config.json",
+    "tier": 3,
+    "sha256": "98474c941d5e7fd5",
+    "bytes": 294
+  },
+  {
+    "path": "meta/perf_state.json",
+    "tier": 3,
+    "sha256": "fa0b4c86086e0d00",
+    "bytes": 150
+  },
+  {
+    "path": "meta/recursive_policy.json",
+    "tier": 3,
+    "sha256": "c5462076dde9d517",
+    "bytes": 509
+  },
+  {
+    "path": "meta/task_completion_rules.json",
+    "tier": 3,
+    "sha256": "65836e2b165b503c",
+    "bytes": 339
+  },
+  {
+    "path": "meta/task_queue_snapshot.json",
+    "tier": 3,
+    "sha256": "032ff7c90e40e0c3",
+    "bytes": 842
+  },
+  {
+    "path": "meta/version_manifest.json",
+    "tier": 3,
+    "sha256": "965f98c276724523",
+    "bytes": 209
+  },
+  {
+    "path": "meta/workflow_order.json",
+    "tier": 3,
+    "sha256": "480e9b6e0219b13a",
+    "bytes": 167
+  },
+  {
+    "path": "meta/working_paths.json",
+    "tier": 3,
+    "sha256": "516dde2f9c4cd876",
+    "bytes": 1104
+  },
+  {
+    "path": "meta/working_registry.json",
+    "tier": 3,
+    "sha256": "a2907f5c95681b18",
+    "bytes": 374
+  },
+  {
+    "path": "projects/codev-20260707/docs/PROTOCOL.md",
+    "tier": 3,
+    "sha256": "144f1406da0aad80",
+    "bytes": 184
+  },
+  {
+    "path": "projects/codev-20260707/docs/TASKS.md",
+    "tier": 3,
+    "sha256": "8840bd6beffe0e57",
+    "bytes": 102
+  },
+  {
+    "path": "projects/codevelop-20260707/docs/PROTOCOL.md",
+    "tier": 3,
+    "sha256": "b1e2072295b3afc1",
+    "bytes": 12
+  },
+  {
+    "path": "projects/codevelop-20260707/docs/TASKS.md",
+    "tier": 3,
+    "sha256": "094e403423c38e44",
+    "bytes": 25
+  },
+  {
+    "path": "quarry_framework.json",
+    "tier": 3,
+    "sha256": "b83ddda716d4594e",
+    "bytes": 347
+  },
+  {
+    "path": "quarry_iter.py",
+    "tier": 3,
+    "sha256": "2c53b9e785bf1e77",
+    "bytes": 8339
+  },
+  {
+    "path": "quarry_run.sh",
+    "tier": 3,
+    "sha256": "b87dc6320079c592",
+    "bytes": 316
+  },
+  {
+    "path": "reboot_bootstrap.py",
+    "tier": 3,
+    "sha256": "ab0f1c16a5ec9466",
+    "bytes": 1295
+  },
+  {
+    "path": "reports/ARCHITECTURE_RECON.json",
+    "tier": 3,
+    "sha256": "833470a764f6fa49",
+    "bytes": 11295
+  },
+  {
+    "path": "reports/ARCHITECTURE_RECON.md",
+    "tier": 3,
+    "sha256": "5db145af9e653c58",
+    "bytes": 9527
+  },
+  {
+    "path": "reports/CODE_EXAM.md",
+    "tier": 3,
+    "sha256": "214c9aea5b57655f",
+    "bytes": 38006
+  },
+  {
+    "path": "reports/FS_DISCOVERY.md",
+    "tier": 3,
+    "sha256": "ee89de71b114ed21",
+    "bytes": 28531
+  },
+  {
+    "path": "reports/GROK_CODEBASE_FEED.md",
+    "tier": 3,
+    "sha256": "155a9cfada82d843",
+    "bytes": 449605
+  },
+  {
+    "path": "reports/INVENTORY_REPORT.md",
+    "tier": 3,
+    "sha256": "832a1cee122a20e4",
+    "bytes": 4200
+  },
+  {
+    "path": "reports/INVESTIGATION_REPORT.md",
+    "tier": 3,
+    "sha256": "88fc90691b84d426",
+    "bytes": 3718
+  },
+  {
+    "path": "reports/RISH_SHIZUKU_PERMS.json",
+    "tier": 0,
+    "sha256": "410f953508887a1b",
+    "bytes": 660
+  },
+  {
+    "path": "reports/SANITIZED_PROMPT.md",
+    "tier": 3,
+    "sha256": "28a721324fdec207",
+    "bytes": 400
+  },
+  {
+    "path": "reports/bin_research.json",
+    "tier": 3,
+    "sha256": "f2e2691ffbdecdfc",
+    "bytes": 7793
+  },
+  {
+    "path": "reports/display_after_chat_fg.json",
+    "tier": 3,
+    "sha256": "d350d6e0e48fbdf4",
+    "bytes": 88
+  },
+  {
+    "path": "reports/display_at_chat_fg.json",
+    "tier": 3,
+    "sha256": "d350d6e0e48fbdf4",
+    "bytes": 88
+  },
+  {
+    "path": "reports/heal_debug_last.json",
+    "tier": 3,
+    "sha256": "29fcfd08bc0702ab",
+    "bytes": 1812
+  },
+  {
+    "path": "reports/inventory.json",
+    "tier": 3,
+    "sha256": "2f0cb735d6976c99",
+    "bytes": 15487
+  },
+  {
+    "path": "reports/investigation.json",
+    "tier": 3,
+    "sha256": "8c12fc41b5b8584b",
+    "bytes": 11219
+  },
+  {
+    "path": "reports/mac_context_audit.json",
+    "tier": 3,
+    "sha256": "26db6b0da9adabc1",
+    "bytes": 613
+  },
+  {
+    "path": "reports/notif_codebase_search.json",
+    "tier": 3,
+    "sha256": "0879d8177ecc1197",
+    "bytes": 228553
+  },
+  {
+    "path": "reports/quarry_display.json",
+    "tier": 3,
+    "sha256": "d350d6e0e48fbdf4",
+    "bytes": 88
+  },
+  {
+    "path": "reports/quarry_last.json",
+    "tier": 3,
+    "sha256": "4ff820781c56d6d9",
+    "bytes": 1991
+  },
+  {
+    "path": "reports/research/gemini_rwa_v41_SEED.md",
+    "tier": 3,
+    "sha256": "bb034f00cb3674dd",
+    "bytes": 101
+  },
+  {
+    "path": "reports/selftest_last.json",
+    "tier": 3,
+    "sha256": "35ade13fead8b67b",
+    "bytes": 436
+  },
+  {
+    "path": "reports/smoke_compare.json",
+    "tier": 3,
+    "sha256": "df8469584c339557",
+    "bytes": 860
+  },
+  {
+    "path": "reports/ui_send_targets.json",
+    "tier": 3,
+    "sha256": "18201235ddac29cc",
+    "bytes": 46
+  },
+  {
+    "path": "reports/ui_snapshot.json",
+    "tier": 3,
+    "sha256": "697d39138d88b634",
+    "bytes": 188
+  },
+  {
+    "path": "reports/version_walk_result.json",
+    "tier": 3,
+    "sha256": "ca2bea0a36104d83",
+    "bytes": 215
+  },
+  {
+    "path": "reports/wire_context.json",
+    "tier": 3,
+    "sha256": "2dcdde4ca561916f",
+    "bytes": 49
+  },
+  {
+    "path": "research/notes.md",
+    "tier": 3,
+    "sha256": "55b9037618e9ad67",
+    "bytes": 760
+  },
+  {
+    "path": "smoke_fast.py",
+    "tier": 3,
+    "sha256": "3749d6d1efdc0e72",
+    "bytes": 1971
+  },
+  {
+    "path": "smoke_lesson_foreground.py",
+    "tier": 3,
+    "sha256": "464e4c5d0acef25e",
+    "bytes": 4246
+  },
+  {
+    "path": "spec/BUILD_SPEC.md",
+    "tier": 3,
+    "sha256": "9f5cda5239e3d2da",
+    "bytes": 296
+  },
+  {
+    "path": "state/walk_stage/broccoli_agentic_chat.py",
+    "tier": 3,
+    "sha256": "781b29d17a33b5fd",
+    "bytes": 4873
+  },
+  {
+    "path": "state/walk_stage/broccoli_core_round.py",
+    "tier": 3,
+    "sha256": "dafb70d2322d38d3",
+    "bytes": 7766
+  },
+  {
+    "path": "state/walk_stage/broccoli_input.py",
+    "tier": 3,
+    "sha256": "906da8426e3e9347",
+    "bytes": 2711
+  },
+  {
+    "path": "state/walk_stage/broccoli_rish_shell.py",
+    "tier": 0,
+    "sha256": "9a94e81bd0931956",
+    "bytes": 900
+  },
+  {
+    "path": "state/walk_stage/broccoli_rish_ui.py",
+    "tier": 0,
+    "sha256": "8f3657dcb8edfd79",
+    "bytes": 6031
+  },
+  {
+    "path": "state/walk_stage/broccoli_send.py",
+    "tier": 0,
+    "sha256": "4508ec903e0d6b6c",
+    "bytes": 2642
+  },
+  {
+    "path": "state/walk_stage/broccoli_ui_dump.py",
+    "tier": 3,
+    "sha256": "66fdf74352ebd2e2",
+    "bytes": 5049
+  },
+  {
+    "path": "state/walk_stage_0/broccoli_a11y_rish.py",
+    "tier": 0,
+    "sha256": "c443700e5607d68b",
+    "bytes": 2424
+  },
+  {
+    "path": "state/walk_stage_0/broccoli_a11y_send.py",
+    "tier": 0,
+    "sha256": "d177200eca3879c2",
+    "bytes": 3112
+  },
+  {
+    "path": "state/walk_stage_0/broccoli_agentic_chat.py",
+    "tier": 3,
+    "sha256": "781b29d17a33b5fd",
+    "bytes": 4873
+  },
+  {
+    "path": "state/walk_stage_0/broccoli_input.py",
+    "tier": 3,
+    "sha256": "906da8426e3e9347",
+    "bytes": 2711
+  },
+  {
+    "path": "state/walk_stage_0/broccoli_manual.py",
+    "tier": 3,
+    "sha256": "7ef8047fd0e6bbc6",
+    "bytes": 1097
+  },
+  {
+    "path": "state/walk_stage_0/broccoli_manual_mode.py",
+    "tier": 3,
+    "sha256": "1dbec27f98f1bc02",
+    "bytes": 179
+  },
+  {
+    "path": "state/walk_stage_0/broccoli_operator.py",
+    "tier": 3,
+    "sha256": "cc2291d6bfc0485c",
+    "bytes": 5441
+  },
+  {
+    "path": "state/walk_stage_0/broccoli_rish_shell.py",
+    "tier": 0,
+    "sha256": "9a94e81bd0931956",
+    "bytes": 900
+  },
+  {
+    "path": "state/walk_stage_0/broccoli_rish_ui.py",
+    "tier": 0,
+    "sha256": "8f3657dcb8edfd79",
+    "bytes": 6031
+  },
+  {
+    "path": "state/walk_stage_0/broccoli_selftest.py",
+    "tier": 3,
+    "sha256": "028fc92619812a57",
+    "bytes": 894
+  },
+  {
+    "path": "state/walk_stage_0/broccoli_send.py",
+    "tier": 0,
+    "sha256": "4508ec903e0d6b6c",
+    "bytes": 2642
+  },
+  {
+    "path": "state/walk_stage_0/broccoli_strategy.py",
+    "tier": 3,
+    "sha256": "5fc26d7d7d252f22",
+    "bytes": 1035
+  },
+  {
+    "path": "state/walk_stage_0/broccoli_ui_dump.py",
+    "tier": 3,
+    "sha256": "66fdf74352ebd2e2",
+    "bytes": 5049
+  },
+  {
+    "path": "state/walk_stage_0/broccoli_wait.py",
+    "tier": 3,
+    "sha256": "aea3b9c8679fe69a",
+    "bytes": 1317
+  },
+  {
+    "path": "state/walk_stage_1/broccoli_agentic_chat.py",
+    "tier": 3,
+    "sha256": "781b29d17a33b5fd",
+    "bytes": 4873
+  },
+  {
+    "path": "state/walk_stage_1/broccoli_input.py",
+    "tier": 3,
+    "sha256": "906da8426e3e9347",
+    "bytes": 2711
+  },
+  {
+    "path": "state/walk_stage_1/broccoli_operator.py",
+    "tier": 3,
+    "sha256": "cc2291d6bfc0485c",
+    "bytes": 5441
+  },
+  {
+    "path": "state/walk_stage_1/broccoli_rish_shell.py",
+    "tier": 0,
+    "sha256": "501701c5320332dd",
+    "bytes": 1238
+  },
+  {
+    "path": "state/walk_stage_1/broccoli_selftest.py",
+    "tier": 3,
+    "sha256": "028fc92619812a57",
+    "bytes": 894
+  },
+  {
+    "path": "state/walk_stage_1/broccoli_send.py",
+    "tier": 0,
+    "sha256": "4508ec903e0d6b6c",
+    "bytes": 2642
+  },
+  {
+    "path": "state/walk_stage_1/broccoli_strategy.py",
+    "tier": 3,
+    "sha256": "5fc26d7d7d252f22",
+    "bytes": 1035
+  },
+  {
+    "path": "state/walk_stage_1/broccoli_ui_dump.py",
+    "tier": 3,
+    "sha256": "66fdf74352ebd2e2",
+    "bytes": 5049
+  },
+  {
+    "path": "state/walk_stage_1/broccoli_wait.py",
+    "tier": 3,
+    "sha256": "aea3b9c8679fe69a",
+    "bytes": 1317
+  },
+  {
+    "path": "state/walk_stage_2/broccoli_agentic_chat.py",
+    "tier": 3,
+    "sha256": "a42abc5f6a0ce272",
+    "bytes": 3835
+  },
+  {
+    "path": "state/walk_stage_2/broccoli_input.py",
+    "tier": 3,
+    "sha256": "c9b79f58a9b48026",
+    "bytes": 2619
+  },
+  {
+    "path": "state/walk_stage_2/broccoli_operator.py",
+    "tier": 3,
+    "sha256": "cc2291d6bfc0485c",
+    "bytes": 5441
+  },
+  {
+    "path": "state/walk_stage_2/broccoli_rish_shell.py",
+    "tier": 0,
+    "sha256": "501701c5320332dd",
+    "bytes": 1238
+  },
+  {
+    "path": "state/walk_stage_2/broccoli_ui_dump.py",
+    "tier": 3,
+    "sha256": "66ea7c29f66ee1de",
+    "bytes": 4960
+  },
+  {
+    "path": "state/walk_stage_2/broccoli_wait.py",
+    "tier": 3,
+    "sha256": "aea3b9c8679fe69a",
+    "bytes": 1317
+  },
+  {
+    "path": "state/walk_stage_3/broccoli_a11y.py",
+    "tier": 0,
+    "sha256": "746494dfd39f99ac",
+    "bytes": 1720
+  },
+  {
+    "path": "state/walk_stage_3/broccoli_agent.py",
+    "tier": 3,
+    "sha256": "18cf78a35f74fb57",
+    "bytes": 2396
+  },
+  {
+    "path": "state/walk_stage_3/broccoli_agent_context.py",
+    "tier": 3,
+    "sha256": "24ebdf07ef3b3109",
+    "bytes": 1672
+  },
+  {
+    "path": "state/walk_stage_3/broccoli_bootstrap.py",
+    "tier": 3,
+    "sha256": "088eb6d1b25d05dd",
+    "bytes": 19551
+  },
+  {
+    "path": "state/walk_stage_3/broccoli_mac_ingest.py",
+    "tier": 3,
+    "sha256": "4d00606cfdcab498",
+    "bytes": 1263
+  },
+  {
+    "path": "state/walk_stage_3/broccoli_pulse.py",
+    "tier": 3,
+    "sha256": "b1ba339f25944043",
+    "bytes": 2088
+  },
+  {
+    "path": "state/walk_stage_3/broccoli_rish_shell.py",
+    "tier": 0,
+    "sha256": "9a94e81bd0931956",
+    "bytes": 900
+  },
+  {
+    "path": "state/walk_stage_4/broccoli_meta_heal.py",
+    "tier": 3,
+    "sha256": "34b88221314e848f",
+    "bytes": 336
+  },
+  {
+    "path": "state/walk_stage_4/broccoli_rish_shell.py",
+    "tier": 0,
+    "sha256": "9a94e81bd0931956",
+    "bytes": 900
+  },
+  {
+    "path": "state/walk_stage_4/broccoli_rish_ui.py",
+    "tier": 0,
+    "sha256": "ae751d25fe0295f5",
+    "bytes": 2072
+  },
+  {
+    "path": "state/walk_stage_4/broccoli_secondary_display.py",
+    "tier": 3,
+    "sha256": "85d0b95fe09cb03e",
+    "bytes": 741
+  },
+  {
+    "path": "state/walk_stage_4/broccoli_task_queue.py",
+    "tier": 3,
+    "sha256": "dc14067e24b24ac6",
+    "bytes": 978
+  },
+  {
+    "path": "state/walk_stage_5/broccoli_agentic_chat.py",
+    "tier": 3,
+    "sha256": "781b29d17a33b5fd",
+    "bytes": 4873
+  },
+  {
+    "path": "state/walk_stage_5/broccoli_input.py",
+    "tier": 3,
+    "sha256": "906da8426e3e9347",
+    "bytes": 2711
+  },
+  {
+    "path": "state/walk_stage_5/broccoli_rish_shell.py",
+    "tier": 0,
+    "sha256": "9a94e81bd0931956",
+    "bytes": 900
+  },
+  {
+    "path": "state/walk_stage_5/broccoli_rish_ui.py",
+    "tier": 0,
+    "sha256": "8f3657dcb8edfd79",
+    "bytes": 6031
+  },
+  {
+    "path": "state/walk_stage_5/broccoli_send.py",
+    "tier": 0,
+    "sha256": "4508ec903e0d6b6c",
+    "bytes": 2642
+  },
+  {
+    "path": "state/walk_stage_5/broccoli_ui_dump.py",
+    "tier": 3,
+    "sha256": "66fdf74352ebd2e2",
+    "bytes": 5049
+  },
+  {
+    "path": "tasks/current/TASK.md",
+    "tier": 3,
+    "sha256": "7b363cc1b61b2962",
+    "bytes": 550
+  },
+  {
+    "path": "tasks/state.json",
+    "tier": 3,
+    "sha256": "22015a4b0938b8e5",
+    "bytes": 125
+  },
+  {
+    "path": "thread/conversation.md",
+    "tier": 3,
+    "sha256": "82bdb884dcf0849e",
+    "bytes": 19
+  },
+  {
+    "path": "thread/to_chat.md",
+    "tier": 3,
+    "sha256": "553c37683299bd5c",
+    "bytes": 19227
+  },
+  {
+    "path": "tools/a11y_probe_rish.sh",
+    "tier": 2,
+    "sha256": "2842622ce8bb8272",
+    "bytes": 644
+  },
+  {
+    "path": "tools/a11y_round_fallback.sh",
+    "tier": 0,
+    "sha256": "3aa110b70a0955f6",
+    "bytes": 2142
+  },
+  {
+    "path": "tools/a11y_round_once.sh",
+    "tier": 0,
+    "sha256": "9c358bde6d926d9b",
+    "bytes": 487
+  },
+  {
+    "path": "tools/adb_send_probe.sh",
+    "tier": 2,
+    "sha256": "03eb0933426d0797",
+    "bytes": 783
+  },
+  {
+    "path": "tools/agent_apply_reply.sh",
+    "tier": 2,
+    "sha256": "c5438a9310252f6b",
+    "bytes": 537
+  },
+  {
+    "path": "tools/agent_consume_iteration.sh",
+    "tier": 2,
+    "sha256": "d22f327bbc09cf91",
+    "bytes": 262
+  },
+  {
+    "path": "tools/agent_daemon.sh",
+    "tier": 2,
+    "sha256": "4fca785475fa08fa",
+    "bytes": 1374
+  },
+  {
+    "path": "tools/agent_ensure_running.sh",
+    "tier": 2,
+    "sha256": "d845392665a8e583",
+    "bytes": 917
+  },
+  {
+    "path": "tools/agent_git_vault.sh",
+    "tier": 2,
+    "sha256": "2264eeb2f5e5925e",
+    "bytes": 1689
+  },
+  {
+    "path": "tools/agent_handler.sh",
+    "tier": 2,
+    "sha256": "cfa792791a9970fa",
+    "bytes": 1597
+  },
+  {
+    "path": "tools/agent_health.sh",
+    "tier": 2,
+    "sha256": "e1b7b0b6dea75751",
+    "bytes": 1178
+  },
+  {
+    "path": "tools/agent_loop.sh",
+    "tier": 2,
+    "sha256": "db7a19c615b3f843",
+    "bytes": 127
+  },
+  {
+    "path": "tools/agent_research_private.sh",
+    "tier": 2,
+    "sha256": "237ec53f19ed9dfb",
+    "bytes": 371
+  },
+  {
+    "path": "tools/agent_should_wire.sh",
+    "tier": 2,
+    "sha256": "5f6765888e66671a",
+    "bytes": 317
+  },
+  {
+    "path": "tools/agent_tick.sh",
+    "tier": 2,
+    "sha256": "c8e6ff1094edc1f4",
+    "bytes": 1131
+  },
+  {
+    "path": "tools/agent_turn_grok_feed.sh",
+    "tier": 2,
+    "sha256": "7862dfb1e8ebc9e0",
+    "bytes": 487
+  },
+  {
+    "path": "tools/agent_watch_grok_chat.sh",
+    "tier": 2,
+    "sha256": "715ab3dd89722196",
+    "bytes": 1363
+  },
+  {
+    "path": "tools/agent_wire_rish.sh",
+    "tier": 0,
+    "sha256": "d451053840fab3ee",
+    "bytes": 517
+  },
+  {
+    "path": "tools/agent_wrap.sh",
+    "tier": 2,
+    "sha256": "6a9ce9bbc7622c7e",
+    "bytes": 2494
+  },
+  {
+    "path": "tools/agentic_run_once.py",
+    "tier": 1,
+    "sha256": "84087a68b1e89639",
+    "bytes": 240
+  },
+  {
+    "path": "tools/apply_inbox_patch.sh",
+    "tier": 2,
+    "sha256": "2085078f01a870f0",
+    "bytes": 306
+  },
+  {
+    "path": "tools/b_cli.sh",
+    "tier": 2,
+    "sha256": "c1aa1adc409bdfe7",
+    "bytes": 894
+  },
+  {
+    "path": "tools/bin_research.py",
+    "tier": 2,
+    "sha256": "413642bd47bc4f1a",
+    "bytes": 2572
+  },
+  {
+    "path": "tools/brocc_loop.sh",
+    "tier": 2,
+    "sha256": "74be7038954e903b",
+    "bytes": 307
+  },
+  {
+    "path": "tools/broccoli-daemon.sh",
+    "tier": 2,
+    "sha256": "58014df1429f5d64",
+    "bytes": 90
+  },
+  {
+    "path": "tools/broccoli_agent.py",
+    "tier": 2,
+    "sha256": "6c4057b26e357485",
+    "bytes": 5311
+  },
+  {
+    "path": "tools/broccoli_agentic_loop.py",
+    "tier": 2,
+    "sha256": "ade0acc7500d13f5",
+    "bytes": 856
+  },
+  {
+    "path": "tools/broccoli_agentic_selftest.py",
+    "tier": 2,
+    "sha256": "ebe8c598f3c7703e",
+    "bytes": 1204
+  },
+  {
+    "path": "tools/broccoli_brain.py",
+    "tier": 2,
+    "sha256": "20c360e2ae242f90",
+    "bytes": 3073
+  },
+  {
+    "path": "tools/broccoli_conv_archive.py",
+    "tier": 2,
+    "sha256": "8c3479ff0192ae5e",
+    "bytes": 2582
+  },
+  {
+    "path": "tools/broccoli_entry.sh",
+    "tier": 1,
+    "sha256": "e5994c47b6b12d27",
+    "bytes": 2267
+  },
+  {
+    "path": "tools/broccoli_heal_daemon.sh",
+    "tier": 2,
+    "sha256": "fea4dc3394b04cbc",
+    "bytes": 800
+  },
+  {
+    "path": "tools/broccoli_heal_supervisor.sh",
+    "tier": 2,
+    "sha256": "d7bb4bbe223a682a",
+    "bytes": 554
+  },
+  {
+    "path": "tools/broccoli_infinite_dev_loop.py",
+    "tier": 0,
+    "sha256": "4c8ddb399acd3919",
+    "bytes": 2692
+  },
+  {
+    "path": "tools/broccoli_package_probe.sh",
+    "tier": 2,
+    "sha256": "68c9e4d273aa63cf",
+    "bytes": 1452
+  },
+  {
+    "path": "tools/broccoli_pull.sh",
+    "tier": 2,
+    "sha256": "6dcfd2cdc405609a",
+    "bytes": 1446
+  },
+  {
+    "path": "tools/broccoli_rish_wire.sh",
+    "tier": 0,
+    "sha256": "4206d8129e1c617e",
+    "bytes": 515
+  },
+  {
+    "path": "tools/broccoli_supervisor.sh",
+    "tier": 2,
+    "sha256": "c06df78a5186e519",
+    "bytes": 515
+  },
+  {
+    "path": "tools/broccoli_supervisor_loop.sh",
+    "tier": 2,
+    "sha256": "894999a4a5719404",
+    "bytes": 155
+  },
+  {
+    "path": "tools/broccoli_worker.sh",
+    "tier": 2,
+    "sha256": "d90288bbda66354c",
+    "bytes": 219
+  },
+  {
+    "path": "tools/build_code_index.sh",
+    "tier": 2,
+    "sha256": "2a61557229af85e7",
+    "bytes": 863
+  },
+  {
+    "path": "tools/build_grok_feed.sh",
+    "tier": 2,
+    "sha256": "651c2a5c20af4289",
+    "bytes": 1437
+  },
+  {
+    "path": "tools/build_repair_wire_prompt.sh",
+    "tier": 2,
+    "sha256": "2ae4045d617141b2",
+    "bytes": 415
+  },
+  {
+    "path": "tools/chat_focus_first.sh",
+    "tier": 2,
+    "sha256": "acd2b03c73167a73",
+    "bytes": 2265
+  },
+  {
+    "path": "tools/chat_focus_rish.py",
+    "tier": 0,
+    "sha256": "6a862e81d87c0634",
+    "bytes": 1030
+  },
+  {
+    "path": "tools/codev_loop.sh",
+    "tier": 2,
+    "sha256": "0b2c596e5e8da527",
+    "bytes": 1149
+  },
+  {
+    "path": "tools/codevel_boot.sh",
+    "tier": 2,
+    "sha256": "82d13e1c78f4237c",
+    "bytes": 402
+  },
+  {
+    "path": "tools/codevel_wire.sh",
+    "tier": 2,
+    "sha256": "d6b7304a1aad4bbc",
+    "bytes": 5497
+  },
+  {
+    "path": "tools/codevel_wire_fast.sh",
+    "tier": 2,
+    "sha256": "065ececde0c4f621",
+    "bytes": 4999
+  },
+  {
+    "path": "tools/collab_rish_loop.sh",
+    "tier": 2,
+    "sha256": "58014df1429f5d64",
+    "bytes": 90
+  },
+  {
+    "path": "tools/consume_response.sh",
+    "tier": 0,
+    "sha256": "f8feb827cc4a7ade",
+    "bytes": 702
+  },
+  {
+    "path": "tools/coordinator_run.sh",
+    "tier": 2,
+    "sha256": "4add5475de197637",
+    "bytes": 887
+  },
+  {
+    "path": "tools/debug_send_dump.sh",
+    "tier": 2,
+    "sha256": "14134212643ee1bf",
+    "bytes": 308
+  },
+  {
+    "path": "tools/deliver_to_mac.sh",
+    "tier": 2,
+    "sha256": "eebab4539a93b118",
+    "bytes": 872
+  },
+  {
+    "path": "tools/detect_interject.sh",
+    "tier": 2,
+    "sha256": "c455a583fc1672e5",
+    "bytes": 671
+  },
+  {
+    "path": "tools/discover_directories.sh",
+    "tier": 2,
+    "sha256": "d06c25fe881c17f0",
+    "bytes": 1770
+  },
+  {
+    "path": "tools/dismiss_tos_grok.sh",
+    "tier": 2,
+    "sha256": "f193689873aa128b",
+    "bytes": 2123
+  },
+  {
+    "path": "tools/dump_send_row.sh",
+    "tier": 2,
+    "sha256": "6cab86e0f285a49d",
+    "bytes": 1287
+  },
+  {
+    "path": "tools/extract_chat_from_xml.py",
+    "tier": 0,
+    "sha256": "b84ad2fbc228c5cf",
+    "bytes": 545
+  },
+  {
+    "path": "tools/extract_grok_code.py",
+    "tier": 2,
+    "sha256": "c7470a9ab27e7525",
+    "bytes": 621
+  },
+  {
+    "path": "tools/find_send_tap.py",
+    "tier": 0,
+    "sha256": "1512981dc8e879b2",
+    "bytes": 443
+  },
+  {
+    "path": "tools/gap_analyze.py",
+    "tier": 2,
+    "sha256": "a237804af7044fbc",
+    "bytes": 5233
+  },
+  {
+    "path": "tools/gap_enqueue_chat.sh",
+    "tier": 2,
+    "sha256": "809a833892c9e2be",
+    "bytes": 413
+  },
+  {
+    "path": "tools/gap_watch.sh",
+    "tier": 2,
+    "sha256": "0797c173eb88b608",
+    "bytes": 498
+  },
+  {
+    "path": "tools/go_install.sh",
+    "tier": 2,
+    "sha256": "6e3be489845d57a4",
+    "bytes": 384
+  },
+  {
+    "path": "tools/google_secondary_test.py",
+    "tier": 2,
+    "sha256": "5f5441163856ad3f",
+    "bytes": 1201
+  },
+  {
+    "path": "tools/grok_foreground_then.sh",
+    "tier": 0,
+    "sha256": "c02ab0eb430cb573",
+    "bytes": 2348
+  },
+  {
+    "path": "tools/grok_pull_to_agent.sh",
+    "tier": 2,
+    "sha256": "a1fcc6e5fddff7d2",
+    "bytes": 890
+  },
+  {
+    "path": "tools/grok_smoke_validate.py",
+    "tier": 2,
+    "sha256": "94daa87e5bdf48db",
+    "bytes": 601
+  },
+  {
+    "path": "tools/heal_cycle.sh",
+    "tier": 2,
+    "sha256": "997962b91cc084f8",
+    "bytes": 564
+  },
+  {
+    "path": "tools/heal_daemon.sh",
+    "tier": 2,
+    "sha256": "fea4dc3394b04cbc",
+    "bytes": 800
+  },
+  {
+    "path": "tools/heal_debug_all.py",
+    "tier": 2,
+    "sha256": "f38d9ce3eda6616e",
+    "bytes": 7694
+  },
+  {
+    "path": "tools/heal_debug_all.sh",
+    "tier": 2,
+    "sha256": "d19e580abad8c650",
+    "bytes": 277
+  },
+  {
+    "path": "tools/heal_research.sh",
+    "tier": 2,
+    "sha256": "cafb38d920275828",
+    "bytes": 812
+  },
+  {
+    "path": "tools/heal_supervisor.sh",
+    "tier": 2,
+    "sha256": "91e538da7b0f834f",
+    "bytes": 334
+  },
+  {
+    "path": "tools/heal_wire_fallback.sh",
+    "tier": 1,
+    "sha256": "0770386764a7440c",
+    "bytes": 909
+  },
+  {
+    "path": "tools/inbox_to_queue.sh",
+    "tier": 2,
+    "sha256": "690adfdf6cd7e1c0",
+    "bytes": 351
+  },
+  {
+    "path": "tools/install_a11y_apk.sh",
+    "tier": 2,
+    "sha256": "bd8ca8822cc74463",
+    "bytes": 1990
+  },
+  {
+    "path": "tools/inventory_md_tasks.py",
+    "tier": 2,
+    "sha256": "5652b3c9921d99e8",
+    "bytes": 3834
+  },
+  {
+    "path": "tools/inventory_md_tasks.sh",
+    "tier": 2,
+    "sha256": "a948a7c045a186d3",
+    "bytes": 5057
+  },
+  {
+    "path": "tools/investigate_system.py",
+    "tier": 2,
+    "sha256": "fb21640f56cb23e7",
+    "bytes": 11333
+  },
+  {
+    "path": "tools/investigate_system.sh",
+    "tier": 2,
+    "sha256": "f19750c6c4b4af16",
+    "bytes": 889
+  },
+  {
+    "path": "tools/media_housekeeping.sh",
+    "tier": 2,
+    "sha256": "53af1c28347e4627",
+    "bytes": 7479
+  },
+  {
+    "path": "tools/notif_probe.sh",
+    "tier": 2,
+    "sha256": "4931ec9f516f97c3",
+    "bytes": 526
+  },
+  {
+    "path": "tools/notify_from_dump.sh",
+    "tier": 2,
+    "sha256": "90157137bea4798c",
+    "bytes": 763
+  },
+  {
+    "path": "tools/notify_persistent_agent.sh",
+    "tier": 2,
+    "sha256": "9bc3741b2951eea9",
+    "bytes": 384
+  },
+  {
+    "path": "tools/notify_status.sh",
+    "tier": 2,
+    "sha256": "459cc5da16f855bf",
+    "bytes": 1117
+  },
+  {
+    "path": "tools/notify_toast.sh",
+    "tier": 2,
+    "sha256": "beef6aad54ab229b",
+    "bytes": 333
+  },
+  {
+    "path": "tools/notify_watch.sh",
+    "tier": 2,
+    "sha256": "939bd7baf0f2490c",
+    "bytes": 1560
+  },
+  {
+    "path": "tools/one_round_adb.sh",
+    "tier": 2,
+    "sha256": "2ec3f9cfd5f95cb2",
+    "bytes": 557
+  },
+  {
+    "path": "tools/open_a11y_settings.sh",
+    "tier": 2,
+    "sha256": "f0bcf922ffe1c6c2",
+    "bytes": 386
+  },
+  {
+    "path": "tools/open_codevel.sh",
+    "tier": 2,
+    "sha256": "669aa063b8dcb6eb",
+    "bytes": 1048
+  },
+  {
+    "path": "tools/parse_grok_ui.py",
+    "tier": 0,
+    "sha256": "73b35dbf270e34fe",
+    "bytes": 1065
+  },
+  {
+    "path": "tools/phrase_grok_dump.py",
+    "tier": 2,
+    "sha256": "f8c02ec9005f9f9d",
+    "bytes": 1643
+  },
+  {
+    "path": "tools/poll_loop.sh",
+    "tier": 2,
+    "sha256": "7ea209bb63a86e82",
+    "bytes": 1255
+  },
+  {
+    "path": "tools/prepare_mac_bundle.sh",
+    "tier": 2,
+    "sha256": "e4b053d7bbffbd18",
+    "bytes": 946
+  },
+  {
+    "path": "tools/prepare_mac_bundle_redacted.sh",
+    "tier": 2,
+    "sha256": "677c90491f9c1e1d",
+    "bytes": 751
+  },
+  {
+    "path": "tools/pull_mac_output.sh",
+    "tier": 2,
+    "sha256": "6dcfd2cdc405609a",
+    "bytes": 1446
+  },
+  {
+    "path": "tools/pull_spec_gemini.sh",
+    "tier": 2,
+    "sha256": "adad58df56f564e6",
+    "bytes": 2183
+  },
+  {
+    "path": "tools/pull_wire_from_dump.py",
+    "tier": 2,
+    "sha256": "486b568faaa618ab",
+    "bytes": 2326
+  },
+  {
+    "path": "tools/push_chat_lines_to_inbox.sh",
+    "tier": 2,
+    "sha256": "789947479708f80a",
+    "bytes": 822
+  },
+  {
+    "path": "tools/read_mission.sh",
+    "tier": 2,
+    "sha256": "b73292f48f6aeb14",
+    "bytes": 751
+  },
+  {
+    "path": "tools/recv_copy.sh",
+    "tier": 2,
+    "sha256": "674ea976a359cc83",
+    "bytes": 487
+  },
+  {
+    "path": "tools/redact.sh",
+    "tier": 2,
+    "sha256": "95af682a68657bae",
+    "bytes": 380
+  },
+  {
+    "path": "tools/reinit_agent.sh",
+    "tier": 2,
+    "sha256": "e926eeadac09316c",
+    "bytes": 747
+  },
+  {
+    "path": "tools/reply_to_next_action.py",
+    "tier": 2,
+    "sha256": "9cec6fbab030e67b",
+    "bytes": 4266
+  },
+  {
+    "path": "tools/report_to_queue.sh",
+    "tier": 2,
+    "sha256": "fc3085623f932ece",
+    "bytes": 130
+  },
+  {
+    "path": "tools/rish_grok_once.sh",
+    "tier": 0,
+    "sha256": "1b36bf1fa5bc152b",
+    "bytes": 466
+  },
+  {
+    "path": "tools/rish_grok_round.sh",
+    "tier": 0,
+    "sha256": "af6e86fc006234ab",
+    "bytes": 2880
+  },
+  {
+    "path": "tools/run_doc.sh",
+    "tier": 2,
+    "sha256": "79f9ff6d614da967",
+    "bytes": 686
+  },
+  {
+    "path": "tools/run_grok_smoke.sh",
+    "tier": 2,
+    "sha256": "3c668fdbd4baefa0",
+    "bytes": 862
+  },
+  {
+    "path": "tools/run_infinite.sh",
+    "tier": 0,
+    "sha256": "d3ed28fb93129d4b",
+    "bytes": 589
+  },
+  {
+    "path": "tools/run_version_walk.sh",
+    "tier": 2,
+    "sha256": "3ab66f83085a93a8",
+    "bytes": 558
+  },
+  {
+    "path": "tools/safe_wire_message.sh",
+    "tier": 2,
+    "sha256": "5f156dca3292d985",
+    "bytes": 183
+  },
+  {
+    "path": "tools/search_notif_codebase.py",
+    "tier": 2,
+    "sha256": "046d8deb0a3f8edf",
+    "bytes": 2648
+  },
+  {
+    "path": "tools/send_now.sh",
+    "tier": 0,
+    "sha256": "294aef6aa3811e15",
+    "bytes": 545
+  },
+  {
+    "path": "tools/setup_vault_interactive.sh",
+    "tier": 2,
+    "sha256": "aad4b17ba55ebad2",
+    "bytes": 799
+  },
+  {
+    "path": "tools/setup_wizard.sh",
+    "tier": 2,
+    "sha256": "3a34998ce40a1cff",
+    "bytes": 1996
+  },
+  {
+    "path": "tools/show_queue.sh",
+    "tier": 2,
+    "sha256": "9ffc4a573606a273",
+    "bytes": 632
+  },
+  {
+    "path": "tools/smoke_boot.sh",
+    "tier": 2,
+    "sha256": "9d357bbcda05bab6",
+    "bytes": 1126
+  },
+  {
+    "path": "tools/start_agentic_now.sh",
+    "tier": 2,
+    "sha256": "831a8b4e3cccc13b",
+    "bytes": 580
+  },
+  {
+    "path": "tools/start_dev_task.sh",
+    "tier": 2,
+    "sha256": "8ab603bfd4bef698",
+    "bytes": 1151
+  },
+  {
+    "path": "tools/start_infinite_loop.sh",
+    "tier": 2,
+    "sha256": "6a81f1a31d06d5e3",
+    "bytes": 592
+  },
+  {
+    "path": "tools/stop_all_automation.sh",
+    "tier": 2,
+    "sha256": "64e843b09b16b2bf",
+    "bytes": 316
+  },
+  {
+    "path": "tools/termux_disk_clean.sh",
+    "tier": 2,
+    "sha256": "f093e1b68f28e762",
+    "bytes": 1170
+  },
+  {
+    "path": "tools/termux_disk_investigate.sh",
+    "tier": 2,
+    "sha256": "048735c51c502f71",
+    "bytes": 3200
+  },
+  {
+    "path": "tools/toast_user.sh",
+    "tier": 2,
+    "sha256": "64eb9faf5a0719ae",
+    "bytes": 405
+  },
+  {
+    "path": "tools/ui_dump_chat.py",
+    "tier": 2,
+    "sha256": "fdc34ebf3a1ebe15",
+    "bytes": 2007
+  },
+  {
+    "path": "tools/ui_dump_loop.py",
+    "tier": 2,
+    "sha256": "d7b0b1992c3d4111",
+    "bytes": 5019
+  },
+  {
+    "path": "tools/ui_probe_send.sh",
+    "tier": 2,
+    "sha256": "ed9886be7c5558bd",
+    "bytes": 443
+  },
+  {
+    "path": "tools/ui_snapshot_save.sh",
+    "tier": 2,
+    "sha256": "1a346a8a6adfaf91",
+    "bytes": 232
+  },
+  {
+    "path": "tools/ui_state.py",
+    "tier": 2,
+    "sha256": "4eb423da5186175f",
+    "bytes": 5732
+  },
+  {
+    "path": "tools/user_touch_watch.sh",
+    "tier": 2,
+    "sha256": "b1564589eb810c08",
+    "bytes": 529
+  },
+  {
+    "path": "tools/version_manager.sh",
+    "tier": 2,
+    "sha256": "e37a573639143e66",
+    "bytes": 1367
+  },
+  {
+    "path": "tools/version_walk_heal.py",
+    "tier": 2,
+    "sha256": "4ece39f756a4ae3c",
+    "bytes": 3547
+  },
+  {
+    "path": "tools/wire_build_prompt.sh",
+    "tier": 2,
+    "sha256": "5c70e8395f88d732",
+    "bytes": 165
+  },
+  {
+    "path": "tools/wire_daemon.sh",
+    "tier": 2,
+    "sha256": "207cbba55708542a",
+    "bytes": 1429
+  },
+  {
+    "path": "tools/wire_diag.sh",
+    "tier": 2,
+    "sha256": "b685b9629ee8961b",
+    "bytes": 422
+  },
+  {
+    "path": "tools/wire_latency_test.sh",
+    "tier": 2,
+    "sha256": "8a6cf484f181fb87",
+    "bytes": 480
+  },
+  {
+    "path": "tools/wire_loop_full.sh",
+    "tier": 0,
+    "sha256": "6fd4a17f4d3ac1ed",
+    "bytes": 2414
+  },
+  {
+    "path": "tools/wire_send_fast.sh",
+    "tier": 0,
+    "sha256": "3e9801bdb713ba30",
+    "bytes": 3714
+  },
+  {
+    "path": "tools/wire_send_immediate.sh",
+    "tier": 0,
+    "sha256": "1f0bec4fe9723cc3",
+    "bytes": 1610
+  },
+  {
+    "path": "tools/wire_send_ui.sh",
+    "tier": 0,
+    "sha256": "1d7f47e3af2a0173",
+    "bytes": 1723
+  },
+  {
+    "path": "tools/wire_ui_loop.sh",
+    "tier": 2,
+    "sha256": "c13c4c825a4a2911",
+    "bytes": 1840
+  },
+  {
+    "path": "tools/write_sanitized_prompt.sh",
+    "tier": 2,
+    "sha256": "1c11d29e1fa800c4",
+    "bytes": 1337
+  },
+  {
+    "path": "ui/state.json",
+    "tier": 3,
+    "sha256": "51e13fe643917394",
+    "bytes": 180
+  },
+  {
+    "path": "user/PENDING.md",
+    "tier": 3,
+    "sha256": "1ea8fd1f28bee73c",
+    "bytes": 52
+  },
+  {
+    "path": "workflow_front.py",
+    "tier": 3,
+    "sha256": "4982efaccb555b91",
+    "bytes": 2108
+  }
+]

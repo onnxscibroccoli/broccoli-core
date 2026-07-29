@@ -1,0 +1,162 @@
+291d6bfc0485c	5441	state/walk_stage_1/broccoli_operator.py	#!/usr/bin/env python3
+3	028fc92619812a57	894	state/walk_stage_1/broccoli_selftest.py	import json, time
+3	5fc26d7d7d252f22	1035	state/walk_stage_1/broccoli_strategy.py	import json, time
+3	66fdf74352ebd2e2	5049	state/walk_stage_1/broccoli_ui_dump.py	import os, re, time, xml.etree.ElementTree as ET
+3	aea3b9c8679fe69a	1317	state/walk_stage_1/broccoli_wait.py	#!/usr/bin/env python3
+3	a42abc5f6a0ce272	3835	state/walk_stage_2/broccoli_agentic_chat.py	import os, time, json, subprocess
+3	c9b79f58a9b48026	2619	state/walk_stage_2/broccoli_input.py	import os, re, time, subprocess
+3	cc2291d6bfc0485c	5441	state/walk_stage_2/broccoli_operator.py	#!/usr/bin/env python3
+3	66ea7c29f66ee1de	4960	state/walk_stage_2/broccoli_ui_dump.py	import os, re, time, xml.etree.ElementTree as ET
+3	aea3b9c8679fe69a	1317	state/walk_stage_2/broccoli_wait.py	#!/usr/bin/env python3
+3	18cf78a35f74fb57	2396	state/walk_stage_3/broccoli_agent.py	
+3	24ebdf07ef3b3109	1672	state/walk_stage_3/broccoli_agent_context.py	
+3	088eb6d1b25d05dd	19551	state/walk_stage_3/broccoli_bootstrap.py	#!/usr/bin/env python3
+3	4d00606cfdcab498	1263	state/walk_stage_3/broccoli_mac_ingest.py	
+3	b1ba339f25944043	2088	state/walk_stage_3/broccoli_pulse.py	
+3	34b88221314e848f	336	state/walk_stage_4/broccoli_meta_heal.py	#!/usr/bin/env python3
+3	85d0b95fe09cb03e	741	state/walk_stage_4/broccoli_secondary_display.py	#!/usr/bin/env python3
+3	dc14067e24b24ac6	978	state/walk_stage_4/broccoli_task_queue.py	#!/usr/bin/env python3
+3	781b29d17a33b5fd	4873	state/walk_stage_5/broccoli_agentic_chat.py	import os, time, json, subprocess
+3	906da8426e3e9347	2711	state/walk_stage_5/broccoli_input.py	import os, re, time, subprocess
+3	66fdf74352ebd2e2	5049	state/walk_stage_5/broccoli_ui_dump.py	import os, re, time, xml.etree.ElementTree as ET
+3	7b363cc1b61b2962	550	tasks/current/TASK.md	# Task: google-ai-reliable
+3	22015a4b0938b8e5	125	tasks/state.json	{
+3	82bdb884dcf0849e	19	thread/conversation.md	# Broccoli thread
+3	553c37683299bd5c	19227	thread/to_chat.md	## Co-dev: paste INVESTIGATION_REPORT.md to Mac Grok
+2	2842622ce8bb8272	644	tools/a11y_probe_rish.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	03eb0933426d0797	783	tools/adb_send_probe.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	c5438a9310252f6b	537	tools/agent_apply_reply.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	d22f327bbc09cf91	262	tools/agent_consume_iteration.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	4fca785475fa08fa	1374	tools/agent_daemon.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	d845392665a8e583	917	tools/agent_ensure_running.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	2264eeb2f5e5925e	1689	tools/agent_git_vault.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	cfa792791a9970fa	1597	tools/agent_handler.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	e1b7b0b6dea75751	1178	tools/agent_health.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	db7a19c615b3f843	127	tools/agent_loop.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	237ec53f19ed9dfb	371	tools/agent_research_private.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	5f6765888e66671a	317	tools/agent_should_wire.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	c8e6ff1094edc1f4	1131	tools/agent_tick.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	7862dfb1e8ebc9e0	487	tools/agent_turn_grok_feed.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	715ab3dd89722196	1363	tools/agent_watch_grok_chat.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	6a9ce9bbc7622c7e	2494	tools/agent_wrap.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	2085078f01a870f0	306	tools/apply_inbox_patch.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	c1aa1adc409bdfe7	894	tools/b_cli.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	413642bd47bc4f1a	2572	tools/bin_research.py	import time
+2	74be7038954e903b	307	tools/brocc_loop.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	58014df1429f5d64	90	tools/broccoli-daemon.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	6c4057b26e357485	5311	tools/broccoli_agent.py	
+2	ade0acc7500d13f5	856	tools/broccoli_agentic_loop.py	#!/usr/bin/env python3
+2	ebe8c598f3c7703e	1204	tools/broccoli_agentic_selftest.py	#!/usr/bin/env python3
+2	20c360e2ae242f90	3073	tools/broccoli_brain.py	
+2	8c3479ff0192ae5e	2582	tools/broccoli_conv_archive.py	#!/usr/bin/env python3
+2	fea4dc3394b04cbc	800	tools/broccoli_heal_daemon.sh	#!/bin/bash
+2	d7bb4bbe223a682a	554	tools/broccoli_heal_supervisor.sh	#!/bin/bash
+2	68c9e4d273aa63cf	1452	tools/broccoli_package_probe.sh	#!/bin/bash
+2	6dcfd2cdc405609a	1446	tools/broccoli_pull.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	c06df78a5186e519	515	tools/broccoli_supervisor.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	894999a4a5719404	155	tools/broccoli_supervisor_loop.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	d90288bbda66354c	219	tools/broccoli_worker.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	2a61557229af85e7	863	tools/build_code_index.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	651c2a5c20af4289	1437	tools/build_grok_feed.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	2ae4045d617141b2	415	tools/build_repair_wire_prompt.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	acd2b03c73167a73	2265	tools/chat_focus_first.sh	\
+2	0b2c596e5e8da527	1149	tools/codev_loop.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	82d13e1c78f4237c	402	tools/codevel_boot.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	d6b7304a1aad4bbc	5497	tools/codevel_wire.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	065ececde0c4f621	4999	tools/codevel_wire_fast.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	58014df1429f5d64	90	tools/collab_rish_loop.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	4add5475de197637	887	tools/coordinator_run.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	14134212643ee1bf	308	tools/debug_send_dump.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	eebab4539a93b118	872	tools/deliver_to_mac.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	c455a583fc1672e5	671	tools/detect_interject.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	d06c25fe881c17f0	1770	tools/discover_directories.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	f193689873aa128b	2123	tools/dismiss_tos_grok.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	6cab86e0f285a49d	1287	tools/dump_send_row.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	c7470a9ab27e7525	621	tools/extract_grok_code.py	#!/usr/bin/env python3
+2	a237804af7044fbc	5233	tools/gap_analyze.py	#!/usr/bin/env python3
+2	809a833892c9e2be	413	tools/gap_enqueue_chat.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	0797c173eb88b608	498	tools/gap_watch.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	6e3be489845d57a4	384	tools/go_install.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	5f5441163856ad3f	1201	tools/google_secondary_test.py	#!/usr/bin/env python3
+2	a1fcc6e5fddff7d2	890	tools/grok_pull_to_agent.sh	\
+2	94daa87e5bdf48db	601	tools/grok_smoke_validate.py	#!/usr/bin/env python3
+2	997962b91cc084f8	564	tools/heal_cycle.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	fea4dc3394b04cbc	800	tools/heal_daemon.sh	#!/bin/bash
+2	f38d9ce3eda6616e	7694	tools/heal_debug_all.py	#!/usr/bin/env python3
+2	d19e580abad8c650	277	tools/heal_debug_all.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	cafb38d920275828	812	tools/heal_research.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	91e538da7b0f834f	334	tools/heal_supervisor.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	690adfdf6cd7e1c0	351	tools/inbox_to_queue.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	bd8ca8822cc74463	1990	tools/install_a11y_apk.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	5652b3c9921d99e8	3834	tools/inventory_md_tasks.py	#!/usr/bin/env python3
+2	a948a7c045a186d3	5057	tools/inventory_md_tasks.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	fb21640f56cb23e7	11333	tools/investigate_system.py	#!/usr/bin/env python3
+2	f19750c6c4b4af16	889	tools/investigate_system.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	53af1c28347e4627	7479	tools/media_housekeeping.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	4931ec9f516f97c3	526	tools/notif_probe.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	90157137bea4798c	763	tools/notify_from_dump.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	9bc3741b2951eea9	384	tools/notify_persistent_agent.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	459cc5da16f855bf	1117	tools/notify_status.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	beef6aad54ab229b	333	tools/notify_toast.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	939bd7baf0f2490c	1560	tools/notify_watch.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	2ec3f9cfd5f95cb2	557	tools/one_round_adb.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	f0bcf922ffe1c6c2	386	tools/open_a11y_settings.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	669aa063b8dcb6eb	1048	tools/open_codevel.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	f8c02ec9005f9f9d	1643	tools/phrase_grok_dump.py	#!/usr/bin/env python3
+2	7ea209bb63a86e82	1255	tools/poll_loop.sh	#!/bin/bash
+2	e4b053d7bbffbd18	946	tools/prepare_mac_bundle.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	677c90491f9c1e1d	751	tools/prepare_mac_bundle_redacted.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	6dcfd2cdc405609a	1446	tools/pull_mac_output.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	adad58df56f564e6	2183	tools/pull_spec_gemini.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	486b568faaa618ab	2326	tools/pull_wire_from_dump.py	
+2	789947479708f80a	822	tools/push_chat_lines_to_inbox.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	b73292f48f6aeb14	751	tools/read_mission.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	674ea976a359cc83	487	tools/recv_copy.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	95af682a68657bae	380	tools/redact.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	e926eeadac09316c	747	tools/reinit_agent.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	9cec6fbab030e67b	4266	tools/reply_to_next_action.py	#!/usr/bin/env python3
+2	fc3085623f932ece	130	tools/report_to_queue.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	79f9ff6d614da967	686	tools/run_doc.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	3c668fdbd4baefa0	862	tools/run_grok_smoke.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	3ab66f83085a93a8	558	tools/run_version_walk.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	5f156dca3292d985	183	tools/safe_wire_message.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	046d8deb0a3f8edf	2648	tools/search_notif_codebase.py	#!/usr/bin/env python3
+2	aad4b17ba55ebad2	799	tools/setup_vault_interactive.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	3a34998ce40a1cff	1996	tools/setup_wizard.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	9ffc4a573606a273	632	tools/show_queue.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	9d357bbcda05bab6	1126	tools/smoke_boot.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	831a8b4e3cccc13b	580	tools/start_agentic_now.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	8ab603bfd4bef698	1151	tools/start_dev_task.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	6a81f1a31d06d5e3	592	tools/start_infinite_loop.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	64e843b09b16b2bf	316	tools/stop_all_automation.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	f093e1b68f28e762	1170	tools/termux_disk_clean.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	048735c51c502f71	3200	tools/termux_disk_investigate.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	64eb9faf5a0719ae	405	tools/toast_user.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	fdc34ebf3a1ebe15	2007	tools/ui_dump_chat.py	#!/usr/bin/env python3
+2	d7b0b1992c3d4111	5019	tools/ui_dump_loop.py	
+2	ed9886be7c5558bd	443	tools/ui_probe_send.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	1a346a8a6adfaf91	232	tools/ui_snapshot_save.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	4eb423da5186175f	5732	tools/ui_state.py	#!/usr/bin/env python3
+2	b1564589eb810c08	529	tools/user_touch_watch.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	e37a573639143e66	1367	tools/version_manager.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	4ece39f756a4ae3c	3547	tools/version_walk_heal.py	#!/usr/bin/env python3
+2	5c70e8395f88d732	165	tools/wire_build_prompt.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	207cbba55708542a	1429	tools/wire_daemon.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	b685b9629ee8961b	422	tools/wire_diag.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	8a6cf484f181fb87	480	tools/wire_latency_test.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	c13c4c825a4a2911	1840	tools/wire_ui_loop.sh	#!/data/data/com.termux/files/usr/bin/bash
+2	1c11d29e1fa800c4	1337	tools/write_sanitized_prompt.sh	#!/data/data/com.termux/files/usr/bin/bash
+3	51e13fe643917394	180	ui/state.json	{
+3	1ea8fd1f28bee73c	52	user/PENDING.md	COMMITTED tools clip=CLIP_V2_194111 loop=persistent
+3	4982efaccb555b91	2108	workflow_front.py	#!/usr/bin/env python3
+
+
+===== BUNDLE_DIFF (tier0 paths home vs bundle) =====
+ONLY_HOME	bin/wire
+DIFF	lib/broccoli_adb_ui.py	home=d922aaa5c62de625	bundle=58b0623a1f2730f1
+ONLY_HOME	lib/broccoli_rish_adb.py
+DIFF	lib/broccoli_rish_shell.py	home=9a94e81bd0931956	bundle=1a6d13e22e86d2b9
+DIFF	lib/broccoli_rish_ui.py	home=d56278700e2f9d5b	bundle=8f3657dcb8edfd79
+DIFF	tools/broccoli_infinite_dev_loop.py	home=4c8ddb399acd3919	bundle=aa1486e8ee05988c
+ONLY_HOME	tools/run_infinite.sh
+ONLY_HOME	tools/send_now.sh

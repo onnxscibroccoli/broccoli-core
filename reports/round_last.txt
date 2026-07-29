@@ -1,0 +1,6 @@
+CHAT_FOCUS_FAIL
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=ai.x.grok/.MainActivity }
+2026-07-07T23:34:37-04:00 LAUNCH reuse pkg=ai.x.grok
+2026-07-07T23:34:38-04:00 WARN rish hook failed, continuing
+2026-07-07T23:34:38-04:00 CHAT_FOCUS_FAIL (no verify)
+FAIL: chat focus

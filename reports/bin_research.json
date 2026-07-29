@@ -1,0 +1,273 @@
+{
+  "ts": "2026-07-07T22:38:17",
+  "brocc_path": "/data/data/com.termux/files/home/broccoli/bin/brocc",
+  "wire_candidates": [
+    "/data/data/com.termux/files/home/broccoli/bin/wire"
+  ],
+  "bins_sample": [
+    {
+      "path": "/data/data/com.termux/files/home/broccoli/bin/brocc",
+      "name": "brocc",
+      "size": 1037
+    },
+    {
+      "path": "/data/data/com.termux/files/home/broccoli/bin/wire",
+      "name": "wire",
+      "size": 1759
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/[",
+      "name": "[",
+      "size": 1307600
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/aarch64-linux-android-ar",
+      "name": "aarch64-linux-android-ar",
+      "size": 71440
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/aarch64-linux-android-clang",
+      "name": "aarch64-linux-android-clang",
+      "size": 201
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/aarch64-linux-android-clang++",
+      "name": "aarch64-linux-android-clang++",
+      "size": 205
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/aarch64-linux-android-cpp",
+      "name": "aarch64-linux-android-cpp",
+      "size": 197
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/aarch64-linux-android-g++",
+      "name": "aarch64-linux-android-g++",
+      "size": 197
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/aarch64-linux-android-gcc",
+      "name": "aarch64-linux-android-gcc",
+      "size": 197
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/aarch64-linux-android-ld",
+      "name": "aarch64-linux-android-ld",
+      "size": 5871888
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/aarch64-linux-android-nm",
+      "name": "aarch64-linux-android-nm",
+      "size": 133016
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/aarch64-linux-android-objdump",
+      "name": "aarch64-linux-android-objdump",
+      "size": 826816
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/aarch64-linux-android-ranlib",
+      "name": "aarch64-linux-android-ranlib",
+      "size": 71440
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/aarch64-linux-android-readelf",
+      "name": "aarch64-linux-android-readelf",
+      "size": 1734360
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/aarch64-linux-android-strip",
+      "name": "aarch64-linux-android-strip",
+      "size": 209368
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/aclocal",
+      "name": "aclocal",
+      "size": 37831
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/adb",
+      "name": "adb",
+      "size": 2864536
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/add-trusted-certificate",
+      "name": "add-trusted-certificate",
+      "size": 545
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/addpart",
+      "name": "addpart",
+      "size": 23488
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/addr2line",
+      "name": "addr2line",
+      "size": 81328
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/am",
+      "name": "am",
+      "size": 1423
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/amdgpu-arch",
+      "name": "amdgpu-arch",
+      "size": 40104
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/analyze-build",
+      "name": "analyze-build",
+      "size": 584
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/androsh",
+      "name": "androsh",
+      "size": 81
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/append2simg",
+      "name": "append2simg",
+      "size": 58216
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/apropos",
+      "name": "apropos",
+      "size": 467896
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/apt",
+      "name": "apt",
+      "size": 38040
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/apt-cache",
+      "name": "apt-cache",
+      "size": 102504
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/apt-config",
+      "name": "apt-config",
+      "size": 45360
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/apt-get",
+      "name": "apt-get",
+      "size": 64648
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/apt-key",
+      "name": "apt-key",
+      "size": 28912
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/apt-mark",
+      "name": "apt-mark",
+      "size": 78312
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/ar",
+      "name": "ar",
+      "size": 71440
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/arp",
+      "name": "arp",
+      "size": 53488
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/as",
+      "name": "as",
+      "size": 481352
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/attr",
+      "name": "attr",
+      "size": 8408
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/autoconf",
+      "name": "autoconf",
+      "size": 6878
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/autoheader",
+      "name": "autoheader",
+      "size": 10461
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/autom4te",
+      "name": "autom4te",
+      "size": 35112
+    },
+    {
+      "path": "/data/data/com.termux/files/usr/bin/automake",
+      "name": "automake",
+      "size": 265537
+    }
+  ],
+  "tools_loops": [
+    "tools/brocc_loop.sh",
+    "tools/wire_loop_full.sh",
+    "tools/wire_ui_loop.sh",
+    "tools/codev_loop.sh",
+    "tools/collab_rish_loop.sh",
+    "tools/agent_loop.sh",
+    "tools/ui_dump_loop.py",
+    "tools/broccoli_supervisor_loop.sh",
+    "tools/poll_loop.sh",
+    "tools/broccoli_agentic_loop.py",
+    "tools/broccoli_infinite_dev_loop.py",
+    "tools/start_infinite_loop.sh",
+    "tools/agent_wrap.sh",
+    "tools/agent_apply_reply.sh",
+    "tools/agent_tick.sh",
+    "tools/agent_daemon.sh",
+    "tools/notify_persistent_agent.sh",
+    "tools/agent_consume_iteration.sh",
+    "tools/agent_ensure_running.sh",
+    "tools/agent_watch_grok_chat.sh",
+    "tools/agent_git_vault.sh",
+    "tools/agent_wire_rish.sh",
+    "tools/agent_research_private.sh",
+    "tools/agent_handler.sh",
+    "tools/agent_should_wire.sh",
+    "tools/reinit_agent.sh",
+    "tools/agent_health.sh",
+    "tools/agent_loop.sh",
+    "tools/broccoli_agent.py",
+    "tools/agent_turn_grok_feed.sh",
+    "tools/grok_pull_to_agent.sh",
+    "tools/broccoli_agentic_loop.py",
+    "tools/broccoli_agentic_selftest.py",
+    "tools/start_agentic_now.sh",
+    "tools/agentic_run_once.py",
+    "tools/poll_loop.sh",
+    "tools/codevel_wire.sh",
+    "tools/codevel_wire_fast.sh",
+    "tools/wire_loop_full.sh",
+    "tools/wire_send_fast.sh",
+    "tools/wire_daemon.sh",
+    "tools/wire_ui_loop.sh",
+    "tools/wire_send_ui.sh",
+    "tools/wire_latency_test.sh",
+    "tools/heal_wire_fallback.sh",
+    "tools/safe_wire_message.sh",
+    "tools/wire_build_prompt.sh",
+    "tools/agent_wire_rish.sh",
+    "tools/agent_should_wire.sh",
+    "tools/wire_diag.sh"
+  ],
+  "loops_running": {
+    "infinite_dev": [
+      "30501 python3 /data/data/com.termux/files/home/broccoli/tools/broccoli_infinite_dev_loop.py",
+      "30503 python3 /data/data/com.termux/files/home/broccoli/tools/broccoli_infinite_dev_loop.py"
+    ],
+    "agentic": [],
+    "poll": [],
+    "version_walk": [],
+    "brocc_agent": [],
+    "agent_loop_cmd": []
+  },
+  "brocc_help_head": "brocc-shim: use /data/data/com.termux/files/home/broccoli/bin/wire or install real brocc in PREFIX\nbrocc-shim: use /data/data/com.termux/files/home/broccoli/bin/wire or install real brocc in PREFIX\nbrocc-shim: use /data/data/com.termux/files/home/broccoli/bin/wire or install real brocc in PREFIX\n"
+}
