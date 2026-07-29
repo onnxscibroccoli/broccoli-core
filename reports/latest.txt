@@ -1,0 +1,33 @@
+=== BROCCOLI HARVEST REPORT ===
+time: 2026-07-17T19:19:20
+phase: 1_harvest_only
+status: OK
+modules: [{'module': 'state_probe', 'ok': True, 'reason': ''}, {'module': 'chat_nav', 'ok': True, 'reason': ''}, {'module': 'ui_dump', 'ok': True, 'reason': ''}, {'module': 'chat_reader', 'ok': True, 'reason': ''}, {'module': 'chat_store', 'ok': True, 'path': '/data/data/com.termux/files/home/broccoli/data/harvest/09a4d6cc02d1bf11.jsonl'}]
+log: state_probe:OK: | chat_nav:OK: | ui_dump:OK: | chat_reader:OK: | chat_store:OK:
+line_count: 25
+tail_preview: Search connectors…
+Connected
+Google Drive
+Featured
+Gmail
+Connect
+Google Calendar
+Connect
+Canva
+Connect
+GitHub
+Connect
+Stripe
+Connect
+Notion
+Connect
+Box
+Connect
+Productivity
+Calendly
+Connect
+Figma
+Connect
+Connectors
+store: True
+=== END REPORT ===
