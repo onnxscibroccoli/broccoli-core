@@ -19,3 +19,4 @@ reports/research/
 *.log
 *.pid
 .drive_sync/
+runtime/event_bus/processed/*.json
