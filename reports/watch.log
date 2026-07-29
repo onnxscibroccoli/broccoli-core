@@ -1,0 +1,16 @@
+nohup: ignoring input
+watch queue /data/data/com.termux/files/home/broccoli/queue/pending.txt every 5 s
+TASK ASK|Read ~/broccoli/spec/BUILD_SPEC.md and output the next 5 IMPLEMENTATION_TASKS as shell-ready brocc commands
+STEP launch_grok
+STEP dump_ui
+  file_bytes 0
+  FAIL: no hierarchy in file  # BROCC: retry full dump
+  file_bytes 0
+FAIL send: no composer
+TASK ASK|Reply with one word: PONG
+STEP launch_grok
+STEP dump_ui
+  file_bytes 0
+  FAIL: no hierarchy in file  # BROCC: retry full dump
+  file_bytes 0
+FAIL send: no composer

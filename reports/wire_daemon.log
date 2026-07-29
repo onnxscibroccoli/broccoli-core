@@ -1,0 +1,56 @@
+nohup: ignoring input
+2026-07-06T22:39:33-04:00 DAEMON start IDLE=3s
+2026-07-06T22:39:33-04:00 DAEMON start IDLE=3s
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+nohup: ignoring input
+2026-07-06T22:42:06-04:00 DAEMON on (idle>=3s)
+2026-07-06T22:42:06-04:00 DAEMON on (idle>=3s)
+/data/data/com.termux/files/home/broccoli/lib/ui_dump_rish.sh: line 10: syntax error near unexpected token `then'
+2026-07-06T22:42:35-04:00 ROUND OUT
+2026-07-06T22:42:35-04:00 ROUND OUT
+2026-07-06T22:42:35-04:00 SEND start len=69
+COMP 540 2139 SEND None
+2026-07-06T22:43:20-04:00 send timeout/fail
+2026-07-06T22:43:20-04:00 send timeout/fail
+2026-07-06T22:43:37-04:00 ROUND IN len=14
+2026-07-06T22:43:37-04:00 ROUND IN len=14
+BLOCKS 0
+nohup: ignoring input
+2026-07-06T22:46:03-04:00 DAEMON ui-poll mode
+2026-07-06T22:46:03-04:00 DAEMON ui-poll mode
+2026-07-06T22:46:24-04:00 ROUND Continue broccoli co-dev: UI dump only; fix rish dump path; no Chrome
+2026-07-06T22:46:24-04:00 ROUND Continue broccoli co-dev: UI dump only; fix rish dump path; no Chrome
+nohup: ignoring input
+2026-07-06T22:56:04-04:00 DAEMON start pid=18894
+2026-07-06T22:56:04-04:00 DAEMON start pid=18894
+nohup: ignoring input
+2026-07-06T23:01:57-04:00 DAEMON start pid=25863
+2026-07-06T23:01:57-04:00 DAEMON start pid=25863
+nohup: ignoring input
+2026-07-06T23:07:18-04:00 DAEMON start pid=675
+2026-07-06T23:07:18-04:00 DAEMON start pid=675
+nohup: ignoring input
+2026-07-06T23:07:19-04:00 DAEMON start pid=717
+2026-07-06T23:07:19-04:00 DAEMON start pid=717
+nohup: ignoring input
+2026-07-06T23:07:19-04:00 DAEMON start pid=828
+2026-07-06T23:07:19-04:00 DAEMON start pid=828
+nohup: ignoring input
+2026-07-06T23:10:44-04:00 DAEMON start pid=6949
+2026-07-06T23:10:44-04:00 DAEMON start pid=6949
+nohup: ignoring input
+2026-07-06T23:13:01-04:00 DAEMON start pid=10822
+2026-07-06T23:13:01-04:00 DAEMON start pid=10822
+2026-07-06T23:13:07-04:00 ROUND start
+2026-07-06T23:13:07-04:00 ROUND start
+2026-07-06T23:13:07-04:00 SEND start len=185
+2026-07-06T23:15:17-04:00 send_tap miss attempt=1 — enter
+2026-07-06T23:16:04-04:00 send_tap miss attempt=2 — enter
+2026-07-06T23:16:38-04:00 send_ok composer_empty_or_in_chat
+2026-07-06T23:17:00-04:00 reply=Start new chat
+Start new chat
+WROTE /data/data/com.termux/files/home/broccoli/sandbox/from_grok/block_20260706_231700_0.sh bytes 616
+BLOCKS 1
+/data/data/com.termux/files/home/broccoli/sandbox/from_grok/block_20260706_231700_0.sh
+/data/data/com.termux/files/home/broccoli/sandbox/from_grok/block_20260706_231700_0.sh: line 3: Wire: command not found

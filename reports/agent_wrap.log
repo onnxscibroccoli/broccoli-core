@@ -1,0 +1,22 @@
+2026-07-06T21:51:03-04:00 grok: compose+send len=25
+2026-07-06T21:51:57-04:00 grok_send_tap: Starting: Intent { act=android.intent.action.VIEW dat=https://grok.com/... pkg=com.android.chrome }
+sent_tap Start Grok Voice  android.widget.ImageView  rc=0
+2026-07-06T22:01:27-04:00 grok: compose+send len=25
+2026-07-06T22:02:23-04:00 grok_send_tap: Starting: Intent { act=android.intent.action.VIEW dat=https://grok.com/... pkg=com.android.chrome }
+sent_tap Start Grok Voice  android.widget.ImageView  rc=0
+STEP launch_grok
+STEP dump_ui fallback early 79048 /data/data/com.termux/files/home/broccoli/ui/last_ui.xml
+STEP ensure_ask_tab tap Ask
+STEP dump_ui fallback early 79048 /data/data/com.termux/files/home/broccoli/ui/last_ui.xml
+STEP grok_send tap composer
+Starting: Intent { act=android.intent.action.VIEW dat=https://grok.com/... pkg=com.android.chrome }
+sent_tap Start Grok Voice  android.widget.ImageView 
+STEP dump_ui fallback early 79048 /data/data/com.termux/files/home/broccoli/ui/last_ui.xml
+STEP grok_send keyevent ENTER
+OK sent
+STEP grok_ask poll
+poll 1 elapsed 0 s
+STEP dump_ui fallback early 79048 /data/data/com.termux/files/home/broccoli/ui/last_ui.xml
+STEP dump_ui fallback early 79048 /data/data/com.termux/files/home/broccoli/ui/last_ui.xml
+Investigate Shizuku Permission Model
+=== BROCCOLI_DONE === grok OK

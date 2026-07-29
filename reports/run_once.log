@@ -1,0 +1,6 @@
+runner: /data/data/com.termux/files/home/broccoli_bootstrap.py grok-smoke
+STEP launch_grok
+TASK RESEARCH|Pull Gemini Drive v3+v4 into ~/broccoli/spec/BUILD_SPEC.md
+unknown task RESEARCH|Pull Gemini Drive v3+v4 into ~/broccoli/spec/BUILD_SPEC.md
+TASK RESEARCH|BUILD_SPEC v3+v4 → implement dump_ui then ask
+unknown task RESEARCH|BUILD_SPEC v3+v4 → implement dump_ui then ask
