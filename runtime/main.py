@@ -1,5 +1,7 @@
-from drivers.accessibility.consumers import register_accessibility_consumers
-from drivers.accessibility.consumers import register_accessibility_consumers
+from runtime.eventbus.service import bus
+from runtime.governor.repo_governor import RepoGovernor
+
+from runtime.drivers.accessibility.consumers import register_accessibility_consumers
 from config import Config
 from logger import Logger
 from event_bus import EventBus
@@ -30,8 +32,6 @@ def main():
     config = Config().load()
     logger = Logger()
     bus = EventBus()
-    register_accessibility_consumers(bus)
-    register_accessibility_consumers(bus)
     state = RuntimeState()
     metrics = Metrics()
     scheduler = Scheduler()
