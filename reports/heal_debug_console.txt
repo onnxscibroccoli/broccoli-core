@@ -1,0 +1,15 @@
+OK  rish_path: /data/data/com.termux/files/usr/bin/rish
+OK  rish_shell: {'ok': True, 'out': 'uid=2000(shell) gid=2000(shell) groups=2000(shell),1004(input),1007(log),1011(adb),1015(sdcard_rw),1028(sdcard_r),1078(ext_data_rw),1079(ext_obb_rw),3001(net_bt_admin),3002(net_bt
+OK  wm_size: (1080, 2408)
+OK  clipboard: {'clip': True, 'set': '/data/data/com.termux/files/usr/bin/termux-clipboard-set'}
+OK  open_grok: {'monkey_rc': 0, 'focus': 'Request timeout. The connection between the current app (com.termux) and Shizuku app may be blocked by your system. Please disable all battery optimization features for both
+OK  ui_dump: {'dump_bytes': 41633, 'parse_error': 'not well-formed (invalid token): line 1, column 8195'}
+OK  input_inject: {'tap_rc': 0, 'home_rc': 0, 'tap_at': [540, 1204], 'out': ''}
+FAIL live_probe: unclosed token: line 1, column 80
+
+=== SUMMARY ===
+{
+  "rish_ok": true,
+  "probe_ok": false,
+  "report": "/data/data/com.termux/files/home/broccoli/reports/heal_debug_last.json"
+}

@@ -1,0 +1,8 @@
+rish_path: OK 
+rish_shell: OK 
+wm_size: OK 
+clipboard: OK 
+open_grok: OK 
+ui_dump: OK 
+input_inject: OK 
+live_probe: FAIL unclosed token: line 1, column 80

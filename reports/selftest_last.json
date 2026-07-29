@@ -1,0 +1,19 @@
+{
+  "t": "2026-07-07T21:42:54",
+  "steps": [
+    {
+      "rish": true,
+      "info": "shell\nuid=2000(shell) gid=2000(shell) groups=2000(shell),1004(input),1007(log),1011(adb),1015(sdcard_rw),1028(sdcard_r),1078(ext_data_rw),1079(ext_obb_rw),3001(net_bt_admin),3002(net_bt),3003(inet),30"
+    },
+    {
+      "clipboard": false
+    }
+  ],
+  "dump_bytes": 0,
+  "ui": {
+    "nodes": 0,
+    "box": null,
+    "sends": []
+  },
+  "ok": false
+}

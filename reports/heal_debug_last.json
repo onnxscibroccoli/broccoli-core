@@ -1,0 +1,73 @@
+{
+  "ts": "2026-07-07T22:01:31",
+  "steps": [
+    {
+      "name": "rish_path",
+      "ok": true,
+      "detail": "/data/data/com.termux/files/usr/bin/rish"
+    },
+    {
+      "name": "rish_shell",
+      "ok": true,
+      "detail": {
+        "ok": true,
+        "out": "uid=2000(shell) gid=2000(shell) groups=2000(shell),1004(input),1007(log),1011(adb),1015(sdcard_rw),1028(sdcard_r),1078(ext_data_rw),1079(ext_obb_rw),3001(net_bt_admin),3002(net_bt),3003(inet),3006(net_bw_stats),3009(readproc),3011(uhid),3012(readtracefs) context=u:r:shell:s0\nshell"
+      }
+    },
+    {
+      "name": "wm_size",
+      "ok": true,
+      "detail": [
+        1080,
+        2408
+      ]
+    },
+    {
+      "name": "clipboard",
+      "ok": true,
+      "detail": {
+        "clip": true,
+        "set": "/data/data/com.termux/files/usr/bin/termux-clipboard-set"
+      }
+    },
+    {
+      "name": "open_grok",
+      "ok": true,
+      "detail": {
+        "monkey_rc": 0,
+        "focus": "Request timeout. The connection between the current app (com.termux) and Shizuku app may be blocked by your system. Please disable all battery optimization features for both current app (com.termux) and Shizuku app.",
+        "grok_pkg": "ai.x.grok"
+      }
+    },
+    {
+      "name": "ui_dump",
+      "ok": true,
+      "detail": {
+        "dump_bytes": 41633,
+        "parse_error": "not well-formed (invalid token): line 1, column 8195"
+      }
+    },
+    {
+      "name": "input_inject",
+      "ok": true,
+      "detail": {
+        "tap_rc": 0,
+        "home_rc": 0,
+        "tap_at": [
+          540,
+          1204
+        ],
+        "out": ""
+      }
+    },
+    {
+      "name": "live_probe",
+      "ok": false,
+      "error": "unclosed token: line 1, column 80"
+    }
+  ],
+  "ok": false,
+  "fixes": [],
+  "rish_ok": true,
+  "probe": null
+}

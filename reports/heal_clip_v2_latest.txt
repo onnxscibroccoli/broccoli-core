@@ -1,0 +1,3 @@
+CLIP_V2_195011
+round=1 score=0 health_rc=1
+round=2 score=0 health_rc=1
