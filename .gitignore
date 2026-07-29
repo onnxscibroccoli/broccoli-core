@@ -18,3 +18,4 @@ reports/research/
 # Runtime logs
 *.log
 *.pid
+.drive_sync/
