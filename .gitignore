@@ -20,3 +20,7 @@ reports/research/
 *.pid
 .drive_sync/
 runtime/event_bus/processed/*.json
+
+# Python
+__pycache__/
+*.py[cod]
