@@ -1,4 +1,4 @@
-from event_bus import EventBus
+from runtime.eventbus import EventBus
 
 from problem_runtime import ProblemRuntime
 

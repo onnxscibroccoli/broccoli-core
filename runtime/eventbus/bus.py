@@ -16,7 +16,17 @@ class EventBus:
                            topic,
                            getattr(callback, "__name__", repr(callback)))
 
-    def publish(self, topic, payload, source="unknown"):
+    def emit(self, topic, payload=None, source="legacy"):
+        return self.publish(
+            topic,
+            payload or {},
+            source=source
+        )
+
+    def publish(self, topic, payload=None, source="unknown"):
+        if payload is None:
+            payload = {}
+
         event = Event(topic=topic,
                       payload=payload,
                       source=source)

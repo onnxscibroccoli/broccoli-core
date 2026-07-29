@@ -1,7 +1,7 @@
 from .backend import AccessibilityBackend
 from .public_backend import PublicBackend
 from .hidden_backend import HiddenBackend
-from event_bus import EventBus
+from runtime.eventbus import EventBus
 
 class AccessibilityManager:
     def __init__(self, bus: EventBus, preferred="public"):

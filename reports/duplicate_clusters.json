@@ -1,0 +1,1530 @@
+{
+  "5bb18226d6884ebf72bb0895993e692ab69f8d45faf677c1f6a0237bcb4efaf2": [
+    "fix_accessibility_imports.py",
+    "runtime/fix_accessibility_imports.py",
+    "broccoli-core/fix_accessibility_imports.py",
+    "broccoli-core/runtime/fix_accessibility_imports.py"
+  ],
+  "c97f7f68c3f7c093db920cc5e027cca474f61439c693f352fd85b92cb2b533c5": [
+    "agent_apply_guardrails.py",
+    "BroccoliWorkspaceBackup/agent_apply_guardrails.py"
+  ],
+  "7032d475f26cc5ae8379330a41463c21afe233b5443d14906813e72bc9afcb5e": [
+    "broccoli_bootstrap.py",
+    "BroccoliWorkspaceBackup/broccoli_bootstrap.py"
+  ],
+  "9d5ae0ba5d56abe1063bc81da38821c99c97d41a6e8880623d706c6e1955816f": [
+    "broccoli_chat_loop.py",
+    "BroccoliWorkspaceBackup/broccoli_chat_loop.py"
+  ],
+  "3775919aed958a045b746f36f51f86ae65668182a8dd3b0404547825c6972585": [
+    "broccoli_host.py",
+    "BroccoliWorkspaceBackup/broccoli_host.py"
+  ],
+  "6bc76a36393c06804b87141e50edc05294fa627bd21143623f762c077903f29f": [
+    "broccoli_init.py",
+    "BroccoliWorkspaceBackup/broccoli_init.py"
+  ],
+  "34b88221314e848ff6274387c0753eeebb4ae15a8f107ea9d6da13dafd860c90": [
+    "broccoli_meta_heal.py",
+    "BroccoliWorkspaceBackup/broccoli_meta_heal.py",
+    "state/walk_stage_4/broccoli_meta_heal.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_4/broccoli_meta_heal.py",
+    "Agent/Broccoli/mirror/broccoli_meta_heal.py",
+    "Agent/Broccoli/pull/bundle_20260707_205153/broccoli/broccoli_meta_heal.py",
+    "Agent/Broccoli/pull/bundle_20260707_205026/broccoli/broccoli_meta_heal.py",
+    "Agent/Broccoli/pull/bundle_20260707_204900/broccoli/broccoli_meta_heal.py",
+    "Agent/Broccoli/pull/bundle_20260707_203923/broccoli/broccoli_meta_heal.py",
+    "Agent/Broccoli/pull/bundle_20260707_203609/broccoli/broccoli_meta_heal.py",
+    "Agent/Broccoli/pull/bundle_20260707_203142/broccoli/broccoli_meta_heal.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/broccoli_meta_heal.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/broccoli_meta_heal.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/broccoli_meta_heal.py",
+    "Agent/Broccoli/pull/bundle_20260707_194820/broccoli/broccoli_meta_heal.py",
+    "Agent/Broccoli/pull/bundle_20260707_194646/broccoli/broccoli_meta_heal.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/broccoli_meta_heal.py"
+  ],
+  "18af5daaf6b426304078ba5a358889e652e9f05ffc84189a3a58d10380e8a991": [
+    "broccoli_phone_grok_send.py",
+    "BroccoliWorkspaceBackup/broccoli_phone_grok_send.py"
+  ],
+  "69ec0676ee8fce81e027a6d53697b6270b0a7fdd9c7ed3bf4d64bf4eabd52511": [
+    "broccoli_pulse.py",
+    "BroccoliWorkspaceBackup/broccoli_pulse.py"
+  ],
+  "f4997820ef710cd9bcb3e27603fccb8eb13446d482971902a9eb645697ead229": [
+    "broccoli_report.py",
+    "BroccoliWorkspaceBackup/broccoli_report.py"
+  ],
+  "ae751d25fe0295f5f73b798b26cabfb131ed3ca2506a926cdc72d9c2de535039": [
+    "broccoli_rish_ui.py",
+    "BroccoliWorkspaceBackup/broccoli_rish_ui.py",
+    "state/walk_stage_4/broccoli_rish_ui.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_4/broccoli_rish_ui.py",
+    "Agent/Broccoli/mirror/broccoli_rish_ui.py",
+    "Agent/Broccoli/pull/bundle_20260707_205153/broccoli/broccoli_rish_ui.py",
+    "Agent/Broccoli/pull/bundle_20260707_205026/broccoli/broccoli_rish_ui.py",
+    "Agent/Broccoli/pull/bundle_20260707_204900/broccoli/broccoli_rish_ui.py",
+    "Agent/Broccoli/pull/bundle_20260707_203923/broccoli/broccoli_rish_ui.py",
+    "Agent/Broccoli/pull/bundle_20260707_203609/broccoli/broccoli_rish_ui.py",
+    "Agent/Broccoli/pull/bundle_20260707_203142/broccoli/broccoli_rish_ui.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/broccoli_rish_ui.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/broccoli_rish_ui.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/broccoli_rish_ui.py",
+    "Agent/Broccoli/pull/bundle_20260707_194820/broccoli/broccoli_rish_ui.py",
+    "Agent/Broccoli/pull/bundle_20260707_194646/broccoli/broccoli_rish_ui.py",
+    "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/broccoli_rish_ui.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/broccoli_rish_ui.py"
+  ],
+  "85d0b95fe09cb03e292ea16e795429c094080ea70404d896e791edf13e458dc9": [
+    "broccoli_secondary_display.py",
+    "BroccoliWorkspaceBackup/broccoli_secondary_display.py",
+    "state/walk_stage_4/broccoli_secondary_display.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_4/broccoli_secondary_display.py",
+    "Agent/Broccoli/mirror/broccoli_secondary_display.py",
+    "Agent/Broccoli/pull/bundle_20260707_205153/broccoli/broccoli_secondary_display.py",
+    "Agent/Broccoli/pull/bundle_20260707_205026/broccoli/broccoli_secondary_display.py",
+    "Agent/Broccoli/pull/bundle_20260707_204900/broccoli/broccoli_secondary_display.py",
+    "Agent/Broccoli/pull/bundle_20260707_203923/broccoli/broccoli_secondary_display.py",
+    "Agent/Broccoli/pull/bundle_20260707_203609/broccoli/broccoli_secondary_display.py",
+    "Agent/Broccoli/pull/bundle_20260707_203142/broccoli/broccoli_secondary_display.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/broccoli_secondary_display.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/broccoli_secondary_display.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/broccoli_secondary_display.py",
+    "Agent/Broccoli/pull/bundle_20260707_194820/broccoli/broccoli_secondary_display.py",
+    "Agent/Broccoli/pull/bundle_20260707_194646/broccoli/broccoli_secondary_display.py",
+    "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/broccoli_secondary_display.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/broccoli_secondary_display.py"
+  ],
+  "dc14067e24b24ac69853afa5d399dee0268c0a303118b7a40a4301f9da8c7bb0": [
+    "broccoli_task_queue.py",
+    "BroccoliWorkspaceBackup/broccoli_task_queue.py",
+    "state/walk_stage_4/broccoli_task_queue.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_4/broccoli_task_queue.py",
+    "Agent/Broccoli/mirror/broccoli_task_queue.py",
+    "Agent/Broccoli/pull/bundle_20260707_194028/broccoli/broccoli_task_queue.py",
+    "Agent/Broccoli/pull/bundle_20260707_205153/broccoli/broccoli_task_queue.py",
+    "Agent/Broccoli/pull/bundle_20260707_205026/broccoli/broccoli_task_queue.py",
+    "Agent/Broccoli/pull/bundle_20260707_204900/broccoli/broccoli_task_queue.py",
+    "Agent/Broccoli/pull/bundle_20260707_203923/broccoli/broccoli_task_queue.py",
+    "Agent/Broccoli/pull/bundle_20260707_203609/broccoli/broccoli_task_queue.py",
+    "Agent/Broccoli/pull/bundle_20260707_203142/broccoli/broccoli_task_queue.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/broccoli_task_queue.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/broccoli_task_queue.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/broccoli_task_queue.py",
+    "Agent/Broccoli/pull/bundle_20260707_194820/broccoli/broccoli_task_queue.py",
+    "Agent/Broccoli/pull/bundle_20260707_194646/broccoli/broccoli_task_queue.py",
+    "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/broccoli_task_queue.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/broccoli_task_queue.py"
+  ],
+  "30be528f8bc54272418c4777ef342a7729e0cb3ef6cdb3d6a0fdff1455733dba": [
+    "chat_copy_tap.py",
+    "BroccoliWorkspaceBackup/chat_copy_tap.py"
+  ],
+  "b125a467d9b4e34341c11b046eb071e35ae0651ced7ebb1aaf800e31b2e4d6b7": [
+    "chat_scraper.py",
+    "BroccoliWorkspaceBackup/chat_scraper.py"
+  ],
+  "66d33fb1b4ebb04b09f96ed3f86b21790ce519772ad42b34041ae9b72c1a0ea8": [
+    "clip_promt.py",
+    "BroccoliWorkspaceBackup/clip_promt.py"
+  ],
+  "b22664eb8fcbbca98298dc7ff5b66307890c610751645248bee7153a4185ce55": [
+    "daemon_idle_loop.py",
+    "BroccoliWorkspaceBackup/daemon_idle_loop.py",
+    "Agent/Broccoli/mirror/daemon_idle_loop.py",
+    "Agent/Broccoli/pull/bundle_20260707_205153/broccoli/daemon_idle_loop.py",
+    "Agent/Broccoli/pull/bundle_20260707_205026/broccoli/daemon_idle_loop.py",
+    "Agent/Broccoli/pull/bundle_20260707_204900/broccoli/daemon_idle_loop.py",
+    "Agent/Broccoli/pull/bundle_20260707_203923/broccoli/daemon_idle_loop.py",
+    "Agent/Broccoli/pull/bundle_20260707_203609/broccoli/daemon_idle_loop.py",
+    "Agent/Broccoli/pull/bundle_20260707_203142/broccoli/daemon_idle_loop.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/daemon_idle_loop.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/daemon_idle_loop.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/daemon_idle_loop.py",
+    "Agent/Broccoli/pull/bundle_20260707_194820/broccoli/daemon_idle_loop.py",
+    "Agent/Broccoli/pull/bundle_20260707_194646/broccoli/daemon_idle_loop.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/daemon_idle_loop.py"
+  ],
+  "f457d3d4fc7bac7b3869a0e78005d5f945c460b58a703fe7a73f1e00ddfe2fa2": [
+    "dump_project.py",
+    "BroccoliWorkspaceBackup/dump_project.py"
+  ],
+  "e757b2f242a7b83a2885818cb52a650ba2264b2f61283c1e445c50ab3181e8b8": [
+    "dumpp.py",
+    "BroccoliWorkspaceBackup/dumpp.py"
+  ],
+  "3cf7423f1bdf8a4beabef6e9a20cbc7efc913151d7c40faf9ff7a29f57e44b70": [
+    "dumppy.py",
+    "BroccoliWorkspaceBackup/dumppy.py"
+  ],
+  "21d3a9dd38e6756fbb3dfbb8e82820ddaf44bd33ce475cd41bd545071a4b655b": [
+    "grok_ui_coords.py",
+    "BroccoliWorkspaceBackup/grok_ui_coords.py"
+  ],
+  "464e4c5d0acef25e6bb0fc7bbee2e2e96256bffc41a325c1de59a51763942d8e": [
+    "smoke_lesson_foreground.py",
+    "BroccoliWorkspaceBackup/smoke_lesson_foreground.py",
+    "Agent/Broccoli/mirror/smoke_lesson_foreground.py",
+    "Agent/Broccoli/pull/bundle_20260707_205153/broccoli/smoke_lesson_foreground.py",
+    "Agent/Broccoli/pull/bundle_20260707_205026/broccoli/smoke_lesson_foreground.py",
+    "Agent/Broccoli/pull/bundle_20260707_204900/broccoli/smoke_lesson_foreground.py",
+    "Agent/Broccoli/pull/bundle_20260707_203923/broccoli/smoke_lesson_foreground.py",
+    "Agent/Broccoli/pull/bundle_20260707_203609/broccoli/smoke_lesson_foreground.py",
+    "Agent/Broccoli/pull/bundle_20260707_203142/broccoli/smoke_lesson_foreground.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/smoke_lesson_foreground.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/smoke_lesson_foreground.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/smoke_lesson_foreground.py",
+    "Agent/Broccoli/pull/bundle_20260707_194820/broccoli/smoke_lesson_foreground.py",
+    "Agent/Broccoli/pull/bundle_20260707_194646/broccoli/smoke_lesson_foreground.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/smoke_lesson_foreground.py"
+  ],
+  "4982efaccb555b9159aac72e0014da671d40e9586869d0fc5f820bd96e5471b8": [
+    "workflow_front.py",
+    "BroccoliWorkspaceBackup/workflow_front.py",
+    "Agent/Broccoli/mirror/workflow_front.py",
+    "Agent/Broccoli/pull/bundle_20260707_205153/broccoli/workflow_front.py",
+    "Agent/Broccoli/pull/bundle_20260707_205026/broccoli/workflow_front.py",
+    "Agent/Broccoli/pull/bundle_20260707_204900/broccoli/workflow_front.py",
+    "Agent/Broccoli/pull/bundle_20260707_203923/broccoli/workflow_front.py",
+    "Agent/Broccoli/pull/bundle_20260707_203609/broccoli/workflow_front.py",
+    "Agent/Broccoli/pull/bundle_20260707_203142/broccoli/workflow_front.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/workflow_front.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/workflow_front.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/workflow_front.py",
+    "Agent/Broccoli/pull/bundle_20260707_194820/broccoli/workflow_front.py",
+    "Agent/Broccoli/pull/bundle_20260707_194646/broccoli/workflow_front.py",
+    "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/workflow_front.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/workflow_front.py"
+  ],
+  "524f207ea67706aadcf02bc63b31450da9d22dbb7f1fb8ed4b42f020e37a8b34": [
+    "ui_copier.py",
+    "BroccoliWorkspaceBackup/ui_copier.py"
+  ],
+  "783fdeb6c28aa6524133be38be54f182a84d2383266426c73228e92e90e1a3d0": [
+    "screen_state.py",
+    "BroccoliWorkspaceBackup/screen_state.py"
+  ],
+  "2f788dcd8fa1dee8776431bcff8419a32c9914ed3f24a81ba158ecd72ede8933": [
+    "sync_and_purge.py",
+    "BroccoliWorkspaceBackup/sync_and_purge.py"
+  ],
+  "27c92afe614100fcd4c6d851254debd981e4913484bf8a85f7c055432041c52a": [
+    "profile_coords.py",
+    "BroccoliWorkspaceBackup/profile_coords.py"
+  ],
+  "ec4a998c22d832c8dff289ecef82abd73fbc56d65f73c1ce5eafea7916cb44fb": [
+    "ui_window_check.py",
+    "BroccoliWorkspaceBackup/ui_window_check.py"
+  ],
+  "d73f390ddce1379559f3e337c80bc72ee1ceacafc602fe7f72d0b89504f36af2": [
+    "parse_learn_log.py",
+    "BroccoliWorkspaceBackup/parse_learn_log.py"
+  ],
+  "2c53b9e785bf1e771b73b3f486de82094649953f4e8a03aa4eb47e54f58a86ea": [
+    "quarry_iter.py",
+    "BroccoliWorkspaceBackup/quarry_iter.py",
+    "Agent/Broccoli/mirror/quarry_iter.py",
+    "Agent/Broccoli/pull/bundle_20260707_194028/broccoli/quarry_iter.py",
+    "Agent/Broccoli/pull/bundle_20260707_205153/broccoli/quarry_iter.py",
+    "Agent/Broccoli/pull/bundle_20260707_205026/broccoli/quarry_iter.py",
+    "Agent/Broccoli/pull/bundle_20260707_204900/broccoli/quarry_iter.py",
+    "Agent/Broccoli/pull/bundle_20260707_203923/broccoli/quarry_iter.py",
+    "Agent/Broccoli/pull/bundle_20260707_203609/broccoli/quarry_iter.py",
+    "Agent/Broccoli/pull/bundle_20260707_203142/broccoli/quarry_iter.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/quarry_iter.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/quarry_iter.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/quarry_iter.py",
+    "Agent/Broccoli/pull/bundle_20260707_194820/broccoli/quarry_iter.py",
+    "Agent/Broccoli/pull/bundle_20260707_194646/broccoli/quarry_iter.py",
+    "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/quarry_iter.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/quarry_iter.py"
+  ],
+  "ab0f1c16a5ec9466b7ea630dc1b480e43482751fbc881087a79ad2678ffbc962": [
+    "reboot_bootstrap.py",
+    "BroccoliWorkspaceBackup/reboot_bootstrap.py",
+    "Agent/Broccoli/mirror/reboot_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_194028/broccoli/reboot_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_205153/broccoli/reboot_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_205026/broccoli/reboot_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_204900/broccoli/reboot_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_203923/broccoli/reboot_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_203609/broccoli/reboot_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_203142/broccoli/reboot_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/reboot_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/reboot_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/reboot_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_194820/broccoli/reboot_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_194646/broccoli/reboot_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/reboot_bootstrap.py"
+  ],
+  "3749d6d1efdc0e72cc18cb21f260f0c7eef04e6993248cf32d082bc0ee4cf9f3": [
+    "smoke_fast.py",
+    "BroccoliWorkspaceBackup/smoke_fast.py",
+    "Agent/Broccoli/mirror/smoke_fast.py",
+    "Agent/Broccoli/pull/bundle_20260707_205153/broccoli/smoke_fast.py",
+    "Agent/Broccoli/pull/bundle_20260707_205026/broccoli/smoke_fast.py",
+    "Agent/Broccoli/pull/bundle_20260707_204900/broccoli/smoke_fast.py",
+    "Agent/Broccoli/pull/bundle_20260707_203923/broccoli/smoke_fast.py",
+    "Agent/Broccoli/pull/bundle_20260707_203609/broccoli/smoke_fast.py",
+    "Agent/Broccoli/pull/bundle_20260707_203142/broccoli/smoke_fast.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/smoke_fast.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/smoke_fast.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/smoke_fast.py",
+    "Agent/Broccoli/pull/bundle_20260707_194820/broccoli/smoke_fast.py",
+    "Agent/Broccoli/pull/bundle_20260707_194646/broccoli/smoke_fast.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/smoke_fast.py"
+  ],
+  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855": [
+    "drivers/__init__.py",
+    "runtime/__init__.py",
+    "maintenance/__init__.py",
+    "modules/sysdump/__init__.py",
+    "BroccoliWorkspaceBackup/modules/sysdump/__init__.py",
+    "broccoli-core/drivers/__init__.py",
+    "broccoli-core/maintenance/__init__.py",
+    "broccoli-core/runtime/capabilities/__init__.py",
+    "broccoli-core/runtime/models/__init__.py",
+    "broccoli-core/runtime/drivers/accessibility/__init__.py",
+    "broccoli-core/drivers/accessibility/__init__.py",
+    "runtime/capabilities/__init__.py",
+    "runtime/models/__init__.py",
+    "runtime/drivers/accessibility/__init__.py",
+    "drivers/accessibility/__init__.py"
+  ],
+  "87c74efa97e56d574256e9424fe54c7ddc9cd12ff711a4520c93fc2307c8988b": [
+    "governor/engine.py",
+    "broccoli-core/governor/engine.py"
+  ],
+  "a01f41d9f4e718a9c26eb788d5cd19d1ee38913d29eaf82cada94439d62f2834": [
+    "plugins/example_plugin.py",
+    "broccoli-core/plugins/example_plugin.py"
+  ],
+  "077b836538acdccdc2be312edb480b9368b51d11764750bc615dfed15ec3a621": [
+    "providers/grok.py",
+    "broccoli-core/providers/grok.py"
+  ],
+  "fd2c9fc52799d677d69e382ca091c3874d029d48891290d7f35549c3d8c8a406": [
+    "runtime/logger.py",
+    "broccoli-core/runtime/logger.py"
+  ],
+  "256f293992c7d2cd9e0e41e1101f46f01eacd41ead01df7c30775c8fa1d40b39": [
+    "runtime/metrics.py",
+    "broccoli-core/runtime/metrics.py"
+  ],
+  "1a8ac658ed9091d3eabdee001e22b8ba7db769df5d4ca1559a5d59127fc73ff9": [
+    "runtime/plugin_loader.py",
+    "broccoli-core/runtime/plugin_loader.py"
+  ],
+  "3b1fb09b55f17faef5200cb489eff9ffa4bc162e4be0fe77dface3e30741b55f": [
+    "runtime/config.py",
+    "broccoli-core/runtime/config.py"
+  ],
+  "485de2db1161458b72b5b4593d7c9e1f10d648532fd7b80e801d274f23a584d9": [
+    "runtime/constants.py",
+    "broccoli-core/runtime/constants.py"
+  ],
+  "b316848e45f4b8b7c94c4c6d62e76e5054ad38c7c5bbeb829d086eb1fbc702b6": [
+    "runtime/event_bus.py",
+    "broccoli-core/runtime/event_bus.py"
+  ],
+  "8fbf7dc098ef560f212063b364c96a213ee3b1536a0481deae347abd5d18d5e5": [
+    "runtime/health.py",
+    "broccoli-core/runtime/health.py"
+  ],
+  "433adf10d131fe5dd05314684f31c9bf4b4a88eff2cc00dfffa70c092dff740e": [
+    "runtime/journal.py",
+    "broccoli-core/runtime/journal.py"
+  ],
+  "b9c4d0cd38e1b5b3166682f61cd66e78db70e563f6f2f21b2d8312af651ea6e9": [
+    "runtime/lifecycle.py",
+    "broccoli-core/runtime/lifecycle.py"
+  ],
+  "49b2c469801fd2768f3b75758abb02ee2473fbae6443ea606a7a2f605041579a": [
+    "runtime/normalizer.py",
+    "broccoli-core/runtime/normalizer.py"
+  ],
+  "602387287bf2e765b596c7d180a71327b7eb53bc4490c4358df1d377d02a61f1": [
+    "runtime/scheduler.py",
+    "broccoli-core/runtime/scheduler.py"
+  ],
+  "6198b66c87cc53b6298b42a32173437f8b2f237593eaae09ccb078e51951515b": [
+    "runtime/state.py",
+    "broccoli-core/runtime/state.py"
+  ],
+  "dfdaee17fba662c437898151351686669348588e5f511a99b6a76695f4bfde05": [
+    "runtime/deploy_phase2.py",
+    "broccoli-core/runtime/deploy_phase2.py"
+  ],
+  "e5fee870c2233d9a51ee0991ed3938209cc3ea02f28fabf075a1c736e418c756": [
+    "runtime/deploy_phase3.py",
+    "broccoli-core/runtime/deploy_phase3.py"
+  ],
+  "03491dd7c858e95eddc184a140bb5a19a056c8889d2c6a59c0ef8f03afafdf9c": [
+    "runtime/fix_driver_async.py",
+    "broccoli-core/runtime/fix_driver_async.py"
+  ],
+  "bbe6f378ce22d341ea0bd9ddb0e5709c5bfb8d075fa4bbaa2ee237a704fb307c": [
+    "runtime/harden_driver.py",
+    "broccoli-core/runtime/harden_driver.py"
+  ],
+  "b744ff3ce165e06eb1c025a39df80c80254bf389749d8c86110f39d4c71bded0": [
+    "workflow/decision.py",
+    "broccoli-core/workflow/decision.py"
+  ],
+  "523b1e5f721291b29d3b806d28d0841f39768e0dcd62d78459fbec7c8499bda4": [
+    "workflow/executor.py",
+    "broccoli-core/workflow/executor.py"
+  ],
+  "a19f857d211f801363b11844e41e144caeb23779b7ddbb33f3384c87c89be570": [
+    "workflow/queue.py",
+    "broccoli-core/workflow/queue.py"
+  ],
+  "414c6d3d11573167d00df05dfc4b5634eda235c638777e19d7b841c5b347c264": [
+    "workflow/task.py",
+    "broccoli-core/workflow/task.py"
+  ],
+  "d8a111569d496373ab0c83aee2004b113c0c1828e836890b3ec20aeb744dd5b1": [
+    "tools/drive_upload_mem.py",
+    "BroccoliWorkspaceBackup/tools/drive_upload_mem.py"
+  ],
+  "53a6685ce9ebb68d043d6c15029cd0cf5cd75f00f53986c78e928586f663166b": [
+    "tools/device_innovate_smoke.py",
+    "BroccoliWorkspaceBackup/tools/device_innovate_smoke.py"
+  ],
+  "4c8ddb399acd39198a412384fe82d699ea2df5f374f6e8e7fe5fa4aaca26943c": [
+    "tools/broccoli_infinite_dev_loop.py",
+    "BroccoliWorkspaceBackup/tools/broccoli_infinite_dev_loop.py"
+  ],
+  "046d8deb0a3f8edf72f398365bb75780792e249672907712b40b74736cbb2e2a": [
+    "tools/search_notif_codebase.py",
+    "BroccoliWorkspaceBackup/tools/search_notif_codebase.py"
+  ],
+  "413642bd47bc4f1a0976f892738940c49b8f48f2a110f1686a99f9544f9a3c19": [
+    "tools/bin_research.py",
+    "BroccoliWorkspaceBackup/tools/bin_research.py"
+  ],
+  "4ece39f756a4ae3c24a1aa1080867a213ee533fa4c30d45c0317341c5dd66c43": [
+    "tools/version_walk_heal.py",
+    "BroccoliWorkspaceBackup/tools/version_walk_heal.py"
+  ],
+  "f38d9ce3eda6616ef7ce8112fbc5aae4b2e04627bcbaba097bb5675f53eb5a1c": [
+    "tools/heal_debug_all.py",
+    "BroccoliWorkspaceBackup/tools/heal_debug_all.py"
+  ],
+  "84087a68b1e89639af54126ae17038940742f312f64064ac2576be6c004a9ce5": [
+    "tools/agentic_run_once.py",
+    "BroccoliWorkspaceBackup/tools/agentic_run_once.py"
+  ],
+  "ade0acc7500d13f549c0e729f5c4fdbcaa74f6efb1f847c7601ad9d85d89083f": [
+    "tools/broccoli_agentic_loop.py",
+    "BroccoliWorkspaceBackup/tools/broccoli_agentic_loop.py"
+  ],
+  "ebe8c598f3c7703eb2b7a601f75d04ea1e10350b7ad126ac800a3ff2c5677ac5": [
+    "tools/broccoli_agentic_selftest.py",
+    "BroccoliWorkspaceBackup/tools/broccoli_agentic_selftest.py"
+  ],
+  "8c3479ff0192ae5e870404ac97c8343d33f34eddfae702ea08e402510918b2e8": [
+    "tools/broccoli_conv_archive.py",
+    "BroccoliWorkspaceBackup/tools/broccoli_conv_archive.py"
+  ],
+  "6a862e81d87c06347ea8bcebb1fc33f64b9bcb41530ee12012dc72cff1c9a083": [
+    "tools/chat_focus_rish.py",
+    "BroccoliWorkspaceBackup/tools/chat_focus_rish.py"
+  ],
+  "486b568faaa618abfa28bce11e35195d635b1ddb41e0bb8edba6fa0e7826d386": [
+    "tools/pull_wire_from_dump.py",
+    "BroccoliWorkspaceBackup/tools/pull_wire_from_dump.py",
+    "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/pull_wire_from_dump.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/pull_wire_from_dump.py",
+    "Agent/Broccoli/mirror/tools/pull_wire_from_dump.py"
+  ],
+  "20c360e2ae242f90ad6fa5236796d51b7cbed105ef562af85db373f8ed4b1e26": [
+    "tools/broccoli_brain.py",
+    "BroccoliWorkspaceBackup/tools/broccoli_brain.py",
+    "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/broccoli_brain.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/broccoli_brain.py",
+    "Agent/Broccoli/mirror/tools/broccoli_brain.py"
+  ],
+  "d7b0b1992c3d4111ba4d402fd123e4cdfc2ed88b5d8ddf2c89c3b9105f25387d": [
+    "tools/ui_dump_loop.py",
+    "BroccoliWorkspaceBackup/tools/ui_dump_loop.py",
+    "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/ui_dump_loop.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/ui_dump_loop.py",
+    "Agent/Broccoli/mirror/tools/ui_dump_loop.py"
+  ],
+  "6c4057b26e357485dc18527d1bda7085a714329833469b11d92fd1f3f489c5de": [
+    "tools/broccoli_agent.py",
+    "BroccoliWorkspaceBackup/tools/broccoli_agent.py",
+    "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/broccoli_agent.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/broccoli_agent.py",
+    "Agent/Broccoli/mirror/tools/broccoli_agent.py"
+  ],
+  "73b35dbf270e34feaeda49620e4dcd7eaddc9f2c64b44704ce1d23eb9ae747bf": [
+    "tools/parse_grok_ui.py",
+    "BroccoliWorkspaceBackup/tools/parse_grok_ui.py",
+    "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/parse_grok_ui.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/parse_grok_ui.py",
+    "Agent/Broccoli/mirror/tools/parse_grok_ui.py"
+  ],
+  "5652b3c9921d99e8b37a708cb10ae6e69b70528955976e5047ebe2f37a20afdb": [
+    "tools/inventory_md_tasks.py",
+    "BroccoliWorkspaceBackup/tools/inventory_md_tasks.py",
+    "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/inventory_md_tasks.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/inventory_md_tasks.py",
+    "Agent/Broccoli/mirror/tools/inventory_md_tasks.py"
+  ],
+  "9cec6fbab030e67bd408fec5ae3fc4224ea3254fcb02bc73db95813ce5b3ae89": [
+    "tools/reply_to_next_action.py",
+    "BroccoliWorkspaceBackup/tools/reply_to_next_action.py",
+    "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/reply_to_next_action.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/reply_to_next_action.py",
+    "Agent/Broccoli/mirror/tools/reply_to_next_action.py"
+  ],
+  "f8c02ec9005f9f9d6bf716c1bb8136088a3a2853851f70d461e7430f96b9fd79": [
+    "tools/phrase_grok_dump.py",
+    "BroccoliWorkspaceBackup/tools/phrase_grok_dump.py",
+    "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/phrase_grok_dump.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/phrase_grok_dump.py",
+    "Agent/Broccoli/mirror/tools/phrase_grok_dump.py"
+  ],
+  "fb21640f56cb23e7283b4383c73e53f7c0a546959c3b7d441b0d583ca7bfbe44": [
+    "tools/investigate_system.py",
+    "BroccoliWorkspaceBackup/tools/investigate_system.py",
+    "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/investigate_system.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/investigate_system.py",
+    "Agent/Broccoli/mirror/tools/investigate_system.py"
+  ],
+  "a237804af7044fbcafb4ce2462584b8c4391bfb3aa35ed6fcefc228d569c88fb": [
+    "tools/gap_analyze.py",
+    "BroccoliWorkspaceBackup/tools/gap_analyze.py",
+    "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/gap_analyze.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/gap_analyze.py",
+    "Agent/Broccoli/mirror/tools/gap_analyze.py"
+  ],
+  "94daa87e5bdf48dba502462f784be1334b0533adb98f27076e6db5c5b3e1950d": [
+    "tools/grok_smoke_validate.py",
+    "BroccoliWorkspaceBackup/tools/grok_smoke_validate.py",
+    "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/grok_smoke_validate.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/grok_smoke_validate.py",
+    "Agent/Broccoli/mirror/tools/grok_smoke_validate.py"
+  ],
+  "1512981dc8e879b2e756be5d06f30b61de14d763e69be460d5d2466e4536e6d8": [
+    "tools/find_send_tap.py",
+    "BroccoliWorkspaceBackup/tools/find_send_tap.py",
+    "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/find_send_tap.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/find_send_tap.py",
+    "Agent/Broccoli/mirror/tools/find_send_tap.py"
+  ],
+  "4eb423da5186175f5094d56e277e0c85e69fb6be5ab31ca470cbd86e024d9c9e": [
+    "tools/ui_state.py",
+    "BroccoliWorkspaceBackup/tools/ui_state.py",
+    "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/ui_state.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/ui_state.py",
+    "Agent/Broccoli/mirror/tools/ui_state.py"
+  ],
+  "c7470a9ab27e75255918e43ba5681b3e1062bc62bdf6916b81d6e38ff55943a0": [
+    "tools/extract_grok_code.py",
+    "BroccoliWorkspaceBackup/tools/extract_grok_code.py",
+    "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/extract_grok_code.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/extract_grok_code.py",
+    "Agent/Broccoli/mirror/tools/extract_grok_code.py"
+  ],
+  "fdc34ebf3a1ebe1561c3ec692d871c633e61cfd399da68b829c11556f8d3378a": [
+    "tools/ui_dump_chat.py",
+    "BroccoliWorkspaceBackup/tools/ui_dump_chat.py",
+    "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/ui_dump_chat.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/ui_dump_chat.py",
+    "Agent/Broccoli/mirror/tools/ui_dump_chat.py"
+  ],
+  "b84ad2fbc228c5cfe65cb8717ef0b33648d775eed6599e3398779c9f1faf1122": [
+    "tools/extract_chat_from_xml.py",
+    "BroccoliWorkspaceBackup/tools/extract_chat_from_xml.py",
+    "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/extract_chat_from_xml.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/extract_chat_from_xml.py",
+    "Agent/Broccoli/mirror/tools/extract_chat_from_xml.py"
+  ],
+  "5f5441163856ad3f504dab5cc1876c845deb4707f8f56dd99697144a0f4ed67c": [
+    "tools/google_secondary_test.py",
+    "BroccoliWorkspaceBackup/tools/google_secondary_test.py",
+    "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/google_secondary_test.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/google_secondary_test.py",
+    "Agent/Broccoli/mirror/tools/google_secondary_test.py"
+  ],
+  "f2855fb30951553b083f00687f6a89135af25cc088ca2ef7ca6bb6c86491b749": [
+    "integration/test_integration.py",
+    "broccoli-core/integration/test_integration.py"
+  ],
+  "3f7132f329281f74b4f553d94032c56bece0d8690caa244e97d6eca7b65b13e3": [
+    "simulation/test_stress.py",
+    "broccoli-core/simulation/test_stress.py"
+  ],
+  "214a324252aae6e77bd57db2cda84df2f70c5e8f638f36f7b09360882650044c": [
+    "tests/test_core.py",
+    "broccoli-core/tests/test_core.py"
+  ],
+  "e44b3c34b02273381a8185ec06f548dc6530b7587b6c75967341f342541eb96e": [
+    "agent/context.py",
+    "BroccoliWorkspaceBackup/agent/context.py"
+  ],
+  "287fedbc4f7cbfa177fc7640e20f175cda3fde8bb506a722a33569cb55fc7f00": [
+    "agent/loop.py",
+    "BroccoliWorkspaceBackup/agent/loop.py"
+  ],
+  "220cac871ecb3b4012936f7acf971cd8e1172175baea21c7f9c3578aa8fdd575": [
+    "agent/planner.py",
+    "BroccoliWorkspaceBackup/agent/planner.py"
+  ],
+  "f6290ce6d8e86e9e3954707789accfc72c501051f0035d9d39dbace342b4a006": [
+    "agent/verifier.py",
+    "BroccoliWorkspaceBackup/agent/verifier.py"
+  ],
+  "831629ba08abf7deaf26cb11380cce582387e3018e59e5b4563fed5d1cf69a25": [
+    "daemons/sysdumpd.py",
+    "BroccoliWorkspaceBackup/daemons/sysdumpd.py"
+  ],
+  "20625222a508cb53261a414978b56419bd130ff99eaee95a07564ea071cb51da": [
+    "lib/brocc_toast.py",
+    "BroccoliWorkspaceBackup/lib/brocc_toast.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/brocc_toast.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/brocc_toast.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/brocc_toast.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/brocc_toast.py",
+    "Agent/Broccoli/mirror/lib/brocc_toast.py"
+  ],
+  "1f48b843dbbc5f50cb3c534393c2ccd5808a546e38685f6a9d490d442f73b6fb": [
+    "lib/a11y_automation.py",
+    "BroccoliWorkspaceBackup/lib/a11y_automation.py"
+  ],
+  "471808529a7468ba72e5b2e16952867207bda5fea7cb841de4c5c4727f9e3a38": [
+    "lib/agent_loop.py",
+    "BroccoliWorkspaceBackup/lib/agent_loop.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/agent_loop.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/agent_loop.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/agent_loop.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/agent_loop.py",
+    "Agent/Broccoli/mirror/lib/agent_loop.py"
+  ],
+  "c443700e5607d68b61f7a61c15762279dc2b7598c668a9f05da106e70d8b3500": [
+    "lib/broccoli_a11y_rish.py",
+    "state/walk_stage_0/broccoli_a11y_rish.py",
+    "BroccoliWorkspaceBackup/lib/broccoli_a11y_rish.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_a11y_rish.py"
+  ],
+  "44d0edae15c95694a7384f0a90c5ad7f33bf78c719f60133e58f8b317f3c9753": [
+    "lib/brocc_wire.py",
+    "BroccoliWorkspaceBackup/lib/brocc_wire.py"
+  ],
+  "16234e79645bde871c262ac402fb2ff075a31e391242fea76b1f5ac4f952a861": [
+    "lib/brocc_validate.py",
+    "BroccoliWorkspaceBackup/lib/brocc_validate.py"
+  ],
+  "7ef8047fd0e6bbc6bcb6d5b4d71813a89090dd850f7ce7f5ba4a1c95feab3e9d": [
+    "lib/broccoli_manual.py",
+    "state/walk_stage_0/broccoli_manual.py",
+    "BroccoliWorkspaceBackup/lib/broccoli_manual.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_manual.py"
+  ],
+  "a93c6dc4161a6dfff53ed6a13297ed4dbcb0d521965287942953b95fcbc78b5e": [
+    "lib/broccoli_log.py",
+    "BroccoliWorkspaceBackup/lib/broccoli_log.py"
+  ],
+  "d177200eca3879c2bfe2f71b7af16209e4ad136944c5117dd0c57ac61951e688": [
+    "lib/broccoli_a11y_send.py",
+    "state/walk_stage_0/broccoli_a11y_send.py",
+    "BroccoliWorkspaceBackup/lib/broccoli_a11y_send.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_a11y_send.py"
+  ],
+  "d922aaa5c62de6253076895e54649bab6bd9eff5c212fccb4a5dec985dc61954": [
+    "lib/broccoli_adb_ui.py",
+    "BroccoliWorkspaceBackup/lib/broccoli_adb_ui.py"
+  ],
+  "781b29d17a33b5fd9e64aad02ec0f5d8b610b33b3cfc922f45fd838325721a4c": [
+    "lib/broccoli_agentic_chat.py",
+    "state/walk_stage/broccoli_agentic_chat.py",
+    "state/walk_stage_0/broccoli_agentic_chat.py",
+    "state/walk_stage_5/broccoli_agentic_chat.py",
+    "state/walk_stage_1/broccoli_agentic_chat.py",
+    "lib/_pinned_from_walk/broccoli_agentic_chat.py",
+    "BroccoliWorkspaceBackup/lib/broccoli_agentic_chat.py",
+    "BroccoliWorkspaceBackup/state/walk_stage/broccoli_agentic_chat.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_agentic_chat.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_agentic_chat.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_5/broccoli_agentic_chat.py",
+    "BroccoliWorkspaceBackup/lib/_pinned_from_walk/broccoli_agentic_chat.py"
+  ],
+  "42edbc7ed27451f84715fba7aa9c34fe0bdac4747bca58b938b36491405913b3": [
+    "lib/broccoli_core_round.py",
+    "BroccoliWorkspaceBackup/lib/broccoli_core_round.py"
+  ],
+  "0b163fc00482730b8579ac040c8be336b22991bc6d28be7349b5e7707bc52df5": [
+    "lib/broccoli_device.py",
+    "BroccoliWorkspaceBackup/lib/broccoli_device.py"
+  ],
+  "ec917ae0fe73df0d2b1557b8e92e65d940d85f30ac995dcf5781e2b465c35035": [
+    "lib/broccoli_guard.py",
+    "BroccoliWorkspaceBackup/lib/broccoli_guard.py"
+  ],
+  "906da8426e3e9347b0c7ef223e7d653ba746d197cb1c50fe3f425e3101393407": [
+    "lib/broccoli_input.py",
+    "state/walk_stage/broccoli_input.py",
+    "state/walk_stage_0/broccoli_input.py",
+    "state/walk_stage_5/broccoli_input.py",
+    "state/walk_stage_1/broccoli_input.py",
+    "lib/_pinned_from_walk/broccoli_input.py",
+    "BroccoliWorkspaceBackup/lib/broccoli_input.py",
+    "BroccoliWorkspaceBackup/state/walk_stage/broccoli_input.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_input.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_input.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_5/broccoli_input.py",
+    "BroccoliWorkspaceBackup/lib/_pinned_from_walk/broccoli_input.py"
+  ],
+  "1dbec27f98f1bc023e2f4be8c6e94c3860ef561fd6c5268b778ea1e2e94e7000": [
+    "lib/broccoli_manual_mode.py",
+    "state/walk_stage_0/broccoli_manual_mode.py",
+    "BroccoliWorkspaceBackup/lib/broccoli_manual_mode.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_manual_mode.py"
+  ],
+  "649e678e7696abdcab02b1ce72118885e2c5af7e03f10dc3d297ed0962140977": [
+    "lib/broccoli_notif.py",
+    "BroccoliWorkspaceBackup/lib/broccoli_notif.py"
+  ],
+  "cc2291d6bfc0485c40cceb6d47a39fd79d71c1b14396923ea6369d7f507149a3": [
+    "lib/broccoli_operator.py",
+    "lib/operator.py",
+    "state/walk_stage_0/broccoli_operator.py",
+    "state/walk_stage_1/broccoli_operator.py",
+    "state/walk_stage_2/broccoli_operator.py",
+    "BroccoliWorkspaceBackup/lib/broccoli_operator.py",
+    "BroccoliWorkspaceBackup/lib/operator.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_operator.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_operator.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_2/broccoli_operator.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/broccoli_operator.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/broccoli_operator.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/broccoli_operator.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/broccoli_operator.py",
+    "Agent/Broccoli/mirror/lib/broccoli_operator.py"
+  ],
+  "8a8fc58a42153b712438936c0459b98e311f492a0b910e857563b6be631f4e10": [
+    "lib/broccoli_recv_copy_rish.py",
+    "BroccoliWorkspaceBackup/lib/broccoli_recv_copy_rish.py"
+  ],
+  "caea21fffd73c15ff27b2fd23172335f81a943ca28ac884b32e4d7329f1fce03": [
+    "lib/broccoli_retry.py",
+    "BroccoliWorkspaceBackup/lib/broccoli_retry.py"
+  ],
+  "0b0bfa6179e245e72c32cdc4dabd4ab2bd3829ec66ed3451877788853fe83899": [
+    "lib/broccoli_rish_adb.py",
+    "BroccoliWorkspaceBackup/lib/broccoli_rish_adb.py"
+  ],
+  "6a64ee7b40e118ede22bf3a2d9b8587ffa26ff981711048a99c9229f0a40a3ec": [
+    "lib/broccoli_rish_shell.py",
+    "BroccoliWorkspaceBackup/lib/broccoli_rish_shell.py"
+  ],
+  "41490b801542decf8d11887cec9ae96ccff6af40d2970a111054f4823db0e422": [
+    "lib/chat_context.py",
+    "BroccoliWorkspaceBackup/lib/chat_context.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/chat_context.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/chat_context.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/chat_context.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/chat_context.py",
+    "Agent/Broccoli/mirror/lib/chat_context.py"
+  ],
+  "d56278700e2f9d5b0250f65092c5bafcd55f54ad9d94cc1f9e5fba45a1d0527a": [
+    "lib/broccoli_rish_ui.py",
+    "BroccoliWorkspaceBackup/lib/broccoli_rish_ui.py"
+  ],
+  "028fc92619812a57595eca183bda7f1a3f28f289d2c2845d24d2d41fc19c8c83": [
+    "lib/broccoli_selftest.py",
+    "state/walk_stage_0/broccoli_selftest.py",
+    "state/walk_stage_1/broccoli_selftest.py",
+    "BroccoliWorkspaceBackup/lib/broccoli_selftest.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_selftest.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_selftest.py"
+  ],
+  "4508ec903e0d6b6c69de3a3e2b83eec89f0e7460b238ea2f0ce2178d24cbadc9": [
+    "lib/broccoli_send.py",
+    "state/walk_stage/broccoli_send.py",
+    "state/walk_stage_0/broccoli_send.py",
+    "state/walk_stage_5/broccoli_send.py",
+    "state/walk_stage_1/broccoli_send.py",
+    "lib/_pinned_from_walk/broccoli_send.py",
+    "BroccoliWorkspaceBackup/lib/broccoli_send.py",
+    "BroccoliWorkspaceBackup/state/walk_stage/broccoli_send.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_send.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_send.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_5/broccoli_send.py",
+    "BroccoliWorkspaceBackup/lib/_pinned_from_walk/broccoli_send.py"
+  ],
+  "5fc26d7d7d252f22fbeaab71d2b3652f27054fdb4eb8130a984d629ac7c016e9": [
+    "lib/broccoli_strategy.py",
+    "state/walk_stage_0/broccoli_strategy.py",
+    "state/walk_stage_1/broccoli_strategy.py",
+    "BroccoliWorkspaceBackup/lib/broccoli_strategy.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_strategy.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_strategy.py"
+  ],
+  "66fdf74352ebd2e23f18a91c41033812d0ddbb9829a7ae50514407955c0eace3": [
+    "lib/broccoli_ui_dump.py",
+    "state/walk_stage/broccoli_ui_dump.py",
+    "state/walk_stage_0/broccoli_ui_dump.py",
+    "state/walk_stage_5/broccoli_ui_dump.py",
+    "state/walk_stage_1/broccoli_ui_dump.py",
+    "lib/_pinned_from_walk/broccoli_ui_dump.py",
+    "BroccoliWorkspaceBackup/lib/broccoli_ui_dump.py",
+    "BroccoliWorkspaceBackup/state/walk_stage/broccoli_ui_dump.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_ui_dump.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_ui_dump.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_5/broccoli_ui_dump.py",
+    "BroccoliWorkspaceBackup/lib/_pinned_from_walk/broccoli_ui_dump.py"
+  ],
+  "aea3b9c8679fe69aac84026daba2cbce1047e9df1dea45650fedeadabc4ecfde": [
+    "lib/broccoli_wait.py",
+    "state/walk_stage_0/broccoli_wait.py",
+    "state/walk_stage_1/broccoli_wait.py",
+    "state/walk_stage_2/broccoli_wait.py",
+    "BroccoliWorkspaceBackup/lib/broccoli_wait.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_wait.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_wait.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_2/broccoli_wait.py"
+  ],
+  "2a011b2daf6f50f8630d4fd319ad51d735a6372d54b00c3dff0d702f5b78bfb5": [
+    "lib/broccoli_xml_sanitize.py",
+    "BroccoliWorkspaceBackup/lib/broccoli_xml_sanitize.py"
+  ],
+  "0304b7b2a80ba94088ebb93849f1cc154b7d14a88981bb971f869268b76e6867": [
+    "lib/catalog_loop_hook.py",
+    "BroccoliWorkspaceBackup/lib/catalog_loop_hook.py"
+  ],
+  "8fd6f3824b617149cda44feb2391eccce76f779d374c2a1b2952982ba4a5830d": [
+    "lib/clip.py",
+    "BroccoliWorkspaceBackup/lib/clip.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/clip.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/clip.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/clip.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/clip.py",
+    "Agent/Broccoli/mirror/lib/clip.py"
+  ],
+  "f476701758532e003e5d6b475601c9dbc1b7fd3a07e4cf94a7f93948fb166a70": [
+    "lib/closed_loop.py",
+    "BroccoliWorkspaceBackup/lib/closed_loop.py"
+  ],
+  "580262bed8296260dd31e6da0a19df1436f527d1e0d135a8b8b044f1ef1a8004": [
+    "lib/display_context.py",
+    "BroccoliWorkspaceBackup/lib/display_context.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/display_context.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/display_context.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/display_context.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/display_context.py",
+    "Agent/Broccoli/mirror/lib/display_context.py"
+  ],
+  "7d03b0461d1f53d46ce670103a7ccb9151cf3a97f854b5215e114dc9b9013500": [
+    "lib/compose_cap.py",
+    "BroccoliWorkspaceBackup/lib/compose_cap.py"
+  ],
+  "e3e750213005677263d2a7c59198948da7d0e30fbb4cac8f51f2a0db1a04f7f3": [
+    "lib/code_from_chat.py",
+    "BroccoliWorkspaceBackup/lib/code_from_chat.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/code_from_chat.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/code_from_chat.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/code_from_chat.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/code_from_chat.py",
+    "Agent/Broccoli/mirror/lib/code_from_chat.py"
+  ],
+  "b4125b9271470cb73e8b5726d889850e3db65d1652286b36afead397c49ba009": [
+    "lib/dump_ui_fallback.py",
+    "BroccoliWorkspaceBackup/lib/dump_ui_fallback.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/dump_ui_fallback.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/dump_ui_fallback.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/dump_ui_fallback.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/dump_ui_fallback.py",
+    "Agent/Broccoli/mirror/lib/dump_ui_fallback.py"
+  ],
+  "bda55f49f33a4a43687ef2e8fd422d8f6315a4267793c6823d50ff8ebd51f526": [
+    "lib/display_lane.py",
+    "BroccoliWorkspaceBackup/lib/display_lane.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/display_lane.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/display_lane.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/display_lane.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/display_lane.py",
+    "Agent/Broccoli/mirror/lib/display_lane.py"
+  ],
+  "77e65eb7ac8be140f87f9df5ae2e9822538f9bc9282f2a009b517e9800fa335b": [
+    "lib/grok_chat_foreground.py",
+    "BroccoliWorkspaceBackup/lib/grok_chat_foreground.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/grok_chat_foreground.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/grok_chat_foreground.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/grok_chat_foreground.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/grok_chat_foreground.py",
+    "Agent/Broccoli/mirror/lib/grok_chat_foreground.py"
+  ],
+  "d4434d5c6f822e92992ac8033ef38ace644c7bbd78f8cb47de194c775e9d3ffe": [
+    "lib/paste_accommodate.py",
+    "BroccoliWorkspaceBackup/lib/paste_accommodate.py"
+  ],
+  "6a6971d7ae172be4437834dadbbdc4623a13c482fecd4011a91f7f5e119f8d4d": [
+    "lib/grok_open_loop.py",
+    "BroccoliWorkspaceBackup/lib/grok_open_loop.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/grok_open_loop.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/grok_open_loop.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/grok_open_loop.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/grok_open_loop.py",
+    "Agent/Broccoli/mirror/lib/grok_open_loop.py"
+  ],
+  "b63d322f449fc8081174f082ed38a05ed30342f0be5d56b3a38fc203ddbecead": [
+    "lib/grok_send_tap.py",
+    "BroccoliWorkspaceBackup/lib/grok_send_tap.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/grok_send_tap.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/grok_send_tap.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/grok_send_tap.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/grok_send_tap.py",
+    "Agent/Broccoli/mirror/lib/grok_send_tap.py"
+  ],
+  "1a529ffdcad7af3a3b1e42052367728677b2a92c296eed854ebd3a669d043326": [
+    "lib/grok_takeover.py",
+    "BroccoliWorkspaceBackup/lib/grok_takeover.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/grok_takeover.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/grok_takeover.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/grok_takeover.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/grok_takeover.py",
+    "Agent/Broccoli/mirror/lib/grok_takeover.py"
+  ],
+  "dbaf5e4f4772e1ea8d6e59c953ef5dde530e216668c1bcd565de74841dc74637": [
+    "lib/grok_xml_parse.py",
+    "BroccoliWorkspaceBackup/lib/grok_xml_parse.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/grok_xml_parse.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/grok_xml_parse.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/grok_xml_parse.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/grok_xml_parse.py",
+    "Agent/Broccoli/mirror/lib/grok_xml_parse.py"
+  ],
+  "dfa6694ba6c67408779ae54d8d541a332a567e64b3fdd22ec2e59f7fdbc611e7": [
+    "lib/idle_takeover.py",
+    "BroccoliWorkspaceBackup/lib/idle_takeover.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/idle_takeover.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/idle_takeover.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/idle_takeover.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/idle_takeover.py",
+    "Agent/Broccoli/mirror/lib/idle_takeover.py"
+  ],
+  "0da6dcaf34702ab26196c0c90ebf858a18869a7804a2816fe5acc6de35018ce1": [
+    "lib/smoke_autoheal.py",
+    "BroccoliWorkspaceBackup/lib/smoke_autoheal.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/smoke_autoheal.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/smoke_autoheal.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/smoke_autoheal.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/smoke_autoheal.py",
+    "Agent/Broccoli/mirror/lib/smoke_autoheal.py"
+  ],
+  "3d202bd27d390f89a36d95a724b15bf188bec4b55a98ba21ec1164fd1bc7d692": [
+    "lib/rish_adb.py",
+    "BroccoliWorkspaceBackup/lib/rish_adb.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/rish_adb.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/rish_adb.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/rish_adb.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/rish_adb.py",
+    "Agent/Broccoli/mirror/lib/rish_adb.py"
+  ],
+  "399ca6696e1c0f7733e3982e888ca8f8b18da40196671be1ed98a47020bf6d37": [
+    "lib/recursive_impl.py",
+    "BroccoliWorkspaceBackup/lib/recursive_impl.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/recursive_impl.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/recursive_impl.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/recursive_impl.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/recursive_impl.py",
+    "Agent/Broccoli/mirror/lib/recursive_impl.py"
+  ],
+  "e0ed3c9d4597985963e01165b81e8c1f9c75327a5156fb19a58d78c5c5bee105": [
+    "lib/rish_cmd.py",
+    "BroccoliWorkspaceBackup/lib/rish_cmd.py"
+  ],
+  "dc40771e2bc813a5d534aa03921e813aef08832f899054323e137cc0eaeddff8": [
+    "lib/rish_run.py",
+    "BroccoliWorkspaceBackup/lib/rish_run.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/rish_run.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/rish_run.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/rish_run.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/rish_run.py",
+    "Agent/Broccoli/mirror/lib/rish_run.py"
+  ],
+  "40b59135427305a5272590fdd66d2843fae27a5b7fcd65321b3dce82ccaf9620": [
+    "lib/task_current.py",
+    "BroccoliWorkspaceBackup/lib/task_current.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/task_current.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/task_current.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/task_current.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/task_current.py",
+    "Agent/Broccoli/mirror/lib/task_current.py"
+  ],
+  "aecd036cf4fc60773a523f1f381775e43bd22092adf69a59ed288ae1f1566ee4": [
+    "lib/task_complete.py",
+    "BroccoliWorkspaceBackup/lib/task_complete.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/task_complete.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/task_complete.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/task_complete.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/task_complete.py",
+    "Agent/Broccoli/mirror/lib/task_complete.py"
+  ],
+  "e8c5430a649d19b9545cd87bd4d890a806b44f500762e429bf34337ba81cfb1a": [
+    "lib/task_queue.py",
+    "BroccoliWorkspaceBackup/lib/task_queue.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/task_queue.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/task_queue.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/task_queue.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/task_queue.py",
+    "Agent/Broccoli/mirror/lib/task_queue.py"
+  ],
+  "b3ba6e1946a25a375b2480ae8ca7672173403ca9c5a756947ceddb90275925e6": [
+    "lib/toast.py",
+    "BroccoliWorkspaceBackup/lib/toast.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/toast.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/toast.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/toast.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/toast.py",
+    "Agent/Broccoli/mirror/lib/toast.py"
+  ],
+  "78fca95f4a68fcee5aab6e842ca9f5039ac82e11ea35edf8fcfe825272f8bd24": [
+    "lib/user_task_wait.py",
+    "BroccoliWorkspaceBackup/lib/user_task_wait.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/user_task_wait.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/user_task_wait.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/user_task_wait.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/user_task_wait.py",
+    "Agent/Broccoli/mirror/lib/user_task_wait.py"
+  ],
+  "ecf696d6dbdf83e80cf2b46d372e5c5e4af6700b21f798520e316a690d4e5976": [
+    "scripts/inject_refresh_send.py",
+    "BroccoliWorkspaceBackup/scripts/inject_refresh_send.py"
+  ],
+  "df7c30841d4b416a99350bef57e170bfada6b182a835e257c48b1983ed47486a": [
+    "scripts/grok_universal_cycle.py",
+    "BroccoliWorkspaceBackup/scripts/grok_universal_cycle.py"
+  ],
+  "ef5d6e394463227e888515a05cb78c73b437a5621cab42e63a2661ba61097397": [
+    "scripts/grok_validate_reply.py",
+    "BroccoliWorkspaceBackup/scripts/grok_validate_reply.py"
+  ],
+  "733c6d5af89504d502e58be10e45e09a6ee5301ecb11c237cbdb9e814b053cea": [
+    "scripts/grok_button_poll.py",
+    "BroccoliWorkspaceBackup/scripts/grok_button_poll.py"
+  ],
+  "9defe4b6f1746d81a1d24dd54abd49b711cb29a4edaf5adda3bae5823bc0e569": [
+    "scripts/tap_send.py",
+    "BroccoliWorkspaceBackup/scripts/tap_send.py"
+  ],
+  "e16d35c05a2d1f3949c6b4959c16202ab28d6fc406c382df7beb7120274a974f": [
+    "scripts/autojs_run.py",
+    "BroccoliWorkspaceBackup/scripts/autojs_run.py"
+  ],
+  "2d3e47a28584e0119d3100a95b5ef3c308f3db4a0c6f571b76d8a479ed3245ad": [
+    "scripts/grok_auto_context.py",
+    "BroccoliWorkspaceBackup/scripts/grok_auto_context.py"
+  ],
+  "56d0f246aaa0398a6bffc709fa92eef3b0625a5f7a65fb39ca7d5d2fdd44d4b4": [
+    "scripts/refresh_screen.py",
+    "BroccoliWorkspaceBackup/scripts/refresh_screen.py"
+  ],
+  "d84c19745e3e0e704604de3088adca6f9bf40dffeb3713adcd8cc286c9fc5a8b": [
+    "scripts/grok_context_send_retry.py",
+    "BroccoliWorkspaceBackup/scripts/grok_context_send_retry.py"
+  ],
+  "b407d3f1bb11baa9460284c7e8e0ae4b828026f5b21d8350a37b068870d43854": [
+    "meta/broccoli_storage_sync.py",
+    "BroccoliWorkspaceBackup/meta/broccoli_storage_sync.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/meta/broccoli_storage_sync.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/meta/broccoli_storage_sync.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/meta/broccoli_storage_sync.py",
+    "Agent/Broccoli/mirror/meta/broccoli_storage_sync.py"
+  ],
+  "3926b27aa5f7b499dd59de2704728dc463cc3a14ef0766545ba2854bf486fd50": [
+    "meta/brocc_state.py",
+    "BroccoliWorkspaceBackup/meta/brocc_state.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/meta/brocc_state.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/meta/brocc_state.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/meta/brocc_state.py",
+    "Agent/Broccoli/mirror/meta/brocc_state.py"
+  ],
+  "80f0adae837caeb3539642684f9ab7916a3d49a7090760426e60c4533f8ef073": [
+    "meta/brocc_live_wire.py",
+    "BroccoliWorkspaceBackup/meta/brocc_live_wire.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/meta/brocc_live_wire.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/meta/brocc_live_wire.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/meta/brocc_live_wire.py",
+    "Agent/Broccoli/mirror/meta/brocc_live_wire.py"
+  ],
+  "5b0090a831aafb6794865ca44cf5af8e436943310e3d3b2a54c5ae4513806425": [
+    "meta/brocc_loop_emit.py",
+    "BroccoliWorkspaceBackup/meta/brocc_loop_emit.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/meta/brocc_loop_emit.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/meta/brocc_loop_emit.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/meta/brocc_loop_emit.py",
+    "Agent/Broccoli/mirror/meta/brocc_loop_emit.py"
+  ],
+  "473a7b3a5fe88d0f5d9fe086d2d64a1699339aa1f14824ee65910871d1938643": [
+    "meta/brocc_watch.py",
+    "BroccoliWorkspaceBackup/meta/brocc_watch.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/meta/brocc_watch.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/meta/brocc_watch.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/meta/brocc_watch.py",
+    "Agent/Broccoli/mirror/meta/brocc_watch.py"
+  ],
+  "603b42232889b8224caf9a53e319213ff6e0e68f790f7d5cd30a298c2767dfb2": [
+    "modules/chat_store.py",
+    "BroccoliWorkspaceBackup/modules/chat_store.py"
+  ],
+  "45c8e0086f857ff49a8ef544eb647f47a8017d6db6a8209fbfd221d64504a46b": [
+    "modules/grok_focus.py",
+    "BroccoliWorkspaceBackup/modules/grok_focus.py"
+  ],
+  "a0c6368c9fdde67f36b6d9f47aaa182bcd1261869d34dc54a3faf305d7aaeb79": [
+    "modules/clipboard_read.py",
+    "BroccoliWorkspaceBackup/modules/clipboard_read.py"
+  ],
+  "21f34e728993b42b8bbf64525c6c355e09555f798237f583469045214431d5eb": [
+    "modules/state_probe.py",
+    "BroccoliWorkspaceBackup/modules/state_probe.py"
+  ],
+  "a2c4b9809aa7a0ff4a66d628a967dc7d0e1be25e7be193041ee8f6ba9bfd952f": [
+    "modules/a11y_probe.py",
+    "BroccoliWorkspaceBackup/modules/a11y_probe.py"
+  ],
+  "9da6820d681df3d957bea631261897689577d1693caac05e3c2ee3c52b602fa3": [
+    "modules/chat_harvest.py",
+    "BroccoliWorkspaceBackup/modules/chat_harvest.py"
+  ],
+  "fbe0d7fdba98e35ee3a431ab1afd84bfc26cb0200b1605c717c02061ae72452c": [
+    "modules/chat_nav.py",
+    "BroccoliWorkspaceBackup/modules/chat_nav.py"
+  ],
+  "6fb05b4a5d3c5981372419b652ee8ea6849a433726431e6ebac0f17777fe8907": [
+    "modules/chat_reader.py",
+    "BroccoliWorkspaceBackup/modules/chat_reader.py"
+  ],
+  "e00b66e477f06c6ec522ede3f8a8aec2e139bd2d537a9771f42e3cf661179a6e": [
+    "modules/ui_dump.py",
+    "BroccoliWorkspaceBackup/modules/ui_dump.py"
+  ],
+  "24532392cb7778ec8771a7e961f33e185b7bdc250d8c846013782562f3a053cc": [
+    "modules/__init__.py",
+    "BroccoliWorkspaceBackup/modules/__init__.py"
+  ],
+  "81c4bb6c15d38f4c0f1205e23f1d8e9868919db1f0d31872211d47559aab8283": [
+    "modules/registry.py",
+    "BroccoliWorkspaceBackup/modules/registry.py"
+  ],
+  "c3ded60f27ff15a7f6874905ad4d7696ce4c48a82d5092c8a2eb7cfd0fce01f7": [
+    "modules/offline_sanitizer.py",
+    "BroccoliWorkspaceBackup/modules/offline_sanitizer.py"
+  ],
+  "84faf7318c427553e98c8a56fa2443dfc6f4fb3e54487ec3d062f1547d438dcf": [
+    "modules/kxt_xxd.py",
+    "BroccoliWorkspaceBackup/modules/kxt_xxd.py"
+  ],
+  "4d6cb3a7e0d19d894011572f0326207ea5962e9cfb6d399454a7291a31a4cc8b": [
+    "modules/sysdump/replay.py",
+    "BroccoliWorkspaceBackup/modules/sysdump/replay.py"
+  ],
+  "0596803e06ed1a9cf179d759ab57e90153fbdea2d1eacd44ef6793cf610505af": [
+    "modules/sysdump/buffer.py",
+    "BroccoliWorkspaceBackup/modules/sysdump/buffer.py"
+  ],
+  "17625948713ba9778b5ee7b1d0d4d9cc7ffaa827a4766aa52d73fb4631425de8": [
+    "modules/sysdump/collector.py",
+    "BroccoliWorkspaceBackup/modules/sysdump/collector.py"
+  ],
+  "dafb70d2322d38d3850c005130bcc224f8dd7f2c89b8a1d9b5cf72bea1be6d3e": [
+    "state/walk_stage/broccoli_core_round.py",
+    "BroccoliWorkspaceBackup/state/walk_stage/broccoli_core_round.py"
+  ],
+  "9a94e81bd09319561269089357a2c5b90a380472df7dc3c73a4c8e7a386621b6": [
+    "state/walk_stage/broccoli_rish_shell.py",
+    "state/walk_stage_0/broccoli_rish_shell.py",
+    "state/walk_stage_4/broccoli_rish_shell.py",
+    "state/walk_stage_3/broccoli_rish_shell.py",
+    "state/walk_stage_5/broccoli_rish_shell.py",
+    "lib/_pinned_from_walk/broccoli_rish_shell.py",
+    "BroccoliWorkspaceBackup/state/walk_stage/broccoli_rish_shell.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_rish_shell.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_3/broccoli_rish_shell.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_4/broccoli_rish_shell.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_5/broccoli_rish_shell.py",
+    "BroccoliWorkspaceBackup/lib/_pinned_from_walk/broccoli_rish_shell.py"
+  ],
+  "8f3657dcb8edfd797d63d0804f65bded196862db01dc411bf3845485cdb5a861": [
+    "state/walk_stage/broccoli_rish_ui.py",
+    "state/walk_stage_0/broccoli_rish_ui.py",
+    "state/walk_stage_5/broccoli_rish_ui.py",
+    "lib/_pinned_from_walk/broccoli_rish_ui.py",
+    "BroccoliWorkspaceBackup/state/walk_stage/broccoli_rish_ui.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_rish_ui.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_5/broccoli_rish_ui.py",
+    "BroccoliWorkspaceBackup/lib/_pinned_from_walk/broccoli_rish_ui.py"
+  ],
+  "746494dfd39f99acd8b496954c41d9d2798c27a9640af3ac88fc161a5e8c9d46": [
+    "state/walk_stage_3/broccoli_a11y.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_3/broccoli_a11y.py",
+    "Agent/Broccoli/broccoli_a11y.py",
+    "Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_a11y.py",
+    "Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_a11y.py",
+    "Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_a11y.py",
+    "Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_a11y.py",
+    "Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_a11y.py",
+    "Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_a11y.py",
+    "Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_a11y.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_a11y.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_a11y.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_a11y.py",
+    "Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_a11y.py",
+    "Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_a11y.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_a11y.py"
+  ],
+  "18cf78a35f74fb57fd92e81d88b6b77d1c346867d2806406da89bb9d2ea53d62": [
+    "state/walk_stage_3/broccoli_agent.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_3/broccoli_agent.py",
+    "Agent/Broccoli/broccoli_agent.py"
+  ],
+  "b1ba339f2594404364348f1d1c11ce5fe79500901390f25c2bd39c3b30ec7aba": [
+    "state/walk_stage_3/broccoli_pulse.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_3/broccoli_pulse.py",
+    "Agent/Broccoli/broccoli_pulse.py",
+    "Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_pulse.py",
+    "Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_pulse.py",
+    "Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_pulse.py",
+    "Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_pulse.py",
+    "Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_pulse.py",
+    "Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_pulse.py",
+    "Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_pulse.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_pulse.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_pulse.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_pulse.py",
+    "Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_pulse.py",
+    "Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_pulse.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_pulse.py"
+  ],
+  "24ebdf07ef3b31091bdc4c13a4a35fb42ff261208a6d6f2fc8eafbebe36fd5f8": [
+    "state/walk_stage_3/broccoli_agent_context.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_3/broccoli_agent_context.py",
+    "Agent/Broccoli/broccoli_agent_context.py",
+    "Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_agent_context.py",
+    "Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_agent_context.py",
+    "Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_agent_context.py",
+    "Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_agent_context.py",
+    "Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_agent_context.py",
+    "Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_agent_context.py",
+    "Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_agent_context.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_agent_context.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_agent_context.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_agent_context.py",
+    "Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_agent_context.py",
+    "Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_agent_context.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_agent_context.py"
+  ],
+  "4d00606cfdcab498505dac37552aa3900bef480d21734ffa342f85373f95ee2c": [
+    "state/walk_stage_3/broccoli_mac_ingest.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_3/broccoli_mac_ingest.py",
+    "Agent/Broccoli/broccoli_mac_ingest.py",
+    "Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_mac_ingest.py",
+    "Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_mac_ingest.py",
+    "Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_mac_ingest.py",
+    "Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_mac_ingest.py",
+    "Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_mac_ingest.py",
+    "Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_mac_ingest.py",
+    "Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_mac_ingest.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_mac_ingest.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_mac_ingest.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_mac_ingest.py",
+    "Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_mac_ingest.py",
+    "Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_mac_ingest.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_mac_ingest.py"
+  ],
+  "088eb6d1b25d05ddcbc803a3000584c892b3203044edd4433960ca8613b5fa97": [
+    "state/walk_stage_3/broccoli_bootstrap.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_3/broccoli_bootstrap.py",
+    "Agent/Broccoli/broccoli_bootstrap.py"
+  ],
+  "501701c5320332dde34faf49231f3da8794f57fe6993228ae8680d905d660892": [
+    "state/walk_stage_1/broccoli_rish_shell.py",
+    "state/walk_stage_2/broccoli_rish_shell.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_rish_shell.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_2/broccoli_rish_shell.py"
+  ],
+  "a42abc5f6a0ce27202f0b07fcea14a4f8301eecf8e58f99da039d0d8e056421c": [
+    "state/walk_stage_2/broccoli_agentic_chat.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_2/broccoli_agentic_chat.py"
+  ],
+  "66ea7c29f66ee1de177bab36bc086d0fcc67d6cd010dd821c0acf12e29727d93": [
+    "state/walk_stage_2/broccoli_ui_dump.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_2/broccoli_ui_dump.py"
+  ],
+  "c9b79f58a9b48026441b54f09854e28e892aeed6dbf9a9785612f0769872fb20": [
+    "state/walk_stage_2/broccoli_input.py",
+    "BroccoliWorkspaceBackup/state/walk_stage_2/broccoli_input.py"
+  ],
+  "b7dd89c5345b077451399c0dc755e4e2f14fe2b67810cb278e00645415d830c4": [
+    "broccoli-core/runtime/agents/coordinator.py",
+    "runtime/agents/coordinator.py"
+  ],
+  "1747f7b60556b70b6d82188d0a82b196fe7833f789de1d76c59f2a135c0c3bdd": [
+    "broccoli-core/runtime/agents/grok_agent.py",
+    "runtime/agents/grok_agent.py"
+  ],
+  "f140bc0f9c5624b99a92dc72f1f7183557c4173530f3c60b4c8d73e5c7debe65": [
+    "broccoli-core/runtime/autonomy/executor.py",
+    "runtime/autonomy/executor.py"
+  ],
+  "22d0d25f32de33a100d3fb4f2dd75d8ddc1e9f108fc02ed04b99c07316557779": [
+    "broccoli-core/runtime/autonomy/goal_manager.py",
+    "runtime/autonomy/goal_manager.py"
+  ],
+  "3db32b2e454d58993699a0f549bf9e89c2090a005334e28262869ce819682c54": [
+    "broccoli-core/runtime/autonomy/intent.py",
+    "runtime/autonomy/intent.py"
+  ],
+  "641a708a13ca5864a7e2afedb128eb84845bf96fe7c7e41bf48fc2e480cb8212": [
+    "broccoli-core/runtime/autonomy/progress.py",
+    "runtime/autonomy/progress.py"
+  ],
+  "83d7a8a81e5b8c32c649c5ec4e3f10921f78a41d6fab28ca29f2e21e7f111327": [
+    "broccoli-core/runtime/autonomy/recovery.py",
+    "runtime/autonomy/recovery.py"
+  ],
+  "ee94d93c46bedcc67686f5cce76e2335838caee19183ccd7c425e568d6d38ca8": [
+    "broccoli-core/runtime/capabilities/base.py",
+    "runtime/capabilities/base.py"
+  ],
+  "e16f8b73164ff9262e1f577959444a00693551b0da9d0860d2b1d6f0236395d4": [
+    "broccoli-core/runtime/capabilities/registry.py",
+    "runtime/capabilities/registry.py"
+  ],
+  "7e23d6b11eecff83ec11b407c26ba3b5d90fc29e1a31fddf29f3e5a5f4d4405f": [
+    "broccoli-core/runtime/config/settings.py",
+    "runtime/config/settings.py"
+  ],
+  "95f6f625f05ce329f98ed1a840a4a660bd2aeebe582e0a1cf95a6e153ec6d7a7": [
+    "broccoli-core/runtime/governor/engine.py",
+    "runtime/governor/engine.py"
+  ],
+  "afe6c2ebe9480e99bd866da594df13f1b018cc7f2ad3f8f8f7af8db53e9e6271": [
+    "broccoli-core/runtime/memory/knowledge_graph.py",
+    "runtime/memory/knowledge_graph.py"
+  ],
+  "e4b695368493123f327dd61d5c7003562285165d9ade8f6dc0560a96e92be5d9": [
+    "broccoli-core/runtime/models/semantic.py",
+    "runtime/models/semantic.py"
+  ],
+  "9fe898815ffa22bfab63dadd457b16a0cb1dcf5e7466804697c37ec057577438": [
+    "broccoli-core/runtime/planner/adaptive.py",
+    "runtime/planner/adaptive.py"
+  ],
+  "e4fb8a7f2cc8b645c8dffe7734add87efdc6e7d5681f82a0f17ddbb91899287f": [
+    "broccoli-core/runtime/planner/planner.py",
+    "runtime/planner/planner.py"
+  ],
+  "664a8192bd99cd72663d9173820a02db36c9158a43c3d5634d154b3100777dcd": [
+    "broccoli-core/runtime/providers/base.py",
+    "runtime/providers/base.py"
+  ],
+  "5b193810b1d804bb978f5c8e8555a27cc6804ed5aed2ffaa3b898cc5ab8aee7a": [
+    "broccoli-core/runtime/providers/grok.py",
+    "runtime/providers/grok.py"
+  ],
+  "2b5c0b4c9457837b7ad485551a1d26a874ba0595163b1716903c5c5f97bb581b": [
+    "broccoli-core/runtime/providers/manager.py",
+    "runtime/providers/manager.py"
+  ],
+  "c92e947b1169250dff29dbf6a0036ed17505a2160126954fae3034634a1a6702": [
+    "broccoli-core/runtime/services/daemon.py",
+    "runtime/services/daemon.py"
+  ],
+  "53fac2e0ca043a83a083dbf7e116275c6486adf03033410e769bcc0986aec649": [
+    "broccoli-core/runtime/workflow/executor.py",
+    "runtime/workflow/executor.py"
+  ],
+  "14adf0f4fc5fa182b6574df7c4625e030731259c4cd3c38f13e1e6e62c617871": [
+    "broccoli-core/runtime/workflow/queue.py",
+    "runtime/workflow/queue.py"
+  ],
+  "838900f0083bf9ebce5c2c9b13440d3fc5422afc803bb4b8d186984424f93755": [
+    "broccoli-core/runtime/workflow/task.py",
+    "runtime/workflow/task.py"
+  ],
+  "2ccf43411344e4a79cf570b1ee58c3a9d2b6672b8131934f39642703fdf4ab6d": [
+    "broccoli-core/runtime/drivers/accessibility/backend.py",
+    "runtime/drivers/accessibility/backend.py"
+  ],
+  "b8f87df04d1bb81e7ad1e095a2b5e15ab44167bcfc7a0994f0d4b390b136a60f": [
+    "broccoli-core/runtime/drivers/accessibility/cache.py",
+    "runtime/drivers/accessibility/cache.py"
+  ],
+  "6c6b77b87c6167f4af2418b532c13582faa1f798ee99d4e0b860d308428a4f3e": [
+    "broccoli-core/runtime/drivers/accessibility/consumers.py",
+    "runtime/drivers/accessibility/consumers.py"
+  ],
+  "0a9d51d9556d3c1b1561f9d03309d977fd7a1c8855a7b7e099a353842d8ac8bd": [
+    "broccoli-core/runtime/drivers/accessibility/diff.py",
+    "runtime/drivers/accessibility/diff.py"
+  ],
+  "a3dc27e0151f45297ed352d2c6a8e87d42fa03ab4c48deb3ca84f97de07fd105": [
+    "broccoli-core/runtime/drivers/accessibility/driver.py",
+    "runtime/drivers/accessibility/driver.py"
+  ],
+  "5c41edd33479b9c4de77344e98aa3e23982ab6ce9a7f9ffd4a4af5e15f2072ef": [
+    "broccoli-core/runtime/drivers/accessibility/events.py",
+    "runtime/drivers/accessibility/events.py"
+  ],
+  "a7c0dfd7a127cd29c08ca8b90ec4745fc35e1254f121d838b6c6645b9d760d5f": [
+    "broccoli-core/runtime/drivers/accessibility/hidden_backend.py",
+    "runtime/drivers/accessibility/hidden_backend.py"
+  ],
+  "387d4b153ac986fb04ddbfbff8653ef3d80716ec398910f3f0266c6ead9459a0": [
+    "broccoli-core/runtime/drivers/accessibility/manager.py",
+    "runtime/drivers/accessibility/manager.py"
+  ],
+  "e52707914093e65a9faa09266496dab2120fde9fe1dfa02ae7f481de5c1e45dd": [
+    "broccoli-core/runtime/drivers/accessibility/observer.py",
+    "runtime/drivers/accessibility/observer.py"
+  ],
+  "dac0d3b5e3e7d1f2a217334f53f9fddafbd7ae921aaa0c5189811ce4671c3b08": [
+    "broccoli-core/runtime/drivers/accessibility/public_backend.py",
+    "runtime/drivers/accessibility/public_backend.py"
+  ],
+  "c200157fdc0100b50e31310f536e59d59ffbf34d77807ae66c5068bf74e5081e": [
+    "broccoli-core/runtime/drivers/accessibility/semantic.py",
+    "runtime/drivers/accessibility/semantic.py"
+  ],
+  "eae1e87df9f1a4ba56b43d5a615ad756aafa623dec9826491cfffed1326fbdff": [
+    "broccoli-core/runtime/drivers/accessibility/window.py",
+    "runtime/drivers/accessibility/window.py"
+  ],
+  "e29b576580273e60d56e768733cc00be6baf6863d53e12e96ee267ce69630ab3": [
+    "broccoli-core/runtime/drivers/accessibility/xml_parser.py",
+    "runtime/drivers/accessibility/xml_parser.py"
+  ],
+  "34058dadd3e39666ad4e36c031b320667c85e24071eeb2885d7c68af9fc1b9a2": [
+    "broccoli-core/plugins/core/base.py",
+    "plugins/core/base.py"
+  ],
+  "4388093970482b177b1a75d43e40086dfeb39c3fbeee3da2b4e7f98cba529dfe": [
+    "broccoli-core/plugins/core/example.py",
+    "plugins/core/example.py"
+  ],
+  "e6b3bf5987623303f836e7462a96795f182805efb7db0e847c29e029ae0f8a98": [
+    "broccoli-core/drivers/accessibility/driver.py",
+    "drivers/accessibility/driver.py"
+  ],
+  "7b3972aac15ea660ffcaf23ff1c3c23cdbd5e65a43e9ba81332c8aeb551644e0": [
+    "broccoli-core/drivers/overlay/virtual_display.py",
+    "drivers/overlay/virtual_display.py"
+  ],
+  "8d5807c2a44d3e78e7fdaeba80ce5554a4c133243a9c05192c0ccfcb01b9dead": [
+    "broccoli-core/drivers/shizuku/rish.py",
+    "drivers/shizuku/rish.py"
+  ],
+  "73199c46a7849adc9c5e7f5b5c236844210d4fa6ea0097beadde10f512eac996": [
+    "Agent/Broccoli/google_ai_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_194028/home/google_ai_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_205153/home/google_ai_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_205026/home/google_ai_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_204900/home/google_ai_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_203923/home/google_ai_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_203609/home/google_ai_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_203142/home/google_ai_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/home/google_ai_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/home/google_ai_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/home/google_ai_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_194820/home/google_ai_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_194646/home/google_ai_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/home/google_ai_bootstrap.py"
+  ],
+  "bf4168b43610223068b1ce6c8c2bd938d4f3921e8ba632af1bd1d7ef242c819a": [
+    "Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_agent.py",
+    "Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_agent.py",
+    "Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_agent.py",
+    "Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_agent.py",
+    "Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_agent.py",
+    "Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_agent.py",
+    "Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_agent.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_agent.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_agent.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_agent.py",
+    "Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_agent.py",
+    "Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_agent.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_agent.py"
+  ],
+  "d57f189efb5e446357c17dcfa287aa3400dc1c2f413979b6f733d785b86fcaa1": [
+    "Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_bootstrap.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_bootstrap.py"
+  ],
+  "669b18e7aa0f84447c819dbf97983d292acfa42e0fbb55be927e95b4f2977839": [
+    "Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_compose.py",
+    "Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_compose.py",
+    "Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_compose.py",
+    "Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_compose.py",
+    "Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_compose.py",
+    "Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_compose.py",
+    "Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_compose.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_compose.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_compose.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_compose.py",
+    "Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_compose.py",
+    "Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_compose.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_compose.py"
+  ],
+  "2120822f183cde445dd3c612f96cc7001edb186df4bb73df4604485f8d8b9f8b": [
+    "Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_research.py",
+    "Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_research.py",
+    "Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_research.py",
+    "Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_research.py",
+    "Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_research.py",
+    "Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_research.py",
+    "Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_research.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_research.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_research.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_research.py",
+    "Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_research.py",
+    "Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_research.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_research.py"
+  ],
+  "fe67ba151335fc8b2560d69f645fbf6b3ccc9c2b040e7d74865df6d10b571330": [
+    "Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_rish_pull.py",
+    "Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_rish_pull.py",
+    "Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_rish_pull.py",
+    "Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_rish_pull.py",
+    "Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_rish_pull.py",
+    "Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_rish_pull.py",
+    "Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_rish_pull.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_rish_pull.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_rish_pull.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_rish_pull.py",
+    "Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_rish_pull.py",
+    "Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_rish_pull.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_rish_pull.py"
+  ],
+  "d2941b206f843756f9bc386f2da06a5b0509fe95fd27d31995c2cd853a1e51b5": [
+    "Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_user_wait.py",
+    "Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_user_wait.py",
+    "Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_user_wait.py",
+    "Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_user_wait.py",
+    "Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_user_wait.py",
+    "Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_user_wait.py",
+    "Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_user_wait.py",
+    "Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_user_wait.py",
+    "Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_user_wait.py",
+    "Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_user_wait.py",
+    "Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_user_wait.py",
+    "Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_user_wait.py",
+    "Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_user_wait.py"
+  ]
+}

@@ -2,26 +2,25 @@ from runtime.eventbus.service import bus
 from runtime.governor.repo_governor import RepoGovernor
 
 from runtime.drivers.accessibility.consumers import register_accessibility_consumers
-from config import Config
-from logger import Logger
-from event_bus import EventBus
-from state import RuntimeState
-from metrics import Metrics
-from scheduler import Scheduler
-from health import HealthMonitor
-from lifecycle import Lifecycle
-from governor.engine import Governor
-from drivers.accessibility.driver import AccessibilityDriver
-from plugin_loader import PluginLoader
-from planner.adaptive import AdaptivePlanner
-from workflow.queue import TaskQueue
-from workflow.executor import Executor as WorkflowExecutor
-from providers.grok import GrokProvider
-from memory.knowledge_graph import KnowledgeGraph
-from agents.coordinator import AgentCoordinator
-from agents.grok_agent import GrokAgent
-from autonomy.goal_manager import GoalManager
-from autonomy.recovery import RecoveryManager
+from runtime.config import Config
+from runtime.logger import Logger
+from runtime.state import RuntimeState
+from runtime.metrics import Metrics
+from runtime.scheduler import Scheduler
+from runtime.health import HealthMonitor
+from runtime.lifecycle import Lifecycle
+from runtime.governor.engine import Governor
+from runtime.drivers.accessibility.driver import AccessibilityDriver
+from runtime.plugin_loader import PluginLoader
+from runtime.planner.adaptive import AdaptivePlanner
+from runtime.workflow.queue import TaskQueue
+from runtime.workflow.executor import Executor as WorkflowExecutor
+from runtime.providers.grok import GrokProvider
+from runtime.memory.knowledge_graph import KnowledgeGraph
+from runtime.agents.coordinator import AgentCoordinator
+from runtime.agents.grok_agent import GrokAgent
+from runtime.autonomy.goal_manager import GoalManager
+from runtime.autonomy.recovery import RecoveryManager
 import time
 
 # How often (in ticks) to run a full recovery scan.
@@ -31,7 +30,6 @@ RECOVERY_SCAN_EVERY = 10
 def main():
     config = Config().load()
     logger = Logger()
-    bus = EventBus()
     state = RuntimeState()
     metrics = Metrics()
     scheduler = Scheduler()
@@ -92,3 +90,28 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# Capability monitoring hook
+def capability_status(event):
+    try:
+        print(
+            "Capability:",
+            event.get("capability"),
+            "available=",
+            event.get("available"),
+            "fallback=",
+            event.get("fallback")
+        )
+    except Exception:
+        pass
+
+
+try:
+    bus.subscribe(
+        "CAPABILITY_STATUS",
+        capability_status
+    )
+except Exception:
+    pass
+

@@ -1,0 +1,9 @@
+{
+  "created": "2026-07-29T01:44:50.524544+00:00",
+  "purpose": "Broccoli Core development quarantine archive",
+  "policy": {
+    "delete": false,
+    "preserve_history": true,
+    "restore_possible": true
+  }
+}

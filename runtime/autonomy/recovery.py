@@ -1,7 +1,7 @@
 """RecoveryManager – uses the same shared Executor as GoalManager."""
 from .executor import Executor, GoalStatus
 from .goal_manager import get_shared_executor
-from event_bus import EventBus
+from runtime.eventbus import EventBus
 
 class RecoveryManager:
     def __init__(self, bus: EventBus):

@@ -1,0 +1,102 @@
+# Canonical Runtime Candidates
+
+- pathlib | imports=759 | reachable=False
+- sys | imports=175 | reachable=False
+- subprocess | imports=108 | reachable=False
+- json, subprocess, sys, time | imports=108 | reachable=False
+- os | imports=98 | reachable=False
+- broccoli_rish_shell | imports=94 | reachable=False
+- time | imports=86 | reachable=False
+- task_queue | imports=81 | reachable=False
+- json | imports=73 | reachable=False
+- typing | imports=69 | reachable=False
+- json, time | imports=64 | reachable=False
+- broccoli_ui_dump | imports=64 | reachable=False
+- re | imports=63 | reachable=False
+- grok_xml_parse | imports=59 | reachable=False
+- argparse | imports=49 | reachable=False
+- __future__ | imports=49 | reachable=False
+- broccoli_strategy | imports=40 | reachable=False
+- sys, json | imports=35 | reachable=False
+- dataclasses | imports=35 | reachable=False
+- event_bus | imports=33 | reachable=False
+- smoke_autoheal | imports=32 | reachable=False
+- toast | imports=31 | reachable=False
+- xml | imports=31 | reachable=False
+- json, re, subprocess, sys, time | imports=28 | reachable=False
+-  | imports=28 | reachable=False
+- importlib | imports=28 | reachable=False
+- broccoli_input | imports=28 | reachable=False
+- hashlib | imports=27 | reachable=False
+- display_context | imports=24 | reachable=False
+- display_lane | imports=23 | reachable=False
+- datetime | imports=22 | reachable=False
+- json, re, sys | imports=20 | reachable=False
+- collections | imports=19 | reachable=False
+- re, subprocess, sys | imports=18 | reachable=False
+- subprocess, time | imports=18 | reachable=False
+- logging | imports=18 | reachable=False
+- os, re, subprocess, shutil | imports=18 | reachable=False
+- json, os, subprocess, sys, time | imports=17 | reachable=False
+- modules | imports=16 | reachable=False
+- runtime | imports=16 | reachable=False
+- workflow | imports=16 | reachable=False
+- threading | imports=16 | reachable=False
+- os, time | imports=16 | reachable=False
+- subprocess, sys, re, json | imports=16 | reachable=False
+- json, subprocess, time | imports=16 | reachable=False
+- dump_ui_fallback as _duf | imports=16 | reachable=False
+- subprocess as _sp | imports=16 | reachable=False
+- sys as _sys | imports=16 | reachable=False
+- time as _t | imports=16 | reachable=False
+- idle_takeover | imports=15 | reachable=False
+- task_current | imports=14 | reachable=False
+- os, time, json, subprocess | imports=14 | reachable=False
+- os, re, time, subprocess | imports=14 | reachable=False
+- os, re, time, xml | imports=14 | reachable=False
+- re, subprocess, sys, time | imports=14 | reachable=False
+- ui_dump_loop | imports=14 | reachable=False
+- ui_state | imports=14 | reachable=False
+- re,sys,os,time,subprocess,shutil,json | imports=14 | reachable=False
+- sys as _sys_gps | imports=13 | reachable=False
+- json, os, shutil, subprocess, time | imports=13 | reachable=False
+- json, os, re, subprocess | imports=12 | reachable=False
+- os, re, time, json, xml | imports=12 | reachable=False
+- broccoli_selftest | imports=12 | reachable=False
+- broccoli_send | imports=12 | reachable=False
+- json, os, subprocess, sys | imports=11 | reachable=False
+- broccoli_agentic_chat | imports=10 | reachable=False
+- hashlib, json, re, sys | imports=10 | reachable=False
+- json, re | imports=9 | reachable=False
+- subprocess, sys | imports=9 | reachable=False
+- drivers | imports=8 | reachable=False
+- hashlib, time | imports=8 | reachable=False
+- task_complete | imports=7 | reachable=False
+- user_task_wait | imports=7 | reachable=False
+- re, subprocess | imports=7 | reachable=False
+- json, time, re | imports=7 | reachable=False
+- rish_adb | imports=7 | reachable=False
+- subprocess, sys, time | imports=7 | reachable=False
+- idle_detect | imports=7 | reachable=False
+- json, re, subprocess, time | imports=7 | reachable=False
+- shutil, subprocess, sys | imports=7 | reachable=False
+- code_from_chat | imports=7 | reachable=False
+- subprocess, shutil, os | imports=7 | reachable=False
+- providers | imports=6 | reachable=False
+- problem_solver | imports=6 | reachable=False
+- unittest | imports=6 | reachable=False
+- os, subprocess | imports=6 | reachable=False
+- argparse, json, shutil, time | imports=6 | reachable=False
+- json, hashlib, time, sys | imports=6 | reachable=False
+- subprocess, sys, hashlib | imports=6 | reachable=False
+- json, subprocess, sys, time, importlib | imports=6 | reachable=False
+- os as _cp_os | imports=6 | reachable=False
+- os as _os_emit | imports=6 | reachable=False
+- subprocess as _cp_sp, sys as _cp_sys | imports=6 | reachable=False
+- subprocess as _sp, sys as _sys | imports=6 | reachable=False
+- subprocess, sys, time, fcntl | imports=6 | reachable=False
+- abc | imports=6 | reachable=False
+- argparse, json, re, sys | imports=5 | reachable=False
+- subprocess, sys, time, shutil | imports=5 | reachable=False
+- hashlib, json, re, subprocess, sys, time, shutil | imports=5 | reachable=False
+- json, re, subprocess, sys, time, shutil, tempfile | imports=5 | reachable=False

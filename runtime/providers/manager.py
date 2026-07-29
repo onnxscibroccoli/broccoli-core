@@ -1,5 +1,5 @@
 from typing import Dict
-from event_bus import EventBus
+from runtime.eventbus import EventBus
 
 class ProviderManager:
     def __init__(self, bus: EventBus):

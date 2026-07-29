@@ -39,3 +39,19 @@ def parse_uiautomator_xml(xml_string):
     except ET.ParseError as e:
         logger.error(f"Failed to parse XML: {e}")
     return nodes
+
+
+def is_valid_xml(xml_text):
+    if not xml_text:
+        return False
+
+    if "<?xml" not in xml_text:
+        return False
+
+    if "<hierarchy" not in xml_text:
+        return False
+
+    if "</hierarchy>" not in xml_text:
+        return False
+
+    return True

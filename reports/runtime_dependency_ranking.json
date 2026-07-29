@@ -1,0 +1,1072 @@
+{
+  "generated": "2026-07-29T01:46:41.355147+00:00",
+  "ranking": [
+    {
+      "module": "broccoli_rish_shell",
+      "dependents": 92,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/tools/device_innovate_smoke.py",
+        "/data/data/com.termux/files/home/broccoli-core/tools/heal_debug_all.py",
+        "/data/data/com.termux/files/home/broccoli-core/tools/broccoli_agentic_selftest.py",
+        "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_a11y_rish.py",
+        "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_manual.py"
+      ]
+    },
+    {
+      "module": "task_queue",
+      "dependents": 81,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/broccoli_task_queue.py",
+        "/data/data/com.termux/files/home/broccoli-core/workflow_front.py",
+        "/data/data/com.termux/files/home/broccoli-core/quarry_iter.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/broccoli_task_queue.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/quarry_iter.py"
+      ]
+    },
+    {
+      "module": "broccoli_ui_dump",
+      "dependents": 64,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/tools/broccoli_agentic_selftest.py",
+        "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_manual.py",
+        "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_a11y_send.py",
+        "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_agentic_chat.py",
+        "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_input.py"
+      ]
+    },
+    {
+      "module": "grok_xml_parse",
+      "dependents": 59,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/smoke_lesson_foreground.py",
+        "/data/data/com.termux/files/home/broccoli-core/quarry_iter.py",
+        "/data/data/com.termux/files/home/broccoli-core/smoke_fast.py",
+        "/data/data/com.termux/files/home/broccoli-core/tools/grok_smoke_validate.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/quarry_iter.py"
+      ]
+    },
+    {
+      "module": "__future__",
+      "dependents": 49,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/broccoli_bootstrap.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli_report.py",
+        "/data/data/com.termux/files/home/broccoli-core/chat_scraper.py",
+        "/data/data/com.termux/files/home/broccoli-core/tools/investigate_system.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/broccoli_bootstrap.py"
+      ]
+    },
+    {
+      "module": "broccoli_strategy",
+      "dependents": 40,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_a11y_send.py",
+        "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_agentic_chat.py",
+        "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_input.py",
+        "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_send.py",
+        "/data/data/com.termux/files/home/broccoli-core/state/walk_stage/broccoli_agentic_chat.py"
+      ]
+    },
+    {
+      "module": "event_bus",
+      "dependents": 39,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/deploy_phase2.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/integrate_problem_solver.py",
+        "/data/data/com.termux/files/home/broccoli-core/_quarantine/broccoli-core/runtime/governor/engine.py",
+        "/data/data/com.termux/files/home/broccoli-core/_quarantine/tilde-artifact/broccoli-core/autonomy/bridge.py"
+      ]
+    },
+    {
+      "module": "smoke_autoheal",
+      "dependents": 32,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/broccoli_meta_heal.py",
+        "/data/data/com.termux/files/home/broccoli-core/smoke_fast.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/broccoli_meta_heal.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/smoke_fast.py",
+        "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_4/broccoli_meta_heal.py"
+      ]
+    },
+    {
+      "module": "toast",
+      "dependents": 31,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/workflow_front.py",
+        "/data/data/com.termux/files/home/broccoli-core/smoke_fast.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/smoke_fast.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/workflow_front.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/smoke_fast.py"
+      ]
+    },
+    {
+      "module": "broccoli_input",
+      "dependents": 28,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_manual.py",
+        "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_a11y_send.py",
+        "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_agentic_chat.py",
+        "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_selftest.py",
+        "/data/data/com.termux/files/home/broccoli-core/state/walk_stage/broccoli_agentic_chat.py"
+      ]
+    },
+    {
+      "module": "display_context",
+      "dependents": 24,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/quarry_iter.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/quarry_iter.py",
+        "/data/data/com.termux/files/home/broccoli-core/lib/grok_chat_foreground.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/grok_chat_foreground.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/quarry_iter.py"
+      ]
+    },
+    {
+      "module": "display_lane",
+      "dependents": 23,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/broccoli_secondary_display.py",
+        "/data/data/com.termux/files/home/broccoli-core/tools/google_secondary_test.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/broccoli_secondary_display.py",
+        "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_4/broccoli_secondary_display.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/google_secondary_test.py"
+      ]
+    },
+    {
+      "module": "dump_ui_fallback",
+      "dependents": 16,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_3/broccoli_bootstrap.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_3/broccoli_bootstrap.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/broccoli_bootstrap.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_bootstrap.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_bootstrap.py"
+      ]
+    },
+    {
+      "module": "idle_takeover",
+      "dependents": 15,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/daemon_idle_loop.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/daemon_idle_loop.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/daemon_idle_loop.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205153/broccoli/daemon_idle_loop.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205026/broccoli/daemon_idle_loop.py"
+      ]
+    },
+    {
+      "module": "task_current",
+      "dependents": 14,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/lib/agent_loop.py",
+        "/data/data/com.termux/files/home/broccoli-core/lib/recursive_impl.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/agent_loop.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/recursive_impl.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/agent_loop.py"
+      ]
+    },
+    {
+      "module": "ui_dump_loop",
+      "dependents": 14,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/lib/recursive_impl.py",
+        "/data/data/com.termux/files/home/broccoli-core/lib/task_complete.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/recursive_impl.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/task_complete.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/recursive_impl.py"
+      ]
+    },
+    {
+      "module": "ui_state",
+      "dependents": 14,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/lib/recursive_impl.py",
+        "/data/data/com.termux/files/home/broccoli-core/lib/task_complete.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/recursive_impl.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/task_complete.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/recursive_impl.py"
+      ]
+    },
+    {
+      "module": "executor",
+      "dependents": 14,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/_quarantine/tilde-artifact/broccoli-core/autonomy/bridge.py",
+        "/data/data/com.termux/files/home/broccoli-core/_quarantine/tilde-artifact/broccoli-core/autonomy/demo_supervisor.py",
+        "/data/data/com.termux/files/home/broccoli-core/_quarantine/tilde-artifact/broccoli-core/autonomy/goal_cli.py",
+        "/data/data/com.termux/files/home/broccoli-core/_quarantine/tilde-artifact/broccoli-core/autonomy/supervisor.py",
+        "/data/data/com.termux/files/home/broccoli-core/_quarantine/tilde-artifact/broccoli-core/autonomy/test_integration.py"
+      ]
+    },
+    {
+      "module": "broccoli_selftest",
+      "dependents": 12,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_agentic_chat.py",
+        "/data/data/com.termux/files/home/broccoli-core/state/walk_stage/broccoli_agentic_chat.py",
+        "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_0/broccoli_agentic_chat.py",
+        "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_5/broccoli_agentic_chat.py",
+        "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_1/broccoli_agentic_chat.py"
+      ]
+    },
+    {
+      "module": "broccoli_send",
+      "dependents": 12,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_agentic_chat.py",
+        "/data/data/com.termux/files/home/broccoli-core/state/walk_stage/broccoli_agentic_chat.py",
+        "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_0/broccoli_agentic_chat.py",
+        "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_5/broccoli_agentic_chat.py",
+        "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_1/broccoli_agentic_chat.py"
+      ]
+    },
+    {
+      "module": "modules.registry",
+      "dependents": 12,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/modules/chat_store.py",
+        "/data/data/com.termux/files/home/broccoli-core/modules/a11y_probe.py",
+        "/data/data/com.termux/files/home/broccoli-core/modules/chat_harvest.py",
+        "/data/data/com.termux/files/home/broccoli-core/modules/chat_nav.py",
+        "/data/data/com.termux/files/home/broccoli-core/modules/chat_reader.py"
+      ]
+    },
+    {
+      "module": "uuid",
+      "dependents": 11,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/workflow/task.py",
+        "/data/data/com.termux/files/home/broccoli-core/_quarantine/tilde-artifact/broccoli/autonomy/executor.py",
+        "/data/data/com.termux/files/home/broccoli-core/_quarantine/tilde-artifact/broccoli-core/autonomy/executor.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/workflow/task.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/autonomy/executor.py"
+      ]
+    },
+    {
+      "module": "workflow.queue",
+      "dependents": 10,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/agents/coordinator.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/planner/adaptive.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/planner/planner.py"
+      ]
+    },
+    {
+      "module": "broccoli_agentic_chat",
+      "dependents": 10,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/tools/agentic_run_once.py",
+        "/data/data/com.termux/files/home/broccoli-core/tools/broccoli_agentic_loop.py",
+        "/data/data/com.termux/files/home/broccoli-core/tools/broccoli_agentic_selftest.py",
+        "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_a11y_send.py",
+        "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_0/broccoli_a11y_send.py"
+      ]
+    },
+    {
+      "module": "runtime.logger",
+      "dependents": 8,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/plugins/example_plugin.py",
+        "/data/data/com.termux/files/home/broccoli-core/workflow/decision.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/plugins/example_plugin.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/workflow/decision.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/services/daemon.py"
+      ]
+    },
+    {
+      "module": "workflow.task",
+      "dependents": 8,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/workflow/executor.py",
+        "/data/data/com.termux/files/home/broccoli-core/workflow/queue.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/workflow/executor.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/workflow/queue.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/planner/planner.py"
+      ]
+    },
+    {
+      "module": "enum",
+      "dependents": 8,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/_quarantine/tilde-artifact/broccoli/autonomy/executor.py",
+        "/data/data/com.termux/files/home/broccoli-core/_quarantine/tilde-artifact/broccoli-core/autonomy/executor.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/autonomy/executor.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/events.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/_quarantine/tilde-artifact/broccoli/autonomy/executor.py"
+      ]
+    },
+    {
+      "module": "task_complete",
+      "dependents": 7,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/lib/agent_loop.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/agent_loop.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/agent_loop.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/agent_loop.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/agent_loop.py"
+      ]
+    },
+    {
+      "module": "user_task_wait",
+      "dependents": 7,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/lib/agent_loop.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/agent_loop.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/agent_loop.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/agent_loop.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/agent_loop.py"
+      ]
+    },
+    {
+      "module": "rish_adb",
+      "dependents": 7,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/lib/grok_open_loop.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/grok_open_loop.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/grok_open_loop.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/grok_open_loop.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/grok_open_loop.py"
+      ]
+    },
+    {
+      "module": "idle_detect",
+      "dependents": 7,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/lib/idle_takeover.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/idle_takeover.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/idle_takeover.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/idle_takeover.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/idle_takeover.py"
+      ]
+    },
+    {
+      "module": "code_from_chat",
+      "dependents": 7,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/lib/recursive_impl.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/recursive_impl.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/recursive_impl.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/recursive_impl.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/recursive_impl.py"
+      ]
+    },
+    {
+      "module": "problem_solver",
+      "dependents": 6,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/android_collectors.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/default_collectors.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/default_reasoner.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/default_remediator.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/problem_runtime.py"
+      ]
+    },
+    {
+      "module": "sqlite3",
+      "dependents": 6,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/tools/broccoli_conv_archive.py",
+        "/data/data/com.termux/files/home/broccoli-core/lib/catalog_loop_hook.py",
+        "/data/data/com.termux/files/home/broccoli-core/lib/closed_loop.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/catalog_loop_hook.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/closed_loop.py"
+      ]
+    },
+    {
+      "module": "fcntl",
+      "dependents": 6,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/meta/brocc_watch.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/meta/brocc_watch.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/meta/brocc_watch.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/meta/brocc_watch.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/meta/brocc_watch.py"
+      ]
+    },
+    {
+      "module": "modules.state_probe",
+      "dependents": 6,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/modules/chat_harvest.py",
+        "/data/data/com.termux/files/home/broccoli-core/modules/chat_reader.py",
+        "/data/data/com.termux/files/home/broccoli-core/modules/ui_dump.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/modules/chat_harvest.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/modules/chat_reader.py"
+      ]
+    },
+    {
+      "module": "backend",
+      "dependents": 6,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/hidden_backend.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/manager.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/public_backend.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/hidden_backend.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/manager.py"
+      ]
+    },
+    {
+      "module": "tempfile",
+      "dependents": 5,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/tools/broccoli_agent.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/broccoli_agent.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/broccoli_agent.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/broccoli_agent.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/tools/broccoli_agent.py"
+      ]
+    },
+    {
+      "module": "brocc_toast",
+      "dependents": 5,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/tools/google_secondary_test.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/google_secondary_test.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/google_secondary_test.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/google_secondary_test.py",
+        "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/tools/google_secondary_test.py"
+      ]
+    },
+    {
+      "module": "plugins.core.base",
+      "dependents": 4,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/plugins/example_plugin.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/plugins/example_plugin.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/plugins/core/example.py",
+        "/data/data/com.termux/files/home/broccoli-core/plugins/core/example.py"
+      ]
+    },
+    {
+      "module": "drivers.accessibility.driver",
+      "dependents": 4,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/workflow/executor.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/workflow/executor.py"
+      ]
+    },
+    {
+      "module": "providers.grok",
+      "dependents": 4,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/workflow/executor.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/workflow/executor.py"
+      ]
+    },
+    {
+      "module": "runtime.eventbus.service",
+      "dependents": 4,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/governor/repo_governor.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/governor/test_repo_governor.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/eventbus/test_service.py"
+      ]
+    },
+    {
+      "module": "state",
+      "dependents": 4,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/governor/engine.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/governor/engine.py"
+      ]
+    },
+    {
+      "module": "gzip",
+      "dependents": 4,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/tools/drive_upload_mem.py",
+        "/data/data/com.termux/files/home/broccoli-core/tools/broccoli_conv_archive.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/broccoli_conv_archive.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/drive_upload_mem.py"
+      ]
+    },
+    {
+      "module": "broccoli_adb_ui",
+      "dependents": 4,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/tools/broccoli_infinite_dev_loop.py",
+        "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_core_round.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_core_round.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/broccoli_infinite_dev_loop.py"
+      ]
+    },
+    {
+      "module": "broccoli_log",
+      "dependents": 4,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/tools/broccoli_infinite_dev_loop.py",
+        "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_recv_copy_rish.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_recv_copy_rish.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/broccoli_infinite_dev_loop.py"
+      ]
+    },
+    {
+      "module": "broccoli_core_round",
+      "dependents": 4,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/tools/version_walk_heal.py",
+        "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_rish_ui.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_rish_ui.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/version_walk_heal.py"
+      ]
+    },
+    {
+      "module": "ast",
+      "dependents": 4,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/tools/dependency_analyzer.py",
+        "/data/data/com.termux/files/home/broccoli-core/tools/runtime_path_analyzer.py",
+        "/data/data/com.termux/files/home/broccoli-core/tools/conflict_analyzer.py",
+        "/data/data/com.termux/files/home/broccoli-core/tools/build_dependency_report_v2.py"
+      ]
+    },
+    {
+      "module": "broccoli_a11y_rish",
+      "dependents": 4,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_a11y_send.py",
+        "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_0/broccoli_a11y_send.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_a11y_send.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_a11y_send.py"
+      ]
+    },
+    {
+      "module": "rish_cmd",
+      "dependents": 4,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/scripts/grok_universal_cycle.py",
+        "/data/data/com.termux/files/home/broccoli-core/scripts/tap_send.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/scripts/grok_universal_cycle.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/scripts/tap_send.py"
+      ]
+    },
+    {
+      "module": "semantic",
+      "dependents": 4,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/_quarantine/broccoli-core/runtime/drivers/accessibility/driver.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/window.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/_quarantine/broccoli-core/runtime/drivers/accessibility/driver.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/window.py"
+      ]
+    },
+    {
+      "module": "events",
+      "dependents": 4,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/diff.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/observer.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/diff.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/observer.py"
+      ]
+    },
+    {
+      "module": "drivers.accessibility.consumers",
+      "dependents": 3,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/deploy_phase2.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/deploy_phase2.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/main.py"
+      ]
+    },
+    {
+      "module": "lib.broccoli_guard",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/broccoli_bootstrap.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/broccoli_bootstrap.py"
+      ]
+    },
+    {
+      "module": "modules.kxt_xxd",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/broccoli_bootstrap.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/broccoli_bootstrap.py"
+      ]
+    },
+    {
+      "module": "modules.offline_sanitizer",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/broccoli_bootstrap.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/broccoli_bootstrap.py"
+      ]
+    },
+    {
+      "module": "chat_scraper",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/broccoli_chat_loop.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/broccoli_chat_loop.py"
+      ]
+    },
+    {
+      "module": "binascii",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/dump_project.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/dump_project.py"
+      ]
+    },
+    {
+      "module": "glob",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/sync_and_purge.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/sync_and_purge.py"
+      ]
+    },
+    {
+      "module": "agents.coordinator",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/main.py"
+      ]
+    },
+    {
+      "module": "agents.grok_agent",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/main.py"
+      ]
+    },
+    {
+      "module": "autonomy.goal_manager",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/main.py"
+      ]
+    },
+    {
+      "module": "autonomy.recovery",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/main.py"
+      ]
+    },
+    {
+      "module": "config",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/main.py"
+      ]
+    },
+    {
+      "module": "governor.engine",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/main.py"
+      ]
+    },
+    {
+      "module": "health",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/main.py"
+      ]
+    },
+    {
+      "module": "lifecycle",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/main.py"
+      ]
+    },
+    {
+      "module": "logger",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/main.py"
+      ]
+    },
+    {
+      "module": "memory.knowledge_graph",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/main.py"
+      ]
+    },
+    {
+      "module": "metrics",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/main.py"
+      ]
+    },
+    {
+      "module": "planner.adaptive",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/main.py"
+      ]
+    },
+    {
+      "module": "plugin_loader",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/main.py"
+      ]
+    },
+    {
+      "module": "runtime.governor.repo_governor",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/governor/test_repo_governor.py"
+      ]
+    },
+    {
+      "module": "scheduler",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/main.py"
+      ]
+    },
+    {
+      "module": "workflow.executor",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/main.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/main.py"
+      ]
+    },
+    {
+      "module": "models.semantic",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/normalizer.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/normalizer.py"
+      ]
+    },
+    {
+      "module": "drivers.accessibility.observer",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/deploy_phase2.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/deploy_phase2.py"
+      ]
+    },
+    {
+      "module": "drivers.accessibility.xml_parser",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/deploy_phase2.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/deploy_phase2.py"
+      ]
+    },
+    {
+      "module": "default_collectors",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/integrate_problem_solver.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/test_problem_solver.py"
+      ]
+    },
+    {
+      "module": "default_reasoner",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/integrate_problem_solver.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/test_problem_solver.py"
+      ]
+    },
+    {
+      "module": "default_remediator",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/integrate_problem_solver.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/test_problem_solver.py"
+      ]
+    },
+    {
+      "module": "io",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/tools/drive_upload_mem.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/drive_upload_mem.py"
+      ]
+    },
+    {
+      "module": "broccoli_device",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/tools/device_innovate_smoke.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/device_innovate_smoke.py"
+      ]
+    },
+    {
+      "module": "broccoli_notif",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/tools/broccoli_infinite_dev_loop.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/broccoli_infinite_dev_loop.py"
+      ]
+    },
+    {
+      "module": "concurrent.futures",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/simulation/test_stress.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/simulation/test_stress.py"
+      ]
+    },
+    {
+      "module": "tracemalloc",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/simulation/test_stress.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/simulation/test_stress.py"
+      ]
+    },
+    {
+      "module": "modules.sysdump.buffer",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/daemons/sysdumpd.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/daemons/sysdumpd.py"
+      ]
+    },
+    {
+      "module": "modules.sysdump.collector",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/daemons/sysdumpd.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/daemons/sysdumpd.py"
+      ]
+    },
+    {
+      "module": "broccoli.lib.broccoli_rish_shell",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_device.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_device.py"
+      ]
+    },
+    {
+      "module": "fnmatch",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_guard.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_guard.py"
+      ]
+    },
+    {
+      "module": "broccoli_rish_adb",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_recv_copy_rish.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_recv_copy_rish.py"
+      ]
+    },
+    {
+      "module": "random",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/lib/rish_cmd.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/rish_cmd.py"
+      ]
+    },
+    {
+      "module": "broccoli_retry",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/scripts/grok_context_send_retry.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/scripts/grok_context_send_retry.py"
+      ]
+    },
+    {
+      "module": "modules",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/modules/chat_harvest.py",
+        "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/modules/chat_harvest.py"
+      ]
+    },
+    {
+      "module": "constants",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/_quarantine/broccoli-core/runtime/governor/engine.py",
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/_quarantine/broccoli-core/runtime/governor/engine.py"
+      ]
+    },
+    {
+      "module": "goal_manager",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/autonomy/recovery.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/autonomy/recovery.py"
+      ]
+    },
+    {
+      "module": "base",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/capabilities/registry.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/capabilities/registry.py"
+      ]
+    },
+    {
+      "module": "planner.planner",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/planner/adaptive.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/planner/adaptive.py"
+      ]
+    },
+    {
+      "module": "providers.base",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/providers/grok.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/providers/grok.py"
+      ]
+    },
+    {
+      "module": "runtime.metrics",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/services/daemon.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/services/daemon.py"
+      ]
+    },
+    {
+      "module": "manager",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/driver.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/driver.py"
+      ]
+    },
+    {
+      "module": "observer",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/driver.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/driver.py"
+      ]
+    },
+    {
+      "module": "xml_parser",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/driver.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/driver.py"
+      ]
+    },
+    {
+      "module": "hidden_backend",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/manager.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/manager.py"
+      ]
+    },
+    {
+      "module": "public_backend",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/manager.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/manager.py"
+      ]
+    },
+    {
+      "module": "cache",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/observer.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/observer.py"
+      ]
+    },
+    {
+      "module": "diff",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/observer.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/observer.py"
+      ]
+    },
+    {
+      "module": "event",
+      "dependents": 2,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/eventbus/__init__.py",
+        "/data/data/com.termux/files/home/broccoli-core/runtime/eventbus/bus.py"
+      ]
+    },
+    {
+      "module": "runtime.drivers.accessibility.consumers",
+      "dependents": 1,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/main.py"
+      ]
+    },
+    {
+      "module": "android_collectors",
+      "dependents": 1,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/integrate_problem_solver.py"
+      ]
+    },
+    {
+      "module": "knowledge_learning",
+      "dependents": 1,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/integrate_problem_solver.py"
+      ]
+    },
+    {
+      "module": "problem_runtime",
+      "dependents": 1,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/integrate_problem_solver.py"
+      ]
+    },
+    {
+      "module": "bus",
+      "dependents": 1,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/eventbus/__init__.py"
+      ]
+    },
+    {
+      "module": "runtime.eventbus",
+      "dependents": 1,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/eventbus/test_eventbus.py"
+      ]
+    },
+    {
+      "module": "runtime.eventbus.bus",
+      "dependents": 1,
+      "examples": [
+        "/data/data/com.termux/files/home/broccoli-core/runtime/eventbus/service.py"
+      ]
+    }
+  ]
+}

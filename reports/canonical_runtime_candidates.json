@@ -1,0 +1,942 @@
+{
+  "generated": "2026-07-29T01:45:19.729895+00:00",
+  "top_runtime_dependencies": [
+    {
+      "file": "pathlib",
+      "imports": 759,
+      "runtime_reachable": false
+    },
+    {
+      "file": "sys",
+      "imports": 175,
+      "runtime_reachable": false
+    },
+    {
+      "file": "subprocess",
+      "imports": 108,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, subprocess, sys, time",
+      "imports": 108,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os",
+      "imports": 98,
+      "runtime_reachable": false
+    },
+    {
+      "file": "broccoli_rish_shell",
+      "imports": 94,
+      "runtime_reachable": false
+    },
+    {
+      "file": "time",
+      "imports": 86,
+      "runtime_reachable": false
+    },
+    {
+      "file": "task_queue",
+      "imports": 81,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json",
+      "imports": 73,
+      "runtime_reachable": false
+    },
+    {
+      "file": "typing",
+      "imports": 69,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, time",
+      "imports": 64,
+      "runtime_reachable": false
+    },
+    {
+      "file": "broccoli_ui_dump",
+      "imports": 64,
+      "runtime_reachable": false
+    },
+    {
+      "file": "re",
+      "imports": 63,
+      "runtime_reachable": false
+    },
+    {
+      "file": "grok_xml_parse",
+      "imports": 59,
+      "runtime_reachable": false
+    },
+    {
+      "file": "argparse",
+      "imports": 49,
+      "runtime_reachable": false
+    },
+    {
+      "file": "__future__",
+      "imports": 49,
+      "runtime_reachable": false
+    },
+    {
+      "file": "broccoli_strategy",
+      "imports": 40,
+      "runtime_reachable": false
+    },
+    {
+      "file": "sys, json",
+      "imports": 35,
+      "runtime_reachable": false
+    },
+    {
+      "file": "dataclasses",
+      "imports": 35,
+      "runtime_reachable": false
+    },
+    {
+      "file": "event_bus",
+      "imports": 33,
+      "runtime_reachable": false
+    },
+    {
+      "file": "smoke_autoheal",
+      "imports": 32,
+      "runtime_reachable": false
+    },
+    {
+      "file": "toast",
+      "imports": 31,
+      "runtime_reachable": false
+    },
+    {
+      "file": "xml",
+      "imports": 31,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, re, subprocess, sys, time",
+      "imports": 28,
+      "runtime_reachable": false
+    },
+    {
+      "file": "",
+      "imports": 28,
+      "runtime_reachable": false
+    },
+    {
+      "file": "importlib",
+      "imports": 28,
+      "runtime_reachable": false
+    },
+    {
+      "file": "broccoli_input",
+      "imports": 28,
+      "runtime_reachable": false
+    },
+    {
+      "file": "hashlib",
+      "imports": 27,
+      "runtime_reachable": false
+    },
+    {
+      "file": "display_context",
+      "imports": 24,
+      "runtime_reachable": false
+    },
+    {
+      "file": "display_lane",
+      "imports": 23,
+      "runtime_reachable": false
+    },
+    {
+      "file": "datetime",
+      "imports": 22,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, re, sys",
+      "imports": 20,
+      "runtime_reachable": false
+    },
+    {
+      "file": "collections",
+      "imports": 19,
+      "runtime_reachable": false
+    },
+    {
+      "file": "re, subprocess, sys",
+      "imports": 18,
+      "runtime_reachable": false
+    },
+    {
+      "file": "subprocess, time",
+      "imports": 18,
+      "runtime_reachable": false
+    },
+    {
+      "file": "logging",
+      "imports": 18,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os, re, subprocess, shutil",
+      "imports": 18,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, os, subprocess, sys, time",
+      "imports": 17,
+      "runtime_reachable": false
+    },
+    {
+      "file": "modules",
+      "imports": 16,
+      "runtime_reachable": false
+    },
+    {
+      "file": "runtime",
+      "imports": 16,
+      "runtime_reachable": false
+    },
+    {
+      "file": "workflow",
+      "imports": 16,
+      "runtime_reachable": false
+    },
+    {
+      "file": "threading",
+      "imports": 16,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os, time",
+      "imports": 16,
+      "runtime_reachable": false
+    },
+    {
+      "file": "subprocess, sys, re, json",
+      "imports": 16,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, subprocess, time",
+      "imports": 16,
+      "runtime_reachable": false
+    },
+    {
+      "file": "dump_ui_fallback as _duf",
+      "imports": 16,
+      "runtime_reachable": false
+    },
+    {
+      "file": "subprocess as _sp",
+      "imports": 16,
+      "runtime_reachable": false
+    },
+    {
+      "file": "sys as _sys",
+      "imports": 16,
+      "runtime_reachable": false
+    },
+    {
+      "file": "time as _t",
+      "imports": 16,
+      "runtime_reachable": false
+    },
+    {
+      "file": "idle_takeover",
+      "imports": 15,
+      "runtime_reachable": false
+    },
+    {
+      "file": "task_current",
+      "imports": 14,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os, time, json, subprocess",
+      "imports": 14,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os, re, time, subprocess",
+      "imports": 14,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os, re, time, xml",
+      "imports": 14,
+      "runtime_reachable": false
+    },
+    {
+      "file": "re, subprocess, sys, time",
+      "imports": 14,
+      "runtime_reachable": false
+    },
+    {
+      "file": "ui_dump_loop",
+      "imports": 14,
+      "runtime_reachable": false
+    },
+    {
+      "file": "ui_state",
+      "imports": 14,
+      "runtime_reachable": false
+    },
+    {
+      "file": "re,sys,os,time,subprocess,shutil,json",
+      "imports": 14,
+      "runtime_reachable": false
+    },
+    {
+      "file": "sys as _sys_gps",
+      "imports": 13,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, os, shutil, subprocess, time",
+      "imports": 13,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, os, re, subprocess",
+      "imports": 12,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os, re, time, json, xml",
+      "imports": 12,
+      "runtime_reachable": false
+    },
+    {
+      "file": "broccoli_selftest",
+      "imports": 12,
+      "runtime_reachable": false
+    },
+    {
+      "file": "broccoli_send",
+      "imports": 12,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, os, subprocess, sys",
+      "imports": 11,
+      "runtime_reachable": false
+    },
+    {
+      "file": "broccoli_agentic_chat",
+      "imports": 10,
+      "runtime_reachable": false
+    },
+    {
+      "file": "hashlib, json, re, sys",
+      "imports": 10,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, re",
+      "imports": 9,
+      "runtime_reachable": false
+    },
+    {
+      "file": "subprocess, sys",
+      "imports": 9,
+      "runtime_reachable": false
+    },
+    {
+      "file": "drivers",
+      "imports": 8,
+      "runtime_reachable": false
+    },
+    {
+      "file": "hashlib, time",
+      "imports": 8,
+      "runtime_reachable": false
+    },
+    {
+      "file": "task_complete",
+      "imports": 7,
+      "runtime_reachable": false
+    },
+    {
+      "file": "user_task_wait",
+      "imports": 7,
+      "runtime_reachable": false
+    },
+    {
+      "file": "re, subprocess",
+      "imports": 7,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, time, re",
+      "imports": 7,
+      "runtime_reachable": false
+    },
+    {
+      "file": "rish_adb",
+      "imports": 7,
+      "runtime_reachable": false
+    },
+    {
+      "file": "subprocess, sys, time",
+      "imports": 7,
+      "runtime_reachable": false
+    },
+    {
+      "file": "idle_detect",
+      "imports": 7,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, re, subprocess, time",
+      "imports": 7,
+      "runtime_reachable": false
+    },
+    {
+      "file": "shutil, subprocess, sys",
+      "imports": 7,
+      "runtime_reachable": false
+    },
+    {
+      "file": "code_from_chat",
+      "imports": 7,
+      "runtime_reachable": false
+    },
+    {
+      "file": "subprocess, shutil, os",
+      "imports": 7,
+      "runtime_reachable": false
+    },
+    {
+      "file": "providers",
+      "imports": 6,
+      "runtime_reachable": false
+    },
+    {
+      "file": "problem_solver",
+      "imports": 6,
+      "runtime_reachable": false
+    },
+    {
+      "file": "unittest",
+      "imports": 6,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os, subprocess",
+      "imports": 6,
+      "runtime_reachable": false
+    },
+    {
+      "file": "argparse, json, shutil, time",
+      "imports": 6,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, hashlib, time, sys",
+      "imports": 6,
+      "runtime_reachable": false
+    },
+    {
+      "file": "subprocess, sys, hashlib",
+      "imports": 6,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, subprocess, sys, time, importlib",
+      "imports": 6,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os as _cp_os",
+      "imports": 6,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os as _os_emit",
+      "imports": 6,
+      "runtime_reachable": false
+    },
+    {
+      "file": "subprocess as _cp_sp, sys as _cp_sys",
+      "imports": 6,
+      "runtime_reachable": false
+    },
+    {
+      "file": "subprocess as _sp, sys as _sys",
+      "imports": 6,
+      "runtime_reachable": false
+    },
+    {
+      "file": "subprocess, sys, time, fcntl",
+      "imports": 6,
+      "runtime_reachable": false
+    },
+    {
+      "file": "abc",
+      "imports": 6,
+      "runtime_reachable": false
+    },
+    {
+      "file": "argparse, json, re, sys",
+      "imports": 5,
+      "runtime_reachable": false
+    },
+    {
+      "file": "subprocess, sys, time, shutil",
+      "imports": 5,
+      "runtime_reachable": false
+    },
+    {
+      "file": "hashlib, json, re, subprocess, sys, time, shutil",
+      "imports": 5,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, re, subprocess, sys, time, shutil, tempfile",
+      "imports": 5,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, subprocess, sys",
+      "imports": 5,
+      "runtime_reachable": false
+    },
+    {
+      "file": "re, sys",
+      "imports": 5,
+      "runtime_reachable": false
+    },
+    {
+      "file": "brocc_toast",
+      "imports": 5,
+      "runtime_reachable": false
+    },
+    {
+      "file": "subprocess, sys, json, time",
+      "imports": 5,
+      "runtime_reachable": false
+    },
+    {
+      "file": "uuid",
+      "imports": 5,
+      "runtime_reachable": false
+    },
+    {
+      "file": "shutil",
+      "imports": 4,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, re, sys, xml",
+      "imports": 4,
+      "runtime_reachable": false
+    },
+    {
+      "file": "plugins",
+      "imports": 4,
+      "runtime_reachable": false
+    },
+    {
+      "file": "planner",
+      "imports": 4,
+      "runtime_reachable": false
+    },
+    {
+      "file": "state",
+      "imports": 4,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, sys",
+      "imports": 4,
+      "runtime_reachable": false
+    },
+    {
+      "file": "broccoli_adb_ui",
+      "imports": 4,
+      "runtime_reachable": false
+    },
+    {
+      "file": "broccoli_log",
+      "imports": 4,
+      "runtime_reachable": false
+    },
+    {
+      "file": "broccoli_notif",
+      "imports": 4,
+      "runtime_reachable": false
+    },
+    {
+      "file": "broccoli_core_round",
+      "imports": 4,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os, re, time, json, subprocess",
+      "imports": 4,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os, time, json",
+      "imports": 4,
+      "runtime_reachable": false
+    },
+    {
+      "file": "broccoli_a11y_rish",
+      "imports": 4,
+      "runtime_reachable": false
+    },
+    {
+      "file": "rish_cmd",
+      "imports": 4,
+      "runtime_reachable": false
+    },
+    {
+      "file": "enum",
+      "imports": 4,
+      "runtime_reachable": false
+    },
+    {
+      "file": "lib",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os; os",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "chat_scraper",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os, subprocess, sys, time",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, os, re, subprocess, sys",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "argparse, os, subprocess, sys",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "hashlib, json, os, re, subprocess, sys, time",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "binascii",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, re, xml",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, re, subprocess, xml",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os, time, subprocess, glob",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "agents",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "autonomy",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "config",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "governor",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "health",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "lifecycle",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "logger",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "memory",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "metrics",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "plugin_loader",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "scheduler",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "models",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "default_collectors",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "default_reasoner",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "default_remediator",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "uuid, time",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "gzip, io, os, subprocess, sys, json, hashlib",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "broccoli_device",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, hashlib",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, os, sys, time",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, re, time",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os, json, time, subprocess, shutil",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os, sys, re, json, time, shutil, hashlib, subprocess",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os, sys, json, time, subprocess, re, xml",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "sys, json, os",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os, sys, time, json, subprocess",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "argparse,gzip,hashlib,json,sqlite3,datetime,os",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "concurrent",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "tracemalloc",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "broccoli_recv_copy_rish",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "broccoli_xml_sanitize",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "broccoli",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, re, subprocess",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "fnmatch",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, os, subprocess, time",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "broccoli_rish_adb",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os, re, time",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "sqlite3, subprocess",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "sqlite3",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os, random, subprocess",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os, subprocess, sys",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, os, subprocess, sys, time, datetime",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os, sys, subprocess",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os, re, subprocess, sys, time",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os,subprocess,sys,time,json",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "broccoli_retry",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json, os, time, hashlib",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "json as J",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os, re, subprocess, time",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os, sys, datetime",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os, re, subprocess",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "os, re, time, json, subprocess, xml",
+      "imports": 2,
+      "runtime_reachable": false
+    },
+    {
+      "file": "android_collectors",
+      "imports": 1,
+      "runtime_reachable": false
+    },
+    {
+      "file": "knowledge_learning",
+      "imports": 1,
+      "runtime_reachable": false
+    },
+    {
+      "file": "problem_runtime",
+      "imports": 1,
+      "runtime_reachable": false
+    },
+    {
+      "file": "ast",
+      "imports": 1,
+      "runtime_reachable": false
+    }
+  ],
+  "reachable_count": 0,
+  "total_indexed": 1030
+}

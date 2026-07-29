@@ -1,6 +1,6 @@
-from workflow.queue import TaskQueue
-from workflow.task import Task
-from event_bus import EventBus
+from runtime.workflow.queue import TaskQueue
+from runtime.workflow.task import Task
+from runtime.eventbus import EventBus
 
 class Executor:
     def __init__(self, bus: EventBus, queue: TaskQueue):

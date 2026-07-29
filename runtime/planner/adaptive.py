@@ -1,6 +1,6 @@
-from planner.planner import Planner
-from event_bus import EventBus
-from workflow.queue import TaskQueue
+from runtime.planner.planner import Planner
+from runtime.eventbus import EventBus
+from runtime.workflow.queue import TaskQueue
 
 class AdaptivePlanner(Planner):
     def __init__(self, bus: EventBus, queue: TaskQueue):

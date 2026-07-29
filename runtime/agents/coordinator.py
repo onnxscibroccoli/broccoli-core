@@ -1,5 +1,5 @@
-from event_bus import EventBus
-from workflow.queue import TaskQueue
+from runtime.eventbus import EventBus
+from runtime.workflow.queue import TaskQueue
 
 class AgentCoordinator:
     def __init__(self, bus: EventBus, queue: TaskQueue):

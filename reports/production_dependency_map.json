@@ -1,0 +1,670 @@
+{
+  "generated": "2026-07-29T01:47:59.246326+00:00",
+  "files": 146,
+  "modules": 85,
+  "ranking": [
+    {
+      "module": "broccoli_rish_shell",
+      "dependents": 15,
+      "examples": [
+        "lib/broccoli_a11y_rish.py",
+        "lib/broccoli_manual.py",
+        "lib/broccoli_a11y_send.py",
+        "lib/broccoli_agentic_chat.py",
+        "lib/broccoli_device.py",
+        "lib/broccoli_input.py",
+        "lib/broccoli_rish_ui.py",
+        "lib/broccoli_selftest.py"
+      ]
+    },
+    {
+      "module": "event_bus",
+      "dependents": 14,
+      "examples": [
+        "runtime/main.py",
+        "runtime/deploy_phase2.py",
+        "runtime/integrate_problem_solver.py",
+        "runtime/governor/engine.py",
+        "runtime/agents/coordinator.py",
+        "runtime/autonomy/goal_manager.py",
+        "runtime/autonomy/recovery.py",
+        "runtime/planner/adaptive.py"
+      ]
+    },
+    {
+      "module": "broccoli_ui_dump",
+      "dependents": 10,
+      "examples": [
+        "lib/broccoli_manual.py",
+        "lib/broccoli_a11y_send.py",
+        "lib/broccoli_agentic_chat.py",
+        "lib/broccoli_input.py",
+        "lib/broccoli_selftest.py",
+        "lib/broccoli_send.py",
+        "lib/broccoli_wait.py",
+        "lib/_pinned_from_walk/broccoli_agentic_chat.py"
+      ]
+    },
+    {
+      "module": "broccoli_strategy",
+      "dependents": 7,
+      "examples": [
+        "lib/broccoli_a11y_send.py",
+        "lib/broccoli_agentic_chat.py",
+        "lib/broccoli_input.py",
+        "lib/broccoli_send.py",
+        "lib/_pinned_from_walk/broccoli_agentic_chat.py",
+        "lib/_pinned_from_walk/broccoli_input.py",
+        "lib/_pinned_from_walk/broccoli_send.py"
+      ]
+    },
+    {
+      "module": "problem_solver",
+      "dependents": 6,
+      "examples": [
+        "runtime/android_collectors.py",
+        "runtime/default_collectors.py",
+        "runtime/default_reasoner.py",
+        "runtime/default_remediator.py",
+        "runtime/problem_runtime.py",
+        "runtime/test_problem_solver.py"
+      ]
+    },
+    {
+      "module": "broccoli_input",
+      "dependents": 5,
+      "examples": [
+        "lib/broccoli_manual.py",
+        "lib/broccoli_a11y_send.py",
+        "lib/broccoli_agentic_chat.py",
+        "lib/broccoli_selftest.py",
+        "lib/_pinned_from_walk/broccoli_agentic_chat.py"
+      ]
+    },
+    {
+      "module": "workflow.queue",
+      "dependents": 5,
+      "examples": [
+        "runtime/main.py",
+        "runtime/agents/coordinator.py",
+        "runtime/planner/adaptive.py",
+        "runtime/planner/planner.py",
+        "runtime/workflow/executor.py"
+      ]
+    },
+    {
+      "module": "task_queue",
+      "dependents": 4,
+      "examples": [
+        "lib/broccoli_operator.py",
+        "lib/grok_takeover.py",
+        "lib/operator.py",
+        "lib/task_current.py"
+      ]
+    },
+    {
+      "module": "runtime.eventbus.service",
+      "dependents": 4,
+      "examples": [
+        "runtime/main.py",
+        "runtime/governor/repo_governor.py",
+        "runtime/governor/test_repo_governor.py",
+        "runtime/eventbus/test_service.py"
+      ]
+    },
+    {
+      "module": "uuid",
+      "dependents": 3,
+      "examples": [
+        "runtime/autonomy/executor.py",
+        "runtime/eventbus/event.py",
+        "runtime/drivers/accessibility/events.py"
+      ]
+    },
+    {
+      "module": "backend",
+      "dependents": 3,
+      "examples": [
+        "runtime/drivers/accessibility/hidden_backend.py",
+        "runtime/drivers/accessibility/manager.py",
+        "runtime/drivers/accessibility/public_backend.py"
+      ]
+    },
+    {
+      "module": "task_current",
+      "dependents": 2,
+      "examples": [
+        "lib/agent_loop.py",
+        "lib/recursive_impl.py"
+      ]
+    },
+    {
+      "module": "broccoli_selftest",
+      "dependents": 2,
+      "examples": [
+        "lib/broccoli_agentic_chat.py",
+        "lib/_pinned_from_walk/broccoli_agentic_chat.py"
+      ]
+    },
+    {
+      "module": "broccoli_send",
+      "dependents": 2,
+      "examples": [
+        "lib/broccoli_agentic_chat.py",
+        "lib/_pinned_from_walk/broccoli_agentic_chat.py"
+      ]
+    },
+    {
+      "module": "sqlite3",
+      "dependents": 2,
+      "examples": [
+        "lib/catalog_loop_hook.py",
+        "lib/closed_loop.py"
+      ]
+    },
+    {
+      "module": "ui_dump_loop",
+      "dependents": 2,
+      "examples": [
+        "lib/recursive_impl.py",
+        "lib/task_complete.py"
+      ]
+    },
+    {
+      "module": "ui_state",
+      "dependents": 2,
+      "examples": [
+        "lib/recursive_impl.py",
+        "lib/task_complete.py"
+      ]
+    },
+    {
+      "module": "drivers.accessibility.driver",
+      "dependents": 2,
+      "examples": [
+        "runtime/main.py",
+        "runtime/workflow/executor.py"
+      ]
+    },
+    {
+      "module": "runtime.governor.repo_governor",
+      "dependents": 2,
+      "examples": [
+        "runtime/main.py",
+        "runtime/governor/test_repo_governor.py"
+      ]
+    },
+    {
+      "module": "state",
+      "dependents": 2,
+      "examples": [
+        "runtime/main.py",
+        "runtime/governor/engine.py"
+      ]
+    },
+    {
+      "module": "default_collectors",
+      "dependents": 2,
+      "examples": [
+        "runtime/integrate_problem_solver.py",
+        "runtime/test_problem_solver.py"
+      ]
+    },
+    {
+      "module": "default_reasoner",
+      "dependents": 2,
+      "examples": [
+        "runtime/integrate_problem_solver.py",
+        "runtime/test_problem_solver.py"
+      ]
+    },
+    {
+      "module": "default_remediator",
+      "dependents": 2,
+      "examples": [
+        "runtime/integrate_problem_solver.py",
+        "runtime/test_problem_solver.py"
+      ]
+    },
+    {
+      "module": "runtime.logger",
+      "dependents": 2,
+      "examples": [
+        "runtime/services/daemon.py",
+        "drivers/overlay/virtual_display.py"
+      ]
+    },
+    {
+      "module": "enum",
+      "dependents": 2,
+      "examples": [
+        "runtime/autonomy/executor.py",
+        "runtime/drivers/accessibility/events.py"
+      ]
+    },
+    {
+      "module": "executor",
+      "dependents": 2,
+      "examples": [
+        "runtime/autonomy/goal_manager.py",
+        "runtime/autonomy/recovery.py"
+      ]
+    },
+    {
+      "module": "workflow.task",
+      "dependents": 2,
+      "examples": [
+        "runtime/planner/planner.py",
+        "runtime/workflow/executor.py"
+      ]
+    },
+    {
+      "module": "event",
+      "dependents": 2,
+      "examples": [
+        "runtime/eventbus/__init__.py",
+        "runtime/eventbus/bus.py"
+      ]
+    },
+    {
+      "module": "events",
+      "dependents": 2,
+      "examples": [
+        "runtime/drivers/accessibility/diff.py",
+        "runtime/drivers/accessibility/observer.py"
+      ]
+    },
+    {
+      "module": "task_complete",
+      "dependents": 1,
+      "examples": [
+        "lib/agent_loop.py"
+      ]
+    },
+    {
+      "module": "user_task_wait",
+      "dependents": 1,
+      "examples": [
+        "lib/agent_loop.py"
+      ]
+    },
+    {
+      "module": "broccoli_a11y_rish",
+      "dependents": 1,
+      "examples": [
+        "lib/broccoli_a11y_send.py"
+      ]
+    },
+    {
+      "module": "broccoli_agentic_chat",
+      "dependents": 1,
+      "examples": [
+        "lib/broccoli_a11y_send.py"
+      ]
+    },
+    {
+      "module": "broccoli_adb_ui",
+      "dependents": 1,
+      "examples": [
+        "lib/broccoli_core_round.py"
+      ]
+    },
+    {
+      "module": "broccoli.lib.broccoli_rish_shell",
+      "dependents": 1,
+      "examples": [
+        "lib/broccoli_device.py"
+      ]
+    },
+    {
+      "module": "fnmatch",
+      "dependents": 1,
+      "examples": [
+        "lib/broccoli_guard.py"
+      ]
+    },
+    {
+      "module": "broccoli_log",
+      "dependents": 1,
+      "examples": [
+        "lib/broccoli_recv_copy_rish.py"
+      ]
+    },
+    {
+      "module": "broccoli_rish_adb",
+      "dependents": 1,
+      "examples": [
+        "lib/broccoli_recv_copy_rish.py"
+      ]
+    },
+    {
+      "module": "broccoli_core_round",
+      "dependents": 1,
+      "examples": [
+        "lib/broccoli_rish_ui.py"
+      ]
+    },
+    {
+      "module": "display_context",
+      "dependents": 1,
+      "examples": [
+        "lib/grok_chat_foreground.py"
+      ]
+    },
+    {
+      "module": "rish_adb",
+      "dependents": 1,
+      "examples": [
+        "lib/grok_open_loop.py"
+      ]
+    },
+    {
+      "module": "idle_detect",
+      "dependents": 1,
+      "examples": [
+        "lib/idle_takeover.py"
+      ]
+    },
+    {
+      "module": "grok_xml_parse",
+      "dependents": 1,
+      "examples": [
+        "lib/smoke_autoheal.py"
+      ]
+    },
+    {
+      "module": "code_from_chat",
+      "dependents": 1,
+      "examples": [
+        "lib/recursive_impl.py"
+      ]
+    },
+    {
+      "module": "random",
+      "dependents": 1,
+      "examples": [
+        "lib/rish_cmd.py"
+      ]
+    },
+    {
+      "module": "agents.coordinator",
+      "dependents": 1,
+      "examples": [
+        "runtime/main.py"
+      ]
+    },
+    {
+      "module": "agents.grok_agent",
+      "dependents": 1,
+      "examples": [
+        "runtime/main.py"
+      ]
+    },
+    {
+      "module": "autonomy.goal_manager",
+      "dependents": 1,
+      "examples": [
+        "runtime/main.py"
+      ]
+    },
+    {
+      "module": "autonomy.recovery",
+      "dependents": 1,
+      "examples": [
+        "runtime/main.py"
+      ]
+    },
+    {
+      "module": "config",
+      "dependents": 1,
+      "examples": [
+        "runtime/main.py"
+      ]
+    },
+    {
+      "module": "governor.engine",
+      "dependents": 1,
+      "examples": [
+        "runtime/main.py"
+      ]
+    },
+    {
+      "module": "health",
+      "dependents": 1,
+      "examples": [
+        "runtime/main.py"
+      ]
+    },
+    {
+      "module": "lifecycle",
+      "dependents": 1,
+      "examples": [
+        "runtime/main.py"
+      ]
+    },
+    {
+      "module": "logger",
+      "dependents": 1,
+      "examples": [
+        "runtime/main.py"
+      ]
+    },
+    {
+      "module": "memory.knowledge_graph",
+      "dependents": 1,
+      "examples": [
+        "runtime/main.py"
+      ]
+    },
+    {
+      "module": "metrics",
+      "dependents": 1,
+      "examples": [
+        "runtime/main.py"
+      ]
+    },
+    {
+      "module": "planner.adaptive",
+      "dependents": 1,
+      "examples": [
+        "runtime/main.py"
+      ]
+    },
+    {
+      "module": "plugin_loader",
+      "dependents": 1,
+      "examples": [
+        "runtime/main.py"
+      ]
+    },
+    {
+      "module": "providers.grok",
+      "dependents": 1,
+      "examples": [
+        "runtime/main.py"
+      ]
+    },
+    {
+      "module": "runtime.drivers.accessibility.consumers",
+      "dependents": 1,
+      "examples": [
+        "runtime/main.py"
+      ]
+    },
+    {
+      "module": "scheduler",
+      "dependents": 1,
+      "examples": [
+        "runtime/main.py"
+      ]
+    },
+    {
+      "module": "workflow.executor",
+      "dependents": 1,
+      "examples": [
+        "runtime/main.py"
+      ]
+    },
+    {
+      "module": "models.semantic",
+      "dependents": 1,
+      "examples": [
+        "runtime/normalizer.py"
+      ]
+    },
+    {
+      "module": "drivers.accessibility.consumers",
+      "dependents": 1,
+      "examples": [
+        "runtime/deploy_phase2.py"
+      ]
+    },
+    {
+      "module": "drivers.accessibility.observer",
+      "dependents": 1,
+      "examples": [
+        "runtime/deploy_phase2.py"
+      ]
+    },
+    {
+      "module": "drivers.accessibility.xml_parser",
+      "dependents": 1,
+      "examples": [
+        "runtime/deploy_phase2.py"
+      ]
+    },
+    {
+      "module": "android_collectors",
+      "dependents": 1,
+      "examples": [
+        "runtime/integrate_problem_solver.py"
+      ]
+    },
+    {
+      "module": "knowledge_learning",
+      "dependents": 1,
+      "examples": [
+        "runtime/integrate_problem_solver.py"
+      ]
+    },
+    {
+      "module": "problem_runtime",
+      "dependents": 1,
+      "examples": [
+        "runtime/integrate_problem_solver.py"
+      ]
+    },
+    {
+      "module": "runtime.metrics",
+      "dependents": 1,
+      "examples": [
+        "runtime/services/daemon.py"
+      ]
+    },
+    {
+      "module": "base",
+      "dependents": 1,
+      "examples": [
+        "runtime/capabilities/registry.py"
+      ]
+    },
+    {
+      "module": "goal_manager",
+      "dependents": 1,
+      "examples": [
+        "runtime/autonomy/recovery.py"
+      ]
+    },
+    {
+      "module": "planner.planner",
+      "dependents": 1,
+      "examples": [
+        "runtime/planner/adaptive.py"
+      ]
+    },
+    {
+      "module": "providers.base",
+      "dependents": 1,
+      "examples": [
+        "runtime/providers/grok.py"
+      ]
+    },
+    {
+      "module": "bus",
+      "dependents": 1,
+      "examples": [
+        "runtime/eventbus/__init__.py"
+      ]
+    },
+    {
+      "module": "runtime.eventbus",
+      "dependents": 1,
+      "examples": [
+        "runtime/eventbus/test_eventbus.py"
+      ]
+    },
+    {
+      "module": "runtime.eventbus.bus",
+      "dependents": 1,
+      "examples": [
+        "runtime/eventbus/service.py"
+      ]
+    },
+    {
+      "module": "manager",
+      "dependents": 1,
+      "examples": [
+        "runtime/drivers/accessibility/driver.py"
+      ]
+    },
+    {
+      "module": "observer",
+      "dependents": 1,
+      "examples": [
+        "runtime/drivers/accessibility/driver.py"
+      ]
+    },
+    {
+      "module": "xml_parser",
+      "dependents": 1,
+      "examples": [
+        "runtime/drivers/accessibility/driver.py"
+      ]
+    },
+    {
+      "module": "hidden_backend",
+      "dependents": 1,
+      "examples": [
+        "runtime/drivers/accessibility/manager.py"
+      ]
+    },
+    {
+      "module": "public_backend",
+      "dependents": 1,
+      "examples": [
+        "runtime/drivers/accessibility/manager.py"
+      ]
+    },
+    {
+      "module": "cache",
+      "dependents": 1,
+      "examples": [
+        "runtime/drivers/accessibility/observer.py"
+      ]
+    },
+    {
+      "module": "diff",
+      "dependents": 1,
+      "examples": [
+        "runtime/drivers/accessibility/observer.py"
+      ]
+    },
+    {
+      "module": "semantic",
+      "dependents": 1,
+      "examples": [
+        "runtime/drivers/accessibility/window.py"
+      ]
+    }
+  ]
+}
