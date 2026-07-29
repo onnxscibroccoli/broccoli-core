@@ -22,8 +22,7 @@ from runtime.agents.coordinator import AgentCoordinator
 from runtime.agents.grok_agent import GrokAgent
 from runtime.autonomy.goal_manager import GoalManager
 from runtime.autonomy.recovery import RecoveryManager
-from runtime.transports.registry import TransportRegistry
-from runtime.transports.supervisor import register_transport_supervisor
+from runtime.transports import ProviderTransport, TransportRegistry, register_transport_supervisor
 import time
 
 # How often (in ticks) to run a full recovery scan.
@@ -60,12 +59,14 @@ def main():
 
     transport_registry = TransportRegistry(bus)
     clipboard_bridge = ClipboardEventBridge(bus)
+    grok_transport = ProviderTransport("grok", grok)
 
     transport_registry.register("accessibility", accessibility)
     transport_registry.register("clipboard", clipboard_bridge)
-    register_transport_supervisor(bus, transport_registry, metrics)
+    transport_registry.register("grok", grok_transport)
 
     register_accessibility_consumers(bus, metrics)
+    register_transport_supervisor(bus, transport_registry, metrics)
     transport_registry.start_all()
 
     lifecycle.startup([
@@ -74,8 +75,6 @@ def main():
         grok, kg, coordinator, goal_manager, recovery, plugins,
         transport_registry,
     ])
-
-    grok.initialize()
 
     # Example goal (kept for smoke visibility)
     goal_manager.create_goal("test_goal", "Test autonomous task")

@@ -6,6 +6,7 @@ from .events import (
     TRANSPORT_RECOVERY_FAILED,
     TRANSPORT_UNHEALTHY,
 )
+from .provider_transport import ProviderTransport
 from .registry import TransportRegistry
 from .supervisor import register_transport_supervisor
 
@@ -16,6 +17,7 @@ __all__ = [
     "TRANSPORT_RECOVERED",
     "TRANSPORT_RECOVERY_FAILED",
     "TRANSPORT_UNHEALTHY",
+    "ProviderTransport",
     "TransportRegistry",
     "register_transport_supervisor",
 ]
