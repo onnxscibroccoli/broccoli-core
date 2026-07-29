@@ -2,6 +2,8 @@ from runtime.eventbus.service import bus
 from runtime.governor.repo_governor import RepoGovernor
 
 from runtime.drivers.accessibility.consumers import register_accessibility_consumers
+from runtime.clipboard.adapter import ClipboardEventBridge
+from runtime.clipboard.consumers import register_clipboard_consumers
 from runtime.config import Config
 from runtime.logger import Logger
 from runtime.state import RuntimeState
@@ -26,6 +28,7 @@ import time
 # How often (in ticks) to run a full recovery scan.
 # Event-driven recovery still happens immediately on GOAL_FAILED.
 RECOVERY_SCAN_EVERY = 10
+
 
 def main():
     config = Config().load()
@@ -54,10 +57,16 @@ def main():
     plugins = PluginLoader()
     plugins.load()
 
+    register_accessibility_consumers(bus, metrics)
+    register_clipboard_consumers(bus, metrics)
+    clipboard_bridge = ClipboardEventBridge(bus)
+    clipboard_bridge.start()
+
     lifecycle.startup([
         config, logger, bus, state, metrics, scheduler, health,
         governor, accessibility, planner, workflow_executor,
-        grok, kg, coordinator, goal_manager, recovery, plugins
+        grok, kg, coordinator, goal_manager, recovery, plugins,
+        clipboard_bridge,
     ])
 
     grok.initialize()
@@ -87,6 +96,9 @@ def main():
     except KeyboardInterrupt:
         logger.log("INFO", "Shutdown requested", "Core")
         state.transition("STOPPED")
+    finally:
+        clipboard_bridge.stop()
+
 
 if __name__ == "__main__":
     main()
@@ -114,4 +126,3 @@ try:
     )
 except Exception:
     pass
-
