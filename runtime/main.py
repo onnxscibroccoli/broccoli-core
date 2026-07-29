@@ -4,6 +4,7 @@ from runtime.governor.repo_governor import RepoGovernor
 from runtime.drivers.accessibility.consumers import register_accessibility_consumers
 from runtime.clipboard.adapter import ClipboardEventBridge
 from runtime.clipboard.consumers import register_clipboard_consumers
+from runtime.clipboard.supervisor import register_clipboard_supervisor
 from runtime.config import Config
 from runtime.logger import Logger
 from runtime.state import RuntimeState
@@ -60,6 +61,7 @@ def main():
     register_accessibility_consumers(bus, metrics)
     register_clipboard_consumers(bus, metrics)
     clipboard_bridge = ClipboardEventBridge(bus)
+    register_clipboard_supervisor(bus, clipboard_bridge, metrics)
     clipboard_bridge.start()
 
     lifecycle.startup([
@@ -83,6 +85,13 @@ def main():
             bus.publish("TICK")
             scheduler.run_pending()
             workflow_executor.run_pending()
+            health_report = health.check()
+            bus.publish("HEALTH_CHECK", health_report, source="HealthMonitor")
+            bus.publish(
+                "CLIPBOARD_BRIDGE_HEALTH",
+                clipboard_bridge.health(),
+                source="ClipboardEventBridge",
+            )
             health.check()
             metrics.increment("loop_cycles")
 

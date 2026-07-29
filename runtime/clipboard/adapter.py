@@ -4,7 +4,7 @@ import logging
 import shutil
 import subprocess
 import threading
-import time
+from datetime import datetime, timezone
 from typing import Callable, Optional
 
 from runtime.eventbus.bus import EventBus
@@ -18,6 +18,10 @@ from .events import (
 )
 
 logger = logging.getLogger("clipboard.bridge")
+
+
+def _utc_now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
 
 
 class ClipboardEventBridge:
@@ -42,6 +46,8 @@ class ClipboardEventBridge:
         self._stop_event = threading.Event()
         self._thread: Optional[threading.Thread] = None
         self._last_digest: Optional[str] = None
+        self._last_observed_at: Optional[str] = None
+        self._last_kind: Optional[str] = None
 
     def _default_clipboard_get(self) -> str:
         if shutil.which("termux-clipboard-get") is None:
@@ -78,8 +84,10 @@ class ClipboardEventBridge:
             return None
 
         self._last_digest = digest
+        self._last_observed_at = _utc_now_iso()
 
         if is_result_envelope(clip):
+            self._last_kind = "result"
             payload = build_result_payload(clip, source="clipboard.bridge")
             self.bus.publish(
                 CLIPBOARD_COMMAND_RESULT,
@@ -88,6 +96,7 @@ class ClipboardEventBridge:
             )
             return payload
 
+        self._last_kind = "command"
         payload = build_command_payload(clip, source="clipboard.bridge")
         self.bus.publish(
             CLIPBOARD_COMMAND_RECEIVED,
@@ -123,6 +132,8 @@ class ClipboardEventBridge:
             "running": thread_alive,
             "poll_interval": self.poll_interval,
             "last_digest": self._last_digest,
+            "last_observed_at": self._last_observed_at,
+            "last_kind": self._last_kind,
         }
 
     def _run(self):

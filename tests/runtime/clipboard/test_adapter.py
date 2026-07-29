@@ -57,3 +57,18 @@ BROCCOLI_OK""",
     ]
     assert bus.events[0]["payload"]["command_id"] == bus.events[1]["payload"]["command_id"]
     assert bus.events[1]["payload"]["output"] == "BROCCOLI_OK"
+
+
+def test_bridge_health_tracks_last_observed_timestamp():
+    bus = FakeBus()
+    bridge = ClipboardEventBridge(
+        bus,
+        clipboard_get=lambda: "echo BROCCOLI_OK",
+        poll_interval=0.01,
+    )
+
+    bridge.poll_once()
+    health = bridge.health()
+
+    assert health["last_observed_at"] is not None
+    assert health["last_kind"] == "command"
