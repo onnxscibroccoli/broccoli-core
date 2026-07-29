@@ -1,0 +1,64 @@
+2026-07-07T20:35:53-04:00 ROUND_START bytes=45
+SMOKE_SKIP
+clip 0 PASS CLIP_V2_203558
+
+pull 0 PULL_RISH_OK 577 /sdcard/Broccoli/pull/bundle_20260707_203609
+2026-07-07T20:36:40-04:00 CLIP_PASS
+2026-07-07T20:36:40-04:00 PULL_PASS
+FAIL: no bundle under /sdcard/Broccoli/pull
+2026-07-07T20:39:08-04:00 ROUND_START len=45
+SMOKE_SKIP
+clip 0 PASS CLIP_V2_203912
+
+pull 0 PULL_RISH_OK 578 /sdcard/Broccoli/pull/bundle_20260707_203923
+2026-07-07T20:40:03-04:00 FAIL no bundle dir=/sdcard/Broccoli/pull
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=ai.x.grok/.MainActivity }
+2026-07-07T20:42:16-04:00 LAUNCH reuse pkg=ai.x.grok
+2026-07-07T20:42:27-04:00 WARN rish hook failed, continuing
+2026-07-07T20:42:34-04:00 CHAT_FOCUS_FAIL (no verify)
+FAIL: chat not focused — fix open/focus before clip
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=ai.x.grok/.MainActivity }
+2026-07-07T23:31:13-04:00 LAUNCH reuse pkg=ai.x.grok
+2026-07-07T23:31:13-04:00 WARN rish hook failed, continuing
+2026-07-07T23:31:13-04:00 CHAT_FOCUS_FAIL (no verify)
+FAIL: chat not focused — fix open/focus before clip
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=ai.x.grok/.MainActivity }
+2026-07-07T23:34:31-04:00 LAUNCH reuse pkg=ai.x.grok
+2026-07-07T23:34:31-04:00 WARN rish hook failed, continuing
+2026-07-07T23:34:31-04:00 CHAT_FOCUS_FAIL (no verify)
+FAIL: chat not focused — fix open/focus before clip
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=ai.x.grok/.MainActivity }
+2026-07-07T23:34:37-04:00 LAUNCH reuse pkg=ai.x.grok
+2026-07-07T23:34:38-04:00 WARN rish hook failed, continuing
+2026-07-07T23:34:38-04:00 CHAT_FOCUS_FAIL (no verify)
+FAIL: chat not focused — fix open/focus before clip
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=ai.x.grok/.MainActivity }
+2026-07-07T23:38:47-04:00 LAUNCH reuse pkg=ai.x.grok
+2026-07-07T23:38:48-04:00 WARN rish hook failed, continuing
+2026-07-07T23:38:48-04:00 CHAT_FOCUS_FAIL (no verify)
+FAIL: chat not focused — fix open/focus before clip
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=ai.x.grok/.MainActivity }
+2026-07-10T02:54:09-04:00 LAUNCH reuse pkg=ai.x.grok
+2026-07-10T02:54:10-04:00 WARN rish hook failed, continuing
+2026-07-10T02:54:10-04:00 CHAT_FOCUS_FAIL (no verify)
+FAIL: chat not focused — fix open/focus before clip
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=ai.x.grok/.MainActivity }
+2026-07-10T02:57:12-04:00 LAUNCH reuse pkg=ai.x.grok
+2026-07-10T02:57:12-04:00 WARN rish hook failed, continuing
+2026-07-10T02:57:12-04:00 CHAT_FOCUS_FAIL (no verify)
+FAIL: chat not focused — fix open/focus before clip
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=ai.x.grok/.MainActivity }
+2026-07-10T03:04:59-04:00 LAUNCH reuse pkg=ai.x.grok
+2026-07-10T03:04:59-04:00 WARN rish hook failed, continuing
+2026-07-10T03:04:59-04:00 CHAT_FOCUS_FAIL (no verify)
+FAIL: chat not focused — fix open/focus before clip
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=ai.x.grok/.MainActivity }
+2026-07-10T03:07:54-04:00 LAUNCH reuse pkg=ai.x.grok
+2026-07-10T03:07:54-04:00 WARN rish hook failed, continuing
+2026-07-10T03:07:55-04:00 CHAT_FOCUS_FAIL (no verify)
+FAIL: chat not focused — fix open/focus before clip
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=ai.x.grok/.MainActivity }
+2026-07-10T03:09:13-04:00 LAUNCH reuse pkg=ai.x.grok
+2026-07-10T03:09:14-04:00 WARN rish hook failed, continuing
+2026-07-10T03:09:37-04:00 CHAT_FOCUS_FAIL (no verify)
+FAIL: chat not focused — fix open/focus before clip

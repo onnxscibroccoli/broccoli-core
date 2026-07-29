@@ -1,0 +1,234 @@
+2026-07-07T23:38:24-04:00 === LOOP_OK_PATH start task_len=33 ===
+2026-07-07T23:38:24-04:00 step1 grok_foreground_then
+AIM_RISH ok try=1
+2026-07-07T23:38:26-04:00 1 launch Grok native
+2026-07-07T23:38:38-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+28765 /data/local/tmp/broccoli_ui.xml
+2026-07-07T23:38:43-04:00 3 packages in dump: package="ai.x.grok" 
+28765 /data/data/com.termux/files/home/broccoli/ui/last_ui.xml
+2026-07-07T23:38:26-04:00 1 launch Grok native
+2026-07-07T23:38:38-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+28765 /data/local/tmp/broccoli_ui.xml
+2026-07-07T23:38:43-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-07T23:38:45-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/rish_grok_round.sh
+CHAT_FOCUS_FAIL
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=ai.x.grok/.MainActivity }
+2026-07-07T23:38:47-04:00 LAUNCH reuse pkg=ai.x.grok
+2026-07-07T23:38:48-04:00 WARN rish hook failed, continuing
+2026-07-07T23:38:48-04:00 CHAT_FOCUS_FAIL (no verify)
+FAIL: chat focus
+2026-07-07T23:38:48-04:00 step2 fail /data/data/com.termux/files/home/broccoli/tools/rish_grok_round.sh (try next)
+2026-07-07T23:38:48-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/wire_loop_full.sh
+2026-07-07T23:38:59-04:00 step2 fail /data/data/com.termux/files/home/broccoli/tools/wire_loop_full.sh (try next)
+2026-07-07T23:38:59-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/wire_send_immediate.sh
+/data/data/com.termux/files/home/broccoli/tools/wire_send_immediate.sh: line 7: 1: msg
+2026-07-07T23:38:59-04:00 step2 fail /data/data/com.termux/files/home/broccoli/tools/wire_send_immediate.sh (try next)
+2026-07-07T23:38:59-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/wire_send_fast.sh
+/data/data/com.termux/files/home/broccoli/tools/wire_send_fast.sh: line 4: $1: unbound variable
+2026-07-07T23:38:59-04:00 step2 fail /data/data/com.termux/files/home/broccoli/tools/wire_send_fast.sh (try next)
+2026-07-07T23:38:59-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/wire_send_ui.sh
+2026-07-07T23:39:00-04:00 step2 fail /data/data/com.termux/files/home/broccoli/tools/wire_send_ui.sh (try next)
+2026-07-07T23:39:00-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/rish_grok_once.sh
+Traceback (most recent call last):
+  File "<string>", line 5, in <module>
+    print(json.dumps(send_task('BROCC_TASK reply exactly: LOOP_OK'), indent=2))
+                     ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/home/broccoli/lib/broccoli_rish_ui.py", line 132, in send_task
+    from broccoli_core_round import full_round
+  File "/data/data/com.termux/files/home/broccoli/lib/broccoli_core_round.py", line 3, in <module>
+    from broccoli_adb_ui import full_round_adb, normalize_task
+  File "/data/data/com.termux/files/home/broccoli/lib/broccoli_adb_ui.py", line 252
+    log("send_verify composer_cleared
+        ^
+SyntaxError: unterminated string literal (detected at line 252)
+2026-07-07T23:39:01-04:00 step2 fail /data/data/com.termux/files/home/broccoli/tools/rish_grok_once.sh (try next)
+2026-07-07T23:39:01-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/agent_wire_rish.sh
+2026-07-07T23:39:17-04:00 step2 ok /data/data/com.termux/files/home/broccoli/tools/agent_wire_rish.sh
+2026-07-07T23:39:17-04:00 step3 wait 25s
+2026-07-07T23:39:42-04:00 step4 try_recv /data/data/com.termux/files/home/broccoli/tools/consume_response.sh
+2026-07-07T23:39:43-04:00 step4 ok /data/data/com.termux/files/home/broccoli/tools/consume_response.sh
+2026-07-07T23:39:44-04:00 === LOOP_OK PASS ===
+2026-07-10T02:53:28-04:00 === LOOP_OK_PATH start task_len=33 ===
+2026-07-10T02:53:28-04:00 step1 grok_foreground_then
+AIM_RISH ok try=1
+2026-07-10T02:53:32-04:00 1 launch Grok native
+2026-07-10T02:53:48-04:00 2 dump UI (rish)
+28765 /data/local/tmp/broccoli_ui.xml
+2026-07-10T02:54:03-04:00 3 packages in dump: package="ai.x.grok" 
+28765 /data/data/com.termux/files/home/broccoli/ui/last_ui.xml
+2026-07-07T23:38:43-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-10T02:53:32-04:00 1 launch Grok native
+2026-07-10T02:53:48-04:00 2 dump UI (rish)
+28765 /data/local/tmp/broccoli_ui.xml
+2026-07-10T02:54:03-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-10T02:54:05-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/rish_grok_round.sh
+CHAT_FOCUS_FAIL
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=ai.x.grok/.MainActivity }
+2026-07-10T02:54:09-04:00 LAUNCH reuse pkg=ai.x.grok
+2026-07-10T02:54:10-04:00 WARN rish hook failed, continuing
+2026-07-10T02:54:10-04:00 CHAT_FOCUS_FAIL (no verify)
+FAIL: chat focus
+2026-07-10T02:54:10-04:00 step2 fail /data/data/com.termux/files/home/broccoli/tools/rish_grok_round.sh (try next)
+2026-07-10T02:54:10-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/wire_loop_full.sh
+2026-07-10T02:54:29-04:00 step2 fail /data/data/com.termux/files/home/broccoli/tools/wire_loop_full.sh (try next)
+2026-07-10T02:54:29-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/wire_send_immediate.sh
+/data/data/com.termux/files/home/broccoli/tools/wire_send_immediate.sh: line 7: 1: msg
+2026-07-10T02:54:29-04:00 step2 fail /data/data/com.termux/files/home/broccoli/tools/wire_send_immediate.sh (try next)
+2026-07-10T02:54:29-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/wire_send_fast.sh
+/data/data/com.termux/files/home/broccoli/tools/wire_send_fast.sh: line 4: $1: unbound variable
+2026-07-10T02:54:29-04:00 step2 fail /data/data/com.termux/files/home/broccoli/tools/wire_send_fast.sh (try next)
+2026-07-10T02:54:29-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/wire_send_ui.sh
+2026-07-10T02:54:29-04:00 step2 fail /data/data/com.termux/files/home/broccoli/tools/wire_send_ui.sh (try next)
+2026-07-10T02:54:29-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/rish_grok_once.sh
+Traceback (most recent call last):
+  File "<string>", line 5, in <module>
+    print(json.dumps(send_task('BROCC_TASK reply exactly: LOOP_OK'), indent=2))
+                     ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/home/broccoli/lib/broccoli_rish_ui.py", line 132, in send_task
+    from broccoli_core_round import full_round
+  File "/data/data/com.termux/files/home/broccoli/lib/broccoli_core_round.py", line 3, in <module>
+    from broccoli_adb_ui import full_round_adb, normalize_task
+  File "/data/data/com.termux/files/home/broccoli/lib/broccoli_adb_ui.py", line 252
+    log("send_verify composer_cleared
+        ^
+SyntaxError: unterminated string literal (detected at line 252)
+2026-07-10T02:54:32-04:00 step2 fail /data/data/com.termux/files/home/broccoli/tools/rish_grok_once.sh (try next)
+2026-07-10T02:54:32-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/agent_wire_rish.sh
+2026-07-10T02:55:08-04:00 step2 ok /data/data/com.termux/files/home/broccoli/tools/agent_wire_rish.sh
+2026-07-10T02:55:08-04:00 step3 wait 25s
+2026-07-10T02:55:34-04:00 step4 try_recv /data/data/com.termux/files/home/broccoli/tools/consume_response.sh
+2026-07-10T02:55:35-04:00 step4 ok /data/data/com.termux/files/home/broccoli/tools/consume_response.sh
+2026-07-10T02:55:41-04:00 === LOOP_OK PASS ===
+2026-07-10T02:56:35-04:00 === LOOP_OK_PATH start task_len=33 ===
+2026-07-10T02:56:35-04:00 step1 grok_foreground_then
+AIM_RISH ok try=1
+2026-07-10T02:56:38-04:00 1 launch Grok native
+2026-07-10T02:57:01-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+27367 /data/local/tmp/broccoli_ui.xml
+2026-07-10T02:57:05-04:00 3 packages in dump: package="ai.x.grok" 
+27367 /data/data/com.termux/files/home/broccoli/ui/last_ui.xml
+2026-07-10T02:56:38-04:00 1 launch Grok native
+2026-07-10T02:57:01-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+27367 /data/local/tmp/broccoli_ui.xml
+2026-07-10T02:57:05-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-10T02:57:08-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/rish_grok_round.sh
+CHAT_FOCUS_FAIL
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=ai.x.grok/.MainActivity }
+2026-07-10T02:57:12-04:00 LAUNCH reuse pkg=ai.x.grok
+2026-07-10T02:57:12-04:00 WARN rish hook failed, continuing
+2026-07-10T02:57:12-04:00 CHAT_FOCUS_FAIL (no verify)
+FAIL: chat focus
+2026-07-10T02:57:12-04:00 step2 fail /data/data/com.termux/files/home/broccoli/tools/rish_grok_round.sh (try next)
+2026-07-10T02:57:12-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/wire_loop_full.sh
+need message
+2026-07-10T02:57:46-04:00 step2 fail /data/data/com.termux/files/home/broccoli/tools/wire_loop_full.sh (try next)
+2026-07-10T02:57:46-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/wire_send_immediate.sh
+/data/data/com.termux/files/home/broccoli/tools/wire_send_immediate.sh: line 7: 1: msg
+2026-07-10T02:57:46-04:00 step2 fail /data/data/com.termux/files/home/broccoli/tools/wire_send_immediate.sh (try next)
+2026-07-10T02:57:46-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/wire_send_fast.sh
+/data/data/com.termux/files/home/broccoli/tools/wire_send_fast.sh: line 4: $1: unbound variable
+2026-07-10T02:57:46-04:00 step2 fail /data/data/com.termux/files/home/broccoli/tools/wire_send_fast.sh (try next)
+2026-07-10T02:57:46-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/wire_send_ui.sh
+2026-07-10T02:57:46-04:00 step2 fail /data/data/com.termux/files/home/broccoli/tools/wire_send_ui.sh (try next)
+2026-07-10T02:57:46-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/rish_grok_once.sh
+Traceback (most recent call last):
+  File "<string>", line 5, in <module>
+    print(json.dumps(send_task('BROCC_TASK reply exactly: LOOP_OK'), indent=2))
+                     ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/home/broccoli/lib/broccoli_rish_ui.py", line 132, in send_task
+    from broccoli_core_round import full_round
+  File "/data/data/com.termux/files/home/broccoli/lib/broccoli_core_round.py", line 3, in <module>
+    from broccoli_adb_ui import full_round_adb, normalize_task
+  File "/data/data/com.termux/files/home/broccoli/lib/broccoli_adb_ui.py", line 252
+    log("send_verify composer_cleared
+        ^
+SyntaxError: unterminated string literal (detected at line 252)
+2026-07-10T02:57:50-04:00 step2 fail /data/data/com.termux/files/home/broccoli/tools/rish_grok_once.sh (try next)
+2026-07-10T02:57:50-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/agent_wire_rish.sh
+2026-07-10T02:58:08-04:00 step2 ok /data/data/com.termux/files/home/broccoli/tools/agent_wire_rish.sh
+2026-07-10T02:58:08-04:00 step3 wait 25s
+2026-07-10T02:58:33-04:00 step4 try_recv /data/data/com.termux/files/home/broccoli/tools/consume_response.sh
+2026-07-10T02:58:34-04:00 step4 ok /data/data/com.termux/files/home/broccoli/tools/consume_response.sh
+2026-07-10T02:58:35-04:00 === LOOP_OK PASS ===
+2026-07-10T03:04:31-04:00 === LOOP_OK_PATH start task_len=33 ===
+2026-07-10T03:04:31-04:00 step1 grok_foreground_then
+AIM_RISH ok try=1
+2026-07-10T03:04:33-04:00 1 launch Grok native
+2026-07-10T03:04:45-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+22781 /data/local/tmp/broccoli_ui.xml
+2026-07-10T03:04:51-04:00 3 packages in dump: package="ai.x.grok" 
+22781 /data/data/com.termux/files/home/broccoli/ui/last_ui.xml
+2026-07-10T03:04:33-04:00 1 launch Grok native
+2026-07-10T03:04:45-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+22781 /data/local/tmp/broccoli_ui.xml
+2026-07-10T03:04:51-04:00 3 packages in dump: package="ai.x.grok" 
+2026-07-10T03:04:53-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/rish_grok_round.sh
+CHAT_FOCUS_FAIL
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=ai.x.grok/.MainActivity }
+2026-07-10T03:04:59-04:00 LAUNCH reuse pkg=ai.x.grok
+2026-07-10T03:04:59-04:00 WARN rish hook failed, continuing
+2026-07-10T03:04:59-04:00 CHAT_FOCUS_FAIL (no verify)
+FAIL: chat focus
+2026-07-10T03:04:59-04:00 step2 fail /data/data/com.termux/files/home/broccoli/tools/rish_grok_round.sh (try next)
+2026-07-10T03:05:00-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/wire_loop_full.sh
+2026-07-10T03:05:21-04:00 step2 fail /data/data/com.termux/files/home/broccoli/tools/wire_loop_full.sh (try next)
+2026-07-10T03:05:21-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/wire_send_immediate.sh
+/data/data/com.termux/files/home/broccoli/tools/wire_send_immediate.sh: line 7: 1: msg
+2026-07-10T03:05:21-04:00 step2 fail /data/data/com.termux/files/home/broccoli/tools/wire_send_immediate.sh (try next)
+2026-07-10T03:05:21-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/wire_send_fast.sh
+/data/data/com.termux/files/home/broccoli/tools/wire_send_fast.sh: line 4: $1: unbound variable
+2026-07-10T03:05:21-04:00 step2 fail /data/data/com.termux/files/home/broccoli/tools/wire_send_fast.sh (try next)
+2026-07-10T03:05:21-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/wire_send_ui.sh
+2026-07-10T03:05:21-04:00 step2 fail /data/data/com.termux/files/home/broccoli/tools/wire_send_ui.sh (try next)
+2026-07-10T03:05:21-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/rish_grok_once.sh
+Traceback (most recent call last):
+  File "<string>", line 5, in <module>
+    print(json.dumps(send_task('BROCC_TASK reply exactly: LOOP_OK'), indent=2))
+                     ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/home/broccoli/lib/broccoli_rish_ui.py", line 132, in send_task
+    from broccoli_core_round import full_round
+  File "/data/data/com.termux/files/home/broccoli/lib/broccoli_core_round.py", line 3, in <module>
+    from broccoli_adb_ui import full_round_adb, normalize_task
+  File "/data/data/com.termux/files/home/broccoli/lib/broccoli_adb_ui.py", line 252
+    log("send_verify composer_cleared
+        ^
+SyntaxError: unterminated string literal (detected at line 252)
+2026-07-10T03:05:24-04:00 step2 fail /data/data/com.termux/files/home/broccoli/tools/rish_grok_once.sh (try next)
+2026-07-10T03:05:24-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/agent_wire_rish.sh
+2026-07-10T03:05:47-04:00 step2 ok /data/data/com.termux/files/home/broccoli/tools/agent_wire_rish.sh
+2026-07-10T03:05:47-04:00 step3 wait 25s
+2026-07-10T03:06:12-04:00 step4 try_recv /data/data/com.termux/files/home/broccoli/tools/consume_response.sh
+2026-07-10T03:06:13-04:00 step4 ok /data/data/com.termux/files/home/broccoli/tools/consume_response.sh
+2026-07-10T03:06:15-04:00 === LOOP_OK PASS ===
+2026-07-10T03:07:06-04:00 === LOOP_OK_PATH start task_len=142 ===
+2026-07-10T03:07:06-04:00 step1 grok_foreground_then
+AIM_RISH ok try=1
+2026-07-10T03:07:10-04:00 1 launch Grok native
+2026-07-10T03:07:32-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+5441 /data/local/tmp/broccoli_ui.xml
+2026-07-10T03:07:38-04:00 3 packages in dump: package="com.sec.android.app.launcher" 
+2026-07-10T03:07:39-04:00 WARN Grok not in dump — tap Grok app on screen, wait 3s, re-dump
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+7928 /data/data/com.termux/files/home/broccoli/ui/last_ui.xml
+2026-07-10T03:07:32-04:00 2 dump UI (rish)
+UI hierchary dumped to: /data/local/tmp/broccoli_ui.xml
+5441 /data/local/tmp/broccoli_ui.xml
+2026-07-10T03:07:38-04:00 3 packages in dump: package="com.sec.android.app.launcher" 
+2026-07-10T03:07:39-04:00 WARN Grok not in dump — tap Grok app on screen, wait 3s, re-dump
+2026-07-10T03:07:50-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/rish_grok_round.sh
+CHAT_FOCUS_FAIL
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=ai.x.grok/.MainActivity }
+2026-07-10T03:07:54-04:00 LAUNCH reuse pkg=ai.x.grok
+2026-07-10T03:07:54-04:00 WARN rish hook failed, continuing
+2026-07-10T03:07:55-04:00 CHAT_FOCUS_FAIL (no verify)
+FAIL: chat focus
+2026-07-10T03:07:55-04:00 step2 fail /data/data/com.termux/files/home/broccoli/tools/rish_grok_round.sh (try next)
+2026-07-10T03:07:55-04:00 step2 try_send /data/data/com.termux/files/home/broccoli/tools/wire_loop_full.sh
+need message

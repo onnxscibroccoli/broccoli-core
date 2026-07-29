@@ -1,0 +1,88 @@
+2026-07-06T22:42:35-04:00 SEND start len=69
+2026-07-06T22:46:03-04:00 === SEND ui-driven len=25 ===
+2026-07-06T22:46:24-04:00 === SEND ui-driven len=69 ===
+2026-07-06T22:51:39-04:00 SEND start len=69
+2026-07-06T22:53:52-04:00 warn paste not in dump — retry paste
+2026-07-06T22:54:11-04:00 paste not visible in dump — continue send
+ERR no_composer
+2026-07-06T22:54:49-04:00 send_tap miss attempt=1 — enter
+TAP 1001 1338
+2026-07-06T22:55:27-04:00 send_tap attempt=2
+2026-07-06T22:55:49-04:00 fallback grok_send_tap
+Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }
+Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }
+no_composer
+ERR no_composer
+2026-07-06T22:57:18-04:00 send_tap miss attempt=3 — enter
+ERR no_send_candidate
+2026-07-06T22:58:10-04:00 send_tap miss attempt=4 — enter
+2026-07-06T22:58:42-04:00 WARN send not confirmed in dump — user may need one tap
+2026-07-06T22:59:05-04:00 reply=DAEMON start, then ROUND start / send_tap ok / reply=
+2026-07-06T23:13:07-04:00 SEND start len=185
+ERR no_composer
+2026-07-06T23:15:17-04:00 send_tap miss attempt=1 — enter
+ERR no_send_candidate
+2026-07-06T23:16:04-04:00 send_tap miss attempt=2 — enter
+2026-07-06T23:16:38-04:00 send_ok composer_empty_or_in_chat
+2026-07-06T23:17:00-04:00 reply=Start new chat
+2026-07-06T23:28:52-04:00 SEND start len=764
+2026-07-06T23:29:53-04:00 SEND start len=655
+TAP 540 1195
+2026-07-06T23:33:54-04:00 send_tap attempt=1
+TAP 540 1195
+2026-07-06T23:33:55-04:00 send_tap attempt=1
+2026-07-06T23:33:57-04:00 SEND len=33
+2026-07-06T23:35:54-04:00 dump_bytes=29986
+{"err": "no_send"}
+{"err": "no_composer"}
+{"err": "no_composer"}
+2026-07-06T23:47:26-04:00 SEND len=33
+2026-07-06T23:49:08-04:00 dump_bytes=8265
+{"err": "no_send"}
+2026-07-06T23:54:28-04:00 SEND len=29
+2026-07-06T23:54:42-04:00 SEND len=29
+2026-07-06T23:59:03-04:00 SEND len=91
+2026-07-07T00:05:13-04:00 dump fail
+2026-07-07T00:06:29-04:00 dump fail
+2026-07-07T00:09:10-04:00 dump fail
+2026-07-07T00:10:10-04:00 SEND len=34
+2026-07-07T00:18:37-04:00 SEND len=34
+2026-07-07T00:33:04-04:00 SEND len=36
+2026-07-07T01:46:02-04:00 SEND start len=237
+/data/data/com.termux/files/home/broccoli/tools/wire_send_ui.sh: line 18: monkey: command not found
+2026-07-07T01:46:09-04:00 dump_bytes=35114
+/data/data/com.termux/files/home/broccoli/tools/wire_send_ui.sh: line 31: input: command not found
+2026-07-07T01:46:20-04:00 SEND start len=237
+/data/data/com.termux/files/home/broccoli/tools/wire_send_ui.sh: line 18: monkey: command not found
+2026-07-07T01:46:26-04:00 dump_bytes=16380
+/data/data/com.termux/files/home/broccoli/tools/wire_send_ui.sh: line 31: input: command not found
+2026-07-07T01:49:27-04:00 SEND start len=117
+/data/data/com.termux/files/home/broccoli/tools/wire_send_ui.sh: line 16: monkey: command not found
+2026-07-07T01:49:33-04:00 dump_bytes=8236
+/data/data/com.termux/files/home/broccoli/tools/wire_send_ui.sh: line 26: input: command not found
+2026-07-07T01:49:45-04:00 SEND start len=117
+/data/data/com.termux/files/home/broccoli/tools/wire_send_ui.sh: line 16: monkey: command not found
+2026-07-07T01:49:50-04:00 dump fail
+2026-07-07T01:50:01-04:00 SEND start len=117
+/data/data/com.termux/files/home/broccoli/tools/wire_send_ui.sh: line 16: monkey: command not found
+/data/data/com.termux/files/home/broccoli/lib/ui_dump_rish.sh: line 13: /data/data/com.termux/files/home/broccoli/reports/.ui_dump.tmp: Permission denied
+2026-07-07T01:50:08-04:00 dump fail
+2026-07-07T01:50:45-04:00 SEND len=7
+/data/data/com.termux/files/home/broccoli/tools/wire_send_ui.sh: line 10: monkey: command not found
+2026-07-07T02:06:41-04:00 SEND len=14
+2026-07-07T02:06:53-04:00 dump_fail
+2026-07-07T11:38:20-04:00 SEND len=14
+2026-07-07T11:38:25-04:00 dump_fail
+2026-07-07T23:39:04-04:00 SEND len=36
+2026-07-07T23:39:09-04:00 dump_fail
+2026-07-10T02:54:37-04:00 SEND len=36
+2026-07-10T02:54:43-04:00 {"bytes": 8182, "package": "com.termux", "composer": null, "send": null, "ok": false}
+2026-07-10T02:54:54-04:00 no_composer
+2026-07-10T02:57:53-04:00 SEND len=36
+2026-07-10T02:57:58-04:00 dump_fail
+2026-07-10T03:05:29-04:00 SEND len=36
+2026-07-10T03:05:34-04:00 dump_fail
+2026-07-10T13:17:15-04:00 SEND len=14
+2026-07-10T13:17:24-04:00 dump_fail
+2026-07-11T13:23:53-04:00 SEND len=14
+2026-07-11T13:24:02-04:00 {"bytes": 4076, "package": "com.termux", "composer": null, "send": null, "ok": false}

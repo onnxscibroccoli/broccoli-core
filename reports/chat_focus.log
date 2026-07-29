@@ -1,0 +1,41 @@
+2026-07-07T20:42:16-04:00 LAUNCH reuse pkg=ai.x.grok
+file_bytes 41634
+2026-07-07T20:42:27-04:00 WARN rish hook failed, continuing
+FAIL CLIP_V2_204227
+2026-07-07T20:42:34-04:00 CHAT_FOCUS_FAIL (no verify)
+2026-07-07T23:31:13-04:00 LAUNCH reuse pkg=ai.x.grok
+2026-07-07T23:31:13-04:00 WARN rish hook failed, continuing
+brocc-shim: use /data/data/com.termux/files/home/broccoli/bin/wire or install real brocc in PREFIX
+2026-07-07T23:31:13-04:00 CHAT_FOCUS_FAIL (no verify)
+2026-07-07T23:34:31-04:00 LAUNCH reuse pkg=ai.x.grok
+2026-07-07T23:34:31-04:00 WARN rish hook failed, continuing
+brocc-shim: use /data/data/com.termux/files/home/broccoli/bin/wire or install real brocc in PREFIX
+2026-07-07T23:34:31-04:00 CHAT_FOCUS_FAIL (no verify)
+2026-07-07T23:34:37-04:00 LAUNCH reuse pkg=ai.x.grok
+2026-07-07T23:34:38-04:00 WARN rish hook failed, continuing
+brocc-shim: use /data/data/com.termux/files/home/broccoli/bin/wire or install real brocc in PREFIX
+2026-07-07T23:34:38-04:00 CHAT_FOCUS_FAIL (no verify)
+2026-07-07T23:38:47-04:00 LAUNCH reuse pkg=ai.x.grok
+2026-07-07T23:38:48-04:00 WARN rish hook failed, continuing
+brocc-shim: use /data/data/com.termux/files/home/broccoli/bin/wire or install real brocc in PREFIX
+2026-07-07T23:38:48-04:00 CHAT_FOCUS_FAIL (no verify)
+2026-07-10T02:54:09-04:00 LAUNCH reuse pkg=ai.x.grok
+2026-07-10T02:54:10-04:00 WARN rish hook failed, continuing
+brocc-shim: use /data/data/com.termux/files/home/broccoli/bin/wire or install real brocc in PREFIX
+2026-07-10T02:54:10-04:00 CHAT_FOCUS_FAIL (no verify)
+2026-07-10T02:57:12-04:00 LAUNCH reuse pkg=ai.x.grok
+2026-07-10T02:57:12-04:00 WARN rish hook failed, continuing
+brocc-shim: use /data/data/com.termux/files/home/broccoli/bin/wire or install real brocc in PREFIX
+2026-07-10T02:57:12-04:00 CHAT_FOCUS_FAIL (no verify)
+2026-07-10T03:04:59-04:00 LAUNCH reuse pkg=ai.x.grok
+2026-07-10T03:04:59-04:00 WARN rish hook failed, continuing
+brocc-shim: use /data/data/com.termux/files/home/broccoli/bin/wire or install real brocc in PREFIX
+2026-07-10T03:04:59-04:00 CHAT_FOCUS_FAIL (no verify)
+2026-07-10T03:07:54-04:00 LAUNCH reuse pkg=ai.x.grok
+2026-07-10T03:07:54-04:00 WARN rish hook failed, continuing
+brocc-shim: use /data/data/com.termux/files/home/broccoli/bin/wire or install real brocc in PREFIX
+2026-07-10T03:07:55-04:00 CHAT_FOCUS_FAIL (no verify)
+2026-07-10T03:09:13-04:00 LAUNCH reuse pkg=ai.x.grok
+2026-07-10T03:09:14-04:00 WARN rish hook failed, continuing
+FAIL CLIP_V2_030914
+2026-07-10T03:09:37-04:00 CHAT_FOCUS_FAIL (no verify)
