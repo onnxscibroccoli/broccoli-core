@@ -8,3 +8,13 @@ id_ecdsa
 id_ecdsa.pub
 id_dsa
 id_dsa.pub
+
+# Runtime state
+tools/sync_state.json
+# Generated notification cache
+meta/notif_mine/
+# Generated research
+reports/research/
+# Runtime logs
+*.log
+*.pid
