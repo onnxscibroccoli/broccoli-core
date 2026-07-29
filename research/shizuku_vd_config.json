@@ -1,0 +1,16 @@
+{
+  "virtual_display": {
+    "width": 1080,
+    "height": 1920,
+    "dpi": 320,
+    "flags": ["FLAG_PRESENTATION", "FLAG_OWN_CONTENT_ONLY"]
+  },
+  "accessibility": {
+    "flag_dont_suppress": "FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES",
+    "note": "UI parser must not suppress a11y services during background capture"
+  },
+  "coordinate_injection": {
+    "map_file": "research/coordinate_map.json",
+    "mode": "direct_injection"
+  }
+}

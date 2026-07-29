@@ -1,0 +1,7 @@
+STEP launch_grok
+STEP dump_ui
+  file_bytes 0
+  FAIL: no hierarchy in file  # BROCC: retry full dump
+  file_bytes 0
+FAIL send: no composer
+=== BROCCOLI_DONE === grok FAIL: send
