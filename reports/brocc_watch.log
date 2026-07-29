@@ -1,0 +1,1 @@
+watch queue /data/data/com.termux/files/home/broccoli/queue/pending.txt every 5 s
