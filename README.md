@@ -59,3 +59,6 @@ Runtime components that expose `start()`, `stop()`, and `health()` are now manag
 
 Runtime components that expose `start()`, `stop()`, and `health()` are now managed as transports. The first transports are the accessibility driver and the clipboard bridge, both registered with the transport registry and supervised for restart/recovery by the Governor and transport supervisor.
 
+## Managed transports
+
+Runtime components that expose `start()`, `stop()`, and `health()` are now managed as transports. The managed set currently includes the accessibility driver, clipboard bridge, Grok provider, workflow executor, adaptive planner, knowledge graph, and agent coordinator, all registered with the transport registry and supervised for restart/recovery by the Governor and transport supervisor.
