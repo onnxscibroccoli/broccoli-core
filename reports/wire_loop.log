@@ -1,0 +1,18 @@
+need message
+need message
+2026-07-07T12:23:34-04:00 OUT len=21
+need message
+need message
+need message
+need message
+need message
+2026-07-11T13:27:31-04:00 reply_seen
+2026-07-11T13:27:31-04:00 IN
+If golden file is empty, the automation failed (wire/disk/Grok parse)—fix wire_send_ui / parse_grok_ui, don’t ask the user to “save” anything.
+Revised golden checklist (automation-only wording)
+1.
+wait_disk / offload — scripts only.
+2.
+2.
+2026-07-11T13:27:50-04:00 RUN /data/data/com.termux/files/home/broccoli/sandbox/from_grok/block_20260706_231700_0.sh
+/data/data/com.termux/files/home/broccoli/sandbox/from_grok/block_20260706_231700_0.sh: line 3: Wire: command not found

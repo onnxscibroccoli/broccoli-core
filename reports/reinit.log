@@ -1,0 +1,36 @@
+2026-07-07T01:45:28-04:00 === termux clean mode=run ===
+/dev/block/dm-59  48G  46G  1.8G  97% /data/user/0
+2026-07-07T01:45:28-04:00 RUN: pkg clean -y 2>/dev/null || apt clean 2>/dev/null || true
+2026-07-07T01:45:28-04:00 RUN: pip cache purge 2>/dev/null || true
+Files removed: 0 (0 bytes)
+Directories removed: 0
+2026-07-07T01:45:30-04:00 RUN: rm -rf "/data/data/com.termux/files/home/broccoli/quarantine/staging"/* 2>/dev/null || true
+/dev/block/dm-59  48G  46G  1.8G  97% /data/user/0
+2026-07-07T01:45:31-04:00 === done ===
+2026-07-07T01:48:29-04:00 === termux clean mode=run ===
+/dev/block/dm-59  48G  46G  1.8G  97% /data/user/0
+2026-07-07T01:48:29-04:00 RUN: pkg clean -y 2>/dev/null || apt clean 2>/dev/null || true
+2026-07-07T01:48:29-04:00 RUN: pip cache purge 2>/dev/null || true
+Files removed: 0 (0 bytes)
+Directories removed: 0
+2026-07-07T01:48:31-04:00 RUN: rm -rf "/data/data/com.termux/files/home/broccoli/quarantine/staging"/* 2>/dev/null || true
+/dev/block/dm-59  48G  46G  1.8G  97% /data/user/0
+2026-07-07T01:48:33-04:00 === done ===
+2026-07-10T12:56:35-04:00 === termux clean mode=run ===
+/dev/block/dm-59  48G  48G   97M 100% /data/user/0
+2026-07-10T12:56:35-04:00 RUN: pkg clean -y 2>/dev/null || apt clean 2>/dev/null || true
+2026-07-10T12:56:35-04:00 RUN: pip cache purge 2>/dev/null || true
+Files removed: 0 (0 bytes)
+Directories removed: 0
+2026-07-10T12:56:37-04:00 RUN: rm -rf "/data/data/com.termux/files/home/broccoli/quarantine/staging"/* 2>/dev/null || true
+/dev/block/dm-59  48G  48G   96M 100% /data/user/0
+2026-07-10T12:56:39-04:00 === done ===
+2026-07-11T13:24:13-04:00 === termux clean mode=run ===
+/dev/block/dm-59  48G  48G  417M 100% /data/user/0
+2026-07-11T13:24:13-04:00 RUN: pkg clean -y 2>/dev/null || apt clean 2>/dev/null || true
+2026-07-11T13:24:13-04:00 RUN: pip cache purge 2>/dev/null || true
+Files removed: 0 (0 bytes)
+Directories removed: 0
+2026-07-11T13:24:15-04:00 RUN: rm -rf "/data/data/com.termux/files/home/broccoli/quarantine/staging"/* 2>/dev/null || true
+/dev/block/dm-59  48G  48G  417M 100% /data/user/0
+2026-07-11T13:24:17-04:00 === done ===

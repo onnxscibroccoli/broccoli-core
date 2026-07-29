@@ -1,0 +1,530 @@
+22:38:15 ROUND task_len=33
+22:38:15 ROUND task_len=33
+=== ONE instance start ===
+infinite SINGLE start pid=30587
+22:38:20 INFINITE_START single_instance poll=45.0
+22:38:20 ROUND task_len=33
+22:38:38 xml_et_fail not well-formed (invalid token): line 1, column 49205
+22:38:41 inject skip_visible
+22:38:47 xml_et_fail not well-formed (invalid token): line 1, column 57397
+22:38:47 xml_et_fail not well-formed (invalid token): line 1, column 57397
+22:38:51 send_adb 540 2060 semantic
+22:39:01 xml_et_fail reference to invalid character number: line 1, column 24577
+22:39:01 send_verify composer_cleared
+22:39:28 xml_et_fail not well-formed (invalid token): line 1, column 16384
+22:39:28 round ok=True loop_ok=True head=export BRO=~/broccoli&#10;export PATH="$PREFIX/bin:$BRO/bin:$BRO/tools:$PATH"&#1
+22:39:28 RESULT {"ok": true, "stage": null, "loop_ok": true, "reply_head": "export BRO=~/broccoli&#10;export PATH=\"$PREFIX/bin:$BRO/bin:$BRO/tools:$PATH\"&#10;export PYTHONPATH=$BRO/lib&#10;export RISH_APPLICATION_ID=com.termux&#10;export BROCCOLI_GROK_PKG=ai.x.grok&#10;export BROCCOLI_NO_ENTER=1&#10;export BROCCOLI_SEND_MODE=sibling_first&#10;export BROCCOLI_POLL_SEC=45&#10;&#10;# kill ALL dup"}
+22:40:13 ROUND task_len=0
+22:40:20 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null}
+infinite SINGLE start pid=13179
+22:48:41 INFINITE_START single_instance poll=45.0
+22:49:16 xml_et_fail not well-formed (invalid token): line 1, column 4099
+22:49:28 inject paste279
+22:55:19 INFINITE_START debugged single_instance poll=45.0
+22:55:21 ROUND task_len=33
+22:55:23 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "cannot import name 'recv_via_notifications' from 'broccoli_notif' (/data/data/com.termux/files/home/broccoli/lib/broccoli_notif.py)"}
+22:56:10 ROUND task_len=33
+22:56:14 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "cannot import name 'recv_via_notifications' from 'broccoli_notif' (/data/data/com.termux/files/home/broccoli/lib/broccoli_notif.py)"}
+22:57:01 ROUND task_len=33
+22:57:05 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "cannot import name 'recv_via_notifications' from 'broccoli_notif' (/data/data/com.termux/files/home/broccoli/lib/broccoli_notif.py)"}
+22:57:43 INFINITE_START debugged single_instance poll=45.0
+22:57:45 ROUND task_len=33
+22:57:48 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "cannot import name 'recv_via_notifications' from 'broccoli_notif' (/data/data/com.termux/files/home/broccoli/lib/broccoli_notif.py)"}
+22:58:35 INFINITE_START debugged single_instance poll=45.0
+22:58:37 ROUND task_len=33
+22:58:39 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "cannot import name 'recv_via_notifications' from 'broccoli_notif' (/data/data/com.termux/files/home/broccoli/lib/broccoli_notif.py)"}
+22:59:26 ROUND task_len=33
+22:59:42 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "cannot import name 'recv_via_notifications' from 'broccoli_notif' (/data/data/com.termux/files/home/broccoli/lib/broccoli_notif.py)"}
+23:00:39 ROUND task_len=33
+23:00:47 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "cannot import name 'recv_via_notifications' from 'broccoli_notif' (/data/data/com.termux/files/home/broccoli/lib/broccoli_notif.py)"}
+23:01:35 ROUND task_len=33
+23:01:37 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "cannot import name 'recv_via_notifications' from 'broccoli_notif' (/data/data/com.termux/files/home/broccoli/lib/broccoli_notif.py)"}
+23:02:24 ROUND task_len=33
+23:02:26 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "cannot import name 'recv_via_notifications' from 'broccoli_notif' (/data/data/com.termux/files/home/broccoli/lib/broccoli_notif.py)"}
+23:03:13 ROUND task_len=33
+23:03:17 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "cannot import name 'recv_via_notifications' from 'broccoli_notif' (/data/data/com.termux/files/home/broccoli/lib/broccoli_notif.py)"}
+23:04:04 ROUND task_len=33
+23:04:08 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "cannot import name 'recv_via_notifications' from 'broccoli_notif' (/data/data/com.termux/files/home/broccoli/lib/broccoli_notif.py)"}
+23:04:56 ROUND task_len=33
+23:05:02 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "cannot import name 'recv_via_notifications' from 'broccoli_notif' (/data/data/com.termux/files/home/broccoli/lib/broccoli_notif.py)"}
+23:05:45 recv_copy_rish start
+23:05:51 recv_copy_rish no_copy_button
+23:05:59 ROUND task_len=33
+23:06:05 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "cannot import name 'recv_via_notifications' from 'broccoli_notif' (/data/data/com.termux/files/home/broccoli/lib/broccoli_notif.py)"}
+23:06:52 ROUND task_len=33
+23:07:02 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "cannot import name 'recv_via_notifications' from 'broccoli_notif' (/data/data/com.termux/files/home/broccoli/lib/broccoli_notif.py)"}
+23:07:50 ROUND task_len=33
+23:07:52 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "cannot import name 'recv_via_notifications' from 'broccoli_notif' (/data/data/com.termux/files/home/broccoli/lib/broccoli_notif.py)"}
+23:08:39 ROUND task_len=33
+23:08:42 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:09:30 ROUND task_len=33
+23:09:32 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:09:35 recv_copy launch_grok start
+23:09:36 recv_copy launch cmd=adb shell monkey -p ai.x.grok -c android.intent.category.LAU rc=1
+23:09:38 recv_copy launch cmd=adb shell am start -a android.intent.action.MAIN -c android. rc=1
+23:09:41 recv_copy launch cmd=adb shell cmd package resolve-activity --brief ai.x.grok 2>/ rc=0
+23:09:44 recv_copy grok_focus fail 
+23:10:19 ROUND task_len=33
+23:10:22 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:11:09 ROUND task_len=33
+23:11:10 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:11:50 recv_copy_rish start
+23:11:50 recv_copy launch_grok start
+23:11:50 recv_copy launch cmd=adb shell monkey -p ai.x.grok -c android.intent.category.LAU rc=1
+23:11:53 recv_copy launch cmd=adb shell am start -a android.intent.action.MAIN -c android. rc=1
+23:11:55 recv_copy launch cmd=adb shell cmd package resolve-activity --brief ai.x.grok 2>/ rc=0
+23:11:57 ROUND task_len=33
+23:11:58 recv_copy grok_focus fail 
+23:11:58 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:11:59 recv_copy launch_grok start
+23:12:00 recv_copy launch cmd=adb shell monkey -p ai.x.grok -c android.intent.category.LAU rc=1
+23:12:02 recv_copy launch cmd=adb shell am start -a android.intent.action.MAIN -c android. rc=1
+23:12:05 recv_copy launch cmd=adb shell cmd package resolve-activity --brief ai.x.grok 2>/ rc=0
+23:12:08 recv_copy grok_focus fail 
+23:12:44 ROUND task_len=33
+23:12:46 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:13:32 ROUND task_len=33
+23:13:34 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:14:20 ROUND task_len=33
+23:14:34 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:15:24 ROUND task_len=33
+23:15:38 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:16:26 ROUND task_len=33
+23:16:27 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:17:15 ROUND task_len=33
+23:17:18 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:18:05 ROUND task_len=33
+23:18:19 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:18:25 recv_copy_rish start
+23:18:25 recv_copy launch_grok monkey pkg=ai.x.grok
+23:18:26 launch_monkey pkg=ai.x.grok rc=1
+23:18:28 recv_copy grok_focus fail adb: no devices/emulators found
+23:19:08 ROUND task_len=33
+23:19:12 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:20:00 ROUND task_len=33
+23:20:02 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:20:50 ROUND task_len=33
+23:20:53 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:21:40 ROUND task_len=33
+23:21:42 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:22:29 ROUND task_len=33
+23:22:32 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:23:19 ROUND task_len=33
+23:23:20 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:24:07 ROUND task_len=33
+23:24:23 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:25:13 ROUND task_len=33
+23:25:21 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:26:09 ROUND task_len=33
+23:26:11 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:26:59 ROUND task_len=33
+23:27:07 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:27:55 ROUND task_len=33
+23:28:03 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:28:51 ROUND task_len=33
+23:28:54 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:29:40 ROUND task_len=33
+23:29:42 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:30:28 ROUND task_len=33
+23:30:32 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:31:19 ROUND task_len=33
+23:31:21 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:32:08 ROUND task_len=33
+23:32:09 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:32:56 ROUND task_len=33
+23:32:57 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:33:44 ROUND task_len=33
+23:33:45 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:34:31 ROUND task_len=33
+23:34:32 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:35:19 ROUND task_len=33
+23:35:20 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:36:06 ROUND task_len=33
+23:36:07 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:36:54 ROUND task_len=33
+23:36:56 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:37:43 ROUND task_len=33
+23:37:46 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:38:33 ROUND task_len=33
+23:38:36 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:39:23 ROUND task_len=33
+23:39:24 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:40:11 ROUND task_len=33
+23:40:12 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:40:58 ROUND task_len=33
+23:40:59 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:41:45 ROUND task_len=33
+23:41:47 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:42:33 ROUND task_len=33
+23:42:34 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:43:20 ROUND task_len=33
+23:43:21 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:44:07 ROUND task_len=33
+23:44:09 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:44:55 ROUND task_len=33
+23:44:57 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:45:44 ROUND task_len=33
+23:45:46 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:46:32 ROUND task_len=33
+23:46:33 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:47:19 ROUND task_len=33
+23:47:21 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:48:07 ROUND task_len=33
+23:48:08 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:48:54 ROUND task_len=33
+23:48:55 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:49:42 ROUND task_len=33
+23:49:43 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:50:29 ROUND task_len=33
+23:50:30 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:51:16 ROUND task_len=33
+23:51:18 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:52:05 ROUND task_len=33
+23:52:06 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:52:52 ROUND task_len=33
+23:52:53 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:53:39 ROUND task_len=33
+23:53:41 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:54:27 ROUND task_len=33
+23:54:28 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:55:14 ROUND task_len=33
+23:55:16 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:56:02 ROUND task_len=33
+23:56:03 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:56:49 ROUND task_len=33
+23:56:50 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:57:36 ROUND task_len=33
+23:57:38 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:58:24 ROUND task_len=33
+23:58:25 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:59:11 ROUND task_len=33
+23:59:12 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+23:59:58 ROUND task_len=33
+00:00:00 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:00:46 ROUND task_len=33
+00:00:48 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:01:34 ROUND task_len=33
+00:01:35 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:02:22 ROUND task_len=33
+00:02:23 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:03:09 ROUND task_len=33
+00:03:27 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:04:14 ROUND task_len=33
+00:04:18 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:05:05 ROUND task_len=33
+00:05:08 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:05:56 ROUND task_len=33
+00:05:57 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:06:43 ROUND task_len=33
+00:06:44 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:07:31 ROUND task_len=33
+00:07:32 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:08:19 ROUND task_len=33
+00:08:21 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:09:07 ROUND task_len=33
+00:09:10 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:09:57 ROUND task_len=33
+00:10:01 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:10:51 ROUND task_len=33
+00:10:54 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:11:41 ROUND task_len=33
+00:11:43 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:12:30 ROUND task_len=33
+00:12:42 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:13:29 ROUND task_len=33
+00:13:32 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:14:19 ROUND task_len=33
+00:14:20 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:15:06 ROUND task_len=33
+00:15:08 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:15:55 ROUND task_len=33
+00:15:56 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:16:42 ROUND task_len=33
+00:16:44 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:17:30 ROUND task_len=33
+00:17:31 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:18:17 ROUND task_len=33
+00:18:18 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:19:05 ROUND task_len=33
+00:19:06 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:19:53 ROUND task_len=33
+00:19:54 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:20:40 ROUND task_len=33
+00:20:44 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:21:34 ROUND task_len=33
+00:21:39 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:22:26 ROUND task_len=33
+00:22:27 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:23:14 ROUND task_len=33
+00:23:15 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:24:01 ROUND task_len=33
+00:24:02 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:24:49 ROUND task_len=33
+00:24:50 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:25:36 ROUND task_len=33
+00:25:38 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:26:24 ROUND task_len=33
+00:26:25 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:27:11 ROUND task_len=33
+00:27:14 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:28:01 ROUND task_len=33
+00:28:03 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:28:49 ROUND task_len=33
+00:28:50 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:29:36 ROUND task_len=33
+00:29:37 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:30:24 ROUND task_len=33
+00:30:25 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:31:11 ROUND task_len=33
+00:31:12 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:31:59 ROUND task_len=33
+00:32:01 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:32:49 ROUND task_len=33
+00:32:50 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:33:36 ROUND task_len=33
+00:33:38 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:34:24 ROUND task_len=33
+00:34:25 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:35:11 ROUND task_len=33
+00:35:12 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:35:59 ROUND task_len=33
+00:36:00 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:36:46 ROUND task_len=33
+00:36:47 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:37:33 ROUND task_len=33
+00:37:34 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:38:21 ROUND task_len=33
+00:38:22 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:39:08 ROUND task_len=33
+00:39:10 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:39:56 ROUND task_len=33
+00:39:57 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:40:44 ROUND task_len=33
+00:40:45 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:41:31 ROUND task_len=33
+00:41:33 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:42:19 ROUND task_len=33
+00:42:20 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:43:07 ROUND task_len=33
+00:43:08 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:43:54 ROUND task_len=33
+00:43:56 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:44:42 ROUND task_len=33
+00:44:43 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:45:30 ROUND task_len=33
+00:45:31 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:46:17 ROUND task_len=33
+00:46:19 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:47:05 ROUND task_len=33
+00:47:06 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:47:53 ROUND task_len=33
+00:47:54 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:48:40 ROUND task_len=33
+00:48:42 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:49:28 ROUND task_len=33
+00:49:29 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:50:16 ROUND task_len=33
+00:50:17 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:51:03 ROUND task_len=33
+00:51:05 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:51:51 ROUND task_len=33
+00:51:52 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:52:39 ROUND task_len=33
+00:52:40 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:53:26 ROUND task_len=33
+00:53:28 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:54:14 ROUND task_len=33
+00:54:16 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:55:02 ROUND task_len=33
+00:55:03 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:55:50 ROUND task_len=33
+00:55:51 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:56:37 ROUND task_len=33
+00:56:39 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:57:25 ROUND task_len=33
+00:57:26 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:58:13 ROUND task_len=33
+00:58:15 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:59:01 ROUND task_len=33
+00:59:02 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+00:59:48 ROUND task_len=33
+00:59:50 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:00:37 ROUND task_len=33
+01:00:38 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:01:24 ROUND task_len=33
+01:01:26 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:02:12 ROUND task_len=33
+01:02:13 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:03:00 ROUND task_len=33
+01:03:01 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:03:47 ROUND task_len=33
+01:03:48 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:04:34 ROUND task_len=33
+01:04:36 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:05:22 ROUND task_len=33
+01:05:23 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:06:10 ROUND task_len=33
+01:06:11 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:06:57 ROUND task_len=33
+01:06:58 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:07:44 ROUND task_len=33
+01:07:46 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:08:32 ROUND task_len=33
+01:08:33 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:09:19 ROUND task_len=33
+01:09:21 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:10:07 ROUND task_len=33
+01:10:08 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:10:54 ROUND task_len=33
+01:10:57 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:11:44 ROUND task_len=33
+01:11:46 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:12:32 ROUND task_len=33
+01:12:34 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:13:22 ROUND task_len=33
+01:13:26 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:14:13 ROUND task_len=33
+01:14:15 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:15:03 ROUND task_len=33
+01:15:11 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:15:59 ROUND task_len=33
+01:16:00 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:16:46 ROUND task_len=33
+01:16:47 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:17:34 ROUND task_len=33
+01:17:37 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:18:23 ROUND task_len=33
+01:18:25 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:19:11 ROUND task_len=33
+01:19:14 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:20:01 ROUND task_len=33
+01:20:02 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:20:49 ROUND task_len=33
+01:20:50 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:21:36 ROUND task_len=33
+01:21:39 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:22:26 ROUND task_len=33
+01:22:28 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:23:14 ROUND task_len=33
+01:23:17 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:24:03 ROUND task_len=33
+01:24:06 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:24:53 ROUND task_len=33
+01:24:54 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:25:41 ROUND task_len=33
+01:25:42 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:26:28 ROUND task_len=33
+01:26:30 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:27:17 ROUND task_len=33
+01:27:19 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:28:07 ROUND task_len=33
+01:28:08 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:28:54 ROUND task_len=33
+01:28:55 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:29:42 ROUND task_len=33
+01:29:43 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:30:29 ROUND task_len=33
+01:30:31 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:31:17 ROUND task_len=33
+01:31:22 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:32:11 ROUND task_len=33
+01:32:13 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:33:00 ROUND task_len=33
+01:33:02 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:33:49 ROUND task_len=33
+01:34:04 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:34:54 ROUND task_len=33
+01:35:04 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:35:52 ROUND task_len=33
+01:35:58 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:36:45 ROUND task_len=33
+01:36:48 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:37:35 ROUND task_len=33
+01:37:38 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:38:26 ROUND task_len=33
+01:38:27 RESULT {"ok": true, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:39:13 ROUND task_len=33
+01:39:28 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:40:16 ROUND task_len=33
+01:40:31 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:41:19 ROUND task_len=33
+01:41:34 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:42:22 ROUND task_len=33
+01:42:38 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:43:27 ROUND task_len=33
+01:43:43 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:44:34 ROUND task_len=33
+01:44:47 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:45:36 ROUND task_len=33
+01:45:52 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:46:49 ROUND task_len=33
+01:47:03 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:47:50 ROUND task_len=33
+01:48:05 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:48:53 ROUND task_len=33
+01:49:08 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:49:57 ROUND task_len=33
+01:50:11 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:51:00 ROUND task_len=33
+01:51:13 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:52:01 ROUND task_len=33
+01:52:15 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:53:02 ROUND task_len=33
+01:53:16 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:54:03 ROUND task_len=33
+01:54:17 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:55:04 ROUND task_len=33
+01:55:18 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:56:15 ROUND task_len=33
+01:56:28 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:57:15 ROUND task_len=33
+01:57:29 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:58:18 ROUND task_len=33
+01:58:33 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:59:21 ROUND task_len=33
+01:59:35 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+02:00:21 ROUND task_len=33
+02:00:33 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+02:01:20 ROUND task_len=33
+02:01:32 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+02:02:18 ROUND task_len=33
+02:02:32 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+02:03:19 ROUND task_len=33
+02:03:33 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+02:04:21 ROUND task_len=33
+02:04:36 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+02:05:23 ROUND task_len=33
+02:05:35 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+02:06:22 ROUND task_len=33
+02:06:35 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+02:07:22 ROUND task_len=33
+02:07:35 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+02:08:22 ROUND task_len=33
+02:08:34 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+02:09:21 ROUND task_len=33
+02:09:34 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+02:10:21 ROUND task_len=33
+02:10:33 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+02:11:20 ROUND task_len=33
+02:11:34 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+02:12:21 ROUND task_len=33
+02:12:36 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+02:13:22 ROUND task_len=33
+02:13:36 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+02:14:22 ROUND task_len=33
+02:14:35 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+02:15:22 ROUND task_len=33
+02:15:35 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+02:16:23 ROUND task_len=33
+02:16:35 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+02:17:22 ROUND task_len=33
+02:17:36 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+02:18:23 ROUND task_len=33
+02:18:37 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+02:19:23 ROUND task_len=33
+02:19:36 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+02:20:23 ROUND task_len=33
+01:55:25 INFINITE_START debugged single_instance poll=45.0
+01:55:30 ROUND task_len=142
+01:55:43 RESULT {"ok": false, "stage": null, "loop_ok": null, "reply_head": null, "error": "unterminated string literal (detected at line 252) (broccoli_adb_ui.py, line 252)"}
+01:56:41 ROUND task_len=142

@@ -1,0 +1,55 @@
+2026-07-10T12:56:57-04:00 new_chat fp=d8746e1cb57b4c79d904df125ab52722 reply=Ask anything
+UI hierchary dumped to: /sdcard/brocc_ui_dump.xml
+UI_DUMP fail
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] pkg=ai.x.grok }
+SHIZUKU_APP ok pkg=ai.x.grok action=foreground
+UI hierchary dumped to: /sdcard/brocc_ui_dump.xml
+UI hierchary dumped to: /sdcard/brocc_ui_dump.xml
+UI_DUMP ok bytes=8192 path=/data/data/com.termux/files/home/broccoli/ui/last_ui.xml
+CONSUME_OK bytes=317
+2026-07-10T12:59:37-04:00 new_chat fp=c1c14367be128958d300c5b2fb9df7fa reply=END
+UI_DUMP ok bytes=8192 path=/data/data/com.termux/files/home/broccoli/ui/last_ui.xml
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] pkg=ai.x.grok }
+SHIZUKU_APP ok pkg=ai.x.grok action=foreground
+UI hierchary dumped to: /sdcard/brocc_ui_dump.xml
+UI_DUMP ok bytes=8192 path=/data/data/com.termux/files/home/broccoli/ui/last_ui.xml
+CONSUME_OK bytes=160
+2026-07-10T13:03:52-04:00 new_chat fp=cfb12c91b12849e7c9c852039e554341 reply=Need full implementation
+UI hierchary dumped to: /sdcard/brocc_ui_dump.xml
+2026-07-11T13:25:47-04:00 new_chat fp=6480fe61d24ea7ac2d4b3f88f1a99aa5 reply=Ask anything
+UI_DUMP ok bytes=17837 path=/data/data/com.termux/files/home/broccoli/ui/last_ui.xml
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] pkg=ai.x.grok }
+SHIZUKU_APP ok pkg=ai.x.grok action=foreground
+UI hierchary dumped to: /sdcard/brocc_ui_dump.xml
+UI hierchary dumped to: /sdcard/brocc_ui_dump.xml
+UI_DUMP ok bytes=8192 path=/data/data/com.termux/files/home/broccoli/ui/last_ui.xml
+CONSUME_OK bytes=172
+2026-07-11T13:27:52-04:00 new_chat fp=d0c22c6e8f1d92c7ba427c726b6eb571 reply=2.
+UI_DUMP ok bytes=17837 path=/data/data/com.termux/files/home/broccoli/ui/last_ui.xml
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] pkg=ai.x.grok }
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] pkg=ai.x.grok }
+SHIZUKU_APP ok pkg=ai.x.grok action=foreground
+UI hierchary dumped to: /sdcard/brocc_ui_dump.xml
+UI hierchary dumped to: /sdcard/brocc_ui_dump.xml
+UI_DUMP ok bytes=17837 path=/data/data/com.termux/files/home/broccoli/ui/last_ui.xml
+CONSUME_OK bytes=130
+2026-07-11T13:30:05-04:00 new_chat fp=48f3f27080f6b50ab16bc6b80b588900 reply=Clear AGENT_STOP / HEAL_STOP / WIRE_STOP — rm or agent_ensur
+UI hierchary dumped to: /sdcard/brocc_ui_dump.xml
+UI hierchary dumped to: /sdcard/brocc_ui_dump.xml
+UI_DUMP ok bytes=9645 path=/data/data/com.termux/files/home/broccoli/ui/last_ui.xml
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] pkg=ai.x.grok }
+SHIZUKU_APP ok pkg=ai.x.grok action=foreground
+UI hierchary dumped to: /sdcard/brocc_ui_dump.xml
+UI_DUMP ok bytes=17837 path=/data/data/com.termux/files/home/broccoli/ui/last_ui.xml
+CONSUME_OK bytes=160
+2026-07-11T13:31:51-04:00 new_chat fp=12fcd789eeea96b8670a39752fd43929 reply=If you paste head -80 ~/broccoli/tools/open_grok.sh and whet
+UI hierchary dumped to: /sdcard/brocc_ui_dump.xml
+UI hierchary dumped to: /sdcard/brocc_ui_dump.xml
+UI_DUMP fail
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] pkg=ai.x.grok }
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] pkg=ai.x.grok }
+SHIZUKU_APP ok pkg=ai.x.grok action=foreground
+UI hierchary dumped to: /sdcard/brocc_ui_dump.xml
+UI hierchary dumped to: /sdcard/brocc_ui_dump.xml
+UI_DUMP fail
+CONSUME_OK bytes=237

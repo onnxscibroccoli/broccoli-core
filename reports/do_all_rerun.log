@@ -1,0 +1,81 @@
+=== 1 meta/cache ===
+0
+=== 2 wire paths ===
+meta/inbox/from_mac:
+total 11
+drwx------. 2 u0_a347 u0_a347 3452 Jul 13 01:46 .
+drwx------. 4 u0_a347 u0_a347 3452 Jul  7 16:40 ..
+-rwx------. 1 u0_a347 u0_a347   63 Jul 13 01:49 grok_commands.sh
+
+meta/inbox/to_mac:
+total 11
+drwx------. 2 u0_a347 u0_a347 3452 Jul  7 16:53 .
+drwx------. 4 u0_a347 u0_a347 3452 Jul  7 16:40 ..
+-rw-------. 1 u0_a347 u0_a347  460 Jul  7 17:55 loop_packet.json
+total 11
+drwx------. 2 u0_a347 u0_a347 3452 Jul 13 01:49 .
+drwx------. 7 u0_a347 u0_a347 3452 Jul 13 01:49 ..
+-rwx------. 1 u0_a347 u0_a347   63 Jul 13 01:49 grok_commands.sh
+=== 3 closed_loop recv/send grep ===
+4:"""Closed loop v2: Shizuku launch + a11y recv/send + actions + repeat."""
+21:INBOX = HOME / "brocc-inbox"
+73:def recv_text() -> str:
+75:    for path in (BRO / "inbox" / "grok_reply.txt", INBOX / "last_grok_reply.txt"):
+84:def send_text(text: str) -> bool:
+87:    (BRO / "inbox" / "prompt.txt").write_text(text, encoding="utf-8")
+93:    c, o = sh("a11y_send_round.sh", text[:12000], timeout=120)
+145:        msg = recv_text()
+159:        if not send_text(seed):
+160:            return "send_fail"
+170:    (BRO / "inbox" / "grok_reply.txt").write_text(msg, encoding="utf-8")
+179:    if not send_text(out):
+180:        return "send_fail"
+194:    if cmd == "recv":
+196:        print(recv_text()[:10000])
+198:    if cmd == "send" and len(argv) > 2:
+199:        ok = send_text(" ".join(argv[2:]))
+214:    print("usage: closed_loop.py run|once|recv|send <text>")
+=== 4 closed_loop usage ===
+  File "/data/data/com.termux/files/home/broccoli/lib/closed_loop.py", line 5
+    from __future__ import annotations
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: from __future__ imports must occur at the beginning of the file
+=== 5 recv test ===
+  File "/data/data/com.termux/files/home/broccoli/lib/closed_loop.py", line 5
+    from __future__ import annotations
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: from __future__ imports must occur at the beginning of the file
+=== 6 drop test file BOTH places ===
+inbox/from_mac:
+total 11
+drwx------. 2 u0_a347 u0_a347 3452 Jul 13 01:49 .
+drwx------. 7 u0_a347 u0_a347 3452 Jul 13 01:49 ..
+-rwx------. 1 u0_a347 u0_a347   63 Jul 13 01:51 grok_commands.sh
+
+meta/inbox/from_mac:
+total 11
+drwx------. 2 u0_a347 u0_a347 3452 Jul 13 01:46 .
+drwx------. 4 u0_a347 u0_a347 3452 Jul  7 16:40 ..
+-rwx------. 1 u0_a347 u0_a347   63 Jul 13 01:51 grok_commands.sh
+  File "/data/data/com.termux/files/home/broccoli/lib/closed_loop.py", line 5
+    from __future__ import annotations
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: from __future__ imports must occur at the beginning of the file
+=== 7 infinite loop ===
+NOT running
+    else:
+IndentationError: expected an indented block after 'if' statement on line 67
+  File "/data/data/com.termux/files/home/broccoli/tools/broccoli_infinite_dev_loop.py", line 70
+    else:
+IndentationError: expected an indented block after 'if' statement on line 67
+  File "/data/data/com.termux/files/home/broccoli/tools/broccoli_infinite_dev_loop.py", line 70
+    else:
+IndentationError: expected an indented block after 'if' statement on line 67
+nohup: ignoring input
+nohup: ignoring input
+nohup: ignoring input
+nohup: ignoring input
+nohup: ignoring input
+nohup: ignoring input
+nohup: ignoring input
+=== DONE ===

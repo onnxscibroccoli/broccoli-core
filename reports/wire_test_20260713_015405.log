@@ -1,0 +1,86 @@
+=== WIRE TEST 20260713_015405 ===
+--- A. Inboxes ---
+meta/inbox/from_mac:
+total 11
+drwx------. 2 u0_a347 u0_a347 3452 Jul 13 01:46 .
+drwx------. 4 u0_a347 u0_a347 3452 Jul  7 16:40 ..
+-rwx------. 1 u0_a347 u0_a347   63 Jul 13 01:51 grok_commands.sh
+
+meta/inbox/to_mac:
+total 11
+drwx------. 2 u0_a347 u0_a347 3452 Jul  7 16:53 .
+drwx------. 4 u0_a347 u0_a347 3452 Jul  7 16:40 ..
+-rw-------. 1 u0_a347 u0_a347  460 Jul  7 17:55 loop_packet.json
+total 11
+drwx------. 2 u0_a347 u0_a347 3452 Jul 13 01:49 .
+drwx------. 7 u0_a347 u0_a347 3452 Jul 13 01:49 ..
+-rwx------. 1 u0_a347 u0_a347   63 Jul 13 01:51 grok_commands.sh
+--- loop_packet ---
+{
+  "role": "brocc",
+  "ts": "2026-07-07 17:55:02",
+  "phase": "await_grok",
+  "summary": {
+    "missing": 1,
+    "stale": 7,
+    "ok": 568
+  },
+  "ask_grok": "Reply with grok_commands.sh lines only (brocc/python3). Mac: adb push to inbox/from_mac/grok_commands.sh",
+  "mac_pull": [
+    "adb pull /sdcard/Broccoli/mirror_manifest.json .",
+    "adb pull /sdcard/Broccoli/mirror ./Broccoli-mirror",
+    "adb pull /sdcard/Broccoli/pull/CLIPBOARD_LAST.txt ."
+  ]
+}--- B. Install test command (phone-only, no Mac) ---
+-rwx------. 1 u0_a347 u0_a347 154 Jul 13 01:54 inbox/from_mac/grok_commands.sh
+-rwx------. 1 u0_a347 u0_a347 154 Jul 13 01:54 meta/inbox/from_mac/grok_commands.sh
+--- C. Manual run (proves script is valid) ---
+WIRE_TEST_OK
+WIRE_TEST_OK 2026-07-13T01:54:05-04:00
+--- D. closed_loop ---
+  File "/data/data/com.termux/files/home/broccoli/lib/closed_loop.py", line 5
+    from __future__ import annotations
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: from __future__ imports must occur at the beginning of the file
+recv:
+  File "/data/data/com.termux/files/home/broccoli/lib/closed_loop.py", line 5
+    from __future__ import annotations
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: from __future__ imports must occur at the beginning of the file
+once:
+  File "/data/data/com.termux/files/home/broccoli/lib/closed_loop.py", line 5
+    from __future__ import annotations
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: from __future__ imports must occur at the beginning of the file
+--- E. After recv/once: files still there? ---
+inbox/from_mac:
+total 11
+drwx------. 2 u0_a347 u0_a347 3452 Jul 13 01:49 .
+drwx------. 7 u0_a347 u0_a347 3452 Jul 13 01:49 ..
+-rwx------. 1 u0_a347 u0_a347  154 Jul 13 01:54 grok_commands.sh
+
+meta/inbox/from_mac:
+total 11
+drwx------. 2 u0_a347 u0_a347 3452 Jul 13 01:46 .
+drwx------. 4 u0_a347 u0_a347 3452 Jul  7 16:40 ..
+-rwx------. 1 u0_a347 u0_a347  154 Jul 13 01:54 grok_commands.sh
+--- F. Who references from_mac? ---
+--- G. Infinite loop ---
+NOT running
+  File "/data/data/com.termux/files/home/broccoli/tools/broccoli_infinite_dev_loop.py", line 70
+    else:
+IndentationError: expected an indented block after 'if' statement on line 67
+nohup: ignoring input
+nohup: ignoring input
+nohup: ignoring input
+nohup: ignoring input
+nohup: ignoring input
+nohup: ignoring input
+nohup: ignoring input
+--- H. Freshness ---
+-rw-------. 1 u0_a347 u0_a347    240 Jul 11 13:33 inbox/grok_reply.txt
+-rw-------. 1 u0_a347 u0_a347    143 Jul 10 03:07 inbox/prompt.txt
+-rw-------. 1 u0_a347 u0_a347    422 Jul 11 13:31 thread/grok_last.txt
+-rw-------. 1 u0_a347 u0_a347 151689 Jul 12 16:41 ui/latest.xml
+=== END ===
+Log: /data/data/com.termux/files/home/broccoli/reports/wire_test_20260713_015405.log
