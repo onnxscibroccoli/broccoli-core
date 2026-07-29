@@ -61,4 +61,4 @@ Runtime components that expose `start()`, `stop()`, and `health()` are now manag
 
 ## Managed transports
 
-Runtime components that expose `start()`, `stop()`, and `health()` are now managed as transports. The managed set currently includes the accessibility driver, clipboard bridge, Grok provider, workflow executor, adaptive planner, knowledge graph, and agent coordinator, all registered with the transport registry and supervised for restart/recovery by the Governor and transport supervisor.
+Runtime components that expose `start()`, `stop()`, and `health()` are now managed as transports. The managed set currently includes the accessibility driver, clipboard bridge, Grok provider, workflow executor, adaptive planner, knowledge graph, agent coordinator, and plugin loader, all registered with the transport registry and supervised for restart/recovery by the Governor and transport supervisor.

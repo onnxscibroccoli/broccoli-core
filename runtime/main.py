@@ -22,7 +22,7 @@ from runtime.agents.coordinator import AgentCoordinator
 from runtime.agents.grok_agent import GrokAgent
 from runtime.autonomy.goal_manager import GoalManager
 from runtime.autonomy.recovery import RecoveryManager
-from runtime.transports import KnowledgeGraphTransport, ProviderTransport, TransportRegistry, register_transport_supervisor
+from runtime.transports import KnowledgeGraphTransport, PluginLoaderTransport, ProviderTransport, TransportRegistry, register_transport_supervisor
 import time
 
 # How often (in ticks) to run a full recovery scan.
@@ -57,7 +57,7 @@ def main():
     recovery = RecoveryManager(bus)
 
     plugins = PluginLoader()
-    plugins.load()
+    plugin_loader_transport = PluginLoaderTransport(plugins)
 
     transport_registry = TransportRegistry(bus)
     clipboard_bridge = ClipboardEventBridge(bus)
@@ -70,6 +70,7 @@ def main():
     transport_registry.register("adaptive_planner", planner)
     transport_registry.register("knowledge_graph", knowledge_graph_transport)
     transport_registry.register("agent_coordinator", coordinator)
+    transport_registry.register("plugin_loader", plugin_loader_transport)
 
     register_accessibility_consumers(bus, metrics)
     register_transport_supervisor(bus, transport_registry, metrics)
@@ -78,7 +79,7 @@ def main():
     lifecycle.startup([
         config, logger, bus, state, metrics, scheduler, health,
         governor, accessibility, planner, workflow_executor,
-        grok, kg, knowledge_graph_transport, coordinator, goal_manager, recovery, plugins,
+        grok, kg, knowledge_graph_transport, coordinator, goal_manager, recovery, plugin_loader_transport,
         transport_registry,
     ])
 
