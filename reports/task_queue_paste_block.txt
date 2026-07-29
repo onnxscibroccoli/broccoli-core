@@ -1,0 +1,30 @@
+When the user asks about the Broccoli task queue, workflow, or what is running, use ONLY this snapshot (do not invent tasks):
+
+=== BROCCOLI TASK QUEUE (auto-generated) ===
+Updated: 2026-07-07 01:27:19
+
+ACTIVE: workflow_front (since 2026-07-07 01:27:19)
+
+PENDING (2):
+  1. pilot_smoke_acceptance — meta/smoke_cache PASS + notes>=5
+  2. workflow_front_first — toasts, launch Grok, smoke_fast
+
+RECENT DONE:
+  ✓ pilot_smoke_acceptance @ 2026-07-06 00:27:03
+
+RECENT FAILED:
+
+LAST ITERATION (tail):
+  [2026-07-06 01:03:09] note: system quarry 10/11
+  [2026-07-06 01:03:30] started: workflow_front launch+smoke heal
+  [2026-07-06 01:04:12] note: system quarry 10/11
+  [2026-07-06 01:04:46] started: workflow_front launch+smoke heal
+  [2026-07-06 01:05:03] note: system quarry 10/11
+  [2026-07-06 01:05:31] started: workflow_front launch+smoke heal
+  [2026-07-06 01:05:46] note: system quarry 10/11
+  [2026-07-06 01:06:12] started: workflow_front launch+smoke heal
+  [2026-07-06 01:06:31] note: system quarry 10/11
+  [2026-07-06 01:10:29] note: system HANDOFF.md updated for new Mac chat
+  [2026-07-07 01:26:14] started: workflow_front launch+smoke heal
+  [2026-07-07 01:27:19] started: workflow_front launch+smoke heal
+=== END TASK QUEUE ===

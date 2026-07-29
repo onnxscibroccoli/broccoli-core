@@ -1,0 +1,584 @@
+{
+  "ts": "2026-07-07T00:12:39-04:00",
+  "md_count": 37,
+  "md_files": [
+    {
+      "path": "AndroSH/CODE_OF_CONDUCT.md",
+      "bytes": 5202,
+      "mtime": "2025-12-19T10:30:52",
+      "done_signals": 0,
+      "todo_signals": 0,
+      "headings": [
+        "Contributor Covenant Code of Conduct",
+        "Our Pledge",
+        "Our Standards",
+        "Enforcement Responsibilities",
+        "Scope",
+        "Enforcement",
+        "Enforcement Guidelines",
+        "1. Correction"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "AndroSH/README.md",
+      "bytes": 13541,
+      "mtime": "2025-12-19T10:30:52",
+      "done_signals": 6,
+      "todo_signals": 1,
+      "headings": [
+        "AndroSH - Multi-Distribution Linux Environments on Android w",
+        "\u26a1 Quick Features",
+        "\ud83d\ude80 Overview",
+        "\ud83c\udfc6 Competitive Advantage Matrix",
+        "\ud83d\uddbc\ufe0f Visual Demo",
+        "Click to View Full Size",
+        "\ud83c\udfaf Core Capabilities",
+        "\ud83d\ude80 Advanced Android System Integration"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "WiFuX/CHANGELOG.md",
+      "bytes": 3724,
+      "mtime": "2026-05-27T02:46:51",
+      "done_signals": 0,
+      "todo_signals": 2,
+      "headings": [
+        "Changelog",
+        "v2.0 \u2014 2026",
+        "Core Engine",
+        "Global Command System",
+        "Installer",
+        "Built-in Help Guide (`help.py`)",
+        "Contact (`contact.py`)",
+        "Root Fix (`fix.sh`)"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "WiFuX/README.md",
+      "bytes": 6007,
+      "mtime": "2026-05-27T02:46:51",
+      "done_signals": 1,
+      "todo_signals": 2,
+      "headings": [
+        "Overview",
+        "Requirements",
+        "Installation",
+        "Method 1 \u2014 One Command (Recommended)",
+        "Method 2 \u2014 Manual",
+        "Commands",
+        "Usage",
+        "Troubleshooting"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/HANDOFF.md",
+      "bytes": 274,
+      "mtime": "2026-07-06T01:17:34",
+      "done_signals": 1,
+      "todo_signals": 0,
+      "headings": [],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/HANDOFF.md",
+      "bytes": 274,
+      "mtime": "2026-07-06T01:17:34",
+      "done_signals": 1,
+      "todo_signals": 0,
+      "headings": [],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/INSTRUCTIONS.md",
+      "bytes": 2013,
+      "mtime": "2026-07-06T23:59:31",
+      "done_signals": 0,
+      "todo_signals": 1,
+      "headings": [
+        "Broccoli (on-device)",
+        "Co-dev window (persistent)",
+        "Recursive agent (no manual paste-back)",
+        "Voice / STT (user)",
+        "Agent must not stop after install"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/INSTRUCTIONS.md",
+      "bytes": 2013,
+      "mtime": "2026-07-06T23:59:31",
+      "done_signals": 0,
+      "todo_signals": 1,
+      "headings": [
+        "Broccoli (on-device)",
+        "Co-dev window (persistent)",
+        "Recursive agent (no manual paste-back)",
+        "Voice / STT (user)",
+        "Agent must not stop after install"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/PROJECT.md",
+      "bytes": 231,
+      "mtime": "2026-07-05T22:13:49",
+      "done_signals": 0,
+      "todo_signals": 0,
+      "headings": [
+        "Broccoli"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/PROJECT.md",
+      "bytes": 231,
+      "mtime": "2026-07-05T22:13:49",
+      "done_signals": 0,
+      "todo_signals": 0,
+      "headings": [
+        "Broccoli"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/TASK_LIST.md",
+      "bytes": 394,
+      "mtime": "2026-07-06T23:44:06",
+      "done_signals": 0,
+      "todo_signals": 0,
+      "headings": [
+        "Broccoli co-dev task list (active)"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/TASK_LIST.md",
+      "bytes": 394,
+      "mtime": "2026-07-06T23:44:06",
+      "done_signals": 0,
+      "todo_signals": 0,
+      "headings": [
+        "Broccoli co-dev task list (active)"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/docs/RUTO_BRIDGE.md",
+      "bytes": 342,
+      "mtime": "2026-07-06T01:08:38",
+      "done_signals": 0,
+      "todo_signals": 0,
+      "headings": [
+        "Ruto-GLM \u2192 Broccoli (optional true virtual display)"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/docs/RUTO_BRIDGE.md",
+      "bytes": 342,
+      "mtime": "2026-07-06T01:08:38",
+      "done_signals": 0,
+      "todo_signals": 0,
+      "headings": [
+        "Ruto-GLM \u2192 Broccoli (optional true virtual display)"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/meta/README.md",
+      "bytes": 92,
+      "mtime": "2026-07-05T23:15:39",
+      "done_signals": 0,
+      "todo_signals": 0,
+      "headings": [
+        "Research"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/meta/README.md",
+      "bytes": 92,
+      "mtime": "2026-07-05T23:15:39",
+      "done_signals": 0,
+      "todo_signals": 0,
+      "headings": [
+        "Research"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/meta/current_task.md",
+      "bytes": 1102,
+      "mtime": "2026-07-06T00:56:47",
+      "done_signals": 7,
+      "todo_signals": 2,
+      "headings": [
+        "Broccoli continuous agent loop (UI-driven completion)"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/meta/current_task.md",
+      "bytes": 1102,
+      "mtime": "2026-07-06T00:56:47",
+      "done_signals": 7,
+      "todo_signals": 2,
+      "headings": [
+        "Broccoli continuous agent loop (UI-driven completion)"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/reports/INVENTORY_REPORT.md",
+      "bytes": 4214,
+      "mtime": "2026-07-07T00:09:48",
+      "done_signals": 54,
+      "todo_signals": 41,
+      "headings": [
+        "Broccoli inventory",
+        "Daemons",
+        "Runtime",
+        "queue_pending",
+        "task_box",
+        "agent_iteration",
+        "grok_last",
+        "to_chat"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/reports/INVENTORY_REPORT.md",
+      "bytes": 4214,
+      "mtime": "2026-07-07T00:09:48",
+      "done_signals": 54,
+      "todo_signals": 41,
+      "headings": [
+        "Broccoli inventory",
+        "Daemons",
+        "Runtime",
+        "queue_pending",
+        "task_box",
+        "agent_iteration",
+        "grok_last",
+        "to_chat"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/reports/INVESTIGATION_REPORT.md",
+      "bytes": 3718,
+      "mtime": "2026-07-07T00:06:31",
+      "done_signals": 1,
+      "todo_signals": 14,
+      "headings": [
+        "Broccoli system investigation",
+        "Architecture (expected)",
+        "Tree",
+        "Key artifacts",
+        "Last UI dump",
+        "wire_send.log summary",
+        "Findings (priority order)",
+        "Co-dev window"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/reports/INVESTIGATION_REPORT.md",
+      "bytes": 3718,
+      "mtime": "2026-07-07T00:06:31",
+      "done_signals": 1,
+      "todo_signals": 14,
+      "headings": [
+        "Broccoli system investigation",
+        "Architecture (expected)",
+        "Tree",
+        "Key artifacts",
+        "Last UI dump",
+        "wire_send.log summary",
+        "Findings (priority order)",
+        "Co-dev window"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/research/notes.md",
+      "bytes": 760,
+      "mtime": "2026-07-05T23:23:17",
+      "done_signals": 0,
+      "todo_signals": 1,
+      "headings": [
+        "Android UI Automation Research Notes"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/research/notes.md",
+      "bytes": 760,
+      "mtime": "2026-07-05T23:23:17",
+      "done_signals": 0,
+      "todo_signals": 1,
+      "headings": [
+        "Android UI Automation Research Notes"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/spec/BUILD_SPEC.md",
+      "bytes": 296,
+      "mtime": "2026-07-06T04:40:57",
+      "done_signals": 0,
+      "todo_signals": 0,
+      "headings": [],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/spec/BUILD_SPEC.md",
+      "bytes": 296,
+      "mtime": "2026-07-06T04:40:57",
+      "done_signals": 0,
+      "todo_signals": 0,
+      "headings": [],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/tasks/current/TASK.md",
+      "bytes": 715,
+      "mtime": "2026-07-05T23:20:14",
+      "done_signals": 3,
+      "todo_signals": 0,
+      "headings": [
+        "Task: deep-research-pilot",
+        "Goal",
+        "Done when",
+        "User must"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/tasks/current/TASK.md",
+      "bytes": 715,
+      "mtime": "2026-07-05T23:20:14",
+      "done_signals": 3,
+      "todo_signals": 0,
+      "headings": [
+        "Task: deep-research-pilot",
+        "Goal",
+        "Done when",
+        "User must"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/thread/conversation.md",
+      "bytes": 19,
+      "mtime": "2026-07-05T22:57:46",
+      "done_signals": 0,
+      "todo_signals": 0,
+      "headings": [
+        "Broccoli thread"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/thread/conversation.md",
+      "bytes": 19,
+      "mtime": "2026-07-05T22:57:46",
+      "done_signals": 0,
+      "todo_signals": 0,
+      "headings": [
+        "Broccoli thread"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/thread/to_chat.md",
+      "bytes": 11610,
+      "mtime": "2026-07-07T00:06:31",
+      "done_signals": 49,
+      "todo_signals": 58,
+      "headings": [
+        "Co-dev: paste INVESTIGATION_REPORT.md to Mac Grok",
+        "Broccoli system investigation",
+        "Architecture (expected)",
+        "Tree",
+        "Key artifacts",
+        "Last UI dump",
+        "wire_send.log summary",
+        "Findings (priority order)"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/thread/to_chat.md",
+      "bytes": 11610,
+      "mtime": "2026-07-07T00:06:31",
+      "done_signals": 49,
+      "todo_signals": 58,
+      "headings": [
+        "Co-dev: paste INVESTIGATION_REPORT.md to Mac Grok",
+        "Broccoli system investigation",
+        "Architecture (expected)",
+        "Tree",
+        "Key artifacts",
+        "Last UI dump",
+        "wire_send.log summary",
+        "Findings (priority order)"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/user/PENDING.md",
+      "bytes": 72,
+      "mtime": "2026-07-06T01:14:28",
+      "done_signals": 2,
+      "todo_signals": 0,
+      "headings": [],
+      "task_lines": []
+    },
+    {
+      "path": "broccoli/user/PENDING.md",
+      "bytes": 72,
+      "mtime": "2026-07-06T01:14:28",
+      "done_signals": 2,
+      "todo_signals": 0,
+      "headings": [],
+      "task_lines": []
+    },
+    {
+      "path": "ipwndfu/JAILBREAK-GUIDE.md",
+      "bytes": 6054,
+      "mtime": "2025-12-29T16:16:52",
+      "done_signals": 1,
+      "todo_signals": 1,
+      "headings": [
+        "Jailbreak guide for iPhone 3GS (new bootrom)",
+        "Steps",
+        "Notes:",
+        "3 second delay during boot when using a phone jailbroken wit",
+        "Where to download older IPSWs",
+        "How to create a 24Kpwn IPSW",
+        "Notes on using redsn0w 0.9.15b3",
+        "Compatibility with older iOS versions"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "ipwndfu/README.md",
+      "bytes": 4438,
+      "mtime": "2025-12-29T16:16:52",
+      "done_signals": 0,
+      "todo_signals": 1,
+      "headings": [
+        "Open-source jailbreaking tool for many iOS devices",
+        "checkm8",
+        "Quick start guide for checkm8",
+        "Features",
+        "Dependencies",
+        "Tutorial",
+        "Exploit write-up",
+        "iBSS"
+      ],
+      "task_lines": []
+    },
+    {
+      "path": "project_mythara/README.md",
+      "bytes": 18410,
+      "mtime": "2026-07-05T03:16:05",
+      "done_signals": 2,
+      "todo_signals": 6,
+      "headings": [
+        "Project M.Y.T.H.A.R.A",
+        "What M.Y.T.H.A.R.A is",
+        "Why this exists",
+        "Features",
+        "Agentic runtime \u2014 the heart of the app",
+        "Local-first memory + personality",
+        "Privacy + control",
+        "Design language"
+      ],
+      "task_lines": [
+        "- [ ] **Local-model module** \u2014 Gemma Nano via MediaPipe LLM inference; first-class swap from MiniMax. (PRs wanted.)",
+        "- [ ] **Onboarding tutorial** \u2014 gesture-by-gesture intro for the rose-amulet, spine, PTT, alerts.",
+        "- [ ] **Plugin SDK** \u2014 third-party tools as Android Services discovered at runtime; Mythara loads them with permission gates.",
+        "- [ ] **Watch face + complications** \u2014 the rose lives on your Wear OS face and pulses with your HR.",
+        "- [ ] **Foldable tabletop layout** \u2014 when the Pixel Fold is half-open, Mythara routes face mesh to the top half and chat composer to the bottom."
+      ]
+    }
+  ],
+  "runtime": {
+    "queue_pending": {
+      "bytes": 39,
+      "head": [
+        "ASK|Wire probe: reply one word WIRE_OK"
+      ]
+    },
+    "task_box": {
+      "bytes": 196,
+      "head": [
+        "# Mission: recursive wire until DONE in reply",
+        "Run inventory and deliver device output to Mac co-dev",
+        "Wire probe: reply one word WIRE_OK",
+        "Fix INVESTIGATION critical: Grok FG dump only (no Termux FG)"
+      ]
+    },
+    "agent_iteration": {
+      "bytes": 163,
+      "head": [
+        "{",
+        "  \"cycle\": 3,",
+        "  \"last_prompt\": \"ITER_OK\",",
+        "  \"last_reply\": \"ITER_OK\",",
+        "  \"last_fp\": \"\",",
+        "  \"status\": \"idle\","
+      ]
+    },
+    "grok_last": {
+      "bytes": 23,
+      "head": [
+        "Start new chat",
+        "ITER_OK"
+      ]
+    },
+    "to_chat": {
+      "bytes": 11610,
+      "head": [
+        "## Co-dev: paste INVESTIGATION_REPORT.md to Mac Grok",
+        "",
+        "# Broccoli system investigation",
+        "Generated: 2026-07-07T00:06:30-04:00",
+        "",
+        "## Architecture (expected)"
+      ]
+    },
+    "investigation": {
+      "bytes": 3718,
+      "head": [
+        "# Broccoli system investigation",
+        "Generated: 2026-07-07T00:06:30-04:00",
+        "",
+        "## Architecture (expected)",
+        "- **Broccoli** = Termux executor (queue, sandbox, reports).",
+        "- **Grok app** = accessibility only (dump/tap/paste/read)."
+      ]
+    },
+    "instructions": {
+      "bytes": 2013,
+      "head": [
+        "# Broccoli (on-device)",
+        "",
+        "- **Broccoli** = Termux executor: queue, scripts, `sandbox/from_grok`, reports.",
+        "- **Grok app** = accessibility layer only: UI dump (rish), tap composer/send, read replies. Not \"the product.\"",
+        "- **Wire**: `wire_daemon.sh` after **\u22653s user idle** \u2192 `wire_send_ui.sh` \u2192 dump until reply changes \u2192 `extract_grok_code.py` \u2192 run `block_*.sh`.",
+        "- **No Chrome** for wire. Use `launch_grok_native.sh` + `ui_dump_rish.sh` (must see `package=\"ai.x.grok\"` in dump)."
+      ]
+    }
+  },
+  "daemons": {
+    "agent_daemon": "27349 bash /data/data/com.termux/files/home/broccoli/tools/agent_daemon.sh",
+    "heal_supervisor": "21460 bash /data/data/com.termux/files/home/broccoli/tools/heal_supervisor.sh"
+  }
+}

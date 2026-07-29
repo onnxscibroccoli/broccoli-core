@@ -1,0 +1,430 @@
+2026-07-06T23:27:36-04:00 === TICK cycle=1 ===
+=== Broccoli investigate 2026-07-06T23:27:37-04:00 ===
+16014 tail -f /data/data/com.termux/files/home/broccoli/reports/wire_daemon.log /data/data/com.termux/files/home/broccoli/reports/wire_send.log
+WIRE_STOP clear
+# Broccoli system investigation
+Generated: 2026-07-06T23:27:38-04:00
+
+## Architecture (expected)
+- **Broccoli** = Termux executor (queue, sandbox, reports).
+- **Grok app** = accessibility only (dump/tap/paste/read).
+- **Wire** = daemon + wire_send_ui + ui_dump_rish (invariant: `ai.x.grok` in dump).
+
+## Tree
+- Files under `~/broccoli`: **261**
+- Extensions: `{'.log': 29, '.txt': 57, '.md': 14, '.py': 43, '.json': 53, '.sh': 43, '.pid': 1, '(noext)': 1, '.jsonl': 4, '.1783317057': 1, '.xml': 5, '.lock': 1, '.consumed': 1, '.flag': 1, '.cur': 1, '.last': 1, '.ts': 2, '.conf': 3}`
+
+## Key artifacts
+- `INSTRUCTIONS.md`: {'exists': True, 'bytes': 1541, 'mtime': '2026-07-06T23:27:34.000002'}
+- `task_box.txt`: {'exists': True, 'bytes': 245, 'mtime': '2026-07-06T23:12:59.400002'}
+- `queue/pending.txt`: {'exists': True, 'bytes': 0, 'mtime': '2026-07-06T23:17:00.584002'}
+- `queue/done.txt`: {'exists': True, 'bytes': 131, 'mtime': '2026-07-06T23:17:00.580002'}
+- `ui/last_ui.xml`: {'exists': True, 'bytes': 8210, 'mtime': '2026-07-06T23:27:19.912002'}
+- `reports/wire_send.log`: {'exists': True, 'bytes': 1363, 'mtime': '2026-07-06T23:17:00.196002'}
+- `reports/wire_daemon.log`: {'exists': True, 'bytes': 2605, 'mtime': '2026-07-06T23:17:00.552002'}
+- `reports/loop_health.jsonl`: {'exists': False}
+- `reports/manual_gap.jsonl`: {'exists': True, 'bytes': 1489, 'mtime': '2026-07-06T23:19:46.480002'}
+- `thread/to_chat.md`: {'exists': True, 'bytes': 4587, 'mtime': '2026-07-06T23:25:58.588002'}
+- `meta/WIRE_STOP`: {'exists': False}
+
+## Last UI dump
+```json
+{
+  "ok": true,
+  "bytes": 8196,
+  "grok_fg": true,
+  "packages": [
+    "ai.x.grok"
+  ],
+  "has_composer": false,
+  "send_candidates": [],
+  "termux_only": false
+}
+```
+
+## wire_send.log summary
+```json
+{
+  "lines": 27,
+  "counts": {
+    "SEND start": 3,
+    "send_tap": 8,
+    "reply=": 2
+  },
+  "tail": [
+    "2026-07-06T22:54:49-04:00 send_tap miss attempt=1 \u2014 enter",
+    "TAP 1001 1338",
+    "2026-07-06T22:55:27-04:00 send_tap attempt=2",
+    "2026-07-06T22:55:49-04:00 fallback grok_send_tap",
+    "Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }",
+    "Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }",
+    "no_composer",
+    "ERR no_composer",
+    "2026-07-06T22:57:18-04:00 send_tap miss attempt=3 \u2014 enter",
+    "ERR no_send_candidate",
+    "2026-07-06T22:58:10-04:00 send_tap miss attempt=4 \u2014 enter",
+    "2026-07-06T22:58:42-04:00 WARN send not confirmed in dump \u2014 user may need one tap",
+    "2026-07-06T22:59:05-04:00 reply=DAEMON start, then ROUND start / send_tap ok / reply=",
+    "2026-07-06T23:13:07-04:00 SEND start len=185",
+    "ERR no_composer",
+    "2026-07-06T23:15:17-04:00 send_tap miss attempt=1 \u2014 enter",
+    "ERR no_send_candidate",
+    "2026-07-06T23:16:04-04:00 send_tap miss attempt=2 \u2014 enter",
+    "2026-07-06T23:16:38-04:00 send_ok composer_empty_or_in_chat",
+    "2026-07-06T23:17:00-04:00 reply=Start new chat"
+  ]
+}
+```
+
+## Live probe (just ran ui_dump_rish)
+```json
+{
+  "rish": null,
+  "dump_bytes": "26712",
+  "grok_after_dump": true,
+  "packages_after_dump": [
+    "ai.x.grok"
+  ],
+  "termux_trap": false
+}
+```
+
+## Findings (priority order)
+1. **[HIGH]** ui_dump_rish may dump wrong FG
+   - Fix: foreground Grok before every dump
+2. **[HIGH]** missing lib/focus_pkg.sh
+   - Fix: install from RECOVER block
+3. **[HIGH]** tools/agent_wrap.sh still references Chrome/WEB
+   - Fix: route to launch_grok_native.sh only
+4. **[HIGH]** lib/grok_send_tap.py still references Chrome/WEB
+   - Fix: route to launch_grok_native.sh only
+5. **[HIGH]** Grok FG but no send candidates in dump regex
+   - Fix: dump send row manually; patch find_send_tap.py with exact resource-id
+6. **[MED]** wire_send_ui not hooked to gap_watch
+   - Fix: patch gap hooks on fail/success/timeout
+7. **[MED]** queue empty — daemon idle with nothing to send
+   - Fix: inbox_to_queue.sh or task_box.txt
+
+## Co-dev window
+- State file: `~/broccoli/meta/codev_window.json`
+- Session: `20260706_232823`
+- Paste **this entire report** (or `reports/INVESTIGATION_REPORT.md`) into Mac Grok chat for full-context patches.
+- Re-run: `bash ~/broccoli/tools/investigate_system.sh --live`
+
+## Recommended next patches (ordered)
+- foreground Grok before every dump
+- install from RECOVER block
+- route to launch_grok_native.sh only
+- route to launch_grok_native.sh only
+- dump send row manually; patch find_send_tap.py with exact resource-id
+
+Wrote: ~/broccoli/reports/INVESTIGATION_REPORT.md
+Wrote: ~/broccoli/reports/investigation.json
+Wrote: ~/broccoli/meta/codev_window.json
+Co-dev: cat ~/broccoli/reports/INVESTIGATION_REPORT.md
+2026-07-06T23:28:42-04:00 === TICK cycle=1 ===
+=== Broccoli investigate 2026-07-06T23:28:42-04:00 ===
+16014 tail -f /data/data/com.termux/files/home/broccoli/reports/wire_daemon.log /data/data/com.termux/files/home/broccoli/reports/wire_send.log
+WIRE_STOP clear
+## Broccoli wire gap (auto)
+- time: 2026-07-06T23:28:51-04:00
+- grok foreground: False
+- packages: com.termux
+- prompt (frag): 
+
+### What script tried
+- 2026-07-06T22:57:18-04:00 send_tap miss attempt=3 — enter
+- 2026-07-06T22:58:10-04:00 send_tap miss attempt=4 — enter
+- 2026-07-06T22:59:05-04:00 reply=DAEMON start, then ROUND start / send_tap ok / reply=
+- 2026-07-06T23:15:17-04:00 send_tap miss attempt=1 — enter
+- 2026-07-06T23:16:04-04:00 send_tap miss attempt=2 — enter
+
+### What failed / uncertain
+- (none)
+
+### What user likely did (not script)
+- foreground was not ai.x.grok during dump — user may have switched app or dump ran on wrong window
+
+### Send controls in last UI dump
+- `com.termux:id/terminal_view` 
+
+### Chat tail (dump)
+- HOME
+- END
+- PGUP
+- CTRL
+- ALT
+- PGDN
+
+**Fix target:** `~/broccoli/tools/find_send_tap.py` and `wire_send_ui.sh` confirm step.
+queued agent ASK (768 chars)
+2026-07-06T23:28:51-04:00 WIRE send len=764
+# Broccoli system investigation
+Generated: 2026-07-06T23:28:43-04:00
+
+## Architecture (expected)
+- **Broccoli** = Termux executor (queue, sandbox, reports).
+- **Grok app** = accessibility only (dump/tap/paste/read).
+- **Wire** = daemon + wire_send_ui + ui_dump_rish (invariant: `ai.x.grok` in dump).
+
+## Tree
+- Files under `~/broccoli`: **265**
+- Extensions: `{'.log': 29, '.txt': 57, '.md': 14, '.py': 43, '.json': 53, '.sh': 43, '.pid': 1, '(noext)': 2, '.jsonl': 4, '.1783317057': 1, '.xml': 6, '.lock': 1, '.consumed': 1, '.tmp': 1, '.flag': 1, '.cur': 1, '.last': 1, '.ts': 2, '.hash': 1, '.conf': 3}`
+
+## Key artifacts
+- `INSTRUCTIONS.md`: {'exists': True, 'bytes': 1541, 'mtime': '2026-07-06T23:27:34.000002'}
+- `task_box.txt`: {'exists': True, 'bytes': 245, 'mtime': '2026-07-06T23:12:59.400002'}
+- `queue/pending.txt`: {'exists': True, 'bytes': 0, 'mtime': '2026-07-06T23:17:00.584002'}
+- `queue/done.txt`: {'exists': True, 'bytes': 131, 'mtime': '2026-07-06T23:17:00.580002'}
+- `ui/last_ui.xml`: {'exists': True, 'bytes': 7093, 'mtime': '2026-07-06T23:28:42.232002'}
+- `reports/wire_send.log`: {'exists': True, 'bytes': 1363, 'mtime': '2026-07-06T23:17:00.196002'}
+- `reports/wire_daemon.log`: {'exists': True, 'bytes': 2605, 'mtime': '2026-07-06T23:17:00.552002'}
+- `reports/loop_health.jsonl`: {'exists': False}
+- `reports/manual_gap.jsonl`: {'exists': True, 'bytes': 1489, 'mtime': '2026-07-06T23:19:46.480002'}
+- `thread/to_chat.md`: {'exists': True, 'bytes': 4575, 'mtime': '2026-07-06T23:28:23.200002'}
+- `meta/WIRE_STOP`: {'exists': False}
+
+## Last UI dump
+```json
+{
+  "ok": true,
+  "bytes": 7073,
+  "grok_fg": false,
+  "packages": [
+    "com.termux"
+  ],
+  "has_composer": false,
+  "send_candidates": [
+    {
+      "rid": "com.termux:id/terminal_view",
+      "bounds": "",
+      "voice": false
+    }
+  ],
+  "termux_only": true
+}
+```
+
+## wire_send.log summary
+```json
+{
+  "lines": 27,
+  "counts": {
+    "SEND start": 3,
+    "send_tap": 8,
+    "reply=": 2
+  },
+  "tail": [
+    "2026-07-06T22:54:49-04:00 send_tap miss attempt=1 \u2014 enter",
+    "TAP 1001 1338",
+    "2026-07-06T22:55:27-04:00 send_tap attempt=2",
+    "2026-07-06T22:55:49-04:00 fallback grok_send_tap",
+    "Starting: Intent { act=android.intent.action.VIEW dat= pkg=ai.x.grok }",
+    "Error: Activity not started, unable to resolve Intent { act=android.intent.action.VIEW dat= flg=0x10000000 pkg=ai.x.grok }",
+    "no_composer",
+    "ERR no_composer",
+    "2026-07-06T22:57:18-04:00 send_tap miss attempt=3 \u2014 enter",
+    "ERR no_send_candidate",
+    "2026-07-06T22:58:10-04:00 send_tap miss attempt=4 \u2014 enter",
+    "2026-07-06T22:58:42-04:00 WARN send not confirmed in dump \u2014 user may need one tap",
+    "2026-07-06T22:59:05-04:00 reply=DAEMON start, then ROUND start / send_tap ok / reply=",
+    "2026-07-06T23:13:07-04:00 SEND start len=185",
+    "ERR no_composer",
+    "2026-07-06T23:15:17-04:00 send_tap miss attempt=1 \u2014 enter",
+    "ERR no_send_candidate",
+    "2026-07-06T23:16:04-04:00 send_tap miss attempt=2 \u2014 enter",
+    "2026-07-06T23:16:38-04:00 send_ok composer_empty_or_in_chat",
+    "2026-07-06T23:17:00-04:00 reply=Start new chat"
+  ]
+}
+```
+
+## Live probe (just ran ui_dump_rish)
+```json
+{
+  "rish": null,
+  "dump_bytes": "seconds",
+  "grok_after_dump": true,
+  "packages_after_dump": [
+    "ai.x.grok"
+  ],
+  "termux_trap": false
+}
+```
+
+## Findings (priority order)
+1. **[CRITICAL]** last_ui.xml is Termux-focused, not Grok
+   - Fix: ui_dump_rish must launch Grok + retry until ai.x.grok in XML
+2. **[HIGH]** ui_dump_rish may dump wrong FG
+   - Fix: foreground Grok before every dump
+3. **[HIGH]** missing lib/focus_pkg.sh
+   - Fix: install from RECOVER block
+4. **[HIGH]** tools/agent_wrap.sh still references Chrome/WEB
+   - Fix: route to launch_grok_native.sh only
+5. **[HIGH]** lib/grok_send_tap.py still references Chrome/WEB
+   - Fix: route to launch_grok_native.sh only
+6. **[MED]** wire_send_ui not hooked to gap_watch
+   - Fix: patch gap hooks on fail/success/timeout
+
+## Co-dev window
+- State file: `~/broccoli/meta/codev_window.json`
+- Session: `20260706_232928`
+- Paste **this entire report** (or `reports/INVESTIGATION_REPORT.md`) into Mac Grok chat for full-context patches.
+- Re-run: `bash ~/broccoli/tools/investigate_system.sh --live`
+
+## Recommended next patches (ordered)
+- ui_dump_rish must launch Grok + retry until ai.x.grok in XML
+- foreground Grok before every dump
+- install from RECOVER block
+- route to launch_grok_native.sh only
+- route to launch_grok_native.sh only
+
+Wrote: ~/broccoli/reports/INVESTIGATION_REPORT.md
+Wrote: ~/broccoli/reports/investigation.json
+Wrote: ~/broccoli/meta/codev_window.json
+Co-dev: cat ~/broccoli/reports/INVESTIGATION_REPORT.md
+## Broccoli wire gap (auto)
+- time: 2026-07-06T23:29:52-04:00
+- grok foreground: True
+- packages: ai.x.grok
+- prompt (frag): BROCCOLI_AGENT: ## Findings (priori
+
+### What script tried
+- 2026-07-06T22:57:18-04:00 send_tap miss attempt=3 — enter
+- 2026-07-06T22:58:10-04:00 send_tap miss attempt=4 — enter
+- 2026-07-06T22:59:05-04:00 reply=DAEMON start, then ROUND start / send_tap ok / reply=
+- 2026-07-06T23:15:17-04:00 send_tap miss attempt=1 — enter
+- 2026-07-06T23:16:04-04:00 send_tap miss attempt=2 — enter
+
+### What failed / uncertain
+- (none)
+
+### What user likely did (not script)
+
+### Chat tail (dump)
+- ┌─────────────────────────────────────────────────────────┐&#10;│  agent_daemon (idle ≥3s)                                 │&#10;│    └─ agent_tick                                         │&#10;│     
+- Right
+- You paste INVESTIGATION_REPORT.md into Mac chat
+- report_to_queue.sh → wire_send_ui.sh
+- wire_daemon only drains queue you fill by hand
+
+**Fix target:** `~/broccoli/tools/find_send_tap.py` and `wire_send_ui.sh` confirm step.
+queued agent ASK (659 chars)
+2026-07-06T23:29:52-04:00 WIRE send len=655
+/data/data/com.termux/files/home/broccoli/lib/ui_dump_rish.sh: line 8: T): command not found
+2026-07-06T23:33:57-04:00 WIRE fail — re-queue gap priority next tick
+queue=short test (findings stay in INVESTIGATION_REPORT.md only)
+/data/data/com.termux/files/home/broccoli/lib/ui_dump_rish.sh: line 8: T): command not found
+2026-07-06T23:34:04-04:00 WIRE fail — re-queue gap priority next tick
+queue=short test (findings stay in INVESTIGATION_REPORT.md only)
+=== Broccoli investigate 2026-07-06T23:47:26-04:00 ===
+(no wire_daemon)
+WIRE_STOP clear
+# Broccoli system investigation
+Generated: 2026-07-06T23:47:26-04:00
+
+## Architecture (expected)
+- **Broccoli** = Termux executor (queue, sandbox, reports).
+- **Grok app** = accessibility only (dump/tap/paste/read).
+- **Wire** = daemon + wire_send_ui + ui_dump_rish (invariant: `ai.x.grok` in dump).
+
+## Tree
+- Files under `~/broccoli`: **286**
+- Extensions: `{'.log': 34, '.txt': 57, '.md': 14, '.py': 44, '.json': 55, '.sh': 55, '.pid': 1, '(noext)': 2, '.jsonl': 4, '.1783317057': 1, '.xml': 7, '.lock': 1, '.consumed': 1, '.tmp': 1, '.flag': 1, '.cur': 1, '.last': 1, '.ts': 2, '.hash': 1, '.conf': 3}`
+
+## Key artifacts
+- `INSTRUCTIONS.md`: {'exists': True, 'bytes': 1773, 'mtime': '2026-07-06T23:39:39.256002'}
+- `task_box.txt`: {'exists': True, 'bytes': 245, 'mtime': '2026-07-06T23:12:59.400002'}
+- `queue/pending.txt`: {'exists': True, 'bytes': 74, 'mtime': '2026-07-06T23:44:06.256002'}
+- `queue/done.txt`: {'exists': True, 'bytes': 131, 'mtime': '2026-07-06T23:17:00.580002'}
+- `ui/last_ui.xml`: {'exists': True, 'bytes': 20858, 'mtime': '2026-07-06T23:43:04.704002'}
+- `reports/wire_send.log`: {'exists': True, 'bytes': 1715, 'mtime': '2026-07-06T23:41:36.256002'}
+- `reports/wire_daemon.log`: {'exists': True, 'bytes': 2605, 'mtime': '2026-07-06T23:17:00.552002'}
+- `reports/loop_health.jsonl`: {'exists': False}
+- `reports/manual_gap.jsonl`: {'exists': True, 'bytes': 4108, 'mtime': '2026-07-06T23:29:52.480002'}
+- `thread/to_chat.md`: {'exists': True, 'bytes': 1192, 'mtime': '2026-07-06T23:29:52.484002'}
+- `meta/WIRE_STOP`: {'exists': False}
+
+## Last UI dump
+```json
+{
+  "ok": true,
+  "bytes": 20846,
+  "grok_fg": false,
+  "packages": [
+    "com.android.systemui"
+  ],
+  "has_composer": false,
+  "send_candidates": [],
+  "termux_only": false
+}
+```
+
+## wire_send.log summary
+```json
+{
+  "lines": 38,
+  "counts": {
+    "SEND start": 5,
+    "send_tap": 10,
+    "reply=": 2
+  },
+  "tail": [
+    "2026-07-06T22:58:42-04:00 WARN send not confirmed in dump \u2014 user may need one tap",
+    "2026-07-06T22:59:05-04:00 reply=DAEMON start, then ROUND start / send_tap ok / reply=",
+    "2026-07-06T23:13:07-04:00 SEND start len=185",
+    "ERR no_composer",
+    "2026-07-06T23:15:17-04:00 send_tap miss attempt=1 \u2014 enter",
+    "ERR no_send_candidate",
+    "2026-07-06T23:16:04-04:00 send_tap miss attempt=2 \u2014 enter",
+    "2026-07-06T23:16:38-04:00 send_ok composer_empty_or_in_chat",
+    "2026-07-06T23:17:00-04:00 reply=Start new chat",
+    "2026-07-06T23:28:52-04:00 SEND start len=764",
+    "2026-07-06T23:29:53-04:00 SEND start len=655",
+    "TAP 540 1195",
+    "2026-07-06T23:33:54-04:00 send_tap attempt=1",
+    "TAP 540 1195",
+    "2026-07-06T23:33:55-04:00 send_tap attempt=1",
+    "2026-07-06T23:33:57-04:00 SEND len=33",
+    "2026-07-06T23:35:54-04:00 dump_bytes=29986",
+    "{\"err\": \"no_send\"}",
+    "{\"err\": \"no_composer\"}",
+    "{\"err\": \"no_composer\"}"
+  ]
+}
+```
+
+## Findings (priority order)
+1. **[HIGH]** ui_dump_rish may dump wrong FG
+   - Fix: foreground Grok before every dump
+2. **[HIGH]** tools/agent_wrap.sh still references Chrome/WEB
+   - Fix: route to launch_grok_native.sh only
+3. **[HIGH]** lib/grok_send_tap.py still references Chrome/WEB
+   - Fix: route to launch_grok_native.sh only
+4. **[MED]** wire_send_ui not hooked to gap_watch
+   - Fix: patch gap hooks on fail/success/timeout
+
+## Co-dev window
+- State file: `~/broccoli/meta/codev_window.json`
+- Session: `20260706_234726`
+- Paste **this entire report** (or `reports/INVESTIGATION_REPORT.md`) into Mac Grok chat for full-context patches.
+- Re-run: `bash ~/broccoli/tools/investigate_system.sh --live`
+
+## Recommended next patches (ordered)
+- foreground Grok before every dump
+- route to launch_grok_native.sh only
+- route to launch_grok_native.sh only
+- patch gap hooks on fail/success/timeout
+
+Wrote: ~/broccoli/reports/INVESTIGATION_REPORT.md
+Wrote: ~/broccoli/reports/investigation.json
+Wrote: ~/broccoli/meta/codev_window.json
+Co-dev: cat ~/broccoli/reports/INVESTIGATION_REPORT.md
+queue=short test (findings stay in INVESTIGATION_REPORT.md only)
+2026-07-06T23:47:26-04:00 wire prompt len=33
+/data/data/com.termux/files/home/broccoli/lib/ui_dump_rish.sh: line 27: unexpected EOF while looking for matching `"'
+2026-07-06T23:54:42-04:00 tick
+2026-07-06T23:59:02-04:00 tick start
+2026-07-07T00:09:10-04:00 wire_fail
+2026-07-07T00:10:10-04:00 send len=34
+2026-07-07T00:18:37-04:00 send len=34
