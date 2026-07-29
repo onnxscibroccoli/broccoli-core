@@ -95,7 +95,6 @@ class EndToEndSmoke:
             pass
 
     def run(self) -> SmokeSnapshot:
-    def run(self) -> SmokeSnapshot:
         verification = self.bootstrap.verify_bootstrap()
         bootstrap_snapshot = self.bootstrap.run_once()
 

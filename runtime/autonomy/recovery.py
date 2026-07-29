@@ -209,7 +209,6 @@ class RecoveryManager:
         }
 
     def scan_and_recover(self) -> int:
-    def scan_and_recover(self) -> int:
         """
         Scan runtime health snapshot and publish recovery lifecycle events.
         """
@@ -232,7 +231,22 @@ class RecoveryManager:
         overall = snapshot.get("overall_status", "UNKNOWN")
         problems = self._required_problem_components(snapshot)
 
-        if overall == "RUNTIME_OK" and not problems:
+        # Trust overall RUNTIME_OK: do not open recovery on residual component noise.
+        if overall == "RUNTIME_OK":
+            self._publish(
+                "RECOVERY_HEARTBEAT",
+                "No recovery required",
+                severity="INFO",
+                metadata={
+                    "recovered_count": 0,
+                    "overall_status": overall,
+                    "problems": [],
+                    "snapshot": snapshot,
+                },
+            )
+            return 0
+
+        if not problems:
             self._publish(
                 "RECOVERY_HEARTBEAT",
                 "No recovery required",
