@@ -54,3 +54,8 @@ Runtime components that expose `start()`, `stop()`, and `health()` are now manag
 
 Runtime components that expose `start()`, `stop()`, and `health()` are now managed as transports. The first transport is the clipboard bridge, which is registered with a transport registry, published on `TRANSPORT_HEALTH`, and supervised for restart/recovery by the Governor and transport supervisor.
 
+
+## Runtime transports
+
+Runtime components that expose `start()`, `stop()`, and `health()` are now managed as transports. The first transports are the accessibility driver and the clipboard bridge, both registered with the transport registry and supervised for restart/recovery by the Governor and transport supervisor.
+

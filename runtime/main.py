@@ -60,6 +60,8 @@ def main():
 
     transport_registry = TransportRegistry(bus)
     clipboard_bridge = ClipboardEventBridge(bus)
+
+    transport_registry.register("accessibility", accessibility)
     transport_registry.register("clipboard", clipboard_bridge)
     register_transport_supervisor(bus, transport_registry, metrics)
 
