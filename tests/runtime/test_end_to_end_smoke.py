@@ -71,6 +71,29 @@ class EndToEndSmokeTest(unittest.TestCase):
             self.assertEqual(FakeBootstrap.verify_calls, 1)
             self.assertEqual(FakeBootstrap.run_calls, 1)
 
+    def test_smoke_reports_critical_on_bootstrap_exception(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            emitted = []
+            bus = FakeBus()
+
+            class ExplodingBootstrap(FakeBootstrap):
+                def verify_bootstrap(self):
+                    raise RuntimeError("bootstrap boom")
+
+            with patch("runtime.governor.end_to_end_smoke.SystemBootstrapOrchestrator", ExplodingBootstrap):
+                smoke = EndToEndSmoke(
+                    bus=bus,
+                    root=root,
+                    event_writer=lambda **kw: emitted.append(kw),
+                )
+                snapshot = smoke.run()
+
+            self.assertEqual(snapshot.status, "SMOKE_CRITICAL")
+            self.assertFalse(snapshot.verification_ok)
+            self.assertTrue(any(evt[0] == "SMOKE_CRITICAL" for evt in bus.events))
+            self.assertTrue(any(e["event"] == "SMOKE_CRITICAL" for e in emitted))
+
     def test_strict_failure_would_exit_nonzero(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

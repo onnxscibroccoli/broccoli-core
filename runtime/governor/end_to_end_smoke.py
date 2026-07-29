@@ -95,8 +95,21 @@ class EndToEndSmoke:
             pass
 
     def run(self) -> SmokeSnapshot:
-        verification = self.bootstrap.verify_bootstrap()
-        bootstrap_snapshot = self.bootstrap.run_once()
+        try:
+            verification = self.bootstrap.verify_bootstrap()
+            bootstrap_snapshot = self.bootstrap.run_once()
+        except Exception as exc:
+            snapshot = SmokeSnapshot(
+                timestamp=int(time.time()),
+                status="SMOKE_CRITICAL",
+                verification_ok=False,
+                bootstrap_status="unknown",
+                health_status="unknown",
+                note=f"End-to-end smoke failed: {exc}",
+                metadata={"error": str(exc)},
+            )
+            self._publish("SMOKE_CRITICAL", snapshot, severity="CRITICAL")
+            return snapshot
 
         adaptive = (
             verification.get("adaptive_verification", {})
@@ -116,11 +129,12 @@ class EndToEndSmoke:
 
         bootstrap_ok = bootstrap_status == "BOOTSTRAP_OK"
 
-        smoke_status = (
-            "SMOKE_OK"
-            if verification_ok and bootstrap_ok
-            else "SMOKE_WARNING"
-        )
+        if verification_ok and bootstrap_ok:
+            smoke_status = "SMOKE_OK"
+        elif not verification_ok and not bootstrap_ok:
+            smoke_status = "SMOKE_CRITICAL"
+        else:
+            smoke_status = "SMOKE_WARNING"
 
         snapshot = SmokeSnapshot(
             timestamp=int(time.time()),
@@ -130,24 +144,27 @@ class EndToEndSmoke:
             health_status=str(bootstrap_status),
             note=(
                 f"verification_ok={verification_ok} "
-                f"bootstrap_ok={bootstrap_ok}"
+                f"bootstrap_ok={bootstrap_ok} "
+                f"bootstrap={bootstrap_status}"
             ),
             metadata={
                 "verification": verification,
                 "bootstrap_ok": bootstrap_ok,
+                "bootstrap": (
+                    bootstrap_snapshot.to_dict()
+                    if hasattr(bootstrap_snapshot, "to_dict")
+                    else {}
+                ),
             },
         )
 
-        self._publish(
-            smoke_status,
-            snapshot,
-            severity=(
-                "INFO"
-                if smoke_status == "SMOKE_OK"
-                else "WARNING"
-            ),
-        )
+        severity = {
+            "SMOKE_OK": "INFO",
+            "SMOKE_WARNING": "WARNING",
+            "SMOKE_CRITICAL": "CRITICAL",
+        }.get(smoke_status, "WARNING")
 
+        self._publish(smoke_status, snapshot, severity=severity)
         return snapshot
 
     def run_forever(self, interval_seconds: int = 60) -> None:
