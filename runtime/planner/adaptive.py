@@ -135,6 +135,25 @@ class AdaptivePlanner:
             except Exception:
                 pass
 
+
+    def start(self):
+        self.running = True
+        return self
+
+    def stop(self):
+        self.running = False
+        return self
+
+    def health(self):
+        snapshot = self.collect_health()
+        return {
+            "running": self.running,
+            "plan_count": self.plan_count,
+            "feedback_count": self.feedback_count,
+            "last_goal": self.last_goal,
+            "snapshot": snapshot.to_dict(),
+        }
+
     def _payload_of(self, event: Any) -> Dict[str, Any]:
         if event is None:
             return {}
@@ -466,7 +485,7 @@ class AdaptivePlanner:
         }
 
     def run_forever(self, interval_seconds: int = 60) -> None:
-        self.running = True
+        self.start()
         while self.running:
             self.run_once()
             time.sleep(interval_seconds)

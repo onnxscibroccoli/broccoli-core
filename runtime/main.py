@@ -66,6 +66,7 @@ def main():
     transport_registry.register("clipboard", clipboard_bridge)
     transport_registry.register("grok", grok_transport)
     transport_registry.register("workflow_executor", workflow_executor)
+    transport_registry.register("adaptive_planner", planner)
 
     register_accessibility_consumers(bus, metrics)
     register_transport_supervisor(bus, transport_registry, metrics)
