@@ -1,0 +1,8 @@
+2026-07-10T03:04:27-04:00 round 1 seed send
+2026-07-10T03:06:15-04:00 send via loop_ok_path.sh exit=0
+2026-07-10T03:07:01-04:00 round 1 recv len=105514 actions=1
+2026-07-10T03:09:09-04:00 send via loop_ok_path.sh exit=124
+2026-07-10T03:09:37-04:00 send via rish_grok_round.sh exit=5
+2026-07-10T03:09:42-04:00 send via send_now.sh exit=0
+2026-07-10T03:09:42-04:00 === CLOSED_LOOP LOOP_OK HANDSHAKE ===
+2026-07-13T02:23:23-04:00 FAIL shizuku/rish
