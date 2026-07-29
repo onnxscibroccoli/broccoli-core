@@ -23,13 +23,12 @@ def main():
     recovery = runtime["recovery"]
     goal_manager = runtime["goal_manager"]
     transport_registry = runtime["transport_registry"]
+    bus = runtime["bus"]
 
-    transport_registry.start_all()
-
-    lifecycle.startup([
+    components = [
         config,
         logger,
-        runtime["bus"],
+        bus,
         state,
         metrics,
         scheduler,
@@ -47,7 +46,10 @@ def main():
         runtime["plugins"],
         runtime["plugin_loader_transport"],
         transport_registry,
-    ])
+    ]
+
+    transport_registry.start_all()
+    lifecycle.startup(components)
 
     goal_manager.create_goal("test_goal", "Test autonomous task")
 
@@ -57,12 +59,12 @@ def main():
     tick = 0
     try:
         while True:
-            runtime["bus"].publish("TICK")
+            bus.publish("TICK")
             scheduler.run_pending()
             workflow_executor.run_pending()
             transport_registry.publish_health()
             health_report = health.check()
-            runtime["bus"].publish("HEALTH_CHECK", health_report, source="HealthMonitor")
+            bus.publish("HEALTH_CHECK", health_report, source="HealthMonitor")
             metrics.increment("loop_cycles")
 
             tick += 1
@@ -76,7 +78,10 @@ def main():
         logger.log("INFO", "Shutdown requested", "Core")
         state.transition("STOPPED")
     finally:
-        transport_registry.stop_all()
+        try:
+            lifecycle.shutdown(components)
+        finally:
+            transport_registry.stop_all()
 
 
 if __name__ == "__main__":
@@ -99,6 +104,7 @@ def capability_status(event):
 
 try:
     from runtime.eventbus.service import bus
+
     bus.subscribe("CAPABILITY_STATUS", capability_status)
 except Exception:
     pass

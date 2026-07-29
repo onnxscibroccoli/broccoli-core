@@ -46,7 +46,7 @@ def build_runtime_stack(
     metrics = Metrics()
     scheduler = Scheduler()
     health = HealthMonitor()
-    lifecycle = Lifecycle()
+    lifecycle = Lifecycle(bus)
 
     queue = TaskQueue()
     governor = Governor(bus, state)

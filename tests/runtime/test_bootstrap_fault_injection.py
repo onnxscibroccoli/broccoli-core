@@ -88,7 +88,17 @@ class FakeHealthMonitor:
 
 
 class FakeLifecycle:
+    def __init__(self, bus=None):
+        self.bus = bus
+        self.startup_calls = []
+        self.shutdown_calls = []
+
     def startup(self, *args, **kwargs):
+        self.startup_calls.append((args, kwargs))
+        return None
+
+    def shutdown(self, *args, **kwargs):
+        self.shutdown_calls.append((args, kwargs))
         return None
 
 

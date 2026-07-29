@@ -62,3 +62,8 @@ Runtime components that expose `start()`, `stop()`, and `health()` are now manag
 ## Managed transports
 
 Runtime components that expose `start()`, `stop()`, and `health()` are now managed as transports. The managed set currently includes the accessibility driver, clipboard bridge, Grok provider, workflow executor, adaptive planner, knowledge graph, agent coordinator, and plugin loader, all registered with the transport registry and supervised for restart/recovery by the Governor and transport supervisor.
+
+## Lifecycle telemetry
+
+The runtime lifecycle now emits structured startup and shutdown events on the EventBus, including component-ready and component-stopped telemetry, so bootstrap and shutdown flows can be asserted in tests.
+
