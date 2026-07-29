@@ -209,28 +209,48 @@ class RecoveryManager:
         }
 
     def scan_and_recover(self) -> int:
+    def scan_and_recover(self) -> int:
         """
-        Scan the latest runtime health snapshot and publish recovery lifecycle
-        events for any required components that are not healthy.
+        Scan runtime health snapshot and publish recovery lifecycle events.
         """
         snapshot = self._load_latest_snapshot()
+
         if not snapshot:
+            self._publish(
+                "RECOVERY_HEARTBEAT",
+                "No recovery snapshot available",
+                severity="INFO",
+                metadata={
+                    "recovered_count": 0,
+                    "overall_status": "UNKNOWN",
+                    "problems": [],
+                    "snapshot": {},
+                },
+            )
             return 0
 
         overall = snapshot.get("overall_status", "UNKNOWN")
-
-        # A healthy runtime should never trigger recovery.
-        if overall == "RUNTIME_OK":
-            return 0
-
         problems = self._required_problem_components(snapshot)
 
-        if not problems:
+        if overall == "RUNTIME_OK" and not problems:
+            self._publish(
+                "RECOVERY_HEARTBEAT",
+                "No recovery required",
+                severity="INFO",
+                metadata={
+                    "recovered_count": 0,
+                    "overall_status": overall,
+                    "problems": [],
+                    "snapshot": snapshot,
+                },
+            )
             return 0
 
         recovered_count = 0
+
         for component in problems:
             name = component.get("name", "unknown")
+
             if self._within_cooldown(name):
                 continue
 
@@ -238,7 +258,6 @@ class RecoveryManager:
                 "snapshot": snapshot,
                 "component": component,
                 "overall_status": overall,
-                "reason": component.get("details", {}).get("reason", "health_degraded"),
             }
 
             self._publish(
@@ -251,33 +270,42 @@ class RecoveryManager:
             try:
                 result = self._invoke_handler(name, context)
                 success = bool(result.get("success", True))
-                detail = result.get("detail", f"Recovery handler completed for {name}.")
             except Exception as exc:
-                success = False
-                detail = f"Recovery handler failed for {name}: {exc}"
                 result = {
                     "success": False,
-                    "action": "custom_handler",
-                    "detail": detail,
+                    "error": str(exc),
                 }
+                success = False
 
             self.attempts[name] = self.attempts.get(name, 0) + 1
             self.last_recovery_at[name] = time.time()
 
             self._publish(
                 "RECOVERY_FINISHED",
-                detail,
+                f"Recovery finished for {name}",
                 severity="INFO" if success else "CRITICAL",
                 metadata={
                     "component": name,
-                    "attempt": self.attempts[name],
                     "success": success,
                     "result": result,
-                    "snapshot_summary": snapshot.get("summary", ""),
                 },
             )
 
             recovered_count += 1
+
+        self._publish(
+            "RECOVERY_SCAN_COMPLETE",
+            f"Recovery scan complete; actions={recovered_count}",
+            severity="INFO",
+            metadata={
+                "recovered_count": recovered_count,
+                "overall_status": overall,
+                "problems": [
+                    c.get("name", "unknown")
+                    for c in problems
+                ],
+            },
+        )
 
         return recovered_count
 
