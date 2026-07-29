@@ -1,53 +1,56 @@
 from runtime.state import RuntimeState
 from runtime.eventbus import EventBus
 
-from runtime.clipboard.events import (
-    CLIPBOARD_BRIDGE_HEALTH,
-    CLIPBOARD_BRIDGE_HEALTHY,
-    CLIPBOARD_BRIDGE_RESTART_REQUEST,
-    CLIPBOARD_BRIDGE_UNHEALTHY,
+from runtime.transports.events import (
+    TRANSPORT_HEALTH,
+    TRANSPORT_HEALTHY,
+    TRANSPORT_RESTART_REQUEST,
+    TRANSPORT_UNHEALTHY,
 )
+
 
 class Governor:
     def __init__(self, bus: EventBus, state):
         self.bus = bus
         self.state = state
-        self._clipboard_bridge_recovery_requested = False
+        self._transport_recovery_requested = set()
         self.bus.subscribe("TICK", self.on_tick)
-        self.bus.subscribe(CLIPBOARD_BRIDGE_HEALTH, self.on_clipboard_bridge_health)
+        self.bus.subscribe(TRANSPORT_HEALTH, self.on_transport_health)
 
     def on_tick(self, _):
         if self.state.current == "RUNNING":
             self.bus.publish("GOVERNOR_HEARTBEAT")
 
-    def on_clipboard_bridge_health(self, event):
+    def on_transport_health(self, event):
         payload = getattr(event, "payload", {}) or {}
+        transport_name = payload.get("transport", "unknown")
         running = bool(payload.get("running"))
 
         if running:
-            if self._clipboard_bridge_recovery_requested:
+            if transport_name in self._transport_recovery_requested:
                 self.bus.publish(
-                    CLIPBOARD_BRIDGE_HEALTHY,
+                    TRANSPORT_HEALTHY,
                     payload,
                     source="Governor",
                 )
-            self._clipboard_bridge_recovery_requested = False
+            self._transport_recovery_requested.discard(transport_name)
             return
 
-        if self._clipboard_bridge_recovery_requested:
+        if transport_name in self._transport_recovery_requested:
             return
 
-        self._clipboard_bridge_recovery_requested = True
+        self._transport_recovery_requested.add(transport_name)
         self.bus.publish(
-            CLIPBOARD_BRIDGE_UNHEALTHY,
+            TRANSPORT_UNHEALTHY,
             payload,
             source="Governor",
         )
         self.bus.publish(
-            CLIPBOARD_BRIDGE_RESTART_REQUEST,
+            TRANSPORT_RESTART_REQUEST,
             {
-                "reason": "bridge_not_running",
-                "bridge_health": payload,
+                "transport": transport_name,
+                "reason": "transport_not_running",
+                "transport_health": payload,
             },
             source="Governor",
         )

@@ -3,8 +3,6 @@ from runtime.governor.repo_governor import RepoGovernor
 
 from runtime.drivers.accessibility.consumers import register_accessibility_consumers
 from runtime.clipboard.adapter import ClipboardEventBridge
-from runtime.clipboard.consumers import register_clipboard_consumers
-from runtime.clipboard.supervisor import register_clipboard_supervisor
 from runtime.config import Config
 from runtime.logger import Logger
 from runtime.state import RuntimeState
@@ -24,6 +22,8 @@ from runtime.agents.coordinator import AgentCoordinator
 from runtime.agents.grok_agent import GrokAgent
 from runtime.autonomy.goal_manager import GoalManager
 from runtime.autonomy.recovery import RecoveryManager
+from runtime.transports.registry import TransportRegistry
+from runtime.transports.supervisor import register_transport_supervisor
 import time
 
 # How often (in ticks) to run a full recovery scan.
@@ -58,17 +58,19 @@ def main():
     plugins = PluginLoader()
     plugins.load()
 
-    register_accessibility_consumers(bus, metrics)
-    register_clipboard_consumers(bus, metrics)
+    transport_registry = TransportRegistry(bus)
     clipboard_bridge = ClipboardEventBridge(bus)
-    register_clipboard_supervisor(bus, clipboard_bridge, metrics)
-    clipboard_bridge.start()
+    transport_registry.register("clipboard", clipboard_bridge)
+    register_transport_supervisor(bus, transport_registry, metrics)
+
+    register_accessibility_consumers(bus, metrics)
+    transport_registry.start_all()
 
     lifecycle.startup([
         config, logger, bus, state, metrics, scheduler, health,
         governor, accessibility, planner, workflow_executor,
         grok, kg, coordinator, goal_manager, recovery, plugins,
-        clipboard_bridge,
+        transport_registry,
     ])
 
     grok.initialize()
@@ -85,14 +87,9 @@ def main():
             bus.publish("TICK")
             scheduler.run_pending()
             workflow_executor.run_pending()
+            transport_registry.publish_health()
             health_report = health.check()
             bus.publish("HEALTH_CHECK", health_report, source="HealthMonitor")
-            bus.publish(
-                "CLIPBOARD_BRIDGE_HEALTH",
-                clipboard_bridge.health(),
-                source="ClipboardEventBridge",
-            )
-            health.check()
             metrics.increment("loop_cycles")
 
             tick += 1
@@ -106,7 +103,7 @@ def main():
         logger.log("INFO", "Shutdown requested", "Core")
         state.transition("STOPPED")
     finally:
-        clipboard_bridge.stop()
+        transport_registry.stop_all()
 
 
 if __name__ == "__main__":

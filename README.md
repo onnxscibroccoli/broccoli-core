@@ -44,3 +44,13 @@ Clipboard input is handled by a passive bridge in `runtime/clipboard/`. The brid
 
 Clipboard input is handled by a passive bridge in `runtime/clipboard/`. The bridge publishes structured command and result envelopes to the shared EventBus, and the Governor can request a restart when bridge health goes stale or the bridge stops polling.
 
+
+## Runtime transports
+
+Runtime components that expose `start()`, `stop()`, and `health()` are now managed as transports. The first transport is the clipboard bridge, which is registered with a transport registry, published on `TRANSPORT_HEALTH`, and supervised for restart/recovery by the Governor and transport supervisor.
+
+
+## Runtime transports
+
+Runtime components that expose `start()`, `stop()`, and `health()` are now managed as transports. The first transport is the clipboard bridge, which is registered with a transport registry, published on `TRANSPORT_HEALTH`, and supervised for restart/recovery by the Governor and transport supervisor.
+
