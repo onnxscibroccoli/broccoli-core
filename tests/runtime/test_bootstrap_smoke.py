@@ -151,7 +151,7 @@ def test_runtime_bootstrap_smoke(monkeypatch, tmp_path):
     monkeypatch.setattr(bootstrap_mod, "Governor", FakeGovernor)
     monkeypatch.setattr(bootstrap_mod, "AccessibilityDriver", lambda bus: SimpleTransport("accessibility"))
     monkeypatch.setattr(bootstrap_mod, "ClipboardEventBridge", lambda bus: SimpleTransport("clipboard"))
-    monkeypatch.setattr(bootstrap_mod, "AdaptivePlanner", lambda bus, queue, root=None: SimpleTransport("adaptive_planner"))
+    monkeypatch.setattr(bootstrap_mod, "AdaptivePlanner", lambda bus=None, root=None, knowledge_graph=None, **kwargs: SimpleTransport("adaptive_planner"))
     monkeypatch.setattr(bootstrap_mod, "WorkflowExecutor", lambda bus, queue: SimpleTransport("workflow_executor"))
     monkeypatch.setattr(bootstrap_mod, "GrokProvider", FakeGrokProvider)
     monkeypatch.setattr(bootstrap_mod, "KnowledgeGraph", FakeKnowledgeGraph)

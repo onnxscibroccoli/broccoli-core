@@ -51,11 +51,15 @@ def build_runtime_stack(
     queue = TaskQueue()
     governor = Governor(bus, state)
     accessibility = AccessibilityDriver(bus)
-    planner = AdaptivePlanner(bus, queue, root=runtime_root)
     workflow_executor = WorkflowExecutor(bus, queue)
     grok = GrokProvider(bus)
     knowledge_graph = KnowledgeGraph(bus=bus, root=runtime_root)
     knowledge_graph_transport = KnowledgeGraphTransport(knowledge_graph)
+    planner = AdaptivePlanner(
+        bus=bus,
+        root=runtime_root,
+        knowledge_graph=knowledge_graph,
+    )
     coordinator = AgentCoordinator(bus, queue)
     goal_manager = GoalManager(bus, queue, knowledge_graph)
     recovery = RecoveryManager(bus)

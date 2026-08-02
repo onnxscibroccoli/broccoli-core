@@ -168,7 +168,7 @@ def _patch_bootstrap(monkeypatch, plugin_loader=None):
     monkeypatch.setattr(bootstrap_mod, "Governor", FakeGovernor)
     monkeypatch.setattr(bootstrap_mod, "AccessibilityDriver", lambda bus: PassingTransport("accessibility"))
     monkeypatch.setattr(bootstrap_mod, "ClipboardEventBridge", lambda bus: PassingTransport("clipboard"))
-    monkeypatch.setattr(bootstrap_mod, "AdaptivePlanner", lambda bus, queue, root=None: PassingTransport("adaptive_planner"))
+    monkeypatch.setattr(bootstrap_mod, "AdaptivePlanner", lambda bus=None, root=None, knowledge_graph=None, **kwargs: PassingTransport("adaptive_planner"))
     monkeypatch.setattr(bootstrap_mod, "WorkflowExecutor", lambda bus, queue: PassingTransport("workflow_executor"))
     monkeypatch.setattr(bootstrap_mod, "GrokProvider", FakeGrokProvider)
     monkeypatch.setattr(bootstrap_mod, "KnowledgeGraph", FakeKnowledgeGraph)
