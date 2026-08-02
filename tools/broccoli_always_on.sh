@@ -43,15 +43,62 @@ start_runtime() {
 
 assist_pulse() {
   PYTHONPATH="$ROOT" python3 - <<'END' || true
-import json, time
+import json, re, subprocess, time
 from pathlib import Path
+
+AI_PACKAGES = (
+    "ai.x.grok",
+    "com.openai.chatgpt",
+    "com.anthropic.claude",
+    "com.google.android.apps.bard",
+    "com.microsoft.copilot",
+)
+
 root = Path.home() / "broccoli-core"
 meta = root / "meta" / "always_on"
 meta.mkdir(parents=True, exist_ok=True)
+
+def detect_foreground():
+    """Best-effort foreground package. Prefer rish; fall back to dumpsys."""
+    cmds = [
+        ["rish", "-c", "dumpsys activity activities"],
+        ["rish", "-c", "dumpsys window windows"],
+        ["dumpsys", "activity", "activities"],
+    ]
+    text = ""
+    for cmd in cmds:
+        try:
+            r = subprocess.run(cmd, capture_output=True, text=True, timeout=8)
+            if r.returncode == 0 and (r.stdout or "").strip():
+                text = r.stdout
+                break
+        except Exception:
+            continue
+    if not text:
+        return None, "unavailable"
+    # mResumedActivity / topResumedActivity / mFocusedApp
+    patterns = [
+        r"topResumedActivity.*?\s+([a-zA-Z0-9_.]+)/",
+        r"mResumedActivity.*?\s+([a-zA-Z0-9_.]+)/",
+        r"mFocusedApp.*?\s+([a-zA-Z0-9_.]+)/",
+        r"ResumedActivity:\s*ActivityRecord\{[^ ]+\s+[^ ]+\s+([a-zA-Z0-9_.]+)/",
+    ]
+    for pat in patterns:
+        m = re.search(pat, text)
+        if m:
+            return m.group(1), "detected"
+    return None, "unknown"
+
+fg_pkg, fg_src = detect_foreground()
+ai_in_use = bool(fg_pkg and any(fg_pkg == p or fg_pkg.startswith(p + ".") for p in AI_PACKAGES))
+
 payload = {
     "timestamp": int(time.time()),
     "assist_mode": "ready",
-    "note": "always_on supervisor pulse; assist when AI transports healthy",
+    "note": "always_on assist pulse",
+    "foreground_package": fg_pkg,
+    "foreground_source": fg_src,
+    "ai_tool_in_use": ai_in_use,
 }
 try:
     from runtime.governor.runtime_health_governor import RuntimeHealthGovernor
@@ -61,12 +108,25 @@ try:
         {"name": c.name, "status": c.status, "age": round(getattr(c, "age_seconds", 0) or 0, 1)}
         for c in s.components if c.required
     ]
-    payload["assist_mode"] = "active" if s.overall_status in ("RUNTIME_OK", "HEALTH_WARNING") else "degraded"
+    healthy = s.overall_status in ("RUNTIME_OK", "HEALTH_WARNING")
+    if not healthy:
+        payload["assist_mode"] = "degraded"
+    elif ai_in_use:
+        payload["assist_mode"] = "assisting"
+        payload["note"] = f"AI tool in foreground: {fg_pkg}"
+    else:
+        payload["assist_mode"] = "active"
+        payload["note"] = "runtime healthy; assist ready for AI tools"
 except Exception as e:
     payload["assist_mode"] = "degraded"
     payload["error"] = str(e)
+
 (meta / "assist.json").write_text(json.dumps(payload, indent=2))
-print("assist_mode=" + payload["assist_mode"])
+print(
+    "assist_mode={mode} ai_in_use={ai} fg={fg}".format(
+        mode=payload["assist_mode"], ai=ai_in_use, fg=fg_pkg
+    )
+)
 END
 }
 
