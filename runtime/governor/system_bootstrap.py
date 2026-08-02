@@ -308,11 +308,18 @@ class SystemBootstrapOrchestrator:
                 details={"error": str(exc)},
             ), exc
 
+    REQUIRED_COMPONENTS = frozenset({"runtime_health", "recovery"})
+
     def _overall_status(self, components: List[BootstrapComponent]) -> str:
-        worst = max((_status_rank(c.status) for c in components), default=1)
-        if worst >= 3:
+        required = [c for c in components if c.name in self.REQUIRED_COMPONENTS]
+        optional = [c for c in components if c.name not in self.REQUIRED_COMPONENTS]
+        req_worst = max((_status_rank(c.status) for c in required), default=1)
+        opt_worst = max((_status_rank(c.status) for c in optional), default=1)
+        if req_worst >= 3:
             return "BOOTSTRAP_CRITICAL"
-        if worst == 2:
+        if req_worst == 2:
+            return "BOOTSTRAP_WARNING"
+        if opt_worst >= 3:
             return "BOOTSTRAP_WARNING"
         return "BOOTSTRAP_OK"
 
