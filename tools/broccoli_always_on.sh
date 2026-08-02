@@ -15,7 +15,8 @@ export PYTHONPATH="$ROOT"
 log() { echo "$(date -Is) $*" | tee -a "$LOG"; }
 
 free_mb() {
-  df -Pm "$ROOT" 2>/dev/null | awk 'NR==2{print $4}'
+  # Termux: prefer 1K-blocks from df -k, convert to MiB
+  df -k "$ROOT" 2>/dev/null | awk 'NR==2{printf "%d", $4/1024}'
 }
 
 runtime_alive() {
