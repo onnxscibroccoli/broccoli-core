@@ -1,8 +1,8 @@
 #!/data/data/com.termux/files/usr/bin/bash
 set -euo pipefail
 ROOT="${HOME}/broccoli-core"
-cd "\( ROOT"
-N=" \){1:-120}"
+cd "$ROOT" || exit 1
+N="${1:-120}"
 export PYTHONPATH="$ROOT"
 bash tools/repository_health.sh >/dev/null || true
 bash tools/drive_sync_heartbeat.sh
