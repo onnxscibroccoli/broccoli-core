@@ -143,10 +143,19 @@ else
 fi
 
 
-# Optional chat assist (open + armed auto-reply) when meta/always_on/chat_assist.enabled exists
-if [ -f "$META/chat_assist.enabled" ]; then
-  PYTHONPATH="\( ROOT" python3 -m runtime.autonomy.chat_assist --app " \){CHAT_APP:-grok}" --open --auto-reply >/dev/null 2>&1 || true
-fi
+
+
 
 assist_pulse
 log "cycle done free_mb=$(free_mb || echo ?)"
+
+
+
+
+
+
+# Optional chat assist when meta/always_on/chat_assist.enabled exists
+if [ -f "$META/chat_assist.enabled" ]; then
+  PYTHONPATH="$HOME/broccoli-core" python3 -m runtime.autonomy.chat_assist --app "${CHAT_APP:-grok}" --open --auto-reply >/dev/null 2>&1 || true
+fi
+
