@@ -6,7 +6,7 @@ new_code = """import subprocess
 from .manager import AccessibilityManager
 from .observer import AccessibilityObserver
 from .xml_parser import parse_uiautomator_xml
-from event_bus import EventBus
+from runtime.eventbus import EventBus
 import logging
 
 logger = logging.getLogger("accessibility.driver")

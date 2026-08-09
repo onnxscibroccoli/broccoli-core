@@ -1,0 +1,32 @@
+# Curated Android / Termux / UI automation references for Broccoli Core.
+
+references:
+  - repo: termux/termux-app
+    url: https://github.com/termux/termux-app
+    why: Primary Termux runtime host for Broccoli Core on-device execution.
+    tags: [termux, android, shell]
+
+  - repo: appium/appium
+    url: https://github.com/appium/appium
+    why: Cross-platform mobile automation protocol; useful comparison for accessibility-first design.
+    tags: [automation, mobile, accessibility]
+
+  - repo: TencentQQGYLab/AppAgent
+    url: https://github.com/TencentQQGYLab/AppAgent
+    why: Multimodal LLM agents operating smartphone apps; parallel to Grok UI automation goals.
+    tags: [agent, android, multimodal, ui]
+
+  - repo: callstack/agent-device
+    url: https://github.com/callstack/agent-device
+    why: CLI to control iOS and Android devices for AI agents.
+    tags: [agent, android, ios, device]
+
+  - repo: lahfir/agent-desktop
+    url: https://github.com/lahfir/agent-desktop
+    why: Native desktop automation via OS accessibility trees with structured JSON output.
+    tags: [agent, accessibility, desktop]
+
+  - repo: JakeWharton/adb-event-mirror
+    url: https://github.com/JakeWharton/adb-event-mirror
+    why: Real-time ADB input event mirroring; useful for multi-device or replay scenarios.
+    tags: [adb, android, input]

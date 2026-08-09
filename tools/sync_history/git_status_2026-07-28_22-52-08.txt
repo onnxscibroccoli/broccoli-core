@@ -1,0 +1,112 @@
+ M meta/repo_governor.json
+ M reports/repository_inventory.json
+ M reports/repository_summary.md
+ M runtime/__pycache__/android_collectors.cpython-314.pyc
+ M runtime/__pycache__/constants.cpython-314.pyc
+ M runtime/__pycache__/default_collectors.cpython-314.pyc
+ M runtime/__pycache__/default_reasoner.cpython-314.pyc
+ M runtime/__pycache__/default_remediator.cpython-314.pyc
+ M runtime/__pycache__/journal.cpython-314.pyc
+ M runtime/__pycache__/knowledge_learning.cpython-314.pyc
+ M runtime/__pycache__/main.cpython-314.pyc
+ M runtime/__pycache__/normalizer.cpython-314.pyc
+ M runtime/__pycache__/problem_runtime.cpython-314.pyc
+ M runtime/__pycache__/problem_solver.cpython-314.pyc
+ M runtime/agents/__pycache__/coordinator.cpython-314.pyc
+ M runtime/agents/coordinator.py
+ M runtime/autonomy/__pycache__/goal_manager.cpython-314.pyc
+ M runtime/autonomy/__pycache__/intent.cpython-314.pyc
+ M runtime/autonomy/__pycache__/recovery.cpython-314.pyc
+ M runtime/autonomy/goal_manager.py
+ M runtime/autonomy/recovery.py
+ M runtime/capabilities/__pycache__/__init__.cpython-314.pyc
+ M runtime/capabilities/__pycache__/base.cpython-314.pyc
+ M runtime/capabilities/__pycache__/registry.cpython-314.pyc
+ M runtime/drivers/accessibility/__pycache__/backend.cpython-314.pyc
+ M runtime/drivers/accessibility/__pycache__/cache.cpython-314.pyc
+ M runtime/drivers/accessibility/__pycache__/diff.cpython-314.pyc
+ M runtime/drivers/accessibility/__pycache__/driver.cpython-314.pyc
+ M runtime/drivers/accessibility/__pycache__/events.cpython-314.pyc
+ M runtime/drivers/accessibility/__pycache__/hidden_backend.cpython-314.pyc
+ M runtime/drivers/accessibility/__pycache__/manager.cpython-314.pyc
+ M runtime/drivers/accessibility/__pycache__/observer.cpython-314.pyc
+ M runtime/drivers/accessibility/__pycache__/public_backend.cpython-314.pyc
+ M runtime/drivers/accessibility/__pycache__/semantic.cpython-314.pyc
+ M runtime/drivers/accessibility/__pycache__/xml_parser.cpython-314.pyc
+ M runtime/drivers/accessibility/driver.py
+ M runtime/drivers/accessibility/manager.py
+ M runtime/drivers/accessibility/xml_parser.py
+ M runtime/eventbus/__pycache__/bus.cpython-314.pyc
+ M runtime/eventbus/__pycache__/event.cpython-314.pyc
+ M runtime/eventbus/bus.py
+ M runtime/eventbus/event.py
+ M runtime/governor/__pycache__/engine.cpython-314.pyc
+ M runtime/governor/__pycache__/repo_governor.cpython-314.pyc
+ M runtime/governor/engine.py
+ M runtime/governor/repo_governor.py
+ M runtime/harden_driver.py
+ M runtime/integrate_problem_solver.py
+ M runtime/main.py
+ M runtime/models/__pycache__/__init__.cpython-314.pyc
+ M runtime/models/__pycache__/semantic.cpython-314.pyc
+ M runtime/planner/__pycache__/adaptive.cpython-314.pyc
+ M runtime/planner/__pycache__/planner.cpython-314.pyc
+ M runtime/planner/adaptive.py
+ M runtime/planner/planner.py
+ M runtime/providers/__pycache__/grok.cpython-314.pyc
+ M runtime/providers/__pycache__/manager.cpython-314.pyc
+ M runtime/providers/grok.py
+ M runtime/providers/manager.py
+ M runtime/workflow/__pycache__/executor.cpython-314.pyc
+ M runtime/workflow/executor.py
+?? __pycache__/
+?? event_bus.py
+?? quarantine/
+?? reports/canonical_manifest.json
+?? reports/canonical_runtime_candidates.json
+?? reports/canonical_runtime_candidates.md
+?? reports/conflict_report.md
+?? reports/dependency_analysis.json
+?? reports/dependency_analysis.md
+?? reports/duplicate_clusters.json
+?? reports/eventbus_legacy_imports.txt
+?? reports/import_graph.json
+?? reports/import_graph_clean.json
+?? reports/production_dependency_map.json
+?? reports/quarantine_candidates.json
+?? reports/quarantine_manifest.json
+?? reports/reverse_dependencies.json
+?? reports/reverse_dependencies_clean.json
+?? reports/runtime_dependency_ranking.json
+?? reports/runtime_reachable_modules.json
+?? reports/symbol_conflicts.json
+?? runtime/__pycache__/deploy_phase2.cpython-314.pyc
+?? runtime/__pycache__/deploy_phase3.cpython-314.pyc
+?? runtime/__pycache__/fix_accessibility_imports.cpython-314.pyc
+?? runtime/__pycache__/fix_driver_async.cpython-314.pyc
+?? runtime/__pycache__/harden_driver.cpython-314.pyc
+?? runtime/__pycache__/integrate_problem_solver.cpython-314.pyc
+?? runtime/__pycache__/test_problem_solver.cpython-314.pyc
+?? runtime/__pycache__/verification_engine.cpython-314.pyc
+?? runtime/autonomy/__pycache__/progress.cpython-314.pyc
+?? runtime/drivers/accessibility/__pycache__/window.cpython-314.pyc
+?? runtime/drivers/shizuku/
+?? runtime/eventbus/__pycache__/test_eventbus.cpython-314.pyc
+?? runtime/eventbus/__pycache__/test_service.cpython-314.pyc
+?? runtime/governor/__pycache__/path_memory.cpython-314.pyc
+?? runtime/governor/__pycache__/test_repo_governor.cpython-314.pyc
+?? runtime/main.py.pre_eventbus_fix
+?? runtime/main.py.pre_package_fix
+?? runtime/semantic/__pycache__/
+?? sync_checkpoint.sh
+?? tools/build_dependency_report.py
+?? tools/build_dependency_report_v2.py
+?? tools/build_production_dependency_map.py
+?? tools/canonical_runtime_analyzer.py
+?? tools/conflict_analyzer.py
+?? tools/create_canonical_manifest.py
+?? tools/create_quarantine_manifest.py
+?? tools/create_quarantine_structure.py
+?? tools/dependency_analyzer.py
+?? tools/runtime_path_analyzer.py
+?? tools/sync_history/

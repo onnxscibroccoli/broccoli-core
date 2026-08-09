@@ -1,6 +1,6 @@
 """GoalManager – façade over a shared Executor."""
 from .executor import Executor, GoalStatus
-from event_bus import EventBus
+from runtime.eventbus import EventBus
 
 # module-level shared executor so GoalManager + RecoveryManager see the same goals
 _shared_executor = None

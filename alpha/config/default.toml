@@ -1,0 +1,5 @@
+reserve_mb=1000
+batch_files=20
+batch_bytes=157286400
+parallel=2
+branch="alpha-testing"

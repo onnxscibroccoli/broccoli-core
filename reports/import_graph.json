@@ -1,0 +1,5472 @@
+{
+  "fix_accessibility_imports.py": [
+    "pathlib"
+  ],
+  "drive_to_github.py": [
+    "datetime",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "shutil",
+    "subprocess"
+  ],
+  "agent_apply_guardrails.py": [
+    "argparse",
+    "json",
+    "pathlib",
+    "re"
+  ],
+  "broccoli_bootstrap.py": [
+    "__future__",
+    "lib",
+    "modules",
+    "os; os",
+    "pathlib",
+    "subprocess",
+    "sys"
+  ],
+  "broccoli_chat_loop.py": [
+    "argparse",
+    "chat_scraper",
+    "os, subprocess, sys, time",
+    "pathlib"
+  ],
+  "broccoli_host.py": [
+    "json, os, re, subprocess, sys",
+    "pathlib"
+  ],
+  "broccoli_init.py": [
+    "json",
+    "pathlib",
+    "subprocess",
+    "sys",
+    "time"
+  ],
+  "broccoli_meta_heal.py": [
+    "pathlib",
+    "smoke_autoheal",
+    "sys, json"
+  ],
+  "broccoli_phone_grok_send.py": [
+    "argparse, os, subprocess, sys",
+    "pathlib"
+  ],
+  "broccoli_pulse.py": [
+    "json",
+    "pathlib",
+    "sys",
+    "time"
+  ],
+  "broccoli_report.py": [
+    "__future__",
+    "json",
+    "pathlib",
+    "subprocess",
+    "sys"
+  ],
+  "broccoli_rish_ui.py": [
+    "pathlib",
+    "re, subprocess, sys"
+  ],
+  "broccoli_secondary_display.py": [
+    "display_lane",
+    "pathlib",
+    "sys, json"
+  ],
+  "broccoli_task_queue.py": [
+    "pathlib",
+    "sys",
+    "task_queue"
+  ],
+  "chat_copy_tap.py": [
+    "json, re, sys, xml",
+    "pathlib"
+  ],
+  "chat_scraper.py": [
+    "__future__",
+    "argparse",
+    "dataclasses",
+    "hashlib, json, os, re, subprocess, sys, time",
+    "pathlib",
+    "typing"
+  ],
+  "clip_promt.py": [
+    "sys",
+    "typing"
+  ],
+  "daemon_idle_loop.py": [
+    "idle_takeover",
+    "json, time",
+    "pathlib",
+    "sys"
+  ],
+  "dump_project.py": [
+    "binascii",
+    "os",
+    "time"
+  ],
+  "dumpp.py": [
+    "os",
+    "time"
+  ],
+  "dumppy.py": [
+    "os",
+    "time"
+  ],
+  "grok_ui_coords.py": [
+    "json, re, xml",
+    "pathlib"
+  ],
+  "smoke_lesson_foreground.py": [
+    "grok_xml_parse",
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "workflow_front.py": [
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue",
+    "toast"
+  ],
+  "ui_copier.py": [
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "sys",
+    "xml"
+  ],
+  "screen_state.py": [
+    "json, re, subprocess, xml",
+    "pathlib"
+  ],
+  "sync_and_purge.py": [
+    "os, time, subprocess, glob"
+  ],
+  "profile_coords.py": [
+    "json",
+    "pathlib"
+  ],
+  "ui_window_check.py": [
+    "json, re, sys, xml",
+    "pathlib"
+  ],
+  "parse_learn_log.py": [
+    "json, re",
+    "pathlib"
+  ],
+  "quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "reboot_bootstrap.py": [
+    "pathlib",
+    "subprocess, time"
+  ],
+  "smoke_fast.py": [
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "governor/engine.py": [
+    "drivers",
+    "runtime",
+    "time",
+    "workflow"
+  ],
+  "plugins/example_plugin.py": [
+    "plugins",
+    "runtime"
+  ],
+  "runtime/logger.py": [
+    "datetime"
+  ],
+  "runtime/main.py": [
+    "agents",
+    "autonomy",
+    "config",
+    "drivers",
+    "event_bus",
+    "governor",
+    "health",
+    "lifecycle",
+    "logger",
+    "memory",
+    "metrics",
+    "planner",
+    "plugin_loader",
+    "providers",
+    "runtime",
+    "scheduler",
+    "state",
+    "time",
+    "workflow"
+  ],
+  "runtime/config.py": [
+    "json",
+    "pathlib"
+  ],
+  "runtime/event_bus.py": [
+    "collections",
+    "logging",
+    "threading",
+    "time",
+    "typing"
+  ],
+  "runtime/journal.py": [
+    "time",
+    "typing"
+  ],
+  "runtime/normalizer.py": [
+    "models",
+    "typing",
+    "xml"
+  ],
+  "runtime/android_collectors.py": [
+    "problem_solver",
+    "subprocess"
+  ],
+  "runtime/default_collectors.py": [
+    "problem_solver"
+  ],
+  "runtime/default_reasoner.py": [
+    "problem_solver"
+  ],
+  "runtime/default_remediator.py": [
+    "problem_solver"
+  ],
+  "runtime/deploy_phase2.py": [
+    "drivers",
+    "event_bus",
+    "hashlib",
+    "logging",
+    "os",
+    "xml"
+  ],
+  "runtime/deploy_phase3.py": [
+    "",
+    "event_bus",
+    "os"
+  ],
+  "runtime/fix_accessibility_imports.py": [
+    "pathlib"
+  ],
+  "runtime/fix_driver_async.py": [
+    "",
+    "event_bus",
+    "logging",
+    "os",
+    "threading"
+  ],
+  "runtime/harden_driver.py": [
+    "",
+    "event_bus",
+    "logging",
+    "os"
+  ],
+  "runtime/integrate_problem_solver.py": [
+    "android_collectors",
+    "default_collectors",
+    "default_reasoner",
+    "default_remediator",
+    "event_bus",
+    "knowledge_learning",
+    "problem_runtime"
+  ],
+  "runtime/knowledge_learning.py": [
+    "json",
+    "os"
+  ],
+  "runtime/problem_runtime.py": [
+    "logging",
+    "problem_solver"
+  ],
+  "runtime/problem_solver.py": [
+    "dataclasses",
+    "time",
+    "typing"
+  ],
+  "runtime/test_problem_solver.py": [
+    "default_collectors",
+    "default_reasoner",
+    "default_remediator",
+    "problem_solver"
+  ],
+  "workflow/decision.py": [
+    "runtime"
+  ],
+  "workflow/executor.py": [
+    "providers",
+    "workflow"
+  ],
+  "workflow/queue.py": [
+    "collections",
+    "typing",
+    "workflow"
+  ],
+  "workflow/task.py": [
+    "dataclasses",
+    "typing",
+    "uuid, time"
+  ],
+  "tools/drive_sync.py": [
+    "json",
+    "os",
+    "pathlib",
+    "shutil",
+    "subprocess",
+    "time"
+  ],
+  "tools/drive_upload_mem.py": [
+    "gzip, io, os, subprocess, sys, json, hashlib",
+    "pathlib"
+  ],
+  "tools/device_innovate_smoke.py": [
+    "broccoli_device",
+    "broccoli_rish_shell",
+    "json, sys"
+  ],
+  "tools/broccoli_infinite_dev_loop.py": [
+    "broccoli_adb_ui",
+    "broccoli_log",
+    "broccoli_notif",
+    "json, hashlib",
+    "json, os, sys, time",
+    "pathlib"
+  ],
+  "tools/search_notif_codebase.py": [
+    "json, re, time",
+    "pathlib"
+  ],
+  "tools/bin_research.py": [
+    "os, json, time, subprocess, shutil",
+    "pathlib",
+    "time"
+  ],
+  "tools/version_walk_heal.py": [
+    "broccoli_core_round",
+    "os, sys, re, json, time, shutil, hashlib, subprocess",
+    "pathlib"
+  ],
+  "tools/heal_debug_all.py": [
+    "broccoli_rish_shell",
+    "os, sys, json, time, subprocess, re, xml",
+    "pathlib"
+  ],
+  "tools/agentic_run_once.py": [
+    "broccoli_agentic_chat",
+    "pathlib",
+    "sys, json, os"
+  ],
+  "tools/broccoli_agentic_loop.py": [
+    "broccoli_agentic_chat",
+    "os, sys, time, json, subprocess",
+    "pathlib"
+  ],
+  "tools/broccoli_agentic_selftest.py": [
+    "broccoli_agentic_chat",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump",
+    "json, sys",
+    "pathlib"
+  ],
+  "tools/broccoli_conv_archive.py": [
+    "argparse,gzip,hashlib,json,sqlite3,datetime,os",
+    "pathlib"
+  ],
+  "tools/chat_focus_rish.py": [
+    "importlib",
+    "pathlib",
+    "sys"
+  ],
+  "tools/pull_wire_from_dump.py": [
+    "argparse, json, re, sys",
+    "pathlib",
+    "xml"
+  ],
+  "tools/broccoli_brain.py": [
+    "pathlib",
+    "subprocess, sys, time, shutil"
+  ],
+  "tools/ui_dump_loop.py": [
+    "hashlib, json, re, subprocess, sys, time, shutil",
+    "pathlib",
+    "xml"
+  ],
+  "tools/broccoli_agent.py": [
+    "json, re, subprocess, sys, time, shutil, tempfile",
+    "pathlib",
+    "xml"
+  ],
+  "tools/parse_grok_ui.py": [
+    "json, re, sys",
+    "pathlib"
+  ],
+  "tools/inventory_md_tasks.py": [
+    "datetime",
+    "json, os, re, subprocess",
+    "pathlib"
+  ],
+  "tools/reply_to_next_action.py": [
+    "json, re, sys",
+    "pathlib"
+  ],
+  "tools/phrase_grok_dump.py": [
+    "hashlib, json, re, sys",
+    "pathlib"
+  ],
+  "tools/investigate_system.py": [
+    "__future__",
+    "argparse",
+    "collections",
+    "datetime",
+    "json, os, re, subprocess",
+    "pathlib"
+  ],
+  "tools/gap_analyze.py": [
+    "datetime",
+    "json, re, sys",
+    "pathlib"
+  ],
+  "tools/grok_smoke_validate.py": [
+    "grok_xml_parse",
+    "pathlib",
+    "sys"
+  ],
+  "tools/repository_census.py": [
+    "collections",
+    "datetime",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib"
+  ],
+  "tools/dependency_analyzer.py": [
+    "ast",
+    "collections",
+    "datetime",
+    "json",
+    "os",
+    "pathlib",
+    "subprocess"
+  ],
+  "tools/find_send_tap.py": [
+    "json, subprocess, sys",
+    "pathlib"
+  ],
+  "tools/ui_state.py": [
+    "hashlib, json, re, sys",
+    "pathlib"
+  ],
+  "tools/extract_grok_code.py": [
+    "pathlib",
+    "re"
+  ],
+  "tools/ui_dump_chat.py": [
+    "json, re, sys",
+    "pathlib"
+  ],
+  "tools/extract_chat_from_xml.py": [
+    "pathlib",
+    "re, sys"
+  ],
+  "tools/google_secondary_test.py": [
+    "brocc_toast",
+    "display_lane",
+    "pathlib",
+    "subprocess, sys, json, time"
+  ],
+  "tools/build_dependency_report.py": [
+    "collections",
+    "json",
+    "pathlib"
+  ],
+  "broccoli-core/fix_accessibility_imports.py": [
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/agent_apply_guardrails.py": [
+    "argparse",
+    "json",
+    "pathlib",
+    "re"
+  ],
+  "BroccoliWorkspaceBackup/broccoli_host.py": [
+    "json, os, re, subprocess, sys",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/broccoli_bootstrap.py": [
+    "__future__",
+    "lib",
+    "modules",
+    "os; os",
+    "pathlib",
+    "subprocess",
+    "sys"
+  ],
+  "BroccoliWorkspaceBackup/broccoli_init.py": [
+    "json",
+    "pathlib",
+    "subprocess",
+    "sys",
+    "time"
+  ],
+  "BroccoliWorkspaceBackup/broccoli_chat_loop.py": [
+    "argparse",
+    "chat_scraper",
+    "os, subprocess, sys, time",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/broccoli_meta_heal.py": [
+    "pathlib",
+    "smoke_autoheal",
+    "sys, json"
+  ],
+  "BroccoliWorkspaceBackup/broccoli_phone_grok_send.py": [
+    "argparse, os, subprocess, sys",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/broccoli_pulse.py": [
+    "json",
+    "pathlib",
+    "sys",
+    "time"
+  ],
+  "BroccoliWorkspaceBackup/broccoli_report.py": [
+    "__future__",
+    "json",
+    "pathlib",
+    "subprocess",
+    "sys"
+  ],
+  "BroccoliWorkspaceBackup/broccoli_rish_ui.py": [
+    "pathlib",
+    "re, subprocess, sys"
+  ],
+  "BroccoliWorkspaceBackup/broccoli_secondary_display.py": [
+    "display_lane",
+    "pathlib",
+    "sys, json"
+  ],
+  "BroccoliWorkspaceBackup/broccoli_task_queue.py": [
+    "pathlib",
+    "sys",
+    "task_queue"
+  ],
+  "BroccoliWorkspaceBackup/chat_copy_tap.py": [
+    "json, re, sys, xml",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/chat_scraper.py": [
+    "__future__",
+    "argparse",
+    "dataclasses",
+    "hashlib, json, os, re, subprocess, sys, time",
+    "pathlib",
+    "typing"
+  ],
+  "BroccoliWorkspaceBackup/clip_promt.py": [
+    "sys",
+    "typing"
+  ],
+  "BroccoliWorkspaceBackup/daemon_idle_loop.py": [
+    "idle_takeover",
+    "json, time",
+    "pathlib",
+    "sys"
+  ],
+  "BroccoliWorkspaceBackup/dump_project.py": [
+    "binascii",
+    "os",
+    "time"
+  ],
+  "BroccoliWorkspaceBackup/dumpp.py": [
+    "os",
+    "time"
+  ],
+  "BroccoliWorkspaceBackup/dumppy.py": [
+    "os",
+    "time"
+  ],
+  "BroccoliWorkspaceBackup/grok_ui_coords.py": [
+    "json, re, xml",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/parse_learn_log.py": [
+    "json, re",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/profile_coords.py": [
+    "json",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "BroccoliWorkspaceBackup/reboot_bootstrap.py": [
+    "pathlib",
+    "subprocess, time"
+  ],
+  "BroccoliWorkspaceBackup/screen_state.py": [
+    "json, re, subprocess, xml",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/smoke_fast.py": [
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "BroccoliWorkspaceBackup/smoke_lesson_foreground.py": [
+    "grok_xml_parse",
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/sync_and_purge.py": [
+    "os, time, subprocess, glob"
+  ],
+  "BroccoliWorkspaceBackup/workflow_front.py": [
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue",
+    "toast"
+  ],
+  "BroccoliWorkspaceBackup/ui_copier.py": [
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "sys",
+    "xml"
+  ],
+  "BroccoliWorkspaceBackup/ui_window_check.py": [
+    "json, re, sys, xml",
+    "pathlib"
+  ],
+  "integration/test_integration.py": [
+    "importlib",
+    "sys",
+    "unittest"
+  ],
+  "simulation/test_stress.py": [
+    "concurrent",
+    "threading",
+    "time",
+    "tracemalloc",
+    "unittest"
+  ],
+  "tests/test_core.py": [
+    "importlib",
+    "os",
+    "sys",
+    "unittest"
+  ],
+  "agent/context.py": [
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "time"
+  ],
+  "agent/loop.py": [
+    "subprocess",
+    "time"
+  ],
+  "agent/planner.py": [
+    "json",
+    "pathlib",
+    "time"
+  ],
+  "agent/verifier.py": [
+    "json",
+    "pathlib",
+    "subprocess",
+    "time"
+  ],
+  "daemons/sysdumpd.py": [
+    "modules",
+    "os",
+    "sys",
+    "time"
+  ],
+  "lib/brocc_toast.py": [
+    "subprocess"
+  ],
+  "lib/a11y_automation.py": [
+    "__future__",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "subprocess",
+    "sys",
+    "time",
+    "typing",
+    "xml"
+  ],
+  "lib/agent_loop.py": [
+    "argparse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_complete",
+    "task_current",
+    "user_task_wait"
+  ],
+  "lib/broccoli_a11y_rish.py": [
+    "broccoli_rish_shell",
+    "os, re, time, json, subprocess",
+    "pathlib"
+  ],
+  "lib/brocc_wire.py": [
+    "pathlib",
+    "re"
+  ],
+  "lib/broccoli_manual.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump",
+    "os, time, json",
+    "pathlib"
+  ],
+  "lib/broccoli_log.py": [
+    "pathlib",
+    "time"
+  ],
+  "lib/broccoli_a11y_send.py": [
+    "broccoli_a11y_rish",
+    "broccoli_agentic_chat",
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time",
+    "pathlib"
+  ],
+  "lib/broccoli_adb_ui.py": [
+    "broccoli_notif",
+    "broccoli_recv_copy_rish",
+    "broccoli_rish_shell",
+    "broccoli_xml_sanitize",
+    "os",
+    "os, re, time, json, xml",
+    "pathlib"
+  ],
+  "lib/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_selftest",
+    "broccoli_send",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time, json, subprocess",
+    "pathlib"
+  ],
+  "lib/broccoli_core_round.py": [
+    "broccoli_adb_ui",
+    "os, subprocess",
+    "pathlib"
+  ],
+  "lib/broccoli_device.py": [
+    "__future__",
+    "broccoli",
+    "broccoli_rish_shell",
+    "json, re, subprocess",
+    "pathlib"
+  ],
+  "lib/broccoli_guard.py": [
+    "fnmatch",
+    "json",
+    "os",
+    "pathlib"
+  ],
+  "lib/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, re, time, subprocess"
+  ],
+  "lib/broccoli_manual_mode.py": [
+    "os",
+    "pathlib"
+  ],
+  "lib/broccoli_notif.py": [
+    "json, os, subprocess, time",
+    "pathlib"
+  ],
+  "lib/broccoli_operator.py": [
+    "argparse",
+    "json, os, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "lib/broccoli_recv_copy_rish.py": [
+    "broccoli_log",
+    "broccoli_rish_adb",
+    "os, re, time",
+    "pathlib",
+    "subprocess"
+  ],
+  "lib/broccoli_retry.py": [
+    "__future__",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "subprocess",
+    "time",
+    "typing"
+  ],
+  "lib/broccoli_rish_adb.py": [
+    "os, subprocess"
+  ],
+  "lib/broccoli_rish_shell.py": [
+    "os, re, subprocess, shutil",
+    "pathlib"
+  ],
+  "lib/chat_context.py": [
+    "pathlib",
+    "sys"
+  ],
+  "lib/broccoli_rish_ui.py": [
+    "broccoli_core_round",
+    "broccoli_rish_shell",
+    "os",
+    "os, re, time, json, xml",
+    "pathlib",
+    "subprocess"
+  ],
+  "lib/broccoli_selftest.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump",
+    "json, time",
+    "pathlib"
+  ],
+  "lib/broccoli_send.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time"
+  ],
+  "lib/broccoli_strategy.py": [
+    "json, time",
+    "pathlib"
+  ],
+  "lib/broccoli_ui_dump.py": [
+    "broccoli_rish_shell",
+    "os, re, time, xml",
+    "pathlib"
+  ],
+  "lib/broccoli_wait.py": [
+    "broccoli_ui_dump",
+    "hashlib, time"
+  ],
+  "lib/broccoli_xml_sanitize.py": [
+    "re"
+  ],
+  "lib/catalog_loop_hook.py": [
+    "__future__",
+    "pathlib",
+    "sqlite3, subprocess"
+  ],
+  "lib/clip.py": [
+    "subprocess, sys"
+  ],
+  "lib/closed_loop.py": [
+    "__future__",
+    "datetime",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "sqlite3",
+    "subprocess",
+    "sys",
+    "time",
+    "typing"
+  ],
+  "lib/display_context.py": [
+    "json",
+    "pathlib",
+    "re, subprocess"
+  ],
+  "lib/code_from_chat.py": [
+    "pathlib",
+    "re"
+  ],
+  "lib/dump_ui_fallback.py": [
+    "pathlib"
+  ],
+  "lib/display_lane.py": [
+    "json, time, re",
+    "pathlib"
+  ],
+  "lib/grok_chat_foreground.py": [
+    "display_context",
+    "pathlib",
+    "re, subprocess, sys, time"
+  ],
+  "lib/paste_accommodate.py": [
+    "pathlib",
+    "subprocess, sys"
+  ],
+  "lib/grok_open_loop.py": [
+    "argparse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "rish_adb"
+  ],
+  "lib/grok_send_tap.py": [
+    "pathlib",
+    "re, subprocess, sys, time"
+  ],
+  "lib/grok_takeover.py": [
+    "pathlib",
+    "subprocess, sys, time",
+    "task_queue"
+  ],
+  "lib/grok_xml_parse.py": [
+    "re"
+  ],
+  "lib/idle_takeover.py": [
+    "idle_detect",
+    "json, subprocess, sys, time",
+    "pathlib"
+  ],
+  "lib/operator.py": [
+    "argparse",
+    "json, os, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "lib/smoke_autoheal.py": [
+    "grok_xml_parse",
+    "json, re, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "lib/rish_adb.py": [
+    "shutil, subprocess, sys"
+  ],
+  "lib/recursive_impl.py": [
+    "argparse",
+    "code_from_chat",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_current",
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "lib/rish_cmd.py": [
+    "os, random, subprocess"
+  ],
+  "lib/rish_run.py": [
+    "json, os, subprocess, sys",
+    "pathlib"
+  ],
+  "lib/task_current.py": [
+    "json, time",
+    "pathlib",
+    "re",
+    "sys",
+    "task_queue"
+  ],
+  "lib/task_complete.py": [
+    "json, re",
+    "pathlib",
+    "sys",
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "lib/task_queue.py": [
+    "json, time",
+    "pathlib",
+    "sys"
+  ],
+  "lib/toast.py": [
+    "subprocess, shutil, os"
+  ],
+  "lib/user_task_wait.py": [
+    "json, time",
+    "pathlib",
+    "subprocess"
+  ],
+  "scripts/inject_refresh_send.py": [
+    "os, subprocess, sys"
+  ],
+  "scripts/grok_universal_cycle.py": [
+    "json, os, subprocess, sys, time, datetime",
+    "rish_cmd"
+  ],
+  "scripts/grok_validate_reply.py": [
+    "os, sys, subprocess"
+  ],
+  "scripts/grok_button_poll.py": [
+    "os, re, subprocess, sys, time"
+  ],
+  "scripts/tap_send.py": [
+    "json, os, subprocess, sys, time",
+    "rish_cmd"
+  ],
+  "scripts/autojs_run.py": [
+    "os,subprocess,sys,time,json"
+  ],
+  "scripts/grok_auto_context.py": [
+    "json, os, subprocess, sys"
+  ],
+  "scripts/refresh_screen.py": [
+    "json, os, subprocess, sys",
+    "re"
+  ],
+  "scripts/grok_context_send_retry.py": [
+    "argparse",
+    "broccoli_retry",
+    "json",
+    "os",
+    "pathlib",
+    "subprocess",
+    "sys",
+    "time"
+  ],
+  "meta/broccoli_storage_sync.py": [
+    "argparse, json, shutil, time",
+    "pathlib"
+  ],
+  "meta/brocc_state.py": [
+    "json, hashlib, time, sys",
+    "pathlib"
+  ],
+  "meta/brocc_live_wire.py": [
+    "importlib",
+    "pathlib",
+    "subprocess, sys, hashlib"
+  ],
+  "meta/brocc_loop_emit.py": [
+    "json, subprocess, sys, time, importlib",
+    "os as _cp_os",
+    "os as _os_emit",
+    "pathlib",
+    "subprocess as _cp_sp, sys as _cp_sys",
+    "subprocess as _sp, sys as _sys"
+  ],
+  "meta/brocc_watch.py": [
+    "pathlib",
+    "subprocess, sys, time, fcntl"
+  ],
+  "modules/chat_store.py": [
+    "json, os, time, hashlib",
+    "modules"
+  ],
+  "modules/grok_focus.py": [
+    "subprocess",
+    "sys",
+    "time"
+  ],
+  "modules/clipboard_read.py": [
+    "shutil",
+    "subprocess"
+  ],
+  "modules/state_probe.py": [
+    "json as J",
+    "json, os, re, subprocess"
+  ],
+  "modules/a11y_probe.py": [
+    "json",
+    "modules",
+    "os, re, subprocess, time"
+  ],
+  "modules/chat_harvest.py": [
+    "modules",
+    "os",
+    "os, sys, datetime",
+    "subprocess, time"
+  ],
+  "modules/chat_nav.py": [
+    "modules",
+    "os"
+  ],
+  "modules/chat_reader.py": [
+    "modules",
+    "os, re, subprocess",
+    "xml"
+  ],
+  "modules/ui_dump.py": [
+    "modules",
+    "os, subprocess"
+  ],
+  "modules/registry.py": [
+    "dataclasses",
+    "typing"
+  ],
+  "modules/offline_sanitizer.py": [
+    "__future__",
+    "hashlib",
+    "json",
+    "re",
+    "typing"
+  ],
+  "modules/kxt_xxd.py": [
+    "__future__",
+    "dataclasses",
+    "re",
+    "typing"
+  ],
+  "modules/sysdump/replay.py": [
+    "json",
+    "sys",
+    "time"
+  ],
+  "modules/sysdump/buffer.py": [
+    "json",
+    "os",
+    "time"
+  ],
+  "modules/sysdump/collector.py": [
+    "json",
+    "subprocess",
+    "time"
+  ],
+  "state/walk_stage/broccoli_core_round.py": [
+    "broccoli_rish_shell",
+    "os, re, time, json, subprocess, xml",
+    "pathlib"
+  ],
+  "state/walk_stage/broccoli_rish_shell.py": [
+    "os, re, subprocess, shutil",
+    "pathlib"
+  ],
+  "state/walk_stage/broccoli_rish_ui.py": [
+    "broccoli_rish_shell",
+    "os, re, time, json, xml",
+    "pathlib",
+    "subprocess"
+  ],
+  "state/walk_stage/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_selftest",
+    "broccoli_send",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time, json, subprocess",
+    "pathlib"
+  ],
+  "state/walk_stage/broccoli_ui_dump.py": [
+    "broccoli_rish_shell",
+    "os, re, time, xml",
+    "pathlib"
+  ],
+  "state/walk_stage/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, re, time, subprocess"
+  ],
+  "state/walk_stage/broccoli_send.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time"
+  ],
+  "state/walk_stage_0/broccoli_rish_shell.py": [
+    "os, re, subprocess, shutil",
+    "pathlib"
+  ],
+  "state/walk_stage_0/broccoli_rish_ui.py": [
+    "broccoli_rish_shell",
+    "os, re, time, json, xml",
+    "pathlib",
+    "subprocess"
+  ],
+  "state/walk_stage_0/broccoli_a11y_rish.py": [
+    "broccoli_rish_shell",
+    "os, re, time, json, subprocess",
+    "pathlib"
+  ],
+  "state/walk_stage_0/broccoli_a11y_send.py": [
+    "broccoli_a11y_rish",
+    "broccoli_agentic_chat",
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time",
+    "pathlib"
+  ],
+  "state/walk_stage_0/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_selftest",
+    "broccoli_send",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time, json, subprocess",
+    "pathlib"
+  ],
+  "state/walk_stage_0/broccoli_manual_mode.py": [
+    "os",
+    "pathlib"
+  ],
+  "state/walk_stage_0/broccoli_manual.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump",
+    "os, time, json",
+    "pathlib"
+  ],
+  "state/walk_stage_0/broccoli_ui_dump.py": [
+    "broccoli_rish_shell",
+    "os, re, time, xml",
+    "pathlib"
+  ],
+  "state/walk_stage_0/broccoli_send.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time"
+  ],
+  "state/walk_stage_0/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, re, time, subprocess"
+  ],
+  "state/walk_stage_0/broccoli_selftest.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump",
+    "json, time",
+    "pathlib"
+  ],
+  "state/walk_stage_0/broccoli_strategy.py": [
+    "json, time",
+    "pathlib"
+  ],
+  "state/walk_stage_0/broccoli_wait.py": [
+    "broccoli_ui_dump",
+    "hashlib, time"
+  ],
+  "state/walk_stage_0/broccoli_operator.py": [
+    "argparse",
+    "json, os, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "state/walk_stage_4/broccoli_rish_shell.py": [
+    "os, re, subprocess, shutil",
+    "pathlib"
+  ],
+  "state/walk_stage_4/broccoli_rish_ui.py": [
+    "pathlib",
+    "re, subprocess, sys"
+  ],
+  "state/walk_stage_4/broccoli_task_queue.py": [
+    "pathlib",
+    "sys",
+    "task_queue"
+  ],
+  "state/walk_stage_4/broccoli_meta_heal.py": [
+    "pathlib",
+    "smoke_autoheal",
+    "sys, json"
+  ],
+  "state/walk_stage_4/broccoli_secondary_display.py": [
+    "display_lane",
+    "pathlib",
+    "sys, json"
+  ],
+  "state/walk_stage_3/broccoli_rish_shell.py": [
+    "os, re, subprocess, shutil",
+    "pathlib"
+  ],
+  "state/walk_stage_3/broccoli_a11y.py": [
+    "pathlib",
+    "subprocess, sys, re, json"
+  ],
+  "state/walk_stage_3/broccoli_agent.py": [
+    "json, subprocess, sys, time",
+    "pathlib"
+  ],
+  "state/walk_stage_3/broccoli_pulse.py": [
+    "json, subprocess, sys, time",
+    "os",
+    "pathlib"
+  ],
+  "state/walk_stage_3/broccoli_agent_context.py": [
+    "importlib",
+    "json, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "state/walk_stage_3/broccoli_mac_ingest.py": [
+    "json, time",
+    "pathlib",
+    "subprocess"
+  ],
+  "state/walk_stage_3/broccoli_bootstrap.py": [
+    "__future__",
+    "dataclasses",
+    "dump_ui_fallback as _duf",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "subprocess",
+    "subprocess as _sp",
+    "sys",
+    "sys as _sys",
+    "time",
+    "time as _t",
+    "typing"
+  ],
+  "state/walk_stage_5/broccoli_rish_shell.py": [
+    "os, re, subprocess, shutil",
+    "pathlib"
+  ],
+  "state/walk_stage_5/broccoli_rish_ui.py": [
+    "broccoli_rish_shell",
+    "os, re, time, json, xml",
+    "pathlib",
+    "subprocess"
+  ],
+  "state/walk_stage_5/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_selftest",
+    "broccoli_send",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time, json, subprocess",
+    "pathlib"
+  ],
+  "state/walk_stage_5/broccoli_ui_dump.py": [
+    "broccoli_rish_shell",
+    "os, re, time, xml",
+    "pathlib"
+  ],
+  "state/walk_stage_5/broccoli_send.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time"
+  ],
+  "state/walk_stage_5/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, re, time, subprocess"
+  ],
+  "state/walk_stage_1/broccoli_ui_dump.py": [
+    "broccoli_rish_shell",
+    "os, re, time, xml",
+    "pathlib"
+  ],
+  "state/walk_stage_1/broccoli_strategy.py": [
+    "json, time",
+    "pathlib"
+  ],
+  "state/walk_stage_1/broccoli_selftest.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump",
+    "json, time",
+    "pathlib"
+  ],
+  "state/walk_stage_1/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, re, time, subprocess"
+  ],
+  "state/walk_stage_1/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_selftest",
+    "broccoli_send",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time, json, subprocess",
+    "pathlib"
+  ],
+  "state/walk_stage_1/broccoli_send.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time"
+  ],
+  "state/walk_stage_1/broccoli_rish_shell.py": [
+    "os, re, subprocess, shutil",
+    "pathlib"
+  ],
+  "state/walk_stage_1/broccoli_wait.py": [
+    "broccoli_ui_dump",
+    "hashlib, time"
+  ],
+  "state/walk_stage_1/broccoli_operator.py": [
+    "argparse",
+    "json, os, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "state/walk_stage_2/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump",
+    "os, time, json, subprocess",
+    "pathlib"
+  ],
+  "state/walk_stage_2/broccoli_rish_shell.py": [
+    "os, re, subprocess, shutil",
+    "pathlib"
+  ],
+  "state/walk_stage_2/broccoli_ui_dump.py": [
+    "broccoli_rish_shell",
+    "os, re, time, xml",
+    "pathlib"
+  ],
+  "state/walk_stage_2/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_ui_dump",
+    "os, re, time, subprocess"
+  ],
+  "state/walk_stage_2/broccoli_wait.py": [
+    "broccoli_ui_dump",
+    "hashlib, time"
+  ],
+  "state/walk_stage_2/broccoli_operator.py": [
+    "argparse",
+    "json, os, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "lib/_pinned_from_walk/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_selftest",
+    "broccoli_send",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time, json, subprocess",
+    "pathlib"
+  ],
+  "lib/_pinned_from_walk/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, re, time, subprocess"
+  ],
+  "lib/_pinned_from_walk/broccoli_rish_shell.py": [
+    "os, re, subprocess, shutil",
+    "pathlib"
+  ],
+  "lib/_pinned_from_walk/broccoli_rish_ui.py": [
+    "broccoli_rish_shell",
+    "os, re, time, json, xml",
+    "pathlib",
+    "subprocess"
+  ],
+  "lib/_pinned_from_walk/broccoli_send.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time"
+  ],
+  "lib/_pinned_from_walk/broccoli_ui_dump.py": [
+    "broccoli_rish_shell",
+    "os, re, time, xml",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/meta/brocc_state.py": [
+    "json, hashlib, time, sys",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/meta/brocc_live_wire.py": [
+    "importlib",
+    "pathlib",
+    "subprocess, sys, hashlib"
+  ],
+  "BroccoliWorkspaceBackup/meta/brocc_loop_emit.py": [
+    "json, subprocess, sys, time, importlib",
+    "os as _cp_os",
+    "os as _os_emit",
+    "pathlib",
+    "subprocess as _cp_sp, sys as _cp_sys",
+    "subprocess as _sp, sys as _sys"
+  ],
+  "BroccoliWorkspaceBackup/meta/brocc_watch.py": [
+    "pathlib",
+    "subprocess, sys, time, fcntl"
+  ],
+  "BroccoliWorkspaceBackup/meta/broccoli_storage_sync.py": [
+    "argparse, json, shutil, time",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/agent/context.py": [
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "time"
+  ],
+  "BroccoliWorkspaceBackup/agent/loop.py": [
+    "subprocess",
+    "time"
+  ],
+  "BroccoliWorkspaceBackup/agent/planner.py": [
+    "json",
+    "pathlib",
+    "time"
+  ],
+  "BroccoliWorkspaceBackup/agent/verifier.py": [
+    "json",
+    "pathlib",
+    "subprocess",
+    "time"
+  ],
+  "BroccoliWorkspaceBackup/daemons/sysdumpd.py": [
+    "modules",
+    "os",
+    "sys",
+    "time"
+  ],
+  "BroccoliWorkspaceBackup/lib/a11y_automation.py": [
+    "__future__",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "subprocess",
+    "sys",
+    "time",
+    "typing",
+    "xml"
+  ],
+  "BroccoliWorkspaceBackup/lib/agent_loop.py": [
+    "argparse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_complete",
+    "task_current",
+    "user_task_wait"
+  ],
+  "BroccoliWorkspaceBackup/lib/brocc_toast.py": [
+    "subprocess"
+  ],
+  "BroccoliWorkspaceBackup/lib/brocc_wire.py": [
+    "pathlib",
+    "re"
+  ],
+  "BroccoliWorkspaceBackup/lib/broccoli_a11y_rish.py": [
+    "broccoli_rish_shell",
+    "os, re, time, json, subprocess",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/lib/broccoli_a11y_send.py": [
+    "broccoli_a11y_rish",
+    "broccoli_agentic_chat",
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/lib/broccoli_adb_ui.py": [
+    "broccoli_notif",
+    "broccoli_recv_copy_rish",
+    "broccoli_rish_shell",
+    "broccoli_xml_sanitize",
+    "os",
+    "os, re, time, json, xml",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/lib/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_selftest",
+    "broccoli_send",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time, json, subprocess",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/lib/broccoli_core_round.py": [
+    "broccoli_adb_ui",
+    "os, subprocess",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/lib/broccoli_device.py": [
+    "__future__",
+    "broccoli",
+    "broccoli_rish_shell",
+    "json, re, subprocess",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/lib/broccoli_guard.py": [
+    "fnmatch",
+    "json",
+    "os",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/lib/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, re, time, subprocess"
+  ],
+  "BroccoliWorkspaceBackup/lib/broccoli_log.py": [
+    "pathlib",
+    "time"
+  ],
+  "BroccoliWorkspaceBackup/lib/broccoli_manual.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump",
+    "os, time, json",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/lib/broccoli_manual_mode.py": [
+    "os",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/lib/broccoli_notif.py": [
+    "json, os, subprocess, time",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/lib/broccoli_operator.py": [
+    "argparse",
+    "json, os, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "BroccoliWorkspaceBackup/lib/broccoli_recv_copy_rish.py": [
+    "broccoli_log",
+    "broccoli_rish_adb",
+    "os, re, time",
+    "pathlib",
+    "subprocess"
+  ],
+  "BroccoliWorkspaceBackup/lib/broccoli_retry.py": [
+    "__future__",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "subprocess",
+    "time",
+    "typing"
+  ],
+  "BroccoliWorkspaceBackup/lib/broccoli_rish_adb.py": [
+    "os, subprocess"
+  ],
+  "BroccoliWorkspaceBackup/lib/broccoli_rish_shell.py": [
+    "os, re, subprocess, shutil",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/lib/broccoli_rish_ui.py": [
+    "broccoli_core_round",
+    "broccoli_rish_shell",
+    "os",
+    "os, re, time, json, xml",
+    "pathlib",
+    "subprocess"
+  ],
+  "BroccoliWorkspaceBackup/lib/broccoli_selftest.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump",
+    "json, time",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/lib/broccoli_send.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time"
+  ],
+  "BroccoliWorkspaceBackup/lib/broccoli_strategy.py": [
+    "json, time",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/lib/broccoli_ui_dump.py": [
+    "broccoli_rish_shell",
+    "os, re, time, xml",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/lib/broccoli_wait.py": [
+    "broccoli_ui_dump",
+    "hashlib, time"
+  ],
+  "BroccoliWorkspaceBackup/lib/broccoli_xml_sanitize.py": [
+    "re"
+  ],
+  "BroccoliWorkspaceBackup/lib/catalog_loop_hook.py": [
+    "__future__",
+    "pathlib",
+    "sqlite3, subprocess"
+  ],
+  "BroccoliWorkspaceBackup/lib/chat_context.py": [
+    "pathlib",
+    "sys"
+  ],
+  "BroccoliWorkspaceBackup/lib/clip.py": [
+    "subprocess, sys"
+  ],
+  "BroccoliWorkspaceBackup/lib/closed_loop.py": [
+    "__future__",
+    "datetime",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "sqlite3",
+    "subprocess",
+    "sys",
+    "time",
+    "typing"
+  ],
+  "BroccoliWorkspaceBackup/lib/code_from_chat.py": [
+    "pathlib",
+    "re"
+  ],
+  "BroccoliWorkspaceBackup/lib/display_context.py": [
+    "json",
+    "pathlib",
+    "re, subprocess"
+  ],
+  "BroccoliWorkspaceBackup/lib/display_lane.py": [
+    "json, time, re",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/lib/dump_ui_fallback.py": [
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/lib/grok_chat_foreground.py": [
+    "display_context",
+    "pathlib",
+    "re, subprocess, sys, time"
+  ],
+  "BroccoliWorkspaceBackup/lib/grok_open_loop.py": [
+    "argparse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "rish_adb"
+  ],
+  "BroccoliWorkspaceBackup/lib/grok_send_tap.py": [
+    "pathlib",
+    "re, subprocess, sys, time"
+  ],
+  "BroccoliWorkspaceBackup/lib/grok_takeover.py": [
+    "pathlib",
+    "subprocess, sys, time",
+    "task_queue"
+  ],
+  "BroccoliWorkspaceBackup/lib/grok_xml_parse.py": [
+    "re"
+  ],
+  "BroccoliWorkspaceBackup/lib/idle_takeover.py": [
+    "idle_detect",
+    "json, subprocess, sys, time",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/lib/operator.py": [
+    "argparse",
+    "json, os, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "BroccoliWorkspaceBackup/lib/paste_accommodate.py": [
+    "pathlib",
+    "subprocess, sys"
+  ],
+  "BroccoliWorkspaceBackup/lib/recursive_impl.py": [
+    "argparse",
+    "code_from_chat",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_current",
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "BroccoliWorkspaceBackup/lib/rish_adb.py": [
+    "shutil, subprocess, sys"
+  ],
+  "BroccoliWorkspaceBackup/lib/rish_cmd.py": [
+    "os, random, subprocess"
+  ],
+  "BroccoliWorkspaceBackup/lib/rish_run.py": [
+    "json, os, subprocess, sys",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/lib/smoke_autoheal.py": [
+    "grok_xml_parse",
+    "json, re, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "BroccoliWorkspaceBackup/lib/task_complete.py": [
+    "json, re",
+    "pathlib",
+    "sys",
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "BroccoliWorkspaceBackup/lib/task_current.py": [
+    "json, time",
+    "pathlib",
+    "re",
+    "sys",
+    "task_queue"
+  ],
+  "BroccoliWorkspaceBackup/lib/task_queue.py": [
+    "json, time",
+    "pathlib",
+    "sys"
+  ],
+  "BroccoliWorkspaceBackup/lib/toast.py": [
+    "subprocess, shutil, os"
+  ],
+  "BroccoliWorkspaceBackup/lib/user_task_wait.py": [
+    "json, time",
+    "pathlib",
+    "subprocess"
+  ],
+  "BroccoliWorkspaceBackup/modules/a11y_probe.py": [
+    "json",
+    "modules",
+    "os, re, subprocess, time"
+  ],
+  "BroccoliWorkspaceBackup/modules/chat_harvest.py": [
+    "modules",
+    "os",
+    "os, sys, datetime",
+    "subprocess, time"
+  ],
+  "BroccoliWorkspaceBackup/modules/chat_nav.py": [
+    "modules",
+    "os"
+  ],
+  "BroccoliWorkspaceBackup/modules/chat_reader.py": [
+    "modules",
+    "os, re, subprocess",
+    "xml"
+  ],
+  "BroccoliWorkspaceBackup/modules/chat_store.py": [
+    "json, os, time, hashlib",
+    "modules"
+  ],
+  "BroccoliWorkspaceBackup/modules/clipboard_read.py": [
+    "shutil",
+    "subprocess"
+  ],
+  "BroccoliWorkspaceBackup/modules/grok_focus.py": [
+    "subprocess",
+    "sys",
+    "time"
+  ],
+  "BroccoliWorkspaceBackup/modules/kxt_xxd.py": [
+    "__future__",
+    "dataclasses",
+    "re",
+    "typing"
+  ],
+  "BroccoliWorkspaceBackup/modules/offline_sanitizer.py": [
+    "__future__",
+    "hashlib",
+    "json",
+    "re",
+    "typing"
+  ],
+  "BroccoliWorkspaceBackup/modules/registry.py": [
+    "dataclasses",
+    "typing"
+  ],
+  "BroccoliWorkspaceBackup/modules/state_probe.py": [
+    "json as J",
+    "json, os, re, subprocess"
+  ],
+  "BroccoliWorkspaceBackup/modules/ui_dump.py": [
+    "modules",
+    "os, subprocess"
+  ],
+  "BroccoliWorkspaceBackup/scripts/autojs_run.py": [
+    "os,subprocess,sys,time,json"
+  ],
+  "BroccoliWorkspaceBackup/scripts/grok_auto_context.py": [
+    "json, os, subprocess, sys"
+  ],
+  "BroccoliWorkspaceBackup/scripts/grok_button_poll.py": [
+    "os, re, subprocess, sys, time"
+  ],
+  "BroccoliWorkspaceBackup/scripts/grok_context_send_retry.py": [
+    "argparse",
+    "broccoli_retry",
+    "json",
+    "os",
+    "pathlib",
+    "subprocess",
+    "sys",
+    "time"
+  ],
+  "BroccoliWorkspaceBackup/scripts/grok_universal_cycle.py": [
+    "json, os, subprocess, sys, time, datetime",
+    "rish_cmd"
+  ],
+  "BroccoliWorkspaceBackup/scripts/grok_validate_reply.py": [
+    "os, sys, subprocess"
+  ],
+  "BroccoliWorkspaceBackup/scripts/inject_refresh_send.py": [
+    "os, subprocess, sys"
+  ],
+  "BroccoliWorkspaceBackup/scripts/refresh_screen.py": [
+    "json, os, subprocess, sys",
+    "re"
+  ],
+  "BroccoliWorkspaceBackup/scripts/tap_send.py": [
+    "json, os, subprocess, sys, time",
+    "rish_cmd"
+  ],
+  "BroccoliWorkspaceBackup/tools/agentic_run_once.py": [
+    "broccoli_agentic_chat",
+    "pathlib",
+    "sys, json, os"
+  ],
+  "BroccoliWorkspaceBackup/tools/bin_research.py": [
+    "os, json, time, subprocess, shutil",
+    "pathlib",
+    "time"
+  ],
+  "BroccoliWorkspaceBackup/tools/broccoli_agent.py": [
+    "json, re, subprocess, sys, time, shutil, tempfile",
+    "pathlib",
+    "xml"
+  ],
+  "BroccoliWorkspaceBackup/tools/broccoli_agentic_loop.py": [
+    "broccoli_agentic_chat",
+    "os, sys, time, json, subprocess",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/tools/broccoli_agentic_selftest.py": [
+    "broccoli_agentic_chat",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump",
+    "json, sys",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/tools/broccoli_brain.py": [
+    "pathlib",
+    "subprocess, sys, time, shutil"
+  ],
+  "BroccoliWorkspaceBackup/tools/broccoli_conv_archive.py": [
+    "argparse,gzip,hashlib,json,sqlite3,datetime,os",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/tools/broccoli_infinite_dev_loop.py": [
+    "broccoli_adb_ui",
+    "broccoli_log",
+    "broccoli_notif",
+    "json, hashlib",
+    "json, os, sys, time",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/tools/chat_focus_rish.py": [
+    "importlib",
+    "pathlib",
+    "sys"
+  ],
+  "BroccoliWorkspaceBackup/tools/device_innovate_smoke.py": [
+    "broccoli_device",
+    "broccoli_rish_shell",
+    "json, sys"
+  ],
+  "BroccoliWorkspaceBackup/tools/drive_upload_mem.py": [
+    "gzip, io, os, subprocess, sys, json, hashlib",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/tools/extract_chat_from_xml.py": [
+    "pathlib",
+    "re, sys"
+  ],
+  "BroccoliWorkspaceBackup/tools/extract_grok_code.py": [
+    "pathlib",
+    "re"
+  ],
+  "BroccoliWorkspaceBackup/tools/find_send_tap.py": [
+    "json, subprocess, sys",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/tools/gap_analyze.py": [
+    "datetime",
+    "json, re, sys",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/tools/google_secondary_test.py": [
+    "brocc_toast",
+    "display_lane",
+    "pathlib",
+    "subprocess, sys, json, time"
+  ],
+  "BroccoliWorkspaceBackup/tools/grok_smoke_validate.py": [
+    "grok_xml_parse",
+    "pathlib",
+    "sys"
+  ],
+  "BroccoliWorkspaceBackup/tools/heal_debug_all.py": [
+    "broccoli_rish_shell",
+    "os, sys, json, time, subprocess, re, xml",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/tools/inventory_md_tasks.py": [
+    "datetime",
+    "json, os, re, subprocess",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/tools/investigate_system.py": [
+    "__future__",
+    "argparse",
+    "collections",
+    "datetime",
+    "json, os, re, subprocess",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/tools/parse_grok_ui.py": [
+    "json, re, sys",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/tools/phrase_grok_dump.py": [
+    "hashlib, json, re, sys",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/tools/pull_wire_from_dump.py": [
+    "argparse, json, re, sys",
+    "pathlib",
+    "xml"
+  ],
+  "BroccoliWorkspaceBackup/tools/reply_to_next_action.py": [
+    "json, re, sys",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/tools/search_notif_codebase.py": [
+    "json, re, time",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/tools/ui_state.py": [
+    "hashlib, json, re, sys",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/tools/version_walk_heal.py": [
+    "broccoli_core_round",
+    "os, sys, re, json, time, shutil, hashlib, subprocess",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/tools/ui_dump_chat.py": [
+    "json, re, sys",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/tools/ui_dump_loop.py": [
+    "hashlib, json, re, subprocess, sys, time, shutil",
+    "pathlib",
+    "xml"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_selftest",
+    "broccoli_send",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time, json, subprocess",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage/broccoli_core_round.py": [
+    "broccoli_rish_shell",
+    "os, re, time, json, subprocess, xml",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, re, time, subprocess"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage/broccoli_rish_shell.py": [
+    "os, re, subprocess, shutil",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage/broccoli_rish_ui.py": [
+    "broccoli_rish_shell",
+    "os, re, time, json, xml",
+    "pathlib",
+    "subprocess"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage/broccoli_send.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage/broccoli_ui_dump.py": [
+    "broccoli_rish_shell",
+    "os, re, time, xml",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_a11y_rish.py": [
+    "broccoli_rish_shell",
+    "os, re, time, json, subprocess",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_a11y_send.py": [
+    "broccoli_a11y_rish",
+    "broccoli_agentic_chat",
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_selftest",
+    "broccoli_send",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time, json, subprocess",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, re, time, subprocess"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_manual.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump",
+    "os, time, json",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_manual_mode.py": [
+    "os",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_operator.py": [
+    "argparse",
+    "json, os, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_rish_shell.py": [
+    "os, re, subprocess, shutil",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_rish_ui.py": [
+    "broccoli_rish_shell",
+    "os, re, time, json, xml",
+    "pathlib",
+    "subprocess"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_selftest.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump",
+    "json, time",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_send.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_strategy.py": [
+    "json, time",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_ui_dump.py": [
+    "broccoli_rish_shell",
+    "os, re, time, xml",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_wait.py": [
+    "broccoli_ui_dump",
+    "hashlib, time"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_selftest",
+    "broccoli_send",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time, json, subprocess",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, re, time, subprocess"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_operator.py": [
+    "argparse",
+    "json, os, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_rish_shell.py": [
+    "os, re, subprocess, shutil",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_selftest.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump",
+    "json, time",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_send.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_strategy.py": [
+    "json, time",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_ui_dump.py": [
+    "broccoli_rish_shell",
+    "os, re, time, xml",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_wait.py": [
+    "broccoli_ui_dump",
+    "hashlib, time"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_2/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump",
+    "os, time, json, subprocess",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_2/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_ui_dump",
+    "os, re, time, subprocess"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_2/broccoli_operator.py": [
+    "argparse",
+    "json, os, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_2/broccoli_rish_shell.py": [
+    "os, re, subprocess, shutil",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_2/broccoli_ui_dump.py": [
+    "broccoli_rish_shell",
+    "os, re, time, xml",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_2/broccoli_wait.py": [
+    "broccoli_ui_dump",
+    "hashlib, time"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_3/broccoli_a11y.py": [
+    "pathlib",
+    "subprocess, sys, re, json"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_3/broccoli_agent.py": [
+    "json, subprocess, sys, time",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_3/broccoli_agent_context.py": [
+    "importlib",
+    "json, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_3/broccoli_bootstrap.py": [
+    "__future__",
+    "dataclasses",
+    "dump_ui_fallback as _duf",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "subprocess",
+    "subprocess as _sp",
+    "sys",
+    "sys as _sys",
+    "time",
+    "time as _t",
+    "typing"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_3/broccoli_mac_ingest.py": [
+    "json, time",
+    "pathlib",
+    "subprocess"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_3/broccoli_pulse.py": [
+    "json, subprocess, sys, time",
+    "os",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_3/broccoli_rish_shell.py": [
+    "os, re, subprocess, shutil",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_4/broccoli_meta_heal.py": [
+    "pathlib",
+    "smoke_autoheal",
+    "sys, json"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_4/broccoli_rish_shell.py": [
+    "os, re, subprocess, shutil",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_4/broccoli_rish_ui.py": [
+    "pathlib",
+    "re, subprocess, sys"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_4/broccoli_secondary_display.py": [
+    "display_lane",
+    "pathlib",
+    "sys, json"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_4/broccoli_task_queue.py": [
+    "pathlib",
+    "sys",
+    "task_queue"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_5/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_selftest",
+    "broccoli_send",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time, json, subprocess",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_5/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, re, time, subprocess"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_5/broccoli_rish_shell.py": [
+    "os, re, subprocess, shutil",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_5/broccoli_rish_ui.py": [
+    "broccoli_rish_shell",
+    "os, re, time, json, xml",
+    "pathlib",
+    "subprocess"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_5/broccoli_send.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time"
+  ],
+  "BroccoliWorkspaceBackup/state/walk_stage_5/broccoli_ui_dump.py": [
+    "broccoli_rish_shell",
+    "os, re, time, xml",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/modules/sysdump/buffer.py": [
+    "json",
+    "os",
+    "time"
+  ],
+  "BroccoliWorkspaceBackup/modules/sysdump/collector.py": [
+    "json",
+    "subprocess",
+    "time"
+  ],
+  "BroccoliWorkspaceBackup/modules/sysdump/replay.py": [
+    "json",
+    "sys",
+    "time"
+  ],
+  "BroccoliWorkspaceBackup/lib/_pinned_from_walk/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_selftest",
+    "broccoli_send",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time, json, subprocess",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/lib/_pinned_from_walk/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, re, time, subprocess"
+  ],
+  "BroccoliWorkspaceBackup/lib/_pinned_from_walk/broccoli_rish_shell.py": [
+    "os, re, subprocess, shutil",
+    "pathlib"
+  ],
+  "BroccoliWorkspaceBackup/lib/_pinned_from_walk/broccoli_rish_ui.py": [
+    "broccoli_rish_shell",
+    "os, re, time, json, xml",
+    "pathlib",
+    "subprocess"
+  ],
+  "BroccoliWorkspaceBackup/lib/_pinned_from_walk/broccoli_send.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump",
+    "os, time"
+  ],
+  "BroccoliWorkspaceBackup/lib/_pinned_from_walk/broccoli_ui_dump.py": [
+    "broccoli_rish_shell",
+    "os, re, time, xml",
+    "pathlib"
+  ],
+  "broccoli-core/governor/engine.py": [
+    "drivers",
+    "runtime",
+    "time",
+    "workflow"
+  ],
+  "broccoli-core/integration/test_integration.py": [
+    "importlib",
+    "sys",
+    "unittest"
+  ],
+  "broccoli-core/plugins/example_plugin.py": [
+    "plugins",
+    "runtime"
+  ],
+  "broccoli-core/runtime/config.py": [
+    "json",
+    "pathlib"
+  ],
+  "broccoli-core/runtime/deploy_phase2.py": [
+    "drivers",
+    "event_bus",
+    "hashlib",
+    "logging",
+    "os",
+    "xml"
+  ],
+  "broccoli-core/runtime/deploy_phase3.py": [
+    "",
+    "event_bus",
+    "os"
+  ],
+  "broccoli-core/runtime/event_bus.py": [
+    "collections",
+    "logging",
+    "threading",
+    "time",
+    "typing"
+  ],
+  "broccoli-core/runtime/fix_accessibility_imports.py": [
+    "pathlib"
+  ],
+  "broccoli-core/runtime/fix_driver_async.py": [
+    "",
+    "event_bus",
+    "logging",
+    "os",
+    "threading"
+  ],
+  "broccoli-core/runtime/harden_driver.py": [
+    "",
+    "event_bus",
+    "logging",
+    "os"
+  ],
+  "broccoli-core/runtime/journal.py": [
+    "time",
+    "typing"
+  ],
+  "broccoli-core/runtime/logger.py": [
+    "datetime"
+  ],
+  "broccoli-core/runtime/main.py": [
+    "agents",
+    "autonomy",
+    "config",
+    "drivers",
+    "event_bus",
+    "governor",
+    "health",
+    "lifecycle",
+    "logger",
+    "memory",
+    "metrics",
+    "planner",
+    "plugin_loader",
+    "providers",
+    "scheduler",
+    "state",
+    "time",
+    "workflow"
+  ],
+  "broccoli-core/runtime/normalizer.py": [
+    "models",
+    "typing",
+    "xml"
+  ],
+  "broccoli-core/simulation/test_stress.py": [
+    "concurrent",
+    "threading",
+    "time",
+    "tracemalloc",
+    "unittest"
+  ],
+  "broccoli-core/tests/test_core.py": [
+    "importlib",
+    "os",
+    "sys",
+    "unittest"
+  ],
+  "broccoli-core/workflow/decision.py": [
+    "runtime"
+  ],
+  "broccoli-core/workflow/executor.py": [
+    "providers",
+    "workflow"
+  ],
+  "broccoli-core/workflow/queue.py": [
+    "collections",
+    "typing",
+    "workflow"
+  ],
+  "broccoli-core/workflow/task.py": [
+    "dataclasses",
+    "typing",
+    "uuid, time"
+  ],
+  "broccoli-core/runtime/agents/coordinator.py": [
+    "event_bus",
+    "workflow"
+  ],
+  "broccoli-core/runtime/autonomy/executor.py": [
+    "dataclasses",
+    "enum",
+    "json",
+    "logging",
+    "pathlib",
+    "threading",
+    "time",
+    "typing",
+    "uuid"
+  ],
+  "broccoli-core/runtime/autonomy/goal_manager.py": [
+    "",
+    "event_bus"
+  ],
+  "broccoli-core/runtime/autonomy/recovery.py": [
+    "",
+    "event_bus"
+  ],
+  "broccoli-core/runtime/capabilities/base.py": [
+    "abc",
+    "typing"
+  ],
+  "broccoli-core/runtime/capabilities/registry.py": [
+    "",
+    "typing"
+  ],
+  "broccoli-core/runtime/config/settings.py": [
+    "dataclasses"
+  ],
+  "broccoli-core/runtime/governor/engine.py": [
+    "event_bus",
+    "state"
+  ],
+  "broccoli-core/runtime/memory/knowledge_graph.py": [
+    "collections",
+    "json",
+    "pathlib"
+  ],
+  "broccoli-core/runtime/models/semantic.py": [
+    "typing"
+  ],
+  "broccoli-core/runtime/planner/adaptive.py": [
+    "event_bus",
+    "planner",
+    "workflow"
+  ],
+  "broccoli-core/runtime/planner/planner.py": [
+    "event_bus",
+    "workflow"
+  ],
+  "broccoli-core/runtime/providers/base.py": [
+    "abc",
+    "typing"
+  ],
+  "broccoli-core/runtime/providers/grok.py": [
+    "event_bus",
+    "providers"
+  ],
+  "broccoli-core/runtime/providers/manager.py": [
+    "event_bus",
+    "typing"
+  ],
+  "broccoli-core/runtime/services/daemon.py": [
+    "runtime",
+    "time"
+  ],
+  "broccoli-core/runtime/workflow/executor.py": [
+    "drivers",
+    "event_bus",
+    "workflow"
+  ],
+  "broccoli-core/runtime/workflow/queue.py": [
+    "collections"
+  ],
+  "broccoli-core/runtime/drivers/accessibility/backend.py": [
+    "abc",
+    "typing"
+  ],
+  "broccoli-core/runtime/drivers/accessibility/cache.py": [
+    "__future__",
+    "collections",
+    "dataclasses",
+    "threading",
+    "time",
+    "typing"
+  ],
+  "broccoli-core/runtime/drivers/accessibility/consumers.py": [
+    "logging"
+  ],
+  "broccoli-core/runtime/drivers/accessibility/diff.py": [
+    "",
+    "__future__",
+    "typing"
+  ],
+  "broccoli-core/runtime/drivers/accessibility/driver.py": [
+    "",
+    "event_bus",
+    "logging",
+    "subprocess",
+    "threading"
+  ],
+  "broccoli-core/runtime/drivers/accessibility/events.py": [
+    "__future__",
+    "dataclasses",
+    "enum",
+    "time",
+    "typing",
+    "uuid"
+  ],
+  "broccoli-core/runtime/drivers/accessibility/hidden_backend.py": [
+    ""
+  ],
+  "broccoli-core/runtime/drivers/accessibility/manager.py": [
+    "",
+    "event_bus"
+  ],
+  "broccoli-core/runtime/drivers/accessibility/observer.py": [
+    "",
+    "__future__",
+    "threading",
+    "time",
+    "typing"
+  ],
+  "broccoli-core/runtime/drivers/accessibility/public_backend.py": [
+    "",
+    "subprocess"
+  ],
+  "broccoli-core/runtime/drivers/accessibility/semantic.py": [
+    "typing",
+    "xml"
+  ],
+  "broccoli-core/runtime/drivers/accessibility/window.py": [
+    "",
+    "xml"
+  ],
+  "broccoli-core/runtime/drivers/accessibility/xml_parser.py": [
+    "hashlib",
+    "logging",
+    "xml"
+  ],
+  "broccoli-core/plugins/core/example.py": [
+    "plugins"
+  ],
+  "broccoli-core/drivers/accessibility/driver.py": [
+    "subprocess",
+    "time",
+    "typing"
+  ],
+  "broccoli-core/drivers/overlay/virtual_display.py": [
+    "runtime",
+    "time"
+  ],
+  "broccoli-core/drivers/shizuku/rish.py": [
+    "os",
+    "subprocess"
+  ],
+  "Agent/Broccoli/broccoli_a11y.py": [
+    "pathlib",
+    "subprocess, sys, re, json"
+  ],
+  "Agent/Broccoli/broccoli_agent.py": [
+    "json, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/broccoli_agent_context.py": [
+    "importlib",
+    "json, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/broccoli_bootstrap.py": [
+    "__future__",
+    "dataclasses",
+    "dump_ui_fallback as _duf",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "subprocess",
+    "subprocess as _sp",
+    "sys",
+    "sys as _sys",
+    "time",
+    "time as _t",
+    "typing"
+  ],
+  "Agent/Broccoli/broccoli_mac_ingest.py": [
+    "json, time",
+    "pathlib",
+    "subprocess"
+  ],
+  "Agent/Broccoli/broccoli_pulse.py": [
+    "json, subprocess, sys, time",
+    "os",
+    "pathlib"
+  ],
+  "Agent/Broccoli/google_ai_bootstrap.py": [
+    "re,sys,os,time,subprocess,shutil,json"
+  ],
+  "Agent/Broccoli/mirror/broccoli_meta_heal.py": [
+    "pathlib",
+    "smoke_autoheal",
+    "sys, json"
+  ],
+  "Agent/Broccoli/mirror/broccoli_rish_ui.py": [
+    "pathlib",
+    "re, subprocess, sys"
+  ],
+  "Agent/Broccoli/mirror/broccoli_secondary_display.py": [
+    "display_lane",
+    "pathlib",
+    "sys, json"
+  ],
+  "Agent/Broccoli/mirror/broccoli_task_queue.py": [
+    "pathlib",
+    "sys",
+    "task_queue"
+  ],
+  "Agent/Broccoli/mirror/daemon_idle_loop.py": [
+    "idle_takeover",
+    "json, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/mirror/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "Agent/Broccoli/mirror/reboot_bootstrap.py": [
+    "pathlib",
+    "subprocess, time"
+  ],
+  "Agent/Broccoli/mirror/smoke_fast.py": [
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "Agent/Broccoli/mirror/smoke_lesson_foreground.py": [
+    "grok_xml_parse",
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/mirror/workflow_front.py": [
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194028/broccoli/broccoli_task_queue.py": [
+    "pathlib",
+    "sys",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194028/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194028/broccoli/reboot_bootstrap.py": [
+    "pathlib",
+    "subprocess, time"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_a11y.py": [
+    "pathlib",
+    "subprocess, sys, re, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_agent.py": [
+    "os",
+    "pathlib",
+    "subprocess",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_agent_context.py": [
+    "importlib",
+    "json, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dataclasses",
+    "dump_ui_fallback as _duf",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "subprocess",
+    "subprocess as _sp",
+    "sys",
+    "sys as _sys",
+    "sys as _sys_gps",
+    "time",
+    "time as _t",
+    "typing"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_compose.py": [
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_mac_ingest.py": [
+    "json, time",
+    "pathlib",
+    "subprocess"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_pulse.py": [
+    "json, subprocess, sys, time",
+    "os",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_research.py": [
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_rish_pull.py": [
+    "json, os, shutil, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_user_wait.py": [
+    "json, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194028/home/google_ai_bootstrap.py": [
+    "re,sys,os,time,subprocess,shutil,json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205153/broccoli/broccoli_meta_heal.py": [
+    "pathlib",
+    "smoke_autoheal",
+    "sys, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205153/broccoli/broccoli_rish_ui.py": [
+    "pathlib",
+    "re, subprocess, sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205153/broccoli/broccoli_secondary_display.py": [
+    "display_lane",
+    "pathlib",
+    "sys, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205153/broccoli/broccoli_task_queue.py": [
+    "pathlib",
+    "sys",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205153/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205153/broccoli/daemon_idle_loop.py": [
+    "idle_takeover",
+    "json, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205153/broccoli/reboot_bootstrap.py": [
+    "pathlib",
+    "subprocess, time"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205153/broccoli/smoke_fast.py": [
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205153/broccoli/smoke_lesson_foreground.py": [
+    "grok_xml_parse",
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205153/broccoli/workflow_front.py": [
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_a11y.py": [
+    "pathlib",
+    "subprocess, sys, re, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_agent.py": [
+    "os",
+    "pathlib",
+    "subprocess",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_agent_context.py": [
+    "importlib",
+    "json, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dataclasses",
+    "dump_ui_fallback as _duf",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "subprocess",
+    "subprocess as _sp",
+    "sys",
+    "sys as _sys",
+    "sys as _sys_gps",
+    "time",
+    "time as _t",
+    "typing"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_compose.py": [
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_mac_ingest.py": [
+    "json, time",
+    "pathlib",
+    "subprocess"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_pulse.py": [
+    "json, subprocess, sys, time",
+    "os",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_research.py": [
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_rish_pull.py": [
+    "json, os, shutil, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_user_wait.py": [
+    "json, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205153/home/google_ai_bootstrap.py": [
+    "re,sys,os,time,subprocess,shutil,json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205026/broccoli/broccoli_meta_heal.py": [
+    "pathlib",
+    "smoke_autoheal",
+    "sys, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205026/broccoli/broccoli_rish_ui.py": [
+    "pathlib",
+    "re, subprocess, sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205026/broccoli/broccoli_secondary_display.py": [
+    "display_lane",
+    "pathlib",
+    "sys, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205026/broccoli/broccoli_task_queue.py": [
+    "pathlib",
+    "sys",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205026/broccoli/daemon_idle_loop.py": [
+    "idle_takeover",
+    "json, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205026/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205026/broccoli/reboot_bootstrap.py": [
+    "pathlib",
+    "subprocess, time"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205026/broccoli/smoke_fast.py": [
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205026/broccoli/smoke_lesson_foreground.py": [
+    "grok_xml_parse",
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205026/broccoli/workflow_front.py": [
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_a11y.py": [
+    "pathlib",
+    "subprocess, sys, re, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_agent.py": [
+    "os",
+    "pathlib",
+    "subprocess",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_agent_context.py": [
+    "importlib",
+    "json, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dataclasses",
+    "dump_ui_fallback as _duf",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "subprocess",
+    "subprocess as _sp",
+    "sys",
+    "sys as _sys",
+    "sys as _sys_gps",
+    "time",
+    "time as _t",
+    "typing"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_compose.py": [
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_mac_ingest.py": [
+    "json, time",
+    "pathlib",
+    "subprocess"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_pulse.py": [
+    "json, subprocess, sys, time",
+    "os",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_research.py": [
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_rish_pull.py": [
+    "json, os, shutil, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_user_wait.py": [
+    "json, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_205026/home/google_ai_bootstrap.py": [
+    "re,sys,os,time,subprocess,shutil,json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_204900/broccoli/broccoli_meta_heal.py": [
+    "pathlib",
+    "smoke_autoheal",
+    "sys, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_204900/broccoli/broccoli_rish_ui.py": [
+    "pathlib",
+    "re, subprocess, sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_204900/broccoli/broccoli_secondary_display.py": [
+    "display_lane",
+    "pathlib",
+    "sys, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_204900/broccoli/broccoli_task_queue.py": [
+    "pathlib",
+    "sys",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_204900/broccoli/daemon_idle_loop.py": [
+    "idle_takeover",
+    "json, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_204900/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_204900/broccoli/reboot_bootstrap.py": [
+    "pathlib",
+    "subprocess, time"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_204900/broccoli/smoke_fast.py": [
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_204900/broccoli/smoke_lesson_foreground.py": [
+    "grok_xml_parse",
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_204900/broccoli/workflow_front.py": [
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_a11y.py": [
+    "pathlib",
+    "subprocess, sys, re, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_agent.py": [
+    "os",
+    "pathlib",
+    "subprocess",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_agent_context.py": [
+    "importlib",
+    "json, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dataclasses",
+    "dump_ui_fallback as _duf",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "subprocess",
+    "subprocess as _sp",
+    "sys",
+    "sys as _sys",
+    "sys as _sys_gps",
+    "time",
+    "time as _t",
+    "typing"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_compose.py": [
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_mac_ingest.py": [
+    "json, time",
+    "pathlib",
+    "subprocess"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_pulse.py": [
+    "json, subprocess, sys, time",
+    "os",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_research.py": [
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_rish_pull.py": [
+    "json, os, shutil, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_user_wait.py": [
+    "json, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_204900/home/google_ai_bootstrap.py": [
+    "re,sys,os,time,subprocess,shutil,json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203923/broccoli/broccoli_meta_heal.py": [
+    "pathlib",
+    "smoke_autoheal",
+    "sys, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203923/broccoli/broccoli_rish_ui.py": [
+    "pathlib",
+    "re, subprocess, sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203923/broccoli/broccoli_secondary_display.py": [
+    "display_lane",
+    "pathlib",
+    "sys, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203923/broccoli/broccoli_task_queue.py": [
+    "pathlib",
+    "sys",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203923/broccoli/daemon_idle_loop.py": [
+    "idle_takeover",
+    "json, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203923/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203923/broccoli/reboot_bootstrap.py": [
+    "pathlib",
+    "subprocess, time"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203923/broccoli/smoke_fast.py": [
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203923/broccoli/smoke_lesson_foreground.py": [
+    "grok_xml_parse",
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203923/broccoli/workflow_front.py": [
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_a11y.py": [
+    "pathlib",
+    "subprocess, sys, re, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_agent.py": [
+    "os",
+    "pathlib",
+    "subprocess",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_agent_context.py": [
+    "importlib",
+    "json, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dataclasses",
+    "dump_ui_fallback as _duf",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "subprocess",
+    "subprocess as _sp",
+    "sys",
+    "sys as _sys",
+    "sys as _sys_gps",
+    "time",
+    "time as _t",
+    "typing"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_compose.py": [
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_mac_ingest.py": [
+    "json, time",
+    "pathlib",
+    "subprocess"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_pulse.py": [
+    "json, subprocess, sys, time",
+    "os",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_research.py": [
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_rish_pull.py": [
+    "json, os, shutil, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_user_wait.py": [
+    "json, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203923/home/google_ai_bootstrap.py": [
+    "re,sys,os,time,subprocess,shutil,json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203609/broccoli/broccoli_meta_heal.py": [
+    "pathlib",
+    "smoke_autoheal",
+    "sys, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203609/broccoli/broccoli_rish_ui.py": [
+    "pathlib",
+    "re, subprocess, sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203609/broccoli/broccoli_secondary_display.py": [
+    "display_lane",
+    "pathlib",
+    "sys, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203609/broccoli/broccoli_task_queue.py": [
+    "pathlib",
+    "sys",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203609/broccoli/daemon_idle_loop.py": [
+    "idle_takeover",
+    "json, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203609/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203609/broccoli/reboot_bootstrap.py": [
+    "pathlib",
+    "subprocess, time"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203609/broccoli/smoke_fast.py": [
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203609/broccoli/smoke_lesson_foreground.py": [
+    "grok_xml_parse",
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203609/broccoli/workflow_front.py": [
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_a11y.py": [
+    "pathlib",
+    "subprocess, sys, re, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_agent.py": [
+    "os",
+    "pathlib",
+    "subprocess",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_agent_context.py": [
+    "importlib",
+    "json, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dataclasses",
+    "dump_ui_fallback as _duf",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "subprocess",
+    "subprocess as _sp",
+    "sys",
+    "sys as _sys",
+    "sys as _sys_gps",
+    "time",
+    "time as _t",
+    "typing"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_compose.py": [
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_mac_ingest.py": [
+    "json, time",
+    "pathlib",
+    "subprocess"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_pulse.py": [
+    "json, subprocess, sys, time",
+    "os",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_research.py": [
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_rish_pull.py": [
+    "json, os, shutil, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_user_wait.py": [
+    "json, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203609/home/google_ai_bootstrap.py": [
+    "re,sys,os,time,subprocess,shutil,json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203142/broccoli/broccoli_meta_heal.py": [
+    "pathlib",
+    "smoke_autoheal",
+    "sys, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203142/broccoli/broccoli_rish_ui.py": [
+    "pathlib",
+    "re, subprocess, sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203142/broccoli/broccoli_secondary_display.py": [
+    "display_lane",
+    "pathlib",
+    "sys, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203142/broccoli/broccoli_task_queue.py": [
+    "pathlib",
+    "sys",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203142/broccoli/daemon_idle_loop.py": [
+    "idle_takeover",
+    "json, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203142/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203142/broccoli/reboot_bootstrap.py": [
+    "pathlib",
+    "subprocess, time"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203142/broccoli/smoke_fast.py": [
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203142/broccoli/smoke_lesson_foreground.py": [
+    "grok_xml_parse",
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203142/broccoli/workflow_front.py": [
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_a11y.py": [
+    "pathlib",
+    "subprocess, sys, re, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_agent.py": [
+    "os",
+    "pathlib",
+    "subprocess",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_agent_context.py": [
+    "importlib",
+    "json, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dataclasses",
+    "dump_ui_fallback as _duf",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "subprocess",
+    "subprocess as _sp",
+    "sys",
+    "sys as _sys",
+    "sys as _sys_gps",
+    "time",
+    "time as _t",
+    "typing"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_compose.py": [
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_mac_ingest.py": [
+    "json, time",
+    "pathlib",
+    "subprocess"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_pulse.py": [
+    "json, subprocess, sys, time",
+    "os",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_research.py": [
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_rish_pull.py": [
+    "json, os, shutil, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_user_wait.py": [
+    "json, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_203142/home/google_ai_bootstrap.py": [
+    "re,sys,os,time,subprocess,shutil,json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/broccoli_meta_heal.py": [
+    "pathlib",
+    "smoke_autoheal",
+    "sys, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/broccoli_rish_ui.py": [
+    "pathlib",
+    "re, subprocess, sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/broccoli_secondary_display.py": [
+    "display_lane",
+    "pathlib",
+    "sys, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/broccoli_task_queue.py": [
+    "pathlib",
+    "sys",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/daemon_idle_loop.py": [
+    "idle_takeover",
+    "json, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/reboot_bootstrap.py": [
+    "pathlib",
+    "subprocess, time"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/smoke_fast.py": [
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/smoke_lesson_foreground.py": [
+    "grok_xml_parse",
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/workflow_front.py": [
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_a11y.py": [
+    "pathlib",
+    "subprocess, sys, re, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_agent.py": [
+    "os",
+    "pathlib",
+    "subprocess",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_agent_context.py": [
+    "importlib",
+    "json, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dataclasses",
+    "dump_ui_fallback as _duf",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "subprocess",
+    "subprocess as _sp",
+    "sys",
+    "sys as _sys",
+    "sys as _sys_gps",
+    "time",
+    "time as _t",
+    "typing"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_compose.py": [
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_mac_ingest.py": [
+    "json, time",
+    "pathlib",
+    "subprocess"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_pulse.py": [
+    "json, subprocess, sys, time",
+    "os",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_research.py": [
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_rish_pull.py": [
+    "json, os, shutil, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_user_wait.py": [
+    "json, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/home/google_ai_bootstrap.py": [
+    "re,sys,os,time,subprocess,shutil,json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/agent_loop.py": [
+    "argparse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_complete",
+    "task_current",
+    "user_task_wait"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/brocc_toast.py": [
+    "subprocess"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/broccoli_operator.py": [
+    "argparse",
+    "json, os, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/chat_context.py": [
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/clip.py": [
+    "subprocess, sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/code_from_chat.py": [
+    "pathlib",
+    "re"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/display_context.py": [
+    "json",
+    "pathlib",
+    "re, subprocess"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/display_lane.py": [
+    "json, time, re",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/dump_ui_fallback.py": [
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/grok_chat_foreground.py": [
+    "display_context",
+    "pathlib",
+    "re, subprocess, sys, time"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/grok_open_loop.py": [
+    "argparse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "rish_adb"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/grok_send_tap.py": [
+    "pathlib",
+    "re, subprocess, sys, time"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/grok_takeover.py": [
+    "pathlib",
+    "subprocess, sys, time",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/grok_xml_parse.py": [
+    "re"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/idle_takeover.py": [
+    "idle_detect",
+    "json, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/recursive_impl.py": [
+    "argparse",
+    "code_from_chat",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_current",
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/rish_adb.py": [
+    "shutil, subprocess, sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/rish_run.py": [
+    "json, os, subprocess, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/smoke_autoheal.py": [
+    "grok_xml_parse",
+    "json, re, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/task_complete.py": [
+    "json, re",
+    "pathlib",
+    "sys",
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/task_current.py": [
+    "json, time",
+    "pathlib",
+    "re",
+    "sys",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/task_queue.py": [
+    "json, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/toast.py": [
+    "subprocess, shutil, os"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/user_task_wait.py": [
+    "json, time",
+    "pathlib",
+    "subprocess"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/broccoli_meta_heal.py": [
+    "pathlib",
+    "smoke_autoheal",
+    "sys, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/broccoli_rish_ui.py": [
+    "pathlib",
+    "re, subprocess, sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/broccoli_secondary_display.py": [
+    "display_lane",
+    "pathlib",
+    "sys, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/broccoli_task_queue.py": [
+    "pathlib",
+    "sys",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/daemon_idle_loop.py": [
+    "idle_takeover",
+    "json, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/reboot_bootstrap.py": [
+    "pathlib",
+    "subprocess, time"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/smoke_fast.py": [
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/smoke_lesson_foreground.py": [
+    "grok_xml_parse",
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/workflow_front.py": [
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_a11y.py": [
+    "pathlib",
+    "subprocess, sys, re, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_agent.py": [
+    "os",
+    "pathlib",
+    "subprocess",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_agent_context.py": [
+    "importlib",
+    "json, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dataclasses",
+    "dump_ui_fallback as _duf",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "subprocess",
+    "subprocess as _sp",
+    "sys",
+    "sys as _sys",
+    "sys as _sys_gps",
+    "time",
+    "time as _t",
+    "typing"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_compose.py": [
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_mac_ingest.py": [
+    "json, time",
+    "pathlib",
+    "subprocess"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_pulse.py": [
+    "json, subprocess, sys, time",
+    "os",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_research.py": [
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_rish_pull.py": [
+    "json, os, shutil, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_user_wait.py": [
+    "json, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/home/google_ai_bootstrap.py": [
+    "re,sys,os,time,subprocess,shutil,json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/meta/brocc_live_wire.py": [
+    "importlib",
+    "pathlib",
+    "subprocess, sys, hashlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/meta/brocc_loop_emit.py": [
+    "json, subprocess, sys, time, importlib",
+    "os as _cp_os",
+    "os as _os_emit",
+    "pathlib",
+    "subprocess as _cp_sp, sys as _cp_sys",
+    "subprocess as _sp, sys as _sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/meta/brocc_state.py": [
+    "json, hashlib, time, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/meta/brocc_watch.py": [
+    "pathlib",
+    "subprocess, sys, time, fcntl"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/meta/broccoli_storage_sync.py": [
+    "argparse, json, shutil, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/agent_loop.py": [
+    "argparse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_complete",
+    "task_current",
+    "user_task_wait"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/brocc_toast.py": [
+    "subprocess"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/broccoli_operator.py": [
+    "argparse",
+    "json, os, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/chat_context.py": [
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/clip.py": [
+    "subprocess, sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/code_from_chat.py": [
+    "pathlib",
+    "re"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/display_context.py": [
+    "json",
+    "pathlib",
+    "re, subprocess"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/display_lane.py": [
+    "json, time, re",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/dump_ui_fallback.py": [
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/grok_chat_foreground.py": [
+    "display_context",
+    "pathlib",
+    "re, subprocess, sys, time"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/grok_open_loop.py": [
+    "argparse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "rish_adb"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/grok_send_tap.py": [
+    "pathlib",
+    "re, subprocess, sys, time"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/grok_takeover.py": [
+    "pathlib",
+    "subprocess, sys, time",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/grok_xml_parse.py": [
+    "re"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/idle_takeover.py": [
+    "idle_detect",
+    "json, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/recursive_impl.py": [
+    "argparse",
+    "code_from_chat",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_current",
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/rish_adb.py": [
+    "shutil, subprocess, sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/rish_run.py": [
+    "json, os, subprocess, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/smoke_autoheal.py": [
+    "grok_xml_parse",
+    "json, re, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/task_complete.py": [
+    "json, re",
+    "pathlib",
+    "sys",
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/task_current.py": [
+    "json, time",
+    "pathlib",
+    "re",
+    "sys",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/task_queue.py": [
+    "json, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/toast.py": [
+    "subprocess, shutil, os"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/user_task_wait.py": [
+    "json, time",
+    "pathlib",
+    "subprocess"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/broccoli_meta_heal.py": [
+    "pathlib",
+    "smoke_autoheal",
+    "sys, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/broccoli_rish_ui.py": [
+    "pathlib",
+    "re, subprocess, sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/broccoli_secondary_display.py": [
+    "display_lane",
+    "pathlib",
+    "sys, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/broccoli_task_queue.py": [
+    "pathlib",
+    "sys",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/daemon_idle_loop.py": [
+    "idle_takeover",
+    "json, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/reboot_bootstrap.py": [
+    "pathlib",
+    "subprocess, time"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/smoke_fast.py": [
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/smoke_lesson_foreground.py": [
+    "grok_xml_parse",
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/workflow_front.py": [
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_a11y.py": [
+    "pathlib",
+    "subprocess, sys, re, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_agent.py": [
+    "os",
+    "pathlib",
+    "subprocess",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_agent_context.py": [
+    "importlib",
+    "json, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dataclasses",
+    "dump_ui_fallback as _duf",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "subprocess",
+    "subprocess as _sp",
+    "sys",
+    "sys as _sys",
+    "sys as _sys_gps",
+    "time",
+    "time as _t",
+    "typing"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_compose.py": [
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_mac_ingest.py": [
+    "json, time",
+    "pathlib",
+    "subprocess"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_pulse.py": [
+    "json, subprocess, sys, time",
+    "os",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_research.py": [
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_rish_pull.py": [
+    "json, os, shutil, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_user_wait.py": [
+    "json, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/home/google_ai_bootstrap.py": [
+    "re,sys,os,time,subprocess,shutil,json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/meta/brocc_live_wire.py": [
+    "importlib",
+    "pathlib",
+    "subprocess, sys, hashlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/meta/brocc_loop_emit.py": [
+    "json, subprocess, sys, time, importlib",
+    "os as _cp_os",
+    "os as _os_emit",
+    "pathlib",
+    "subprocess as _cp_sp, sys as _cp_sys",
+    "subprocess as _sp, sys as _sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/meta/brocc_state.py": [
+    "json, hashlib, time, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/meta/brocc_watch.py": [
+    "pathlib",
+    "subprocess, sys, time, fcntl"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/meta/broccoli_storage_sync.py": [
+    "argparse, json, shutil, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/agent_loop.py": [
+    "argparse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_complete",
+    "task_current",
+    "user_task_wait"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/brocc_toast.py": [
+    "subprocess"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/broccoli_operator.py": [
+    "argparse",
+    "json, os, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/chat_context.py": [
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/clip.py": [
+    "subprocess, sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/code_from_chat.py": [
+    "pathlib",
+    "re"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/display_context.py": [
+    "json",
+    "pathlib",
+    "re, subprocess"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/display_lane.py": [
+    "json, time, re",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/dump_ui_fallback.py": [
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/grok_chat_foreground.py": [
+    "display_context",
+    "pathlib",
+    "re, subprocess, sys, time"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/grok_open_loop.py": [
+    "argparse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "rish_adb"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/grok_send_tap.py": [
+    "pathlib",
+    "re, subprocess, sys, time"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/grok_takeover.py": [
+    "pathlib",
+    "subprocess, sys, time",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/grok_xml_parse.py": [
+    "re"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/idle_takeover.py": [
+    "idle_detect",
+    "json, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/recursive_impl.py": [
+    "argparse",
+    "code_from_chat",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_current",
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/rish_adb.py": [
+    "shutil, subprocess, sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/rish_run.py": [
+    "json, os, subprocess, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/smoke_autoheal.py": [
+    "grok_xml_parse",
+    "json, re, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/task_complete.py": [
+    "json, re",
+    "pathlib",
+    "sys",
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/task_current.py": [
+    "json, time",
+    "pathlib",
+    "re",
+    "sys",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/task_queue.py": [
+    "json, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/toast.py": [
+    "subprocess, shutil, os"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/user_task_wait.py": [
+    "json, time",
+    "pathlib",
+    "subprocess"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194820/broccoli/broccoli_meta_heal.py": [
+    "pathlib",
+    "smoke_autoheal",
+    "sys, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194820/broccoli/broccoli_rish_ui.py": [
+    "pathlib",
+    "re, subprocess, sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194820/broccoli/broccoli_secondary_display.py": [
+    "display_lane",
+    "pathlib",
+    "sys, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194820/broccoli/broccoli_task_queue.py": [
+    "pathlib",
+    "sys",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194820/broccoli/daemon_idle_loop.py": [
+    "idle_takeover",
+    "json, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194820/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194820/broccoli/reboot_bootstrap.py": [
+    "pathlib",
+    "subprocess, time"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194820/broccoli/smoke_fast.py": [
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194820/broccoli/smoke_lesson_foreground.py": [
+    "grok_xml_parse",
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194820/broccoli/workflow_front.py": [
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_a11y.py": [
+    "pathlib",
+    "subprocess, sys, re, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_agent.py": [
+    "os",
+    "pathlib",
+    "subprocess",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_agent_context.py": [
+    "importlib",
+    "json, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dataclasses",
+    "dump_ui_fallback as _duf",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "subprocess",
+    "subprocess as _sp",
+    "sys",
+    "sys as _sys",
+    "sys as _sys_gps",
+    "time",
+    "time as _t",
+    "typing"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_compose.py": [
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_mac_ingest.py": [
+    "json, time",
+    "pathlib",
+    "subprocess"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_pulse.py": [
+    "json, subprocess, sys, time",
+    "os",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_research.py": [
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_rish_pull.py": [
+    "json, os, shutil, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_user_wait.py": [
+    "json, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194820/home/google_ai_bootstrap.py": [
+    "re,sys,os,time,subprocess,shutil,json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194646/broccoli/broccoli_meta_heal.py": [
+    "pathlib",
+    "smoke_autoheal",
+    "sys, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194646/broccoli/broccoli_rish_ui.py": [
+    "pathlib",
+    "re, subprocess, sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194646/broccoli/broccoli_secondary_display.py": [
+    "display_lane",
+    "pathlib",
+    "sys, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194646/broccoli/broccoli_task_queue.py": [
+    "pathlib",
+    "sys",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194646/broccoli/daemon_idle_loop.py": [
+    "idle_takeover",
+    "json, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194646/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194646/broccoli/reboot_bootstrap.py": [
+    "pathlib",
+    "subprocess, time"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194646/broccoli/smoke_fast.py": [
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194646/broccoli/smoke_lesson_foreground.py": [
+    "grok_xml_parse",
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194646/broccoli/workflow_front.py": [
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_a11y.py": [
+    "pathlib",
+    "subprocess, sys, re, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_agent.py": [
+    "os",
+    "pathlib",
+    "subprocess",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_agent_context.py": [
+    "importlib",
+    "json, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dataclasses",
+    "dump_ui_fallback as _duf",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "subprocess",
+    "subprocess as _sp",
+    "sys",
+    "sys as _sys",
+    "sys as _sys_gps",
+    "time",
+    "time as _t",
+    "typing"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_compose.py": [
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_mac_ingest.py": [
+    "json, time",
+    "pathlib",
+    "subprocess"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_pulse.py": [
+    "json, subprocess, sys, time",
+    "os",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_research.py": [
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_rish_pull.py": [
+    "json, os, shutil, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_user_wait.py": [
+    "json, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_194646/home/google_ai_bootstrap.py": [
+    "re,sys,os,time,subprocess,shutil,json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/broccoli_rish_ui.py": [
+    "pathlib",
+    "re, subprocess, sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/broccoli_secondary_display.py": [
+    "display_lane",
+    "pathlib",
+    "sys, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/broccoli_task_queue.py": [
+    "pathlib",
+    "sys",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/workflow_front.py": [
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/broccoli_agent.py": [
+    "json, re, subprocess, sys, time, shutil, tempfile",
+    "pathlib",
+    "xml"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/broccoli_brain.py": [
+    "pathlib",
+    "subprocess, sys, time, shutil"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/extract_chat_from_xml.py": [
+    "pathlib",
+    "re, sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/extract_grok_code.py": [
+    "pathlib",
+    "re"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/find_send_tap.py": [
+    "json, subprocess, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/gap_analyze.py": [
+    "datetime",
+    "json, re, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/google_secondary_test.py": [
+    "brocc_toast",
+    "display_lane",
+    "pathlib",
+    "subprocess, sys, json, time"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/grok_smoke_validate.py": [
+    "grok_xml_parse",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/inventory_md_tasks.py": [
+    "datetime",
+    "json, os, re, subprocess",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/investigate_system.py": [
+    "__future__",
+    "argparse",
+    "collections",
+    "datetime",
+    "json, os, re, subprocess",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/parse_grok_ui.py": [
+    "json, re, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/phrase_grok_dump.py": [
+    "hashlib, json, re, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/pull_wire_from_dump.py": [
+    "argparse, json, re, sys",
+    "pathlib",
+    "xml"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/reply_to_next_action.py": [
+    "json, re, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/ui_dump_chat.py": [
+    "json, re, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/ui_dump_loop.py": [
+    "hashlib, json, re, subprocess, sys, time, shutil",
+    "pathlib",
+    "xml"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/ui_state.py": [
+    "hashlib, json, re, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/broccoli_meta_heal.py": [
+    "pathlib",
+    "smoke_autoheal",
+    "sys, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/broccoli_rish_ui.py": [
+    "pathlib",
+    "re, subprocess, sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/broccoli_secondary_display.py": [
+    "display_lane",
+    "pathlib",
+    "sys, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/broccoli_task_queue.py": [
+    "pathlib",
+    "sys",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/daemon_idle_loop.py": [
+    "idle_takeover",
+    "json, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/reboot_bootstrap.py": [
+    "pathlib",
+    "subprocess, time"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/smoke_fast.py": [
+    "grok_xml_parse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/smoke_lesson_foreground.py": [
+    "grok_xml_parse",
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/workflow_front.py": [
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_queue",
+    "toast"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_a11y.py": [
+    "pathlib",
+    "subprocess, sys, re, json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_agent.py": [
+    "os",
+    "pathlib",
+    "subprocess",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_agent_context.py": [
+    "importlib",
+    "json, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dataclasses",
+    "dump_ui_fallback as _duf",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "subprocess",
+    "subprocess as _sp",
+    "sys",
+    "sys as _sys",
+    "sys as _sys_gps",
+    "time",
+    "time as _t",
+    "typing"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_compose.py": [
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_mac_ingest.py": [
+    "json, time",
+    "pathlib",
+    "subprocess"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_pulse.py": [
+    "json, subprocess, sys, time",
+    "os",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_research.py": [
+    "json, re, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_rish_pull.py": [
+    "json, os, shutil, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_user_wait.py": [
+    "json, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/home/google_ai_bootstrap.py": [
+    "re,sys,os,time,subprocess,shutil,json"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/meta/brocc_live_wire.py": [
+    "importlib",
+    "pathlib",
+    "subprocess, sys, hashlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/meta/brocc_loop_emit.py": [
+    "json, subprocess, sys, time, importlib",
+    "os as _cp_os",
+    "os as _os_emit",
+    "pathlib",
+    "subprocess as _cp_sp, sys as _cp_sys",
+    "subprocess as _sp, sys as _sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/meta/brocc_state.py": [
+    "json, hashlib, time, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/meta/brocc_watch.py": [
+    "pathlib",
+    "subprocess, sys, time, fcntl"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/meta/broccoli_storage_sync.py": [
+    "argparse, json, shutil, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/agent_loop.py": [
+    "argparse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_complete",
+    "task_current",
+    "user_task_wait"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/brocc_toast.py": [
+    "subprocess"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/broccoli_operator.py": [
+    "argparse",
+    "json, os, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/chat_context.py": [
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/clip.py": [
+    "subprocess, sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/code_from_chat.py": [
+    "pathlib",
+    "re"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/display_context.py": [
+    "json",
+    "pathlib",
+    "re, subprocess"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/display_lane.py": [
+    "json, time, re",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/dump_ui_fallback.py": [
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/grok_chat_foreground.py": [
+    "display_context",
+    "pathlib",
+    "re, subprocess, sys, time"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/grok_open_loop.py": [
+    "argparse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "rish_adb"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/grok_send_tap.py": [
+    "pathlib",
+    "re, subprocess, sys, time"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/grok_takeover.py": [
+    "pathlib",
+    "subprocess, sys, time",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/grok_xml_parse.py": [
+    "re"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/idle_takeover.py": [
+    "idle_detect",
+    "json, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/recursive_impl.py": [
+    "argparse",
+    "code_from_chat",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_current",
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/rish_adb.py": [
+    "shutil, subprocess, sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/rish_run.py": [
+    "json, os, subprocess, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/smoke_autoheal.py": [
+    "grok_xml_parse",
+    "json, re, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/task_complete.py": [
+    "json, re",
+    "pathlib",
+    "sys",
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/task_current.py": [
+    "json, time",
+    "pathlib",
+    "re",
+    "sys",
+    "task_queue"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/task_queue.py": [
+    "json, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/toast.py": [
+    "subprocess, shutil, os"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/user_task_wait.py": [
+    "json, time",
+    "pathlib",
+    "subprocess"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/broccoli_agent.py": [
+    "json, re, subprocess, sys, time, shutil, tempfile",
+    "pathlib",
+    "xml"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/broccoli_brain.py": [
+    "pathlib",
+    "subprocess, sys, time, shutil"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/extract_chat_from_xml.py": [
+    "pathlib",
+    "re, sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/extract_grok_code.py": [
+    "pathlib",
+    "re"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/find_send_tap.py": [
+    "json, subprocess, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/gap_analyze.py": [
+    "datetime",
+    "json, re, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/google_secondary_test.py": [
+    "brocc_toast",
+    "display_lane",
+    "pathlib",
+    "subprocess, sys, json, time"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/grok_smoke_validate.py": [
+    "grok_xml_parse",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/inventory_md_tasks.py": [
+    "datetime",
+    "json, os, re, subprocess",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/investigate_system.py": [
+    "__future__",
+    "argparse",
+    "collections",
+    "datetime",
+    "json, os, re, subprocess",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/parse_grok_ui.py": [
+    "json, re, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/phrase_grok_dump.py": [
+    "hashlib, json, re, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/pull_wire_from_dump.py": [
+    "argparse, json, re, sys",
+    "pathlib",
+    "xml"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/reply_to_next_action.py": [
+    "json, re, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/ui_dump_chat.py": [
+    "json, re, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/ui_dump_loop.py": [
+    "hashlib, json, re, subprocess, sys, time, shutil",
+    "pathlib",
+    "xml"
+  ],
+  "Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/ui_state.py": [
+    "hashlib, json, re, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/mirror/meta/brocc_live_wire.py": [
+    "importlib",
+    "pathlib",
+    "subprocess, sys, hashlib"
+  ],
+  "Agent/Broccoli/mirror/meta/brocc_loop_emit.py": [
+    "json, subprocess, sys, time, importlib",
+    "os as _cp_os",
+    "os as _os_emit",
+    "pathlib",
+    "subprocess as _cp_sp, sys as _cp_sys",
+    "subprocess as _sp, sys as _sys"
+  ],
+  "Agent/Broccoli/mirror/meta/brocc_state.py": [
+    "json, hashlib, time, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/mirror/meta/brocc_watch.py": [
+    "pathlib",
+    "subprocess, sys, time, fcntl"
+  ],
+  "Agent/Broccoli/mirror/meta/broccoli_storage_sync.py": [
+    "argparse, json, shutil, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/mirror/lib/agent_loop.py": [
+    "argparse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_complete",
+    "task_current",
+    "user_task_wait"
+  ],
+  "Agent/Broccoli/mirror/lib/brocc_toast.py": [
+    "subprocess"
+  ],
+  "Agent/Broccoli/mirror/lib/broccoli_operator.py": [
+    "argparse",
+    "json, os, subprocess, sys, time",
+    "pathlib",
+    "task_queue"
+  ],
+  "Agent/Broccoli/mirror/lib/chat_context.py": [
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/mirror/lib/clip.py": [
+    "subprocess, sys"
+  ],
+  "Agent/Broccoli/mirror/lib/code_from_chat.py": [
+    "pathlib",
+    "re"
+  ],
+  "Agent/Broccoli/mirror/lib/display_context.py": [
+    "json",
+    "pathlib",
+    "re, subprocess"
+  ],
+  "Agent/Broccoli/mirror/lib/display_lane.py": [
+    "json, time, re",
+    "pathlib"
+  ],
+  "Agent/Broccoli/mirror/lib/dump_ui_fallback.py": [
+    "pathlib"
+  ],
+  "Agent/Broccoli/mirror/lib/grok_chat_foreground.py": [
+    "display_context",
+    "pathlib",
+    "re, subprocess, sys, time"
+  ],
+  "Agent/Broccoli/mirror/lib/grok_open_loop.py": [
+    "argparse",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "rish_adb"
+  ],
+  "Agent/Broccoli/mirror/lib/grok_send_tap.py": [
+    "pathlib",
+    "re, subprocess, sys, time"
+  ],
+  "Agent/Broccoli/mirror/lib/grok_takeover.py": [
+    "pathlib",
+    "subprocess, sys, time",
+    "task_queue"
+  ],
+  "Agent/Broccoli/mirror/lib/grok_xml_parse.py": [
+    "re"
+  ],
+  "Agent/Broccoli/mirror/lib/idle_takeover.py": [
+    "idle_detect",
+    "json, subprocess, sys, time",
+    "pathlib"
+  ],
+  "Agent/Broccoli/mirror/lib/recursive_impl.py": [
+    "argparse",
+    "code_from_chat",
+    "json, subprocess, sys, time",
+    "pathlib",
+    "task_current",
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "Agent/Broccoli/mirror/lib/rish_adb.py": [
+    "shutil, subprocess, sys"
+  ],
+  "Agent/Broccoli/mirror/lib/rish_run.py": [
+    "json, os, subprocess, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/mirror/lib/smoke_autoheal.py": [
+    "grok_xml_parse",
+    "json, re, subprocess, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/mirror/lib/task_complete.py": [
+    "json, re",
+    "pathlib",
+    "sys",
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "Agent/Broccoli/mirror/lib/task_current.py": [
+    "json, time",
+    "pathlib",
+    "re",
+    "sys",
+    "task_queue"
+  ],
+  "Agent/Broccoli/mirror/lib/task_queue.py": [
+    "json, time",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/mirror/lib/toast.py": [
+    "subprocess, shutil, os"
+  ],
+  "Agent/Broccoli/mirror/lib/user_task_wait.py": [
+    "json, time",
+    "pathlib",
+    "subprocess"
+  ],
+  "Agent/Broccoli/mirror/tools/broccoli_agent.py": [
+    "json, re, subprocess, sys, time, shutil, tempfile",
+    "pathlib",
+    "xml"
+  ],
+  "Agent/Broccoli/mirror/tools/broccoli_brain.py": [
+    "pathlib",
+    "subprocess, sys, time, shutil"
+  ],
+  "Agent/Broccoli/mirror/tools/extract_chat_from_xml.py": [
+    "pathlib",
+    "re, sys"
+  ],
+  "Agent/Broccoli/mirror/tools/extract_grok_code.py": [
+    "pathlib",
+    "re"
+  ],
+  "Agent/Broccoli/mirror/tools/find_send_tap.py": [
+    "json, subprocess, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/mirror/tools/gap_analyze.py": [
+    "datetime",
+    "json, re, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/mirror/tools/google_secondary_test.py": [
+    "brocc_toast",
+    "display_lane",
+    "pathlib",
+    "subprocess, sys, json, time"
+  ],
+  "Agent/Broccoli/mirror/tools/grok_smoke_validate.py": [
+    "grok_xml_parse",
+    "pathlib",
+    "sys"
+  ],
+  "Agent/Broccoli/mirror/tools/inventory_md_tasks.py": [
+    "datetime",
+    "json, os, re, subprocess",
+    "pathlib"
+  ],
+  "Agent/Broccoli/mirror/tools/investigate_system.py": [
+    "__future__",
+    "argparse",
+    "collections",
+    "datetime",
+    "json, os, re, subprocess",
+    "pathlib"
+  ],
+  "Agent/Broccoli/mirror/tools/parse_grok_ui.py": [
+    "json, re, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/mirror/tools/phrase_grok_dump.py": [
+    "hashlib, json, re, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/mirror/tools/pull_wire_from_dump.py": [
+    "argparse, json, re, sys",
+    "pathlib",
+    "xml"
+  ],
+  "Agent/Broccoli/mirror/tools/reply_to_next_action.py": [
+    "json, re, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/mirror/tools/ui_dump_chat.py": [
+    "json, re, sys",
+    "pathlib"
+  ],
+  "Agent/Broccoli/mirror/tools/ui_dump_loop.py": [
+    "hashlib, json, re, subprocess, sys, time, shutil",
+    "pathlib",
+    "xml"
+  ],
+  "Agent/Broccoli/mirror/tools/ui_state.py": [
+    "hashlib, json, re, sys",
+    "pathlib"
+  ],
+  "runtime/config/settings.py": [
+    "dataclasses"
+  ],
+  "runtime/services/daemon.py": [
+    "runtime",
+    "time"
+  ],
+  "runtime/capabilities/base.py": [
+    "abc",
+    "typing"
+  ],
+  "runtime/capabilities/registry.py": [
+    "",
+    "typing"
+  ],
+  "runtime/governor/engine.py": [
+    "event_bus",
+    "state"
+  ],
+  "runtime/governor/repo_governor.py": [
+    "runtime",
+    "subprocess",
+    "threading",
+    "time"
+  ],
+  "runtime/governor/test_repo_governor.py": [
+    "runtime",
+    "time"
+  ],
+  "runtime/models/semantic.py": [
+    "typing"
+  ],
+  "runtime/agents/coordinator.py": [
+    "event_bus",
+    "workflow"
+  ],
+  "runtime/autonomy/executor.py": [
+    "dataclasses",
+    "enum",
+    "json",
+    "logging",
+    "pathlib",
+    "threading",
+    "time",
+    "typing",
+    "uuid"
+  ],
+  "runtime/autonomy/goal_manager.py": [
+    "",
+    "event_bus"
+  ],
+  "runtime/autonomy/recovery.py": [
+    "",
+    "event_bus"
+  ],
+  "runtime/memory/knowledge_graph.py": [
+    "collections",
+    "json",
+    "pathlib"
+  ],
+  "runtime/planner/adaptive.py": [
+    "event_bus",
+    "planner",
+    "workflow"
+  ],
+  "runtime/planner/planner.py": [
+    "event_bus",
+    "workflow"
+  ],
+  "runtime/providers/base.py": [
+    "abc",
+    "typing"
+  ],
+  "runtime/providers/grok.py": [
+    "event_bus",
+    "providers"
+  ],
+  "runtime/providers/manager.py": [
+    "event_bus",
+    "typing"
+  ],
+  "runtime/semantic/cache.py": [
+    "dataclasses",
+    "time"
+  ],
+  "runtime/workflow/executor.py": [
+    "drivers",
+    "event_bus",
+    "workflow"
+  ],
+  "runtime/workflow/queue.py": [
+    "collections"
+  ],
+  "runtime/eventbus/__init__.py": [
+    ""
+  ],
+  "runtime/eventbus/event.py": [
+    "dataclasses",
+    "time",
+    "uuid"
+  ],
+  "runtime/eventbus/bus.py": [
+    "",
+    "collections",
+    "logging",
+    "threading"
+  ],
+  "runtime/eventbus/test_eventbus.py": [
+    "runtime"
+  ],
+  "runtime/eventbus/service.py": [
+    "runtime"
+  ],
+  "runtime/eventbus/test_service.py": [
+    "runtime"
+  ],
+  "runtime/drivers/accessibility/driver.py": [
+    "",
+    "event_bus",
+    "logging",
+    "subprocess",
+    "threading"
+  ],
+  "runtime/drivers/accessibility/semantic.py": [
+    "typing",
+    "xml"
+  ],
+  "runtime/drivers/accessibility/backend.py": [
+    "abc",
+    "typing"
+  ],
+  "runtime/drivers/accessibility/cache.py": [
+    "__future__",
+    "collections",
+    "dataclasses",
+    "threading",
+    "time",
+    "typing"
+  ],
+  "runtime/drivers/accessibility/consumers.py": [
+    "logging"
+  ],
+  "runtime/drivers/accessibility/diff.py": [
+    "",
+    "__future__",
+    "typing"
+  ],
+  "runtime/drivers/accessibility/events.py": [
+    "__future__",
+    "dataclasses",
+    "enum",
+    "time",
+    "typing",
+    "uuid"
+  ],
+  "runtime/drivers/accessibility/hidden_backend.py": [
+    ""
+  ],
+  "runtime/drivers/accessibility/manager.py": [
+    "",
+    "event_bus"
+  ],
+  "runtime/drivers/accessibility/observer.py": [
+    "",
+    "__future__",
+    "threading",
+    "time",
+    "typing"
+  ],
+  "runtime/drivers/accessibility/public_backend.py": [
+    "",
+    "subprocess"
+  ],
+  "runtime/drivers/accessibility/window.py": [
+    "",
+    "xml"
+  ],
+  "runtime/drivers/accessibility/xml_parser.py": [
+    "hashlib",
+    "logging",
+    "xml"
+  ],
+  "plugins/core/example.py": [
+    "plugins"
+  ],
+  "drivers/accessibility/driver.py": [
+    "subprocess",
+    "time",
+    "typing"
+  ],
+  "drivers/overlay/virtual_display.py": [
+    "runtime",
+    "time"
+  ],
+  "drivers/shizuku/rish.py": [
+    "os",
+    "subprocess"
+  ]
+}

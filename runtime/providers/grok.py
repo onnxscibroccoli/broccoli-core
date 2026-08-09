@@ -1,5 +1,5 @@
-from providers.base import Provider
-from event_bus import EventBus
+from runtime.providers.base import Provider
+from runtime.eventbus import EventBus
 
 class GrokProvider(Provider):
     def __init__(self, bus: EventBus):

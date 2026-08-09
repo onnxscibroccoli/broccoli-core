@@ -2,11 +2,12 @@ import subprocess
 import threading
 from .manager import AccessibilityManager
 from .observer import AccessibilityObserver
-from .xml_parser import parse_uiautomator_xml
-from event_bus import EventBus
+from .xml_parser import parse_uiautomator_xml, is_valid_xml
+from runtime.eventbus import EventBus
 import logging
 
 logger = logging.getLogger("accessibility.driver")
+
 
 class AccessibilityDriver:
     def __init__(self, bus: EventBus, metrics=None, logger=None):
@@ -15,17 +16,49 @@ class AccessibilityDriver:
         self.manager.initialize()
 
         self.observer = AccessibilityObserver(bus=bus, metrics=metrics, logger=logger)
-        self.observer.start()
 
         self._lock = threading.Lock()
         self._capturing = False
 
+        self._capture_failures = 0
+        self._capture_disabled = False
+        self._failure_limit = 5
+        self._running = False
+
         self.bus.subscribe("TICK", self.on_tick)
 
+    def start(self):
+        if self._running:
+            return self
+
+        self.observer.start()
+        self._running = True
+        return self
+
+    def stop(self):
+        if not self._running:
+            return self
+
+        self.observer.stop()
+        self._running = False
+        return self
+
     def on_tick(self, _):
-        # Trigger background capture if not already running to avoid tick starvation
-        if not self._capturing:
-            threading.Thread(target=self._background_capture, daemon=True).start()
+        if not self._running:
+            return
+
+        # Accessibility XML capture disabled temporarily.
+        # Shizuku/rish is the active execution backend.
+        self.bus.publish(
+            "CAPABILITY_STATUS",
+            {
+                "capability": "accessibility_stream",
+                "available": False,
+                "backend": "shizuku",
+                "reason": "awaiting_helper_apk",
+            },
+            source="AccessibilityDriver",
+        )
 
     def _background_capture(self):
         with self._lock:
@@ -34,18 +67,63 @@ class AccessibilityDriver:
             snapshot = self.manager.current_snapshot()
             if snapshot:
                 self.bus.publish("AccessibilityCaptureReady", {"snapshot_length": len(snapshot)})
-            
-            # Non-blocking async rish dump
-            proc = subprocess.run(
-                ["rish", "-c", "uiautomator dump /data/local/tmp/uidump.xml > /dev/null 2>&1 && cat /data/local/tmp/uidump.xml"],
-                capture_output=True, text=True, timeout=10
-            )
-            xml_string = proc.stdout
-            
-            xml_start = xml_string.find("<?xml")
+
+            # Resilient accessibility capture
             nodes = []
-            if xml_start != -1:
-                nodes = parse_uiautomator_xml(xml_string[xml_start:])
+
+            try:
+                subprocess.run(
+                    [
+                        "rish",
+                        "-c",
+                        "uiautomator dump /data/local/tmp/uidump.xml",
+                    ],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    timeout=8,
+                )
+
+                proc = subprocess.run(
+                    [
+                        "rish",
+                        "-c",
+                        "cat /data/local/tmp/uidump.xml",
+                    ],
+                    capture_output=True,
+                    text=True,
+                    timeout=5,
+                )
+
+                xml_string = proc.stdout or ""
+
+                xml_start = xml_string.find("<?xml")
+
+                if xml_start >= 0:
+                    xml_payload = xml_string[xml_start:]
+
+                    if is_valid_xml(xml_payload):
+                        try:
+                            nodes = parse_uiautomator_xml(xml_payload)
+                        except Exception as e:
+                            logger.warning(
+                                f"XML parse skipped: {e}"
+                            )
+                    else:
+                        logger.warning(
+                            "Invalid accessibility XML discarded"
+                        )
+
+            except subprocess.TimeoutExpired:
+                logger.warning(
+                    "Accessibility capture timeout"
+                )
+
+            except Exception as e:
+                logger.warning(
+                    f"Accessibility capture failed: {e}"
+                )
+
+            self._capture_failures = 0
 
             self.observer.observe({
                 "package": "unknown",
@@ -54,7 +132,33 @@ class AccessibilityDriver:
                 "nodes": nodes,
             })
         except subprocess.TimeoutExpired:
-            logger.warning("Background a11y dump timed out.")
+            self._capture_failures += 1
+
+            logger.warning(
+                f"Accessibility capture timeout ({self._capture_failures}/{self._failure_limit})"
+            )
+
+            if self._capture_failures >= self._failure_limit:
+                self._capture_disabled = True
+
+                self.bus.publish(
+                    "CAPABILITY_STATUS",
+                    {
+                        "capability": "accessibility_stream",
+                        "available": False,
+                        "fallback": "shizuku",
+                        "reason": "circuit_breaker",
+                    },
+                )
+
+            self.bus.publish(
+                "CAPABILITY_STATUS",
+                {
+                    "capability": "accessibility_stream",
+                    "available": False,
+                    "fallback": "shizuku",
+                },
+            )
         except Exception as e:
             logger.error(f"Background a11y capture error: {e}")
         finally:
@@ -65,7 +169,11 @@ class AccessibilityDriver:
         return self.observer.observe(raw_event)
 
     def health(self):
-        return {"manager": self.manager.health(), "observer": self.observer.health()}
+        return {
+            "running": self._running,
+            "manager": self.manager.health(),
+            "observer": self.observer.health(),
+        }
 
     def tap(self, x=540, y=1274):
         subprocess.run(["rish", "-c", f"input tap {x} {y}"], timeout=5)

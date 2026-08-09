@@ -1,70 +1,56 @@
-from drivers.accessibility.consumers import register_accessibility_consumers
-from drivers.accessibility.consumers import register_accessibility_consumers
-from config import Config
-from logger import Logger
-from event_bus import EventBus
-from state import RuntimeState
-from metrics import Metrics
-from scheduler import Scheduler
-from health import HealthMonitor
-from lifecycle import Lifecycle
-from governor.engine import Governor
-from drivers.accessibility.driver import AccessibilityDriver
-from plugin_loader import PluginLoader
-from planner.adaptive import AdaptivePlanner
-from workflow.queue import TaskQueue
-from workflow.executor import Executor as WorkflowExecutor
-from providers.grok import GrokProvider
-from memory.knowledge_graph import KnowledgeGraph
-from agents.coordinator import AgentCoordinator
-from agents.grok_agent import GrokAgent
-from autonomy.goal_manager import GoalManager
-from autonomy.recovery import RecoveryManager
+from __future__ import annotations
+
 import time
+
+from runtime.bootstrap import build_runtime_stack
 
 # How often (in ticks) to run a full recovery scan.
 # Event-driven recovery still happens immediately on GOAL_FAILED.
 RECOVERY_SCAN_EVERY = 10
 
+
 def main():
-    config = Config().load()
-    logger = Logger()
-    bus = EventBus()
-    register_accessibility_consumers(bus)
-    register_accessibility_consumers(bus)
-    state = RuntimeState()
-    metrics = Metrics()
-    scheduler = Scheduler()
-    health = HealthMonitor()
-    lifecycle = Lifecycle()
+    runtime = build_runtime_stack()
 
-    queue = TaskQueue()
-    governor = Governor(bus, state)
-    accessibility = AccessibilityDriver(bus)
-    planner = AdaptivePlanner(bus, queue)
-    workflow_executor = WorkflowExecutor(bus, queue)
-    grok = GrokProvider(bus)
-    kg = KnowledgeGraph()
-    coordinator = AgentCoordinator(bus, queue)
-    grok_agent = GrokAgent()
-    coordinator.register_agent("grok", grok_agent)
+    config = runtime["config"]
+    logger = runtime["logger"]
+    state = runtime["state"]
+    metrics = runtime["metrics"]
+    scheduler = runtime["scheduler"]
+    health = runtime["health"]
+    lifecycle = runtime["lifecycle"]
+    workflow_executor = runtime["workflow_executor"]
+    recovery = runtime["recovery"]
+    goal_manager = runtime["goal_manager"]
+    transport_registry = runtime["transport_registry"]
+    bus = runtime["bus"]
 
-    # Shared GoalManager + RecoveryManager (same in-memory Executor)
-    goal_manager = GoalManager(bus, queue, kg)
-    recovery = RecoveryManager(bus)
+    components = [
+        config,
+        logger,
+        bus,
+        state,
+        metrics,
+        scheduler,
+        health,
+        runtime["governor"],
+        runtime["accessibility"],
+        runtime["planner"],
+        workflow_executor,
+        runtime["grok"],
+        runtime["knowledge_graph"],
+        runtime["knowledge_graph_transport"],
+        runtime["coordinator"],
+        goal_manager,
+        recovery,
+        runtime["plugins"],
+        runtime["plugin_loader_transport"],
+        transport_registry,
+    ]
 
-    plugins = PluginLoader()
-    plugins.load()
+    transport_registry.start_all()
+    lifecycle.startup(components)
 
-    lifecycle.startup([
-        config, logger, bus, state, metrics, scheduler, health,
-        governor, accessibility, planner, workflow_executor,
-        grok, kg, coordinator, goal_manager, recovery, plugins
-    ])
-
-    grok.initialize()
-
-    # Example goal (kept for smoke visibility)
     goal_manager.create_goal("test_goal", "Test autonomous task")
 
     state.transition("RUNNING")
@@ -76,7 +62,9 @@ def main():
             bus.publish("TICK")
             scheduler.run_pending()
             workflow_executor.run_pending()
-            health.check()
+            transport_registry.publish_health()
+            health_report = health.check()
+            bus.publish("HEALTH_CHECK", health_report, source="HealthMonitor")
             metrics.increment("loop_cycles")
 
             tick += 1
@@ -89,6 +77,34 @@ def main():
     except KeyboardInterrupt:
         logger.log("INFO", "Shutdown requested", "Core")
         state.transition("STOPPED")
+    finally:
+        try:
+            lifecycle.shutdown(components)
+        finally:
+            transport_registry.stop_all()
+
 
 if __name__ == "__main__":
     main()
+
+
+def capability_status(event):
+    try:
+        print(
+            "Capability:",
+            event.get("capability"),
+            "available=",
+            event.get("available"),
+            "fallback=",
+            event.get("fallback"),
+        )
+    except Exception:
+        pass
+
+
+try:
+    from runtime.eventbus.service import bus
+
+    bus.subscribe("CAPABILITY_STATUS", capability_status)
+except Exception:
+    pass

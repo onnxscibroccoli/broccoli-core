@@ -1,0 +1,2601 @@
+{
+  "/data/data/com.termux/files/home/broccoli-core/fix_accessibility_imports.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/drive_to_github.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/agent_apply_guardrails.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli_bootstrap.py": [
+    "__future__",
+    "lib.broccoli_guard",
+    "modules.kxt_xxd",
+    "modules.offline_sanitizer"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli_chat_loop.py": [
+    "chat_scraper"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli_host.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli_init.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli_meta_heal.py": [
+    "smoke_autoheal"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli_phone_grok_send.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli_pulse.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli_report.py": [
+    "__future__"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli_rish_ui.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli_secondary_display.py": [
+    "display_lane"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli_task_queue.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/chat_copy_tap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/chat_scraper.py": [
+    "__future__"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/clip_promt.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/daemon_idle_loop.py": [
+    "idle_takeover"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/dump_project.py": [
+    "binascii"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/dumpp.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/dumppy.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/grok_ui_coords.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/smoke_lesson_foreground.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/workflow_front.py": [
+    "task_queue",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/ui_copier.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/screen_state.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/sync_and_purge.py": [
+    "glob"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/profile_coords.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/ui_window_check.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/parse_learn_log.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/reboot_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/smoke_fast.py": [
+    "grok_xml_parse",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/drivers/__init__.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/plugins/example_plugin.py": [
+    "plugins.core.base",
+    "runtime.logger"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/providers/grok.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/logger.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/main.py": [
+    "agents.coordinator",
+    "agents.grok_agent",
+    "autonomy.goal_manager",
+    "autonomy.recovery",
+    "config",
+    "drivers.accessibility.driver",
+    "event_bus",
+    "governor.engine",
+    "health",
+    "lifecycle",
+    "logger",
+    "memory.knowledge_graph",
+    "metrics",
+    "planner.adaptive",
+    "plugin_loader",
+    "providers.grok",
+    "runtime.drivers.accessibility.consumers",
+    "runtime.eventbus.service",
+    "runtime.governor.repo_governor",
+    "scheduler",
+    "state",
+    "workflow.executor",
+    "workflow.queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/metrics.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/plugin_loader.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/config.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/constants.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/event_bus.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/health.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/journal.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/lifecycle.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/normalizer.py": [
+    "models.semantic"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/scheduler.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/state.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/android_collectors.py": [
+    "problem_solver"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/default_collectors.py": [
+    "problem_solver"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/default_reasoner.py": [
+    "problem_solver"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/default_remediator.py": [
+    "problem_solver"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/deploy_phase2.py": [
+    "drivers.accessibility.consumers",
+    "drivers.accessibility.observer",
+    "drivers.accessibility.xml_parser",
+    "event_bus"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/deploy_phase3.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/fix_accessibility_imports.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/fix_driver_async.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/harden_driver.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/integrate_problem_solver.py": [
+    "android_collectors",
+    "default_collectors",
+    "default_reasoner",
+    "default_remediator",
+    "event_bus",
+    "knowledge_learning",
+    "problem_runtime"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/knowledge_learning.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/problem_runtime.py": [
+    "problem_solver"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/problem_solver.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/test_problem_solver.py": [
+    "default_collectors",
+    "default_reasoner",
+    "default_remediator",
+    "problem_solver"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/verification_engine.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/__init__.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/workflow/decision.py": [
+    "runtime.logger"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/workflow/executor.py": [
+    "providers.grok",
+    "workflow.task"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/workflow/queue.py": [
+    "workflow.task"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/workflow/task.py": [
+    "uuid"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/tools/drive_sync.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/tools/drive_upload_mem.py": [
+    "gzip",
+    "io"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/tools/device_innovate_smoke.py": [
+    "broccoli_device",
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/tools/broccoli_infinite_dev_loop.py": [
+    "broccoli_adb_ui",
+    "broccoli_log",
+    "broccoli_notif"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/tools/search_notif_codebase.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/tools/bin_research.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/tools/version_walk_heal.py": [
+    "broccoli_core_round"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/tools/heal_debug_all.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/tools/agentic_run_once.py": [
+    "broccoli_agentic_chat"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/tools/broccoli_agentic_loop.py": [
+    "broccoli_agentic_chat"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/tools/broccoli_agentic_selftest.py": [
+    "broccoli_agentic_chat",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/tools/broccoli_conv_archive.py": [
+    "gzip",
+    "sqlite3"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/tools/chat_focus_rish.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/tools/pull_wire_from_dump.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/tools/broccoli_brain.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/tools/ui_dump_loop.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/tools/broccoli_agent.py": [
+    "tempfile"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/tools/parse_grok_ui.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/tools/inventory_md_tasks.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/tools/reply_to_next_action.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/tools/phrase_grok_dump.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/tools/investigate_system.py": [
+    "__future__"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/tools/gap_analyze.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/tools/grok_smoke_validate.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/tools/repository_census.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/tools/dependency_analyzer.py": [
+    "ast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/tools/runtime_path_analyzer.py": [
+    "ast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/tools/canonical_runtime_analyzer.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/tools/find_send_tap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/tools/ui_state.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/tools/extract_grok_code.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/tools/ui_dump_chat.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/tools/extract_chat_from_xml.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/tools/google_secondary_test.py": [
+    "brocc_toast",
+    "display_lane"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/tools/build_dependency_report.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/tools/conflict_analyzer.py": [
+    "ast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/tools/create_quarantine_manifest.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/tools/create_quarantine_structure.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/tools/build_dependency_report_v2.py": [
+    "ast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/maintenance/__init__.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/fix_accessibility_imports.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/agent_apply_guardrails.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/broccoli_host.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/broccoli_bootstrap.py": [
+    "__future__",
+    "lib.broccoli_guard",
+    "modules.kxt_xxd",
+    "modules.offline_sanitizer"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/broccoli_init.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/broccoli_chat_loop.py": [
+    "chat_scraper"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/broccoli_meta_heal.py": [
+    "smoke_autoheal"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/broccoli_phone_grok_send.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/broccoli_pulse.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/broccoli_report.py": [
+    "__future__"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/broccoli_rish_ui.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/broccoli_secondary_display.py": [
+    "display_lane"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/broccoli_task_queue.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/chat_copy_tap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/chat_scraper.py": [
+    "__future__"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/clip_promt.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/daemon_idle_loop.py": [
+    "idle_takeover"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/dump_project.py": [
+    "binascii"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/dumpp.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/dumppy.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/grok_ui_coords.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/parse_learn_log.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/profile_coords.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/reboot_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/screen_state.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/smoke_fast.py": [
+    "grok_xml_parse",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/smoke_lesson_foreground.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/sync_and_purge.py": [
+    "glob"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/workflow_front.py": [
+    "task_queue",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/ui_copier.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/ui_window_check.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/integration/test_integration.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/simulation/test_stress.py": [
+    "concurrent.futures",
+    "tracemalloc"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/tests/test_core.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/agent/context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/agent/loop.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/agent/planner.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/agent/verifier.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/daemons/sysdumpd.py": [
+    "modules.sysdump.buffer",
+    "modules.sysdump.collector"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/brocc_toast.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/a11y_automation.py": [
+    "__future__"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/agent_loop.py": [
+    "task_complete",
+    "task_current",
+    "user_task_wait"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_a11y_rish.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/brocc_wire.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/brocc_validate.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_manual.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_log.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_a11y_send.py": [
+    "broccoli_a11y_rish",
+    "broccoli_agentic_chat",
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_selftest",
+    "broccoli_send",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_core_round.py": [
+    "broccoli_adb_ui"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_device.py": [
+    "__future__",
+    "broccoli.lib.broccoli_rish_shell",
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_guard.py": [
+    "fnmatch"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_manual_mode.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_notif.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_operator.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_recv_copy_rish.py": [
+    "broccoli_log",
+    "broccoli_rish_adb"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_retry.py": [
+    "__future__"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_rish_adb.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_rish_shell.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/chat_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_rish_ui.py": [
+    "broccoli_core_round",
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_selftest.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_send.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_strategy.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_ui_dump.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_wait.py": [
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/broccoli_xml_sanitize.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/catalog_loop_hook.py": [
+    "__future__",
+    "sqlite3"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/clip.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/closed_loop.py": [
+    "__future__",
+    "sqlite3"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/display_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/compose_cap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/code_from_chat.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/dump_ui_fallback.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/display_lane.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/grok_chat_foreground.py": [
+    "display_context"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/paste_accommodate.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/grok_open_loop.py": [
+    "rish_adb"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/grok_send_tap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/grok_takeover.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/grok_xml_parse.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/idle_takeover.py": [
+    "idle_detect"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/operator.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/smoke_autoheal.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/rish_adb.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/recursive_impl.py": [
+    "code_from_chat",
+    "task_current",
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/rish_cmd.py": [
+    "random"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/rish_run.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/task_current.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/task_complete.py": [
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/task_queue.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/toast.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/user_task_wait.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/scripts/inject_refresh_send.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/scripts/grok_universal_cycle.py": [
+    "rish_cmd"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/scripts/grok_validate_reply.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/scripts/grok_button_poll.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/scripts/tap_send.py": [
+    "rish_cmd"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/scripts/autojs_run.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/scripts/grok_auto_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/scripts/refresh_screen.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/scripts/grok_context_send_retry.py": [
+    "broccoli_retry"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/meta/broccoli_storage_sync.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/meta/brocc_state.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/meta/brocc_live_wire.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/meta/brocc_loop_emit.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/meta/brocc_watch.py": [
+    "fcntl"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/modules/chat_store.py": [
+    "modules.registry"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/modules/grok_focus.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/modules/clipboard_read.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/modules/state_probe.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/modules/a11y_probe.py": [
+    "modules.registry"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/modules/chat_harvest.py": [
+    "modules",
+    "modules.registry",
+    "modules.state_probe"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/modules/chat_nav.py": [
+    "modules.registry"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/modules/chat_reader.py": [
+    "modules.registry",
+    "modules.state_probe"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/modules/ui_dump.py": [
+    "modules.registry",
+    "modules.state_probe"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/modules/__init__.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/modules/registry.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/modules/offline_sanitizer.py": [
+    "__future__"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/modules/kxt_xxd.py": [
+    "__future__"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/modules/sysdump/replay.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/modules/sysdump/buffer.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/modules/sysdump/collector.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/modules/sysdump/__init__.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage/broccoli_core_round.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage/broccoli_rish_shell.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage/broccoli_rish_ui.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_selftest",
+    "broccoli_send",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage/broccoli_ui_dump.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage/broccoli_send.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_0/broccoli_rish_shell.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_0/broccoli_rish_ui.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_0/broccoli_a11y_rish.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_0/broccoli_a11y_send.py": [
+    "broccoli_a11y_rish",
+    "broccoli_agentic_chat",
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_0/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_selftest",
+    "broccoli_send",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_0/broccoli_manual_mode.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_0/broccoli_manual.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_0/broccoli_ui_dump.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_0/broccoli_send.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_0/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_0/broccoli_selftest.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_0/broccoli_strategy.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_0/broccoli_wait.py": [
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_0/broccoli_operator.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_4/broccoli_rish_shell.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_4/broccoli_rish_ui.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_4/broccoli_task_queue.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_4/broccoli_meta_heal.py": [
+    "smoke_autoheal"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_4/broccoli_secondary_display.py": [
+    "display_lane"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_3/broccoli_rish_shell.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_3/broccoli_a11y.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_3/broccoli_agent.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_3/broccoli_agent_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_3/broccoli_mac_ingest.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_3/broccoli_bootstrap.py": [
+    "__future__",
+    "dump_ui_fallback"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_5/broccoli_rish_shell.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_5/broccoli_rish_ui.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_5/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_selftest",
+    "broccoli_send",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_5/broccoli_ui_dump.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_5/broccoli_send.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_5/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_1/broccoli_ui_dump.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_1/broccoli_strategy.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_1/broccoli_selftest.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_1/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_1/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_selftest",
+    "broccoli_send",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_1/broccoli_send.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_1/broccoli_rish_shell.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_1/broccoli_wait.py": [
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_1/broccoli_operator.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_2/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_2/broccoli_rish_shell.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_2/broccoli_ui_dump.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_2/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_2/broccoli_wait.py": [
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/state/walk_stage_2/broccoli_operator.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/alpha/sync/__init__.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/alpha/tests/test_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/_pinned_from_walk/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_selftest",
+    "broccoli_send",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/_pinned_from_walk/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/_pinned_from_walk/broccoli_rish_shell.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/lib/_pinned_from_walk/broccoli_rish_ui.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/_pinned_from_walk/broccoli_send.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/lib/_pinned_from_walk/broccoli_ui_dump.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/meta/brocc_state.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/meta/brocc_live_wire.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/meta/brocc_loop_emit.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/meta/brocc_watch.py": [
+    "fcntl"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/meta/broccoli_storage_sync.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/agent/context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/agent/loop.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/agent/planner.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/agent/verifier.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/daemons/sysdumpd.py": [
+    "modules.sysdump.buffer",
+    "modules.sysdump.collector"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/a11y_automation.py": [
+    "__future__"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/agent_loop.py": [
+    "task_complete",
+    "task_current",
+    "user_task_wait"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/brocc_toast.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/brocc_validate.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/brocc_wire.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_a11y_rish.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_a11y_send.py": [
+    "broccoli_a11y_rish",
+    "broccoli_agentic_chat",
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_selftest",
+    "broccoli_send",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_core_round.py": [
+    "broccoli_adb_ui"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_device.py": [
+    "__future__",
+    "broccoli.lib.broccoli_rish_shell",
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_guard.py": [
+    "fnmatch"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_log.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_manual.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_manual_mode.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_notif.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_operator.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_recv_copy_rish.py": [
+    "broccoli_log",
+    "broccoli_rish_adb"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_retry.py": [
+    "__future__"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_rish_adb.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_rish_shell.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_rish_ui.py": [
+    "broccoli_core_round",
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_selftest.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_send.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_strategy.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_ui_dump.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_wait.py": [
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/broccoli_xml_sanitize.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/catalog_loop_hook.py": [
+    "__future__",
+    "sqlite3"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/chat_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/clip.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/closed_loop.py": [
+    "__future__",
+    "sqlite3"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/code_from_chat.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/compose_cap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/display_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/display_lane.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/dump_ui_fallback.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/grok_chat_foreground.py": [
+    "display_context"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/grok_open_loop.py": [
+    "rish_adb"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/grok_send_tap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/grok_takeover.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/grok_xml_parse.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/idle_takeover.py": [
+    "idle_detect"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/operator.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/paste_accommodate.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/recursive_impl.py": [
+    "code_from_chat",
+    "task_current",
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/rish_adb.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/rish_cmd.py": [
+    "random"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/rish_run.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/smoke_autoheal.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/task_complete.py": [
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/task_current.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/task_queue.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/toast.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/user_task_wait.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/modules/__init__.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/modules/a11y_probe.py": [
+    "modules.registry"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/modules/chat_harvest.py": [
+    "modules",
+    "modules.registry",
+    "modules.state_probe"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/modules/chat_nav.py": [
+    "modules.registry"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/modules/chat_reader.py": [
+    "modules.registry",
+    "modules.state_probe"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/modules/chat_store.py": [
+    "modules.registry"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/modules/clipboard_read.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/modules/grok_focus.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/modules/kxt_xxd.py": [
+    "__future__"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/modules/offline_sanitizer.py": [
+    "__future__"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/modules/registry.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/modules/state_probe.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/modules/ui_dump.py": [
+    "modules.registry",
+    "modules.state_probe"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/scripts/autojs_run.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/scripts/grok_auto_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/scripts/grok_button_poll.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/scripts/grok_context_send_retry.py": [
+    "broccoli_retry"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/scripts/grok_universal_cycle.py": [
+    "rish_cmd"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/scripts/grok_validate_reply.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/scripts/inject_refresh_send.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/scripts/refresh_screen.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/scripts/tap_send.py": [
+    "rish_cmd"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/agentic_run_once.py": [
+    "broccoli_agentic_chat"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/bin_research.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/broccoli_agent.py": [
+    "tempfile"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/broccoli_agentic_loop.py": [
+    "broccoli_agentic_chat"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/broccoli_agentic_selftest.py": [
+    "broccoli_agentic_chat",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/broccoli_brain.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/broccoli_conv_archive.py": [
+    "gzip",
+    "sqlite3"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/broccoli_infinite_dev_loop.py": [
+    "broccoli_adb_ui",
+    "broccoli_log",
+    "broccoli_notif"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/chat_focus_rish.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/device_innovate_smoke.py": [
+    "broccoli_device",
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/drive_upload_mem.py": [
+    "gzip",
+    "io"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/extract_chat_from_xml.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/extract_grok_code.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/find_send_tap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/gap_analyze.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/google_secondary_test.py": [
+    "brocc_toast",
+    "display_lane"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/grok_smoke_validate.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/heal_debug_all.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/inventory_md_tasks.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/investigate_system.py": [
+    "__future__"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/parse_grok_ui.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/phrase_grok_dump.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/pull_wire_from_dump.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/reply_to_next_action.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/search_notif_codebase.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/ui_state.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/version_walk_heal.py": [
+    "broccoli_core_round"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/ui_dump_chat.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/tools/ui_dump_loop.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_selftest",
+    "broccoli_send",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage/broccoli_core_round.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage/broccoli_rish_shell.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage/broccoli_rish_ui.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage/broccoli_send.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage/broccoli_ui_dump.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_a11y_rish.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_a11y_send.py": [
+    "broccoli_a11y_rish",
+    "broccoli_agentic_chat",
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_selftest",
+    "broccoli_send",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_manual.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_manual_mode.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_operator.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_rish_shell.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_rish_ui.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_selftest.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_send.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_strategy.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_ui_dump.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_0/broccoli_wait.py": [
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_selftest",
+    "broccoli_send",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_operator.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_rish_shell.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_selftest.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_send.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_strategy.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_ui_dump.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_1/broccoli_wait.py": [
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_2/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_2/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_2/broccoli_operator.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_2/broccoli_rish_shell.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_2/broccoli_ui_dump.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_2/broccoli_wait.py": [
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_3/broccoli_a11y.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_3/broccoli_agent.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_3/broccoli_agent_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_3/broccoli_bootstrap.py": [
+    "__future__",
+    "dump_ui_fallback"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_3/broccoli_mac_ingest.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_3/broccoli_rish_shell.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_4/broccoli_meta_heal.py": [
+    "smoke_autoheal"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_4/broccoli_rish_shell.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_4/broccoli_rish_ui.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_4/broccoli_secondary_display.py": [
+    "display_lane"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_4/broccoli_task_queue.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_5/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_selftest",
+    "broccoli_send",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_5/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_5/broccoli_rish_shell.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_5/broccoli_rish_ui.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_5/broccoli_send.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/state/walk_stage_5/broccoli_ui_dump.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/modules/sysdump/__init__.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/modules/sysdump/buffer.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/modules/sysdump/collector.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/modules/sysdump/replay.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/_pinned_from_walk/broccoli_agentic_chat.py": [
+    "broccoli_input",
+    "broccoli_rish_shell",
+    "broccoli_selftest",
+    "broccoli_send",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/_pinned_from_walk/broccoli_input.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/_pinned_from_walk/broccoli_rish_shell.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/_pinned_from_walk/broccoli_rish_ui.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/_pinned_from_walk/broccoli_send.py": [
+    "broccoli_rish_shell",
+    "broccoli_strategy",
+    "broccoli_ui_dump"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/BroccoliWorkspaceBackup/lib/_pinned_from_walk/broccoli_ui_dump.py": [
+    "broccoli_rish_shell"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/_quarantine/broccoli-core/runtime/governor/engine.py": [
+    "constants",
+    "event_bus"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/_quarantine/broccoli-core/runtime/drivers/accessibility/driver.py": [
+    "semantic"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/_quarantine/broccoli-core/runtime/drivers/accessibility/semantic.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/_quarantine/tilde-artifact/broccoli/autonomy/executor.py": [
+    "enum",
+    "uuid"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/_quarantine/tilde-artifact/broccoli-core/autonomy/bridge.py": [
+    "event_bus",
+    "executor"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/_quarantine/tilde-artifact/broccoli-core/autonomy/demo_supervisor.py": [
+    "event_bus",
+    "executor"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/_quarantine/tilde-artifact/broccoli-core/autonomy/event_bus.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/_quarantine/tilde-artifact/broccoli-core/autonomy/executor.py": [
+    "enum",
+    "uuid"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/_quarantine/tilde-artifact/broccoli-core/autonomy/goal_cli.py": [
+    "event_bus",
+    "executor"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/_quarantine/tilde-artifact/broccoli-core/autonomy/supervisor.py": [
+    "event_bus",
+    "executor"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/_quarantine/tilde-artifact/broccoli-core/autonomy/test_integration.py": [
+    "event_bus",
+    "executor"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/drivers/__init__.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/integration/test_integration.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/maintenance/__init__.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/plugins/example_plugin.py": [
+    "plugins.core.base",
+    "runtime.logger"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/providers/grok.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/config.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/constants.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/deploy_phase2.py": [
+    "drivers.accessibility.consumers",
+    "drivers.accessibility.observer",
+    "drivers.accessibility.xml_parser",
+    "event_bus"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/deploy_phase3.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/event_bus.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/fix_accessibility_imports.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/fix_driver_async.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/harden_driver.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/health.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/journal.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/lifecycle.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/logger.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/main.py": [
+    "agents.coordinator",
+    "agents.grok_agent",
+    "autonomy.goal_manager",
+    "autonomy.recovery",
+    "config",
+    "drivers.accessibility.consumers",
+    "drivers.accessibility.driver",
+    "event_bus",
+    "governor.engine",
+    "health",
+    "lifecycle",
+    "logger",
+    "memory.knowledge_graph",
+    "metrics",
+    "planner.adaptive",
+    "plugin_loader",
+    "providers.grok",
+    "scheduler",
+    "state",
+    "workflow.executor",
+    "workflow.queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/metrics.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/normalizer.py": [
+    "models.semantic"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/plugin_loader.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/scheduler.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/state.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/simulation/test_stress.py": [
+    "concurrent.futures",
+    "tracemalloc"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/tests/test_core.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/workflow/decision.py": [
+    "runtime.logger"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/workflow/executor.py": [
+    "providers.grok",
+    "workflow.task"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/workflow/queue.py": [
+    "workflow.task"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/workflow/task.py": [
+    "uuid"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/agents/coordinator.py": [
+    "event_bus",
+    "workflow.queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/agents/grok_agent.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/autonomy/executor.py": [
+    "enum",
+    "uuid"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/autonomy/goal_manager.py": [
+    "event_bus",
+    "executor"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/autonomy/intent.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/autonomy/progress.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/autonomy/recovery.py": [
+    "event_bus",
+    "executor",
+    "goal_manager"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/capabilities/__init__.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/capabilities/base.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/capabilities/registry.py": [
+    "base"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/config/settings.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/governor/engine.py": [
+    "event_bus",
+    "state"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/memory/knowledge_graph.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/models/__init__.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/models/semantic.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/planner/adaptive.py": [
+    "event_bus",
+    "planner.planner",
+    "workflow.queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/planner/planner.py": [
+    "event_bus",
+    "workflow.queue",
+    "workflow.task"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/providers/base.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/providers/grok.py": [
+    "event_bus",
+    "providers.base"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/providers/manager.py": [
+    "event_bus"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/services/daemon.py": [
+    "runtime.logger",
+    "runtime.metrics"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/workflow/executor.py": [
+    "drivers.accessibility.driver",
+    "event_bus",
+    "workflow.queue",
+    "workflow.task"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/workflow/queue.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/workflow/task.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/__init__.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/backend.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/cache.py": [
+    "__future__"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/consumers.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/diff.py": [
+    "__future__",
+    "events"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/driver.py": [
+    "event_bus",
+    "manager",
+    "observer",
+    "xml_parser"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/events.py": [
+    "__future__",
+    "enum",
+    "uuid"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/hidden_backend.py": [
+    "backend"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/manager.py": [
+    "backend",
+    "event_bus",
+    "hidden_backend",
+    "public_backend"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/observer.py": [
+    "__future__",
+    "cache",
+    "diff",
+    "events"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/public_backend.py": [
+    "backend"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/semantic.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/window.py": [
+    "semantic"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/runtime/drivers/accessibility/xml_parser.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/plugins/core/base.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/plugins/core/example.py": [
+    "plugins.core.base"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/drivers/accessibility/__init__.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/drivers/accessibility/driver.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/drivers/overlay/virtual_display.py": [
+    "runtime.logger"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/drivers/shizuku/rish.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/_quarantine/tilde-artifact/broccoli/autonomy/executor.py": [
+    "enum",
+    "uuid"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/_quarantine/tilde-artifact/broccoli-core/autonomy/bridge.py": [
+    "event_bus",
+    "executor"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/_quarantine/tilde-artifact/broccoli-core/autonomy/demo_supervisor.py": [
+    "event_bus",
+    "executor"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/_quarantine/tilde-artifact/broccoli-core/autonomy/event_bus.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/_quarantine/tilde-artifact/broccoli-core/autonomy/executor.py": [
+    "enum",
+    "uuid"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/_quarantine/tilde-artifact/broccoli-core/autonomy/goal_cli.py": [
+    "event_bus",
+    "executor"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/_quarantine/tilde-artifact/broccoli-core/autonomy/supervisor.py": [
+    "event_bus",
+    "executor"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/_quarantine/tilde-artifact/broccoli-core/autonomy/test_integration.py": [
+    "event_bus",
+    "executor"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/_quarantine/broccoli-core/runtime/governor/engine.py": [
+    "constants",
+    "event_bus"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/_quarantine/broccoli-core/runtime/drivers/accessibility/driver.py": [
+    "semantic"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/broccoli-core/_quarantine/broccoli-core/runtime/drivers/accessibility/semantic.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/broccoli_a11y.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/broccoli_agent.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/broccoli_agent_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/broccoli_bootstrap.py": [
+    "__future__",
+    "dump_ui_fallback"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/broccoli_mac_ingest.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/google_ai_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/broccoli_meta_heal.py": [
+    "smoke_autoheal"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/broccoli_rish_ui.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/broccoli_secondary_display.py": [
+    "display_lane"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/broccoli_task_queue.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/daemon_idle_loop.py": [
+    "idle_takeover"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/reboot_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/smoke_fast.py": [
+    "grok_xml_parse",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/smoke_lesson_foreground.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/workflow_front.py": [
+    "task_queue",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194028/broccoli/broccoli_task_queue.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194028/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194028/broccoli/reboot_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_a11y.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_agent.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_agent_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dump_ui_fallback"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_compose.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_mac_ingest.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_research.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_rish_pull.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194028/home/broccoli_user_wait.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194028/home/google_ai_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205153/broccoli/broccoli_meta_heal.py": [
+    "smoke_autoheal"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205153/broccoli/broccoli_rish_ui.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205153/broccoli/broccoli_secondary_display.py": [
+    "display_lane"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205153/broccoli/broccoli_task_queue.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205153/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205153/broccoli/daemon_idle_loop.py": [
+    "idle_takeover"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205153/broccoli/reboot_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205153/broccoli/smoke_fast.py": [
+    "grok_xml_parse",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205153/broccoli/smoke_lesson_foreground.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205153/broccoli/workflow_front.py": [
+    "task_queue",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_a11y.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_agent.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_agent_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dump_ui_fallback"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_compose.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_mac_ingest.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_research.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_rish_pull.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205153/home/broccoli_user_wait.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205153/home/google_ai_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205026/broccoli/broccoli_meta_heal.py": [
+    "smoke_autoheal"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205026/broccoli/broccoli_rish_ui.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205026/broccoli/broccoli_secondary_display.py": [
+    "display_lane"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205026/broccoli/broccoli_task_queue.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205026/broccoli/daemon_idle_loop.py": [
+    "idle_takeover"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205026/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205026/broccoli/reboot_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205026/broccoli/smoke_fast.py": [
+    "grok_xml_parse",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205026/broccoli/smoke_lesson_foreground.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205026/broccoli/workflow_front.py": [
+    "task_queue",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_a11y.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_agent.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_agent_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dump_ui_fallback"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_compose.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_mac_ingest.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_research.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_rish_pull.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205026/home/broccoli_user_wait.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_205026/home/google_ai_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_204900/broccoli/broccoli_meta_heal.py": [
+    "smoke_autoheal"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_204900/broccoli/broccoli_rish_ui.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_204900/broccoli/broccoli_secondary_display.py": [
+    "display_lane"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_204900/broccoli/broccoli_task_queue.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_204900/broccoli/daemon_idle_loop.py": [
+    "idle_takeover"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_204900/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_204900/broccoli/reboot_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_204900/broccoli/smoke_fast.py": [
+    "grok_xml_parse",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_204900/broccoli/smoke_lesson_foreground.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_204900/broccoli/workflow_front.py": [
+    "task_queue",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_a11y.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_agent.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_agent_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dump_ui_fallback"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_compose.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_mac_ingest.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_research.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_rish_pull.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_204900/home/broccoli_user_wait.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_204900/home/google_ai_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203923/broccoli/broccoli_meta_heal.py": [
+    "smoke_autoheal"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203923/broccoli/broccoli_rish_ui.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203923/broccoli/broccoli_secondary_display.py": [
+    "display_lane"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203923/broccoli/broccoli_task_queue.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203923/broccoli/daemon_idle_loop.py": [
+    "idle_takeover"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203923/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203923/broccoli/reboot_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203923/broccoli/smoke_fast.py": [
+    "grok_xml_parse",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203923/broccoli/smoke_lesson_foreground.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203923/broccoli/workflow_front.py": [
+    "task_queue",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_a11y.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_agent.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_agent_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dump_ui_fallback"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_compose.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_mac_ingest.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_research.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_rish_pull.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203923/home/broccoli_user_wait.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203923/home/google_ai_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203609/broccoli/broccoli_meta_heal.py": [
+    "smoke_autoheal"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203609/broccoli/broccoli_rish_ui.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203609/broccoli/broccoli_secondary_display.py": [
+    "display_lane"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203609/broccoli/broccoli_task_queue.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203609/broccoli/daemon_idle_loop.py": [
+    "idle_takeover"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203609/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203609/broccoli/reboot_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203609/broccoli/smoke_fast.py": [
+    "grok_xml_parse",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203609/broccoli/smoke_lesson_foreground.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203609/broccoli/workflow_front.py": [
+    "task_queue",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_a11y.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_agent.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_agent_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dump_ui_fallback"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_compose.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_mac_ingest.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_research.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_rish_pull.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203609/home/broccoli_user_wait.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203609/home/google_ai_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203142/broccoli/broccoli_meta_heal.py": [
+    "smoke_autoheal"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203142/broccoli/broccoli_rish_ui.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203142/broccoli/broccoli_secondary_display.py": [
+    "display_lane"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203142/broccoli/broccoli_task_queue.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203142/broccoli/daemon_idle_loop.py": [
+    "idle_takeover"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203142/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203142/broccoli/reboot_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203142/broccoli/smoke_fast.py": [
+    "grok_xml_parse",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203142/broccoli/smoke_lesson_foreground.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203142/broccoli/workflow_front.py": [
+    "task_queue",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_a11y.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_agent.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_agent_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dump_ui_fallback"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_compose.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_mac_ingest.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_research.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_rish_pull.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203142/home/broccoli_user_wait.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_203142/home/google_ai_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/broccoli_meta_heal.py": [
+    "smoke_autoheal"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/broccoli_rish_ui.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/broccoli_secondary_display.py": [
+    "display_lane"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/broccoli_task_queue.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/daemon_idle_loop.py": [
+    "idle_takeover"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/reboot_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/smoke_fast.py": [
+    "grok_xml_parse",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/smoke_lesson_foreground.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/workflow_front.py": [
+    "task_queue",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_a11y.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_agent.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_agent_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dump_ui_fallback"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_compose.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_mac_ingest.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_research.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_rish_pull.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/home/broccoli_user_wait.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/home/google_ai_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/agent_loop.py": [
+    "task_complete",
+    "task_current",
+    "user_task_wait"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/brocc_toast.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/broccoli_operator.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/chat_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/clip.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/code_from_chat.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/display_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/display_lane.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/dump_ui_fallback.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/grok_chat_foreground.py": [
+    "display_context"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/grok_open_loop.py": [
+    "rish_adb"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/grok_send_tap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/grok_takeover.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/grok_xml_parse.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/idle_takeover.py": [
+    "idle_detect"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/recursive_impl.py": [
+    "code_from_chat",
+    "task_current",
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/rish_adb.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/rish_run.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/smoke_autoheal.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/task_complete.py": [
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/task_current.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/task_queue.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/toast.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202834/broccoli/lib/user_task_wait.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/broccoli_meta_heal.py": [
+    "smoke_autoheal"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/broccoli_rish_ui.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/broccoli_secondary_display.py": [
+    "display_lane"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/broccoli_task_queue.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/daemon_idle_loop.py": [
+    "idle_takeover"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/reboot_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/smoke_fast.py": [
+    "grok_xml_parse",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/smoke_lesson_foreground.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/workflow_front.py": [
+    "task_queue",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_a11y.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_agent.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_agent_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dump_ui_fallback"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_compose.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_mac_ingest.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_research.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_rish_pull.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/home/broccoli_user_wait.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/home/google_ai_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/meta/brocc_live_wire.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/meta/brocc_loop_emit.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/meta/brocc_state.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/meta/brocc_watch.py": [
+    "fcntl"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/meta/broccoli_storage_sync.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/agent_loop.py": [
+    "task_complete",
+    "task_current",
+    "user_task_wait"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/brocc_toast.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/broccoli_operator.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/chat_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/clip.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/code_from_chat.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/display_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/display_lane.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/dump_ui_fallback.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/grok_chat_foreground.py": [
+    "display_context"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/grok_open_loop.py": [
+    "rish_adb"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/grok_send_tap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/grok_takeover.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/grok_xml_parse.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/idle_takeover.py": [
+    "idle_detect"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/recursive_impl.py": [
+    "code_from_chat",
+    "task_current",
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/rish_adb.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/rish_run.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/smoke_autoheal.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/task_complete.py": [
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/task_current.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/task_queue.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/toast.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_202630/broccoli/lib/user_task_wait.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/broccoli_meta_heal.py": [
+    "smoke_autoheal"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/broccoli_rish_ui.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/broccoli_secondary_display.py": [
+    "display_lane"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/broccoli_task_queue.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/daemon_idle_loop.py": [
+    "idle_takeover"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/reboot_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/smoke_fast.py": [
+    "grok_xml_parse",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/smoke_lesson_foreground.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/workflow_front.py": [
+    "task_queue",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_a11y.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_agent.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_agent_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dump_ui_fallback"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_compose.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_mac_ingest.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_research.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_rish_pull.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/home/broccoli_user_wait.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/home/google_ai_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/meta/brocc_live_wire.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/meta/brocc_loop_emit.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/meta/brocc_state.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/meta/brocc_watch.py": [
+    "fcntl"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/meta/broccoli_storage_sync.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/agent_loop.py": [
+    "task_complete",
+    "task_current",
+    "user_task_wait"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/brocc_toast.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/broccoli_operator.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/chat_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/clip.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/code_from_chat.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/display_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/display_lane.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/dump_ui_fallback.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/grok_chat_foreground.py": [
+    "display_context"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/grok_open_loop.py": [
+    "rish_adb"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/grok_send_tap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/grok_takeover.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/grok_xml_parse.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/idle_takeover.py": [
+    "idle_detect"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/recursive_impl.py": [
+    "code_from_chat",
+    "task_current",
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/rish_adb.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/rish_run.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/smoke_autoheal.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/task_complete.py": [
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/task_current.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/task_queue.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/toast.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_195027/broccoli/lib/user_task_wait.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194820/broccoli/broccoli_meta_heal.py": [
+    "smoke_autoheal"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194820/broccoli/broccoli_rish_ui.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194820/broccoli/broccoli_secondary_display.py": [
+    "display_lane"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194820/broccoli/broccoli_task_queue.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194820/broccoli/daemon_idle_loop.py": [
+    "idle_takeover"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194820/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194820/broccoli/reboot_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194820/broccoli/smoke_fast.py": [
+    "grok_xml_parse",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194820/broccoli/smoke_lesson_foreground.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194820/broccoli/workflow_front.py": [
+    "task_queue",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_a11y.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_agent.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_agent_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dump_ui_fallback"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_compose.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_mac_ingest.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_research.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_rish_pull.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194820/home/broccoli_user_wait.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194820/home/google_ai_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194646/broccoli/broccoli_meta_heal.py": [
+    "smoke_autoheal"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194646/broccoli/broccoli_rish_ui.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194646/broccoli/broccoli_secondary_display.py": [
+    "display_lane"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194646/broccoli/broccoli_task_queue.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194646/broccoli/daemon_idle_loop.py": [
+    "idle_takeover"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194646/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194646/broccoli/reboot_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194646/broccoli/smoke_fast.py": [
+    "grok_xml_parse",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194646/broccoli/smoke_lesson_foreground.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194646/broccoli/workflow_front.py": [
+    "task_queue",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_a11y.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_agent.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_agent_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dump_ui_fallback"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_compose.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_mac_ingest.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_research.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_rish_pull.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194646/home/broccoli_user_wait.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_194646/home/google_ai_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_191110/broccoli/broccoli_rish_ui.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_191110/broccoli/broccoli_secondary_display.py": [
+    "display_lane"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_191110/broccoli/broccoli_task_queue.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_191110/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_191110/broccoli/workflow_front.py": [
+    "task_queue",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/broccoli_agent.py": [
+    "tempfile"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/broccoli_brain.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/extract_chat_from_xml.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/extract_grok_code.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/find_send_tap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/gap_analyze.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/google_secondary_test.py": [
+    "brocc_toast",
+    "display_lane"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/grok_smoke_validate.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/inventory_md_tasks.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/investigate_system.py": [
+    "__future__"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/parse_grok_ui.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/phrase_grok_dump.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/pull_wire_from_dump.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/reply_to_next_action.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/ui_dump_chat.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/ui_dump_loop.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_191110/broccoli/tools/ui_state.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/broccoli_meta_heal.py": [
+    "smoke_autoheal"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/broccoli_rish_ui.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/broccoli_secondary_display.py": [
+    "display_lane"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/broccoli_task_queue.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/daemon_idle_loop.py": [
+    "idle_takeover"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/quarry_iter.py": [
+    "display_context",
+    "grok_xml_parse",
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/reboot_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/smoke_fast.py": [
+    "grok_xml_parse",
+    "smoke_autoheal",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/smoke_lesson_foreground.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/workflow_front.py": [
+    "task_queue",
+    "toast"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_a11y.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_agent.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_agent_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_bootstrap.py": [
+    "__future__",
+    "dump_ui_fallback"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_compose.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_mac_ingest.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_research.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_rish_pull.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/home/broccoli_user_wait.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/home/google_ai_bootstrap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/meta/brocc_live_wire.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/meta/brocc_loop_emit.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/meta/brocc_state.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/meta/brocc_watch.py": [
+    "fcntl"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/meta/broccoli_storage_sync.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/agent_loop.py": [
+    "task_complete",
+    "task_current",
+    "user_task_wait"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/brocc_toast.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/broccoli_operator.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/chat_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/clip.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/code_from_chat.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/display_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/display_lane.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/dump_ui_fallback.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/grok_chat_foreground.py": [
+    "display_context"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/grok_open_loop.py": [
+    "rish_adb"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/grok_send_tap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/grok_takeover.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/grok_xml_parse.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/idle_takeover.py": [
+    "idle_detect"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/recursive_impl.py": [
+    "code_from_chat",
+    "task_current",
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/rish_adb.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/rish_run.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/smoke_autoheal.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/task_complete.py": [
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/task_current.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/task_queue.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/toast.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/lib/user_task_wait.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/broccoli_agent.py": [
+    "tempfile"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/broccoli_brain.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/extract_chat_from_xml.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/extract_grok_code.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/find_send_tap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/gap_analyze.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/google_secondary_test.py": [
+    "brocc_toast",
+    "display_lane"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/grok_smoke_validate.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/inventory_md_tasks.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/investigate_system.py": [
+    "__future__"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/parse_grok_ui.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/phrase_grok_dump.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/pull_wire_from_dump.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/reply_to_next_action.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/ui_dump_chat.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/ui_dump_loop.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/pull/bundle_20260707_190956/broccoli/tools/ui_state.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/meta/brocc_live_wire.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/meta/brocc_loop_emit.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/meta/brocc_state.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/meta/brocc_watch.py": [
+    "fcntl"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/meta/broccoli_storage_sync.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/lib/agent_loop.py": [
+    "task_complete",
+    "task_current",
+    "user_task_wait"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/lib/brocc_toast.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/lib/broccoli_operator.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/lib/chat_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/lib/clip.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/lib/code_from_chat.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/lib/display_context.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/lib/display_lane.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/lib/dump_ui_fallback.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/lib/grok_chat_foreground.py": [
+    "display_context"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/lib/grok_open_loop.py": [
+    "rish_adb"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/lib/grok_send_tap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/lib/grok_takeover.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/lib/grok_xml_parse.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/lib/idle_takeover.py": [
+    "idle_detect"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/lib/recursive_impl.py": [
+    "code_from_chat",
+    "task_current",
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/lib/rish_adb.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/lib/rish_run.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/lib/smoke_autoheal.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/lib/task_complete.py": [
+    "ui_dump_loop",
+    "ui_state"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/lib/task_current.py": [
+    "task_queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/lib/task_queue.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/lib/toast.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/lib/user_task_wait.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/tools/broccoli_agent.py": [
+    "tempfile"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/tools/broccoli_brain.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/tools/extract_chat_from_xml.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/tools/extract_grok_code.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/tools/find_send_tap.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/tools/gap_analyze.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/tools/google_secondary_test.py": [
+    "brocc_toast",
+    "display_lane"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/tools/grok_smoke_validate.py": [
+    "grok_xml_parse"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/tools/inventory_md_tasks.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/tools/investigate_system.py": [
+    "__future__"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/tools/parse_grok_ui.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/tools/phrase_grok_dump.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/tools/pull_wire_from_dump.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/tools/reply_to_next_action.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/tools/ui_dump_chat.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/tools/ui_dump_loop.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/Agent/Broccoli/mirror/tools/ui_state.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/config/settings.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/services/daemon.py": [
+    "runtime.logger",
+    "runtime.metrics"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/capabilities/__init__.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/capabilities/base.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/capabilities/registry.py": [
+    "base"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/governor/engine.py": [
+    "event_bus",
+    "state"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/governor/path_memory.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/governor/repo_governor.py": [
+    "runtime.eventbus.service"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/governor/test_repo_governor.py": [
+    "runtime.eventbus.service",
+    "runtime.governor.repo_governor"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/models/__init__.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/models/semantic.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/agents/coordinator.py": [
+    "event_bus",
+    "workflow.queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/agents/grok_agent.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/autonomy/executor.py": [
+    "enum",
+    "uuid"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/autonomy/goal_manager.py": [
+    "event_bus",
+    "executor"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/autonomy/intent.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/autonomy/progress.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/autonomy/recovery.py": [
+    "event_bus",
+    "executor",
+    "goal_manager"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/memory/knowledge_graph.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/planner/adaptive.py": [
+    "event_bus",
+    "planner.planner",
+    "workflow.queue"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/planner/planner.py": [
+    "event_bus",
+    "workflow.queue",
+    "workflow.task"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/providers/base.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/providers/grok.py": [
+    "event_bus",
+    "providers.base"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/providers/manager.py": [
+    "event_bus"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/semantic/cache.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/semantic/graph.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/semantic/perception.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/workflow/executor.py": [
+    "drivers.accessibility.driver",
+    "event_bus",
+    "workflow.queue",
+    "workflow.task"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/workflow/queue.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/workflow/task.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/eventbus/__init__.py": [
+    "bus",
+    "event"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/eventbus/event.py": [
+    "uuid"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/eventbus/bus.py": [
+    "event"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/eventbus/test_eventbus.py": [
+    "runtime.eventbus"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/eventbus/service.py": [
+    "runtime.eventbus.bus"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/eventbus/test_service.py": [
+    "runtime.eventbus.service"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/driver.py": [
+    "event_bus",
+    "manager",
+    "observer",
+    "xml_parser"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/semantic.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/__init__.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/backend.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/cache.py": [
+    "__future__"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/consumers.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/diff.py": [
+    "__future__",
+    "events"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/events.py": [
+    "__future__",
+    "enum",
+    "uuid"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/hidden_backend.py": [
+    "backend"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/manager.py": [
+    "backend",
+    "event_bus",
+    "hidden_backend",
+    "public_backend"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/observer.py": [
+    "__future__",
+    "cache",
+    "diff",
+    "events"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/public_backend.py": [
+    "backend"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/window.py": [
+    "semantic"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/runtime/drivers/accessibility/xml_parser.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/plugins/core/base.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/plugins/core/example.py": [
+    "plugins.core.base"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/drivers/accessibility/driver.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/drivers/accessibility/__init__.py": [],
+  "/data/data/com.termux/files/home/broccoli-core/drivers/overlay/virtual_display.py": [
+    "runtime.logger"
+  ],
+  "/data/data/com.termux/files/home/broccoli-core/drivers/shizuku/rish.py": []
+}
