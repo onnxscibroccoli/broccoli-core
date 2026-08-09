@@ -1,0 +1,36 @@
+name: Deploy DO spike
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [c-off-device-loop]
+    paths:
+      - "runtime/off_device/spike/**"
+      - ".github/workflows/deploy-do-spike.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: runtime/off_device/spike
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: runtime/off_device/spike/package.json
+
+      - name: Install
+        run: npm install
+
+      - name: Deploy Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: runtime/off_device/spike
+          command: deploy
