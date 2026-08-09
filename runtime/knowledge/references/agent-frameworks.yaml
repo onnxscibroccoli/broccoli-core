@@ -1,0 +1,37 @@
+# Curated agent / multi-agent framework references for Broccoli Core.
+
+references:
+  - repo: microsoft/agent-framework
+    url: https://github.com/microsoft/agent-framework
+    why: Orchestration and deployment of AI agents and multi-agent workflows.
+    tags: [agent, multi-agent, orchestration]
+
+  - repo: microsoft/autogen
+    url: https://github.com/microsoft/autogen
+    why: Mature multi-agent conversation and tool-use patterns.
+    tags: [agent, multi-agent, tools]
+
+  - repo: agent0ai/agent-zero
+    url: https://github.com/agent0ai/agent-zero
+    why: General-purpose autonomous agent framework; useful autonomy pattern reference.
+    tags: [agent, autonomy]
+
+  - repo: humanlayer/12-factor-agents
+    url: https://github.com/humanlayer/12-factor-agents
+    why: Production principles for LLM-powered software; aligns with governor supervision model.
+    tags: [agent, production, principles]
+
+  - repo: agno-agi/agno
+    url: https://github.com/agno-agi/agno
+    why: Agent platform for build run manage; capability registry patterns.
+    tags: [agent, platform, capabilities]
+
+  - repo: strands-agents/agent-builder
+    url: https://github.com/strands-agents/agent-builder
+    why: Streaming, tool use, and interactive agent construction patterns.
+    tags: [agent, tools, streaming]
+
+  - repo: cloudflare/agents
+    url: https://github.com/cloudflare/agents
+    why: Agent runtime primitives on Cloudflare; pairs with cloudflare/computer for durable workspaces.
+    tags: [agent, cloudflare, edge]

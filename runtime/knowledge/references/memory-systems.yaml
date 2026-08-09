@@ -1,0 +1,22 @@
+# Curated agent memory / knowledge references for Broccoli Core.
+
+references:
+  - repo: rohitg00/agentmemory
+    url: https://github.com/rohitg00/agentmemory
+    why: Persistent memory for AI coding agents; benchmark-informed design.
+    tags: [memory, agent, persistent]
+
+  - repo: IAAR-Shanghai/Awesome-AI-Memory
+    url: https://github.com/IAAR-Shanghai/Awesome-AI-Memory
+    why: Curated survey of LLM and agent memory research and system designs.
+    tags: [memory, survey, knowledge]
+
+  - repo: toeverything/AFFiNE
+    url: https://github.com/toeverything/AFFiNE
+    why: Open knowledge-base patterns for planning, sorting, creating; privacy-first local models.
+    tags: [knowledge, workspace]
+
+  - repo: ArchiveBox/ArchiveBox
+    url: https://github.com/ArchiveBox/ArchiveBox
+    why: Self-hosted archiving patterns for durable external knowledge capture.
+    tags: [archive, knowledge, durable]

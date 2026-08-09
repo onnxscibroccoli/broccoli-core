@@ -1,0 +1,24 @@
+# Durable agent compute / workspace references.
+# cloudflare/computer is the primary progression target for C.
+
+references:
+  - repo: cloudflare/computer
+    url: https://github.com/cloudflare/computer
+    why: Durable virtual filesystem for agents with SQLite-backed Durable Object and pluggable runtimes. Primary candidate for off-device Broccoli knowledge workspace and progression path C.
+    tags: [cloudflare, durable, vfs, agent-computer, strategic]
+    priority: primary
+
+  - repo: cloudflare/agents
+    url: https://github.com/cloudflare/agents
+    why: Companion agent runtime on Cloudflare; integrates with cloudflare computer tools.
+    tags: [cloudflare, agent, edge]
+
+  - repo: acoyfellow/cloudbox
+    url: https://github.com/acoyfellow/cloudbox
+    why: Durable Cloudflare computers for agents; run repos, steer workspaces, return receipts.
+    tags: [cloudflare, agent-computer, sandbox]
+
+  - repo: nektos/act
+    url: https://github.com/nektos/act
+    why: Local GitHub Actions runner; useful for validating CI-driven knowledge updates offline.
+    tags: [ci, github-actions, local]
