@@ -1,0 +1,16 @@
+{
+  "name": "broccoli-do-spike",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "@cloudflare/computer": "latest"
+  },
+  "devDependencies": {
+    "wrangler": "^4",
+    "typescript": "^5"
+  }
+}

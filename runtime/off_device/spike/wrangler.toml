@@ -1,0 +1,12 @@
+name = "broccoli-do-spike"
+main = "src/index.ts"
+compatibility_date = "2026-08-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[durable_objects.bindings]]
+name = "BROCCOLI_WORKSPACE"
+class_name = "BroccoliWorkspace"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["BroccoliWorkspace"]
