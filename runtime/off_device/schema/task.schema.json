@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "broccoli://task/v1",
+  "title": "BroccoliTask",
+  "type": "object",
+  "required": ["id", "goal", "domain", "status", "created_at"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "goal": { "type": "string", "minLength": 1 },
+    "domain": {
+      "type": "string",
+      "enum": [
+        "real_world_asset_protocol",
+        "file_space_reclaim",
+        "paper_trading",
+        "self_telemetry",
+        "accessibility_function",
+        "hybrid_control",
+        "other"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["queued", "running", "needs_user", "done", "failed", "cancelled"]
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path"],
+        "properties": {
+          "path": { "type": "string" },
+          "kind": { "type": "string" },
+          "bytes": { "type": "integer" }
+        }
+      }
+    },
+    "receipt": {
+      "type": "object",
+      "properties": {
+        "summary": { "type": "string" },
+        "github_ref": { "type": "string" },
+        "notified": { "type": "boolean" }
+      }
+    },
+    "notes": { "type": "string" }
+  }
+}
