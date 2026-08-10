@@ -1,3 +1,4 @@
+import { getWorkspace } from "@cloudflare/computer";
 import { BroccoliWorkspace } from "./broccoli_workspace";
 
 export { BroccoliWorkspace };
@@ -10,10 +11,18 @@ function stub(env: Env, id = "default") {
   return env.BROCCOLI_WORKSPACE.get(env.BROCCOLI_WORKSPACE.idFromName(id));
 }
 
+async function withWs<T>(
+  env: Env,
+  fn: (ws: Awaited<ReturnType<typeof getWorkspace>>) => Promise<T>
+): Promise<T> {
+  // getWorkspace returns a disposable client over the DO stub
+  using ws = await getWorkspace(stub(env));
+  return await fn(ws);
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
-    const doStub = stub(env);
 
     try {
       if (request.method === "POST" && url.pathname === "/write") {
@@ -27,8 +36,19 @@ export default {
             { status: 400 }
           );
         }
-        const result = await doStub.writeFile(body.path, body.content);
-        return Response.json(result);
+        const full = body.path.startsWith("/")
+          ? body.path
+          : `/workspace/${body.path}`;
+        await withWs(env, async (ws) => {
+          const parent = full.replace(/\/[^/]+$/, "") || "/workspace";
+          await ws.fs.mkdir(parent, { recursive: true });
+          await ws.fs.writeFile(full, body.content!);
+        });
+        return Response.json({
+          ok: true,
+          path: full,
+          bytes: body.content.length,
+        });
       }
 
       if (request.method === "GET" && url.pathname === "/read") {
@@ -39,14 +59,31 @@ export default {
             { status: 400 }
           );
         }
-        const result = await doStub.readFile(path);
-        return Response.json(result);
+        const full = path.startsWith("/") ? path : `/workspace/${path}`;
+        const content = await withWs(env, (ws) =>
+          ws.fs.readFile(full, "utf8")
+        );
+        return Response.json({ ok: true, path: full, content });
       }
 
       if (request.method === "GET" && url.pathname === "/ls") {
         const path = url.searchParams.get("path") || "/workspace";
-        const result = await doStub.list(path);
-        return Response.json(result);
+        const entries = await withWs(env, async (ws) => {
+          try {
+            await ws.fs.mkdir(path, { recursive: true });
+            return await ws.fs.readdir(path);
+          } catch {
+            return [];
+          }
+        });
+        const names = Array.isArray(entries)
+          ? entries.map((e: unknown) =>
+              typeof e === "string"
+                ? e
+                : (e as { name?: string })?.name ?? String(e)
+            )
+          : entries;
+        return Response.json({ ok: true, path, entries: names });
       }
 
       return Response.json({
