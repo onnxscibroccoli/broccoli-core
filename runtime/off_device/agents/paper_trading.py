@@ -11,7 +11,7 @@ def http(method, path, body=None):
     data = None if body is None else json.dumps(body).encode()
     req = urllib.request.Request(
         SPIKE + path, data=data, method=method,
-        headers={"content-type": "application/json", "accept": "application/json"},
+        headers={"content-type": "application/json", "accept": "application/json", "User-Agent": "BroccoliAgent/1.0"},
     )
     with urllib.request.urlopen(req, timeout=60) as r:
         return json.loads(r.read().decode())
