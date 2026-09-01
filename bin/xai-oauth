@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Termux-safe launcher. Resolves the repo root from this script's location
+# so you do not have to cd anywhere or set PYTHONPATH.
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+export PYTHONPATH="${ROOT}${PYTHONPATH:+:${PYTHONPATH}}"
+exec python -m runtime.providers.xai_oauth "$@"

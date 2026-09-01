@@ -1,14 +1,45 @@
+"""xAI OAuth device-code provider + CLI.
+
+This is a single module on purpose. Do not also ship a
+`runtime/providers/xai_oauth/` package — Python cannot resolve both
+`xai_oauth.py` and `xai_oauth/` in the same directory, which is what
+broke `python -m runtime.providers.xai_oauth login` on Termux.
+
+Usage from the repo root:
+    python -m runtime.providers.xai_oauth login
+    python -m runtime.providers.xai_oauth status
+    python -m runtime.providers.xai_oauth logout
+
+Or from anywhere (Termux-friendly):
+    python runtime/providers/xai_oauth.py login
+    bin/xai-oauth login
+"""
 from __future__ import annotations
 
+import argparse
 import json
 import os
+import sys
 import time
 import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Callable, Dict, Optional
+
+
+def _ensure_repo_on_path() -> None:
+    """Allow `python runtime/providers/xai_oauth.py login` from any cwd."""
+    here = Path(__file__).resolve()
+    # .../broccoli-core/runtime/providers/xai_oauth.py -> repo root
+    root = here.parents[2]
+    root_s = str(root)
+    if root_s not in sys.path:
+        sys.path.insert(0, root_s)
+
+
+_ensure_repo_on_path()
 
 ISSUER = "https://auth.x.ai"
 DISCOVERY_URL = f"{ISSUER}/.well-known/openid-configuration"
@@ -57,7 +88,7 @@ class TokenSet:
             expires_at=float(data.get("expires_at", 0) or 0),
             token_type=data.get("token_type", "Bearer"),
             scope=data.get("scope", ""),
-            raw=data.get("raw", {}),
+            raw=data.get("raw", {}) or {},
         )
 
 
@@ -94,9 +125,11 @@ def _get_json(url: str, timeout: float = 15.0) -> Dict[str, Any]:
 
 
 def discover() -> Dict[str, Any]:
-    if not hasattr(discover, "_cache"):
-        discover._cache = _get_json(DISCOVERY_URL)  # type: ignore[attr-defined]
-    return discover._cache  # type: ignore[no-any-return]
+    cached = getattr(discover, "_cache", None)
+    if cached is None:
+        cached = _get_json(DISCOVERY_URL)
+        setattr(discover, "_cache", cached)
+    return cached
 
 
 def request_device_code() -> Dict[str, Any]:
@@ -131,8 +164,11 @@ def refresh_token(tokens: TokenSet, token_endpoint: str) -> TokenSet:
 
 def _token_from_response(data: Dict[str, Any], fallback_refresh: str = "") -> TokenSet:
     expires_in = int(data.get("expires_in") or 3600)
+    access = data.get("access_token", "")
+    if not access:
+        raise RuntimeError(f"xAI OAuth response missing access_token: {data}")
     return TokenSet(
-        access_token=data.get("access_token", ""),
+        access_token=access,
         refresh_token=data.get("refresh_token") or fallback_refresh,
         expires_at=time.time() + expires_in,
         token_type=data.get("token_type", "Bearer"),
@@ -146,8 +182,9 @@ def load_tokens(path: Path = DEFAULT_TOKEN_PATH) -> Optional[TokenSet]:
         return None
     try:
         data = json.loads(path.read_text())
-        return TokenSet.from_dict(data)
-    except (OSError, json.JSONDecodeError, KeyError):
+        tokens = TokenSet.from_dict(data)
+        return tokens if tokens.access_token else None
+    except (OSError, json.JSONDecodeError, TypeError, ValueError):
         return None
 
 
@@ -167,7 +204,7 @@ def clear_tokens(path: Path = DEFAULT_TOKEN_PATH) -> None:
 
 def device_login(
     path: Path = DEFAULT_TOKEN_PATH,
-    on_code=None,
+    on_code: Optional[Callable[[str, str, int, int], None]] = None,
     timeout: float = 600.0,
 ) -> TokenSet:
     disc = discover()
@@ -179,6 +216,8 @@ def device_login(
     )
     user_code = device.get("user_code", "")
     device_code = device.get("device_code", "")
+    if not device_code:
+        raise RuntimeError(f"xAI OAuth did not return a device_code: {device}")
     interval = max(int(device.get("interval") or 5), 1)
     expires_in = int(device.get("expires_in") or 300)
 
@@ -231,3 +270,63 @@ def get_access_token(path: Path = DEFAULT_TOKEN_PATH) -> Optional[str]:
         return fresh.access_token
     except Exception:
         return None
+
+
+def cmd_login(args: argparse.Namespace) -> int:
+    path = Path(args.path) if args.path else DEFAULT_TOKEN_PATH
+    try:
+        tokens = device_login(path=path)
+    except Exception as exc:
+        print(f"login failed: {exc}", file=sys.stderr)
+        return 1
+    print(f"Logged in. Access token expires at {tokens.expires_at:.0f}.")
+    print(f"Tokens saved to {path} (mode 600).")
+    return 0
+
+
+def cmd_status(args: argparse.Namespace) -> int:
+    path = Path(args.path) if args.path else DEFAULT_TOKEN_PATH
+    tokens = load_tokens(path)
+    if not tokens:
+        print("No tokens found. Run: python -m runtime.providers.xai_oauth login")
+        return 1
+    print(f"access_token: {tokens.access_token[:12]}...")
+    print(f"expires_at:   {tokens.expires_at:.0f} (expired={tokens.expired})")
+    print(f"has_refresh:  {bool(tokens.refresh_token)}")
+    print(f"path:         {path}")
+    return 0
+
+
+def cmd_logout(args: argparse.Namespace) -> int:
+    path = Path(args.path) if args.path else DEFAULT_TOKEN_PATH
+    clear_tokens(path)
+    print(f"Cleared {path}.")
+    return 0
+
+
+def main(argv: Optional[list] = None) -> int:
+    p = argparse.ArgumentParser(
+        prog="xai_oauth",
+        description="xAI device-code OAuth login for Broccoli Core / Grok.",
+    )
+    p.add_argument(
+        "--path",
+        help="token file path (default: ~/.broccoli/xai_oauth_tokens.json)",
+    )
+    sub = p.add_subparsers(dest="cmd", required=True)
+
+    s = sub.add_parser("login", help="device-code login (headless-friendly)")
+    s.set_defaults(func=cmd_login)
+
+    s = sub.add_parser("status", help="show stored token status")
+    s.set_defaults(func=cmd_status)
+
+    s = sub.add_parser("logout", help="wipe stored tokens")
+    s.set_defaults(func=cmd_logout)
+
+    args = p.parse_args(argv)
+    return args.func(args)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
