@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Production launcher. Resolves repo root from this file, not $HOME/broccoli.
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+export BROCC_ROOT="$ROOT"
+export PYTHONPATH="${ROOT}${PYTHONPATH:+:${PYTHONPATH}}"
+exec python -m runtime.prod "$@"

@@ -64,7 +64,7 @@ def build_runtime_stack(
     goal_manager = GoalManager(bus, queue, knowledge_graph)
     recovery = RecoveryManager(bus)
 
-    grok_agent = GrokAgent()
+    grok_agent = GrokAgent(provider=grok, bus=bus)
     coordinator.register_agent("grok", grok_agent)
 
     plugins = PluginLoader()
@@ -109,4 +109,5 @@ def build_runtime_stack(
         "plugins": plugins,
         "plugin_loader_transport": plugin_loader_transport,
         "transport_registry": transport_registry,
+        "grok_agent": grok_agent,
     }
