@@ -15,7 +15,7 @@ class PluginLoader:
     transport registry can report its health.
     """
 
-    def __init__(self, package: str = "runtime.plugins"):
+    def __init__(self, package: str = "runtime.plugins") -> None:
         self.package = package
         self._plugins: List[Any] = []
         self._loaded = False
@@ -48,14 +48,14 @@ class PluginLoader:
         self._loaded = True
         return self._plugins
 
-    def start(self):
+    def start(self) -> "PluginLoader":
         if self._running:
             return self
         self.load()
         self._running = True
         return self
 
-    def stop(self):
+    def stop(self) -> "PluginLoader":
         self._running = False
         return self
 
