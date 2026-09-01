@@ -5,13 +5,26 @@
 # Broccoli command router.
 #
 # Self-contained CLI dispatcher for the currently installed Phase 1
-# modules plus compatibility commands referenced by worker handoffs.
+# modules plus the production Grok path.
 #
 
 set -Eeuo pipefail
 
-ROOT="${BROCC_ROOT:-$HOME/broccoli}"
+_here="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
+if [ -n "${BROCC_ROOT:-}" ] && [ -d "$BROCC_ROOT/runtime" ]; then
+    ROOT="$BROCC_ROOT"
+elif [ -d "$_here/runtime" ]; then
+    ROOT="$_here"
+elif [ -d "$HOME/broccoli-core/runtime" ]; then
+    ROOT="$HOME/broccoli-core"
+elif [ -d "$HOME/broccoli/runtime" ]; then
+    ROOT="$HOME/broccoli"
+else
+    ROOT="${BROCC_ROOT:-$_here}"
+fi
+
+export BROCC_ROOT="$ROOT"
 export PATH="$ROOT/bin:$PATH"
 export PYTHONPATH="$ROOT${PYTHONPATH:+:$PYTHONPATH}"
 
@@ -77,10 +90,6 @@ user_done()
         printf 'WAITING_USER already clear.\n'
     fi
 
-    #
-    # Compatibility marker. This records the operator acknowledgement
-    # without inventing worker state or starting a send cycle.
-    #
     mkdir -p "$ROOT/state"
 
     {
@@ -95,6 +104,10 @@ user_done()
 usage()
 {
     cat <<'HELP'
+brocc login
+brocc status
+brocc ping
+brocc ask <message>
 brocc probe
 brocc harvest [args...]
 brocc read
@@ -105,19 +118,38 @@ brocc log [lines]
 brocc user-done
 brocc help
 
-Commands:
+Production (live Grok via OAuth):
+  login       xAI device-code OAuth
+  status      oauth + Grok provider health
+  ping        live round-trip to Grok
+  ask         send a real prompt to Grok
+
+Phase 1 harvest:
   probe       inspect current Android/UI state
   harvest     pull chat text into data/harvest/*.jsonl
   read        read current thread
   smoke       Phase 1 harvest smoke operation
-  cycle       disabled until harvest is stable
+  cycle       disabled until harvest stable
   report      display reports/latest.txt
   log         display recent Broccoli log information
   user-done   clear WAITING_USER compatibility state
 HELP
 }
 
+prod()
+{
+    exec python -m runtime.prod "$@"
+}
+
 case "$cmd" in
+
+    login|status|ping)
+        prod "$cmd" "$@"
+        ;;
+
+    ask)
+        prod ask "$@"
+        ;;
 
     agent)
         sub="${1:-help}"
