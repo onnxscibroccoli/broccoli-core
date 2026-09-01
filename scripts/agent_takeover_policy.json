@@ -1,0 +1,5 @@
+{
+  "version": "1.0",
+  "max_spend_usd": 100.0,
+  "require_human_approval": true
+}
