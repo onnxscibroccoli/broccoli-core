@@ -44,8 +44,6 @@ def test_onyx_run_loop_completes_with_echo():
     bus = EventBus()
     onyx = OnyxRuntime(bus)
     onyx.register("echo", EchoProvider(bus))
-    # Echo just echoes; the loop treats any non-DONE text as a step and
-    # exhausts max_steps. Assert it returns a structured result, not a crash.
     out = onyx.run_loop("do a thing", max_steps=2)
     assert isinstance(out, dict)
     assert out["goal"] == "do a thing"

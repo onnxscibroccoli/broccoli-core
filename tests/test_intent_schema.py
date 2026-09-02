@@ -1,3 +1,4 @@
+"""Offline tests for the intent-to-schema automation engine."""
 import unittest
 from runtime.intent_schema import (IntentSchemaEngine, LIBRARY, AutomationSchema,
                                  Step, IntentIndex, MarkovBackend, Emulator)

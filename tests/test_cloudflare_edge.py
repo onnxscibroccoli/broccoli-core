@@ -15,7 +15,6 @@ class TestCloudflareEdge(unittest.TestCase):
         self.assertFalse(ok)
 
     def test_d1_rate_limit_string(self):
-        # Ensure the graceful-degradation token exists in source logic.
         from runtime import cloudflare_edge as m
         self.assertIn("d1_rate_limited", open(m.__file__).read())
 

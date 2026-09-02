@@ -3,7 +3,6 @@ import tempfile
 import unittest
 from pathlib import Path
 
-# cryptography may be absent in CI; skip gracefully.
 try:
     from runtime.memory_vector import EncryptedMemory
     HAS_CRYPTO = True
