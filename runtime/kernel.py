@@ -8,7 +8,7 @@ from __future__ import annotations
 from typing import Any, Dict, Optional
 
 from runtime.automation.engine import AutomationEngine
-from runtime.intent_schema import IntentSchemaEngine
+from runtime.intent_schema import IntentSchemaEngine, Step
 from runtime.onnx_runtime import OnnxIntentClassifier
 
 try:
@@ -23,6 +23,25 @@ class Kernel:
         self.intents = IntentSchemaEngine()
         self.classifier = OnnxIntentClassifier()
         self.actions = AutomationEngine()
+        self._wire_executors()
+
+    def _wire_executors(self) -> None:
+        def bind(name: str):
+            def _fn(step: Step) -> bool:
+                ctx = dict(step.params or {})
+                ctx.setdefault("text", (step.params or {}).get("text", ""))
+                return bool(self.actions.run(name, ctx).get("ok"))
+            return _fn
+
+        for action in (
+            "bluetooth.on",
+            "bluetooth.off",
+            "bluetooth.toggle",
+            "notification",
+            "reminder.set",
+            "calendar.open",
+        ):
+            self.intents.register_executor(action, bind(action))
 
     def tick(self, text: str, dry_run: bool = True) -> Dict[str, Any]:
         classified = self.classifier.classify(text)
@@ -41,8 +60,11 @@ class Kernel:
             classified["intent"],
             {"text": text, "dry_run": dry_run},
         )
+        ok = bool(action.get("ok")) if classified["intent"] != "unknown" else True
+        if not dry_run and ran.get("status") == "partial":
+            ok = bool(action.get("ok"))
         out = {
-            "ok": True,
+            "ok": ok,
             "text": text,
             "intent": classified["intent"],
             "schema": schema.key,

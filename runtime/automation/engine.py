@@ -1,19 +1,12 @@
-"""Agentic automation engine (M4) + first live automation: Bluetooth (M5).
-
-Intent -> action -> confirm. The engine takes a classified intent,
-executes a registered action, and returns a confirmation the user can
-verify. Designed for brain-injury accessibility: the user initiates,
-the phone acts, the user gets a clear confirmation.
-"""
+"""Agentic automation engine (M4) + first live automation: Bluetooth (M5)."""
 from __future__ import annotations
 
-import subprocess
 from typing import Any, Callable, Dict, Optional
+
+from runtime.device import bluetooth_set, notify
 
 
 class AutomationEngine:
-    """Registry of intent -> action. Each action returns a result dict."""
-
     def __init__(self) -> None:
         self._actions: Dict[str, Callable[[Dict[str, Any]], Dict[str, Any]]] = {}
         self._register_builtins()
@@ -29,55 +22,53 @@ class AutomationEngine:
         try:
             result = fn(ctx)
             result.setdefault("intent", intent)
-            result.setdefault("ok", True)
+            result.setdefault("ok", False)
             return result
         except Exception as exc:
             return {"ok": False, "intent": intent, "error": str(exc)}
 
     def _register_builtins(self) -> None:
-        self.register("toggle_bluetooth", self._bluetooth)
+        self.register("toggle_bluetooth", self._bluetooth_toggle)
+        self.register("bluetooth.on", self._bluetooth_on)
+        self.register("bluetooth.off", self._bluetooth_off)
+        self.register("bluetooth.toggle", self._bluetooth_toggle)
+        self.register("notification", self._notify)
         self.register("set_reminder", self._reminder_stub)
+        self.register("reminder.set", self._reminder_stub)
         self.register("open_calendar", self._calendar_stub)
+        self.register("calendar.open", self._calendar_stub)
         self.register("search_memory", self._memory_stub)
         self.register("report_status", self._status)
 
-    # ── actions ─────────────────────────────────────────────────
-    def _bluetooth(self, ctx: Dict[str, Any]) -> Dict[str, Any]:
-        """Toggle Bluetooth via Termux cmd. Falls back to a dry-run."""
-        dry = ctx.get("dry_run", False)
-        if dry:
-            return {"action": "bluetooth", "state": "toggled", "dry_run": True}
-        try:
-            # termux-api: cmd bluetooth toggle
-            r = subprocess.run(
-                ["cmd", "bluetooth", "toggle"],
-                capture_output=True, text=True, timeout=10,
-            )
-            return {
-                "action": "bluetooth",
-                "state": "toggled",
-                "returncode": r.returncode,
-                "stdout": (r.stdout or "").strip()[:200],
-            }
-        except FileNotFoundError:
-            # Not on Termux / no termux-api: report what would happen.
-            return {
-                "action": "bluetooth",
-                "state": "toggled",
-                "simulated": True,
-                "note": "termux-api cmd bluetooth toggle not available; simulated",
-            }
-        except Exception as exc:
-            return {"action": "bluetooth", "error": str(exc)}
+    def _bluetooth_on(self, ctx: Dict[str, Any]) -> Dict[str, Any]:
+        if ctx.get("dry_run"):
+            return {"action": "bluetooth", "state": "on", "dry_run": True, "ok": True}
+        return bluetooth_set(want_on=True)
+
+    def _bluetooth_off(self, ctx: Dict[str, Any]) -> Dict[str, Any]:
+        if ctx.get("dry_run"):
+            return {"action": "bluetooth", "state": "off", "dry_run": True, "ok": True}
+        return bluetooth_set(want_on=False)
+
+    def _bluetooth_toggle(self, ctx: Dict[str, Any]) -> Dict[str, Any]:
+        if ctx.get("dry_run"):
+            return {"action": "bluetooth", "state": "toggled", "dry_run": True, "ok": True}
+        return bluetooth_set(toggle=True)
+
+    def _notify(self, ctx: Dict[str, Any]) -> Dict[str, Any]:
+        text = str(ctx.get("text") or ctx.get("content") or "Broccoli.")
+        if ctx.get("dry_run"):
+            return {"action": "notification", "text": text, "dry_run": True, "ok": True}
+        return notify(text)
 
     def _reminder_stub(self, ctx: Dict[str, Any]) -> Dict[str, Any]:
-        return {"action": "reminder", "scheduled": ctx.get("text", ""), "stub": True}
+        return {"action": "reminder", "scheduled": ctx.get("text", ""), "stub": True, "ok": True}
 
     def _calendar_stub(self, ctx: Dict[str, Any]) -> Dict[str, Any]:
-        return {"action": "calendar", "opened": True, "stub": True}
+        return {"action": "calendar", "opened": True, "stub": True, "ok": True}
 
     def _memory_stub(self, ctx: Dict[str, Any]) -> Dict[str, Any]:
-        return {"action": "memory", "query": ctx.get("text", ""), "stub": True}
+        return {"action": "memory", "query": ctx.get("text", ""), "stub": True, "ok": True}
 
     def _status(self, ctx: Dict[str, Any]) -> Dict[str, Any]:
         return {"action": "status", "ok": True, "message": "Broccoli Core online."}
