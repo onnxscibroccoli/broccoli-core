@@ -4,8 +4,8 @@ Layout:
   <root>/index.jsonl   one record per line
   mode 600 when possible
 
-Similarity: cosine. Brute force is intentional — phone-scale corpora
-(tens of thousands of chunks) stay under 10ms in CPython.
+Similarity: cosine. Brute force is intentional. Phone-scale corpora
+stay under 10ms in CPython.
 """
 from __future__ import annotations
 
@@ -15,6 +15,8 @@ import time
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
+
+from runtime.crypto_key import HAS_FERNET, make_fernet
 
 
 def cosine(a: List[float], b: List[float]) -> float:
@@ -69,23 +71,51 @@ class VectorRecord:
         )
 
 
+def _env_encrypt() -> bool:
+    flag = os.environ.get("BROCCOLI_ENCRYPT_VECTORS", "").strip().lower()
+    return flag in ("1", "true", "yes", "on")
+
+
 class VectorStore:
-    def __init__(self, root: Path | str) -> None:
+    def __init__(
+        self,
+        root: Path | str,
+        *,
+        encrypt: Optional[bool] = None,
+        key: Optional[bytes] = None,
+    ) -> None:
         self.root = Path(root)
         self.root.mkdir(parents=True, exist_ok=True)
         self.path = self.root / "index.jsonl"
+        want = _env_encrypt() if encrypt is None else bool(encrypt)
+        self._fernet = make_fernet(key) if want else None
+        self.encrypted = self._fernet is not None
         self._rows: List[VectorRecord] = []
         self._by_id: Dict[str, int] = {}
         self._hashes: set[str] = set()
         self._load()
 
+    def _decode_payload(self, blob: bytes) -> str:
+        if not blob:
+            return ""
+        if self._fernet is not None:
+            try:
+                return self._fernet.decrypt(blob).decode("utf-8")
+            except Exception:
+                pass
+        try:
+            return blob.decode("utf-8")
+        except Exception:
+            return ""
+
     def _load(self) -> None:
         if not self.path.is_file():
             return
         try:
-            raw = self.path.read_text(encoding="utf-8")
+            blob = self.path.read_bytes()
         except OSError:
             return
+        raw = self._decode_payload(blob)
         for line in raw.splitlines():
             line = line.strip()
             if not line:
@@ -124,7 +154,10 @@ class VectorStore:
         payload = "\n".join(json.dumps(r.to_dict(), separators=(",", ":")) for r in self._rows)
         if payload:
             payload += "\n"
-        tmp.write_text(payload, encoding="utf-8")
+        data = payload.encode("utf-8")
+        if self._fernet is not None:
+            data = self._fernet.encrypt(data)
+        tmp.write_bytes(data)
         tmp.replace(self.path)
         try:
             os.chmod(self.path, 0o600)
@@ -176,4 +209,6 @@ class VectorStore:
             "documents": len(self._rows),
             "dim": dim,
             "backend": "jsonl-cosine",
+            "encrypted": self.encrypted,
+            "fernet_available": HAS_FERNET,
         }
