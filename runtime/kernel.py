@@ -5,16 +5,20 @@ Stdlib only. Runs on a phone. Runs in CI. Runs nowhere special.
 """
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from runtime.automation.engine import AutomationEngine
-from runtime.event_bus import EventBus
 from runtime.intent_schema import IntentSchemaEngine
 from runtime.onnx_runtime import OnnxIntentClassifier
 
+try:
+    from runtime.eventbus.bus import EventBus
+except Exception:  # pragma: no cover
+    from runtime.event_bus import EventBus  # type: ignore
+
 
 class Kernel:
-    def __init__(self, bus: EventBus | None = None) -> None:
+    def __init__(self, bus: Optional[EventBus] = None) -> None:
         self.bus = bus or EventBus()
         self.intents = IntentSchemaEngine()
         self.classifier = OnnxIntentClassifier()
@@ -23,15 +27,20 @@ class Kernel:
     def tick(self, text: str, dry_run: bool = True) -> Dict[str, Any]:
         classified = self.classifier.classify(text)
         schema = self.intents.resolve(text)
-        self.bus.emit(
-            "IntentSeen",
-            {"text": text, "classified": classified["intent"], "schema": schema.key},
-        )
+        payload = {
+            "text": text,
+            "classified": classified["intent"],
+            "schema": schema.key,
+        }
+        if hasattr(self.bus, "emit"):
+            self.bus.emit("IntentSeen", payload)
+        elif hasattr(self.bus, "publish"):
+            self.bus.publish("IntentSeen", payload)
         ran = self.intents.run(text, dry_run=dry_run)
-        if dry_run:
-            action = self.actions.run(classified["intent"], {"dry_run": True, "text": text})
-        else:
-            action = self.actions.run(classified["intent"], {"text": text})
+        action = self.actions.run(
+            classified["intent"],
+            {"text": text, "dry_run": dry_run},
+        )
         out = {
             "ok": True,
             "text": text,
@@ -41,5 +50,8 @@ class Kernel:
             "schema_run": ran,
             "action": action,
         }
-        self.bus.emit("IntentDone", out)
+        if hasattr(self.bus, "emit"):
+            self.bus.emit("IntentDone", out)
+        elif hasattr(self.bus, "publish"):
+            self.bus.publish("IntentDone", out)
         return out
