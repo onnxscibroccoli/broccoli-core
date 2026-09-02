@@ -7,8 +7,9 @@ from runtime.device import bluetooth_set, notify
 
 
 class AutomationEngine:
-    def __init__(self) -> None:
+    def __init__(self, recall: Optional[Callable[[str], Any]] = None) -> None:
         self._actions: Dict[str, Callable[[Dict[str, Any]], Dict[str, Any]]] = {}
+        self._recall = recall
         self._register_builtins()
 
     def register(self, intent: str, fn: Callable[[Dict[str, Any]], Dict[str, Any]]) -> None:
@@ -62,13 +63,45 @@ class AutomationEngine:
         return notify(text)
 
     def _reminder_stub(self, ctx: Dict[str, Any]) -> Dict[str, Any]:
-        return {"action": "reminder", "scheduled": ctx.get("text", ""), "stub": True, "ok": True}
+        from runtime.reminders import ReminderStore
+
+        text = str(ctx.get("text") or ctx.get("content") or "")
+        if ctx.get("dry_run"):
+            return {"action": "reminder", "scheduled": text, "dry_run": True, "stub": False, "ok": True}
+        rec = ReminderStore().add(text, kind="reminder")
+        return {
+            "action": "reminder",
+            "scheduled": rec.get("when") or rec.get("text"),
+            "id": rec.get("id"),
+            "stub": False,
+            "ok": True,
+        }
 
     def _calendar_stub(self, ctx: Dict[str, Any]) -> Dict[str, Any]:
-        return {"action": "calendar", "opened": True, "stub": True, "ok": True}
+        from runtime.reminders import ReminderStore
+
+        text = str(ctx.get("text") or ctx.get("content") or "calendar")
+        if ctx.get("dry_run"):
+            return {"action": "calendar", "opened": False, "dry_run": True, "stub": False, "ok": True}
+        rec = ReminderStore().add(text, kind="calendar")
+        return {
+            "action": "calendar",
+            "opened": False,
+            "id": rec.get("id"),
+            "stub": False,
+            "ok": True,
+            "note": "event stored locally; no calendar provider opened",
+        }
 
     def _memory_stub(self, ctx: Dict[str, Any]) -> Dict[str, Any]:
-        return {"action": "memory", "query": ctx.get("text", ""), "stub": True, "ok": True}
+        query = str(ctx.get("query") or ctx.get("text") or "")
+        if self._recall is None:
+            return {"action": "memory", "query": query, "hits": [], "stub": True, "ok": True}
+        try:
+            hits = list(self._recall(query) or [])
+        except Exception as exc:
+            return {"action": "memory", "query": query, "hits": [], "stub": False, "ok": False, "error": str(exc)}
+        return {"action": "memory", "query": query, "hits": hits, "stub": False, "ok": True}
 
     def _status(self, ctx: Dict[str, Any]) -> Dict[str, Any]:
         return {"action": "status", "ok": True, "message": "Broccoli Core online."}

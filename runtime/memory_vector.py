@@ -8,13 +8,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-try:
-    from cryptography.fernet import Fernet  # type: ignore
-
-    _HAS_FERNET = True
-except Exception:
-    Fernet = None  # type: ignore
-    _HAS_FERNET = False
+from runtime.crypto_key import HAS_FERNET as _HAS_FERNET
+from runtime.crypto_key import make_fernet
 
 
 @dataclass
@@ -30,13 +25,7 @@ class EncryptedMemory:
     def __init__(self, path: Path | str, key: Optional[bytes] = None) -> None:
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        self._fernet = None
-        if _HAS_FERNET:
-            if key is None:
-                key = Fernet.generate_key()
-            if isinstance(key, str):
-                key = key.encode()
-            self._fernet = Fernet(key)
+        self._fernet = make_fernet(key)
         self._rows: List[Dict[str, Any]] = self._load()
 
     def _load(self) -> List[Dict[str, Any]]:
