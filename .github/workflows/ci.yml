@@ -15,7 +15,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/*requirements*.txt', 'pyproject.toml', 'setup.cfg') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt', 'pyproject.toml') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
@@ -23,11 +23,12 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
+          cache-dependency-path: requirements.txt
 
-      - name: install pytest
-        run: python -m pip install --upgrade pip pytest
+      - name: install test deps
+        run: python -m pip install --upgrade pip "pytest>=8"
 
-      - name: unit tests (offline, no secrets)
+      - name: unit tests (offline, no secrets, no device)
         env:
           PYTHONPATH: ${{ github.workspace }}
         run: |
@@ -35,4 +36,9 @@ jobs:
             tests/test_grok_cli.py \
             tests/test_grok_cli_headers.py \
             tests/test_provider_manager.py \
-            tests/test_onyx_runtime.py
+            tests/test_onyx_runtime.py \
+            tests/test_onnx_runtime.py \
+            tests/test_encrypted_memory.py \
+            tests/test_ingest_adapters.py \
+            tests/test_vector_index.py \
+            tests/test_automation_engine.py

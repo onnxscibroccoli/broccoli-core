@@ -1,0 +1,5 @@
+# Broccoli Core — baseline runtime deps (stdlib-only).
+# Optional heavy deps live in pyproject.toml optional-dependencies:
+#   pip install -e ".[all]"  -> onnxruntime, numpy, cryptography
+# CI installs only pytest; these are documentation for Termux/device envs.
+# No network calls, no commercial gates, no secrets.
