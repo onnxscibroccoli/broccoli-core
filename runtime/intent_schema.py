@@ -89,6 +89,11 @@ def _seed() -> None:
         key="open_calendar",
         steps=[Step("calendar.open", {})],
     )
+    LIBRARY["search_memory"] = AutomationSchema(
+        intent="search memory",
+        key="search_memory",
+        steps=[Step("search_memory", {})],
+    )
 
 
 _seed()
@@ -197,9 +202,12 @@ class IntentSchemaEngine:
             key = hits[0][0]
             sch = LIBRARY.get(key)
             if sch:
+                steps = list(sch.steps)
+                if key == "search_memory":
+                    steps = [Step("search_memory", {"text": raw, "query": raw})]
                 return AutomationSchema(
                     intent=raw or sch.intent,
-                    steps=list(sch.steps),
+                    steps=steps,
                     confidence=max(0.5, min(1.0, hits[0][1])),
                     key=key,
                 )
@@ -213,6 +221,20 @@ class IntentSchemaEngine:
         if "remind" in low:
             sch = LIBRARY["set_reminder"]
             return AutomationSchema(intent=raw, steps=list(sch.steps), confidence=0.6, key=sch.key)
+        if "memory" in low and any(w in low for w in ("search", "recall", "find", "what")):
+            return AutomationSchema(
+                intent=raw,
+                steps=[Step("search_memory", {"text": raw, "query": raw})],
+                confidence=0.7,
+                key="search_memory",
+            )
+        if low.startswith("what did i") or "recall memory" in low:
+            return AutomationSchema(
+                intent=raw,
+                steps=[Step("search_memory", {"text": raw, "query": raw})],
+                confidence=0.65,
+                key="search_memory",
+            )
         return AutomationSchema(intent=raw, steps=[], confidence=0.0)
 
     def run(self, text: str, dry_run: bool = True) -> Dict[str, Any]:

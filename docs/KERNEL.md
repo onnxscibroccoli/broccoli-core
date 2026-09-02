@@ -15,8 +15,10 @@ text → classify → resolve schema → execute steps → emit events → remem
 | `runtime/onyx.py` | provider loop + failover + NEED_USER / DONE / NEXT |
 | `runtime/memory_vector.py` | Fernet file, mode 600, searchable |
 | `runtime/cloudflare_edge.py` | client stub; disabled without creds; never blocks the phone |
-| `runtime/automation/engine.py` | bluetooth / reminder / calendar / status |
-| `runtime/kernel.py` | one `tick()` that wires the above |
+| `runtime/automation/engine.py` | bluetooth / reminder / calendar / status / search_memory |
+| `runtime/kernel.py` | one `tick()` that wires the above and remembers |
+| `runtime/memory/vectors.py` | JSONL cosine store used by kernel remember |
+| `runtime/ingest/harvest.py` | harvest JSONL → embed pipeline |
 
 ## What is not real
 
@@ -31,3 +33,20 @@ python -c "from runtime.kernel import Kernel; print(Kernel().tick('turn on bluet
 ```
 
 Offline. No token. No Cloudflare.
+
+## Remember
+
+Every `tick()` writes the phrase to:
+
+- encrypted kernel memory (`BROCCOLI_MEMORY_PATH` or `~/.broccoli/kernel_memory.json`)
+- the embedded vector store (`BROCCOLI_VECTOR_ROOT` or `~/.broccoli/vectors`)
+
+`search memory …` resolves the `search_memory` schema and returns hybrid recall hits on the tick payload. Memory failures never fail the tick.
+
+## Harvest → embed
+
+```bash
+python scripts/ingest_harvest.py data/harvest
+```
+
+Reads `data/harvest/*.jsonl` written by `brocc harvest` and upserts chunks into the local store. Duplicates skip on content hash.
