@@ -1,0 +1,14 @@
+{
+  "name": "broccoli-edge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Free Cloudflare Worker: hash embeddings, intent classification, encrypted sync relay for Broccoli Core.",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "kv:create": "wrangler kv:namespace create BROCCOLI_KV && wrangler kv:namespace create BROCCOLI_KV --preview"
+  },
+  "devDependencies": {
+    "wrangler": "^3.80.0"
+  }
+}
