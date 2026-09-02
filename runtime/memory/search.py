@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
+from runtime.embed.factory import get_embedder
 from runtime.embed.local import HashingTrickEmbedder
 from runtime.memory.vectors import VectorStore
 
@@ -24,7 +25,7 @@ def _lexical_bonus(query: str, text: str) -> float:
 class HybridSearch:
     def __init__(self, store: VectorStore, embedder: Optional[HashingTrickEmbedder] = None) -> None:
         self.store = store
-        self.embedder = embedder or HashingTrickEmbedder()
+        self.embedder = embedder or get_embedder()
 
     def recall(
         self,
