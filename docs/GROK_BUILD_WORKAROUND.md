@@ -4,29 +4,32 @@
 `api.x.ai` rejects SuperGrok OAuth tokens with HTTP 402 `personal-team-blocked:spending-limit`.
 The official Grok Build CLI routes through `cli-chat-proxy.grok.com` and consumes the SuperGrok weekly pool.
 
+Confirmed 2026-09-01 on Termux aarch64: `grok 1.0.13` + device-code login returned
+`BROCCOLI CORE ONLINE VIA SUBSCRIPTION`.
+
 ## Install (Termux)
 ```bash
 curl -fsSL https://x.ai/cli/install.sh | bash
 export PATH="$HOME/.grok/bin:$PATH"
 grok --version
-grok login --device-auth   # prints URL + code; approve in any browser
+grok login --device-auth
 grok -p "Reply with exactly: BROCCOLI CORE ONLINE VIA SUBSCRIPTION"
 ```
 
-## Required headers on cli-chat-proxy (for custom clients)
-- `Authorization: Bearer <oauth_access_token>`
-- `X-XAI-Token-Auth: xai-grok-cli`
-- `x-grok-client-identifier: grok-shell`
-- `x-grok-client-version: <current>`
-- `User-Agent: grok-shell/<ver> (android; aarch64)`
+## Broccoli transport order
+1. Official `grok -p` if `~/.grok/bin/grok` and `~/.grok/auth.json` exist.
+2. HTTP OAuth / API key to `XAI_BASE_URL` or `api.x.ai` (last resort; 402s SuperGrok).
 
-## Config override
-```toml
-# ~/.grok/config.toml
-[model.grok-build]
-base_url = "https://cli-chat-proxy.grok.com/v1"
+```bash
+cd "$HOME/broccoli-core"
+git pull origin main
+export PATH="$HOME/.grok/bin:$PATH"
+./bin/broccoli status
+./bin/broccoli ping
+./bin/broccoli ask say hello from broccoli via grok cli
 ```
 
-## Point Broccoli here
-Change `GrokProvider` base URL from `https://api.x.ai/v1` to `https://cli-chat-proxy.grok.com/v1`
-and attach the CLI identity headers. Then inference bills the subscription, not a second ledger.
+Force the old HTTP path only for debugging:
+```bash
+BROCCOLI_FORCE_HTTP=1 ./bin/broccoli ping
+```

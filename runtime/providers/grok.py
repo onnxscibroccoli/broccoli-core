@@ -1,8 +1,9 @@
-"""Real xAI Grok provider with OAuth-first auth.
+"""Real xAI Grok provider. CLI first, then HTTP.
 
-Prefers a SuperGrok OAuth session (runtime.providers.xai_oauth) and only
-falls back to XAI_API_KEY with a loud warning that it's a separate metered
-ledger. Results are published on the EventBus.
+Transport order:
+1. Official Grok Build CLI (`grok -p`) — SuperGrok weekly pool.
+2. HTTP to XAI_BASE_URL / api.x.ai — OAuth or API key. api.x.ai 402s
+   SuperGrok OAuth; keep it as last resort only.
 """
 from __future__ import annotations
 
@@ -16,12 +17,11 @@ from typing import Any, Dict, List, Optional
 
 from runtime.eventbus import EventBus
 from runtime.providers.base import Provider
+from runtime.providers import grok_cli
 from runtime.providers import xai_oauth as xo
 
 
 class GrokProvider(Provider):
-    """Real xAI Grok provider. OAuth session first, API key fallback."""
-
     DEFAULT_BASE_URL = "https://api.x.ai/v1"
     DEFAULT_MODEL = "grok-4.6"
 
@@ -31,8 +31,9 @@ class GrokProvider(Provider):
         api_key: Optional[str] = None,
         base_url: Optional[str] = None,
         model: Optional[str] = None,
-        timeout: float = 60.0,
+        timeout: float = 180.0,
         token_path: Optional[str] = None,
+        prefer_cli: bool = True,
     ) -> None:
         self.bus = bus
         self.api_key = api_key or os.getenv("XAI_API_KEY") or os.getenv("GROK_API_KEY")
@@ -40,17 +41,32 @@ class GrokProvider(Provider):
         self.model = model or os.getenv("GROK_MODEL") or self.DEFAULT_MODEL
         self.timeout = timeout
         self.token_path = Path(token_path) if token_path else xo.DEFAULT_TOKEN_PATH
+        self.prefer_cli = prefer_cli and os.getenv("BROCCOLI_FORCE_HTTP", "") != "1"
         self.initialized = False
         self.session_active = False
         self._auth_mode: Optional[str] = None
+        self._transport: Optional[str] = None
         self._last_error: Optional[str] = None
         self._last_latency_ms: Optional[float] = None
         self._request_count = 0
 
     def initialize(self) -> bool:
+        if self.prefer_cli and grok_cli.cli_ready():
+            self._auth_mode = "grok_cli"
+            self._transport = "grok_cli"
+            self.initialized = True
+            self.session_active = True
+            self._last_error = None
+            self.bus.publish(
+                "ProviderConnected",
+                {"provider": "grok", "auth": "grok_cli", "bin": str(grok_cli.grok_bin())},
+                source="GrokProvider",
+            )
+            return True
         token = xo.get_access_token(self.token_path)
         if token:
             self._auth_mode = "oauth"
+            self._transport = "http"
             self.initialized = True
             self.session_active = True
             self._last_error = None
@@ -58,6 +74,7 @@ class GrokProvider(Provider):
             return True
         if self.api_key:
             self._auth_mode = "api_key"
+            self._transport = "http"
             self.initialized = True
             self.session_active = True
             self._last_error = None
@@ -67,7 +84,10 @@ class GrokProvider(Provider):
                 source="GrokProvider",
             )
             return True
-        self._last_error = "no OAuth session and no XAI_API_KEY — run: python -m runtime.providers.xai_oauth login"
+        self._last_error = (
+            "no grok CLI session, no Broccoli OAuth, no XAI_API_KEY — "
+            "run: grok login --device-auth"
+        )
         self.bus.publish("ProviderError", {"provider": "grok", "error": self._last_error}, source="GrokProvider")
         return False
 
@@ -81,12 +101,17 @@ class GrokProvider(Provider):
             self.initialize()
         if not self.session_active:
             return False
-
-        messages = self._build_messages(message, context)
-        payload = {"model": self.model, "messages": messages, "temperature": 0.2}
         started = time.monotonic()
         try:
-            raw = self._post("/chat/completions", payload)
+            if self._transport == "grok_cli":
+                content = self._send_cli(message, context)
+            else:
+                raw = self._post("/chat/completions", {
+                    "model": self.model,
+                    "messages": self._build_messages(message, context),
+                    "temperature": 0.2,
+                })
+                content = self._extract_content(raw)
             self._last_latency_ms = (time.monotonic() - started) * 1000.0
             self._request_count += 1
             self._last_error = None
@@ -100,14 +125,13 @@ class GrokProvider(Provider):
             )
             return False
 
-        content = self._extract_content(raw)
         result = {
             "provider": "grok",
             "model": self.model,
             "auth": self._auth_mode,
+            "transport": self._transport,
             "request": message,
             "response": content,
-            "raw": raw,
             "latency_ms": self._last_latency_ms,
             "context": context or {},
         }
@@ -131,16 +155,30 @@ class GrokProvider(Provider):
             "provider": "grok",
             "model": self.model,
             "auth": self._auth_mode,
+            "transport": self._transport,
             "session": self.session_active,
             "requests": self._request_count,
             "latency_ms": self._last_latency_ms,
             "last_error": self._last_error,
+            "has_grok_cli": grok_cli.cli_ready(),
+            "grok_bin": str(grok_cli.grok_bin()) if grok_cli.grok_bin() else None,
             "has_oauth": bool(xo.get_access_token(self.token_path)),
             "has_key": bool(self.api_key),
         }
 
     def capabilities(self) -> Dict[str, bool]:
-        return {"chat": True, "vision": True, "tools": True, "streaming": False, "oauth": True}
+        return {"chat": True, "vision": True, "tools": True, "streaming": False, "oauth": True, "grok_cli": True}
+
+    def _send_cli(self, message: str, context: Optional[Dict[str, Any]]) -> str:
+        prompt = message
+        if context:
+            sys_p = context.get("system") or context.get("system_prompt")
+            if sys_p:
+                prompt = f"{sys_p}\n\n{message}"
+        ok, text = grok_cli.ask(prompt, timeout=self.timeout)
+        if not ok:
+            raise RuntimeError(text)
+        return text
 
     def _build_messages(self, message: str, context: Optional[Dict[str, Any]]) -> List[Dict[str, str]]:
         messages: List[Dict[str, str]] = [{

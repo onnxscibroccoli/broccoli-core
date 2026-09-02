@@ -1,8 +1,6 @@
-"""Production surface: OAuth session + real Grok API + EventBus.
+"""Production surface: grok CLI first, then OAuth HTTP + EventBus.
 
-Does not boot the full accessibility / governor stack. Those stay
-supervised transports. This module is the Unix-atomic tool for
-"talk to Grok from Termux now."
+Does not boot the full accessibility / governor stack.
 """
 from __future__ import annotations
 
@@ -12,6 +10,7 @@ import sys
 from typing import Any, Dict, List, Optional
 
 from runtime.eventbus.bus import EventBus
+from runtime.providers import grok_cli
 from runtime.providers import xai_oauth as xo
 from runtime.providers.grok import GrokProvider
 
@@ -26,6 +25,8 @@ def status_payload() -> Dict[str, Any]:
     ready = provider.initialize()
     health = provider.health()
     return {
+        "grok_cli_ready": grok_cli.cli_ready(),
+        "grok_bin": str(grok_cli.grok_bin()) if grok_cli.grok_bin() else None,
         "oauth_path": str(xo.DEFAULT_TOKEN_PATH),
         "oauth_present": bool(tokens),
         "oauth_expired": bool(tokens.expired) if tokens else True,
@@ -45,10 +46,15 @@ def ask(message: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any
         return {
             "ok": False,
             "error": provider._last_error or "provider failed to initialize",
-            "hint": "run: bin/xai-oauth login",
+            "hint": "run: grok login --device-auth",
         }
     ok = provider.send(message, context=context)
-    result: Dict[str, Any] = {"ok": ok, "auth": provider._auth_mode, "health": provider.health()}
+    result: Dict[str, Any] = {
+        "ok": ok,
+        "auth": provider._auth_mode,
+        "transport": provider._transport,
+        "health": provider.health(),
+    }
     if captured:
         result["event"] = captured[-1]
         if isinstance(captured[-1], dict):
@@ -96,11 +102,11 @@ def cmd_login(args: argparse.Namespace) -> int:
 def main(argv: Optional[list] = None) -> int:
     p = argparse.ArgumentParser(
         prog="broccoli",
-        description="Production Broccoli Core CLI (OAuth + live Grok).",
+        description="Production Broccoli Core CLI (grok CLI + live Grok).",
     )
     sub = p.add_subparsers(dest="cmd", required=True)
 
-    s = sub.add_parser("status", help="oauth + provider health")
+    s = sub.add_parser("status", help="cli + oauth + provider health")
     s.set_defaults(func=cmd_status)
 
     s = sub.add_parser("ask", help="send a real prompt to Grok")
@@ -112,7 +118,7 @@ def main(argv: Optional[list] = None) -> int:
     s.add_argument("--json", action="store_true")
     s.set_defaults(func=cmd_ping)
 
-    s = sub.add_parser("login", help="device-code OAuth login")
+    s = sub.add_parser("login", help="device-code OAuth login (Broccoli tokens)")
     s.add_argument("--path", default=None)
     s.set_defaults(func=cmd_login)
 
