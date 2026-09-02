@@ -10,11 +10,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/*requirements*.txt', 'pyproject.toml', 'setup.cfg') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: pip
+
       - name: install pytest
         run: python -m pip install --upgrade pip pytest
+
       - name: unit tests (offline, no secrets)
         env:
           PYTHONPATH: ${{ github.workspace }}
@@ -22,4 +34,5 @@ jobs:
           python -m pytest -q \
             tests/test_grok_cli.py \
             tests/test_provider_manager.py \
-            tests/test_xai_oauth.py
+            tests/test_xai_oauth.py \
+            tests/test_onyx_runtime.py
