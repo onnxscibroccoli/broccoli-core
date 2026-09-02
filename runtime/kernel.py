@@ -1,7 +1,7 @@
 """The atom.
 
 Sense intent → match a schema → act (or dry-run) → confirm → remember.
-Stdlib only. Runs on a phone. Runs in CI. Runs nowhere special.
+One phrase fires one schema. Never classify-and-toggle after a schema on.
 """
 from __future__ import annotations
 
@@ -43,26 +43,23 @@ class Kernel:
         ):
             self.intents.register_executor(action, bind(action))
 
+    def _emit(self, topic: str, payload: Dict[str, Any]) -> None:
+        if hasattr(self.bus, "emit"):
+            self.bus.emit(topic, payload)
+        elif hasattr(self.bus, "publish"):
+            self.bus.publish(topic, payload)
+
     def tick(self, text: str, dry_run: bool = True) -> Dict[str, Any]:
         classified = self.classifier.classify(text)
         schema = self.intents.resolve(text)
-        payload = {
-            "text": text,
-            "classified": classified["intent"],
-            "schema": schema.key,
-        }
-        if hasattr(self.bus, "emit"):
-            self.bus.emit("IntentSeen", payload)
-        elif hasattr(self.bus, "publish"):
-            self.bus.publish("IntentSeen", payload)
-        ran = self.intents.run(text, dry_run=dry_run)
-        action = self.actions.run(
-            classified["intent"],
-            {"text": text, "dry_run": dry_run},
+        self._emit(
+            "IntentSeen",
+            {"text": text, "classified": classified["intent"], "schema": schema.key},
         )
-        ok = bool(action.get("ok")) if classified["intent"] != "unknown" else True
-        if not dry_run and ran.get("status") == "partial":
-            ok = bool(action.get("ok"))
+        # Schema is the only actuator. A second engine.run() on the
+        # classified label turned Bluetooth back off after schema on.
+        ran = self.intents.run(text, dry_run=dry_run)
+        ok = ran.get("status") in ("done", "dry")
         out = {
             "ok": ok,
             "text": text,
@@ -70,10 +67,6 @@ class Kernel:
             "schema": schema.key,
             "confidence": schema.confidence,
             "schema_run": ran,
-            "action": action,
         }
-        if hasattr(self.bus, "emit"):
-            self.bus.emit("IntentDone", out)
-        elif hasattr(self.bus, "publish"):
-            self.bus.publish("IntentDone", out)
+        self._emit("IntentDone", out)
         return out

@@ -3,11 +3,17 @@ from runtime.onnx_runtime import OnnxIntentClassifier, KNOWN_INTENTS
 
 
 def test_fallback_classifies_bluetooth():
-    c = OnnxIntentClassifier()  # no model -> keyword fallback
+    c = OnnxIntentClassifier()
     r = c.classify("turn on my bluetooth")
-    assert r["intent"] == "toggle_bluetooth"
+    assert r["intent"] == "bluetooth.on"
     assert r["source"] == "keyword"
     assert r["score"] == 1.0
+
+
+def test_fallback_classifies_bluetooth_off():
+    c = OnnxIntentClassifier()
+    r = c.classify("turn off bluetooth")
+    assert r["intent"] == "bluetooth.off"
 
 
 def test_fallback_classifies_reminder():
