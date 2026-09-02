@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 from typing import Any, Dict, Iterable, List, Optional
 
+from runtime.embed.factory import get_embedder
 from runtime.embed.local import HashingTrickEmbedder
 from runtime.memory.vectors import VectorRecord, VectorStore
 
@@ -44,7 +45,7 @@ class EmbedPipeline:
         overlap: int = 160,
     ) -> None:
         self.store = store
-        self.embedder = embedder or HashingTrickEmbedder()
+        self.embedder = embedder or get_embedder()
         self.max_chars = max_chars
         self.overlap = overlap
 

@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from typing import Any, Dict, List
 
-from runtime.embed.local import HashingTrickEmbedder
+from runtime.embed.factory import get_embedder
 from runtime.embed.pipeline import EmbedPipeline
 from runtime.memory.search import HybridSearch
 from runtime.memory.vectors import VectorStore
@@ -19,7 +19,7 @@ def default_store_root() -> Path:
 def build_stack(root: Path | None = None) -> Dict[str, Any]:
     store_root = Path(root) if root else default_store_root()
     store = VectorStore(store_root)
-    embedder = HashingTrickEmbedder()
+    embedder = get_embedder()
     return {
         "store": store,
         "embedder": embedder,
