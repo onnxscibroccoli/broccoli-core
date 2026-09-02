@@ -1,0 +1,15 @@
+[project]
+name = "broccoli-core"
+version = "0.2.0"
+description = "Personal data sovereignty runtime: encrypted memory, local ONNX inference, agentic automations."
+requires-python = ">=3.10"
+
+[project.optional-dependencies]
+onnx = ["onnxruntime>=1.17", "numpy>=1.26"]
+memory = ["cryptography>=42"]
+vector = ["numpy>=1.26"]
+all = ["onnxruntime>=1.17", "numpy>=1.26", "cryptography>=42"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
