@@ -1,70 +1,114 @@
+// Broccoli Edge Worker — free-tier schema emulator + vector store.
+// Deploy: cd edge && npx wrangler deploy
+// Secrets (wrangler secret put): CF_API_TOKEN is NOT needed here; this worker
+// is the dumb mailbox. It stores encrypted payloads and runs the emulator.
+// Bindings (wrangler.toml): KV_NS, D1_DB, VECTORIZE, AI.
+
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type,Authorization",
+};
+
+function json(body, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "Content-Type": "application/json", ...CORS },
+  });
+}
+
 export default {
   async fetch(request, env) {
+    if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
     const url = new URL(request.url);
-    const cors = {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type,Authorization",
-    };
-    if (request.method === "OPTIONS") return new Response(null, { headers: cors });
+    const path = url.pathname.replace(/\/+$/, "") || "/";
 
     try {
-      if (url.pathname === "/health" || url.pathname === "/") {
-        return json({ ok: true, service: "broccoli-edge", version: "0.1.0" }, cors);
+      if (path === "/health" && request.method === "GET") {
+        return json({ ok: true, service: "broccoli-edge", ts: Date.now() });
       }
-      if (url.pathname === "/embed" && request.method === "POST") {
+
+      // POST /ingest  { records: [...] }  -> store encrypted-ish JSON in KV
+      if (path === "/ingest" && request.method === "POST") {
         const body = await request.json();
-        const text = String(body.text || "");
-        const vec = hashEmbed(text, 64);
-        return json({ ok: true, dims: vec.length, vector: vec }, cors);
+        const records = Array.isArray(body.records) ? body.records : [body];
+        let stored = 0;
+        for (const rec of records) {
+          const key = `rec:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`;
+          await env.KV_NS.put(key, JSON.stringify(rec), { expirationTtl: 60 * 60 * 24 * 30 });
+          stored++;
+        }
+        return json({ ok: true, stored });
       }
-      if (url.pathname === "/infer" && request.method === "POST") {
-        const body = await request.json();
-        const text = String(body.text || "").toLowerCase();
-        let intent = "unknown";
-        if (/(bluetooth|bt)\b/.test(text)) intent = "toggle_bluetooth";
-        else if (/(remind|reminder|alarm)\b/.test(text)) intent = "set_reminder";
-        else if (/(calendar|schedule|event)\b/.test(text)) intent = "open_calendar";
-        else if (/(search|find|remember)\b/.test(text)) intent = "search_memory";
-        return json({ ok: true, intent, confidence: intent === "unknown" ? 0.1 : 0.8 }, cors);
+
+      // POST /search  { query, k }  -> naive substring search over KV (free tier)
+      if (path === "/search" && request.method === "POST") {
+        const { query = "", k = 5 } = await request.json();
+        const q = String(query).toLowerCase();
+        const list = await env.KV_NS.list({ limit: 1000 });
+        const hits = [];
+        for (const key of list.keys) {
+          const val = await env.KV_NS.get(key.name);
+          if (val && val.toLowerCase().includes(q)) {
+            hits.push(JSON.parse(val));
+            if (hits.length >= k) break;
+          }
+        }
+        return json({ ok: true, hits });
       }
-      if (url.pathname === "/sync" && request.method === "POST") {
-        const body = await request.json();
-        const key = String(body.key || "default");
-        await env.BROCCOLI_KV.put("sync:" + key, JSON.stringify(body.payload || {}), { expirationTtl: 60 * 60 * 24 * 30 });
-        return json({ ok: true, stored: true }, cors);
+
+      // POST /emulator/trial  { schema }  -> dry-run a schema, return pass/fail
+      if (path === "/emulator/trial" && request.method === "POST") {
+        const schema = await request.json();
+        const steps = Array.isArray(schema.steps) ? schema.steps : [];
+        const known = new Set([
+          "bluetooth.on","bluetooth.toggle","wifi.toggle","notification",
+          "calendar.create","shell","app.launch","wait",
+        ]);
+        let ok = true;
+        const results = [];
+        for (const s of steps) {
+          const pass = known.has(s.action);
+          results.push({ action: s.action, ok: pass });
+          if (!pass) ok = false;
+        }
+        // persist the trial outcome
+        const key = `trial:${Date.now()}`;
+        await env.KV_NS.put(key, JSON.stringify({ schema, ok, results, ts: Date.now() }),
+          { expirationTtl: 60 * 60 * 24 * 7 });
+        return json({ ok, results, promoted: ok });
       }
-      if (url.pathname.startsWith("/sync/") && request.method === "GET") {
-        const key = decodeURIComponent(url.pathname.slice("/sync/".length));
-        const val = await env.BROCCOLI_KV.get("sync:" + key, { type: "json" });
-        return json({ ok: true, key, value: val }, cors);
+
+      // POST /ai/embed  { text }  -> Workers AI embedding (BGE), free 10k neurons/day
+      if (path === "/ai/embed" && request.method === "POST") {
+        const { text } = await request.json();
+        const resp = await env.AI.run("@cf/baai/bge-small-en-v1.5", { text: [String(text)] });
+        const vec = resp?.data?.[0] || resp?.result?.data?.[0] || [];
+        return json({ ok: true, dimensions: vec.length, vector: vec });
       }
-      return json({ ok: false, error: "not found", path: url.pathname }, cors, 404);
+
+      // POST /ai/classify  { text }  -> tiny classifier via Workers AI
+      if (path === "/ai/classify" && request.method === "POST") {
+        const { text } = await request.json();
+        const resp = await env.AI.run("@cf/qwen/qwen1.5-0.5b-chat", {
+          messages: [
+            { role: "system", content: "Classify the user intent into one of: toggle_bluetooth, set_reminder, open_calendar, search_memory, report_status, unknown. Reply with ONLY the label." },
+            { role: "user", content: String(text) },
+          ],
+        });
+        const label = (resp?.response || resp?.result?.response || "unknown").trim().toLowerCase();
+        return json({ ok: true, intent: label });
+      }
+
+      // GET /stats
+      if (path === "/stats" && request.method === "GET") {
+        const list = await env.KV_NS.list({ limit: 1000 });
+        return json({ ok: true, kv_keys: list.keys.length });
+      }
+
+      return json({ ok: false, error: "not found", path }, 404);
     } catch (err) {
-      return json({ ok: false, error: String(err) }, cors, 500);
+      return json({ ok: false, error: String(err) }, 500);
     }
   },
 };
-
-function json(obj, headers, status = 200) {
-  return new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...headers } });
-}
-
-// Deterministic 64-dim bag-of-words hash embedding. No model download, no Neurons spent.
-function hashEmbed(text, dims) {
-  const vec = new Array(dims).fill(0);
-  const tokens = String(text || "").toLowerCase().match(/[a-z0-9']+/g) || [];
-  for (const t of tokens) {
-    let h = 2166136261;
-    for (let i = 0; i < t.length; i++) {
-      h ^= t.charCodeAt(i);
-      h = Math.imul(h, 16777619);
-    }
-    const idx = (h >>> 0) % dims;
-    vec[idx] += 1;
-  }
-  let norm = 0;
-  for (const v of vec) norm += v * v;
-  norm = Math.sqrt(norm) || 1;
-  return vec.map((v) => v / norm);
-}

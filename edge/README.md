@@ -1,36 +1,42 @@
-# broccoli-edge — free Cloudflare compute for Broccoli Core
+# Broccoli Edge (Cloudflare Worker)
 
-A tiny Worker on Cloudflare's **permanent free tier**:
+Free-tier remote brain for Broccoli Core. Zero cost, zero data sold.
 
-- 100,000 requests/day
-- 10 ms CPU/request, 128 MB memory
-- 1 GB KV, 100k reads/day, 1k writes/day
-- 10,000 Workers AI Neurons/day (optional, for real embeddings later)
-- 10 GB R2, zero egress (encrypted blob sync later)
+## What it does
 
-## Routes
+- `/ingest` — store encrypted conversation records (KV, 30-day TTL)
+- `/search` — substring search over stored records
+- `/emulator/trial` — dry-run a schema, persist pass/fail
+- `/ai/embed` — BGE embeddings via Workers AI (10k neurons/day free)
+- `/ai/classify` — tiny intent classifier via Qwen 0.5B
+- `/stats` — KV key count
 
-| Route | Purpose |
-|---|---|
-| `GET /health` | Liveness |
-| `POST /embed` | 64-dim deterministic hash embedding (no model, no Neurons) |
-| `POST /infer` | Keyword intent classifier (bluetooth, reminder, calendar, memory) |
-| `POST /sync` | Store encrypted payload in KV (30-day TTL) |
-| `GET /sync/:key` | Retrieve |
-
-## Deploy (~2 minutes, one time)
+## Deploy
 
 ```bash
+cd edge
 npm i -g wrangler
 wrangler login
-npm run kv:create   # paste the two IDs into wrangler.toml
-npm run deploy
+# edit wrangler.toml: set account_id, KV id, D1 id
+wrangler kv:namespace create "KV_NS"
+wrangler d1 create broccoli-meta
+wrangler vectorize create broccoli-vectors --dimensions=384 --metric=cosine
+wrangler deploy
 ```
 
-```bash
-export BROCCOLI_EDGE_URL=https://broccoli-edge.<subdomain>.workers.dev
-```
+## Free tier (2026-09)
 
-## Privacy invariant
+| Service | Free limit |
+|---|---|
+| Workers | 100k req/day, 10ms CPU, 128MB, 50 subreq/req |
+| KV | 100k reads/day, 1k writes/day, 1GB |
+| D1 | 5M reads/day, 100k writes/day (enforced daily since 2026-09-01) |
+| Vectorize | 30M queried dims/mo, 5M stored dims |
+| Workers AI | 10k neurons/day (or 10k tokens/day text+embed) |
+| R2 | 10GB, 1M Class A / 10M Class B /mo, free egress |
 
-Nothing is plaintext-identifiable by default. Payloads must be Fernet-encrypted *before* they hit `/sync`. The Worker is a dumb encrypted mailbox, not a reader.
+## Rule
+
+Remote is an accelerator, never a dependency. If the edge is down or
+rate-limited, Broccoli runs entirely on-device. The user's intent is
+never blocked on a third party's uptime.

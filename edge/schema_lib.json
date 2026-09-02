@@ -1,0 +1,34 @@
+{
+  "version": "1.0",
+  "schemas": [
+    {
+      "intent": "turn on bluetooth",
+      "steps": [
+        {"action": "bluetooth.on", "params": {}, "confirm": "Bluetooth turned on"},
+        {"action": "notification", "params": {"text": "Bluetooth on"}}
+      ],
+      "confidence": 0.95,
+      "source": "library",
+      "tags": ["device", "connectivity"]
+    },
+    {
+      "intent": "turn off bluetooth",
+      "steps": [
+        {"action": "bluetooth.toggle", "params": {"state": "off"}},
+        {"action": "notification", "params": {"text": "Bluetooth off"}}
+      ],
+      "confidence": 0.95,
+      "source": "library",
+      "tags": ["device", "connectivity"]
+    },
+    {
+      "intent": "remind me to {task} at {time}",
+      "steps": [
+        {"action": "calendar.create", "params": {"title": "{task}", "when": "{time}"}, "confirm": "Reminder set: {task}"}
+      ],
+      "confidence": 0.8,
+      "source": "library",
+      "tags": ["calendar", "reminder"]
+    }
+  ]
+}
