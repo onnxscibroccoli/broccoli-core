@@ -7,8 +7,9 @@ from runtime.device import bluetooth_set, notify
 
 
 class AutomationEngine:
-    def __init__(self) -> None:
+    def __init__(self, recall: Optional[Callable[[str], Any]] = None) -> None:
         self._actions: Dict[str, Callable[[Dict[str, Any]], Dict[str, Any]]] = {}
+        self._recall = recall
         self._register_builtins()
 
     def register(self, intent: str, fn: Callable[[Dict[str, Any]], Dict[str, Any]]) -> None:
@@ -68,7 +69,14 @@ class AutomationEngine:
         return {"action": "calendar", "opened": True, "stub": True, "ok": True}
 
     def _memory_stub(self, ctx: Dict[str, Any]) -> Dict[str, Any]:
-        return {"action": "memory", "query": ctx.get("text", ""), "stub": True, "ok": True}
+        query = str(ctx.get("query") or ctx.get("text") or "")
+        if self._recall is None:
+            return {"action": "memory", "query": query, "hits": [], "stub": True, "ok": True}
+        try:
+            hits = list(self._recall(query) or [])
+        except Exception as exc:
+            return {"action": "memory", "query": query, "hits": [], "stub": False, "ok": False, "error": str(exc)}
+        return {"action": "memory", "query": query, "hits": hits, "stub": False, "ok": True}
 
     def _status(self, ctx: Dict[str, Any]) -> Dict[str, Any]:
         return {"action": "status", "ok": True, "message": "Broccoli Core online."}
