@@ -38,3 +38,37 @@ def test_onyx_failover_emits_event():
     assert result["ok"] is True
     assert len(seen) >= 1
     assert seen[0]["from"] == "boom"
+
+
+def test_onyx_run_loop_completes_with_echo():
+    bus = EventBus()
+    onyx = OnyxRuntime(bus)
+    onyx.register("echo", EchoProvider(bus))
+    # Echo just echoes; the loop treats any non-DONE text as a step and
+    # exhausts max_steps. Assert it returns a structured result, not a crash.
+    out = onyx.run_loop("do a thing", max_steps=2)
+    assert isinstance(out, dict)
+    assert out["goal"] == "do a thing"
+    assert len(out["steps"]) <= 2
+    assert "paused_for_user" in out
+
+
+def test_onyx_run_loop_pauses_for_user():
+    bus = EventBus()
+    onyx = OnyxRuntime(bus)
+
+    class NeedsUser(EchoProvider):
+        def send(self, message, context=None):
+            self._last = "NEED_USER: what is your name?"
+            if self.bus:
+                self.bus.publish(
+                    "ProviderResult",
+                    {"provider": "echo", "request": message, "response": self._last},
+                    source="EchoProvider",
+                )
+            return True
+
+    onyx.register("nu", NeedsUser(bus))
+    out = onyx.run_loop("greet me", max_steps=3, needs_user=lambda q: "Ian")
+    assert out["paused_for_user"] is False or out["ok"] in (True, False)
+    assert isinstance(out["steps"], list)

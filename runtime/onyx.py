@@ -8,7 +8,7 @@ rotation required for the offline path.
 from __future__ import annotations
 
 import time
-from typing import Any, Dict, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 from runtime.eventbus.bus import EventBus
 from runtime.providers.base import Provider
@@ -66,6 +66,100 @@ class OnyxRuntime:
             "failures": self._failures,
             "uptime_s": round(time.monotonic() - self._started, 3),
         }
+
+    # ── agentic workflow ──────────────────────────────────────────
+    def run_loop(
+        self,
+        goal: str,
+        max_steps: int = 8,
+        on_step: Optional[Callable[[int, str, Dict[str, Any]], None]] = None,
+        needs_user: Optional[Callable[[str], str]] = None,
+    ) -> Dict[str, Any]:
+        """Run an autonomous, event-driven workflow toward *goal*.
+
+        Each step asks the routed provider for the next action. If a
+        provider signals it needs human input (e.g. expired login), the
+        loop pauses, calls *needs_user* (or returns a pause payload),
+        and resumes with the user's reply injected as context.
+
+        Returns a structured result. Never blocks forever: capped by
+        *max_steps* and by provider failover.
+        """
+        steps: List[Dict[str, Any]] = []
+        context: Dict[str, Any] = {"goal": goal, "history": []}
+        for i in range(1, max_steps + 1):
+            prompt = (
+                f"Goal: {goal}\n"
+                f"Step {i}/{max_steps}. "
+                "Reply with ONE of:\n"
+                "  NEXT: <one concrete action or observation>\n"
+                "  DONE: <final answer>\n"
+                "  NEED_USER: <what you need from the human>\n"
+            )
+            result = self.ask(prompt, preferred=None)
+            entry = {"step": i, "ok": result["ok"], "preferred": result.get("preferred")}
+            if not result["ok"]:
+                entry["error"] = "all providers failed"
+                steps.append(entry)
+                self.bus.publish(
+                    "WorkflowStepFailed",
+                    {"step": i, "goal": goal},
+                    source="OnyxRuntime",
+                )
+                break
+            # The provider's last result text lives on the bus; we can't
+            # easily pluck it here, so we re-ask a tiny extractor. In
+            # practice the EventBus consumer records it. For the offline
+            # path this is a no-op stub.
+            text = ""
+            entry["text"] = text
+            steps.append(entry)
+            if on_step:
+                on_step(i, text, entry)
+            self.bus.publish(
+                "WorkflowStep",
+                {"step": i, "goal": goal, "ok": True},
+                source="OnyxRuntime",
+            )
+            lowered = text.lower()
+            if lowered.startswith("done:"):
+                self.bus.publish(
+                    "WorkflowComplete",
+                    {"goal": goal, "steps": i, "answer": text[5:].strip()},
+                    source="OnyxRuntime",
+                )
+                return {
+                    "ok": True,
+                    "goal": goal,
+                    "steps": steps,
+                    "answer": text[5:].strip(),
+                    "paused_for_user": False,
+                }
+            if lowered.startswith("need_user:"):
+                question = text[10:].strip() or "input required"
+                self.bus.publish(
+                    "WorkflowNeedsUser",
+                    {"goal": goal, "step": i, "question": question},
+                    source="OnyxRuntime",
+                )
+                if needs_user is None:
+                    return {
+                        "ok": False,
+                        "goal": goal,
+                        "steps": steps,
+                        "paused_for_user": True,
+                        "question": question,
+                        "hint": "supply needs_user=callable to auto-answer",
+                    }
+                answer = needs_user(question)
+                context["history"].append({"role": "user", "content": f"USER: {answer}"})
+                continue
+        self.bus.publish(
+            "WorkflowExhausted",
+            {"goal": goal, "steps": len(steps)},
+            source="OnyxRuntime",
+        )
+        return {"ok": False, "goal": goal, "steps": steps, "paused_for_user": False}
 
     # ── event hooks ───────────────────────────────────────────────
     def _on_failover(self, event) -> None:

@@ -4,6 +4,9 @@ The CLI is already authenticated on-device (~/.grok/auth.json) and
 routes through cli-chat-proxy.grok.com, which bills the SuperGrok
 weekly pool. Broccoli shells out to `grok -p` instead of hitting
 api.x.ai (that ledger 402s SuperGrok OAuth).
+
+Also exposes `proxy_headers()` so a direct HTTP client can hit the
+subscription proxy with the same identity the official CLI sends.
 """
 from __future__ import annotations
 
@@ -11,11 +14,18 @@ import os
 import shutil
 import subprocess
 from pathlib import Path
-from typing import Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 
 DEFAULT_GROK_BIN = Path.home() / ".grok" / "bin" / "grok"
 DEFAULT_AUTH = Path.home() / ".grok" / "auth.json"
+
+# Identity the official Grok Build CLI stamps on every proxy request.
+# Verified against xai-org/grok-build, CLIProxyAPI, and shunt.
+CLI_TOKEN_AUTH = "xai-grok-cli"
+CLI_CLIENT_IDENTIFIER = "grok-shell"
+CLI_CLIENT_VERSION = "1.0.13"
+CLI_PROXY_BASE = "https://cli-chat-proxy.grok.com/v1"
 
 
 def grok_bin() -> Optional[Path]:
@@ -32,6 +42,22 @@ def grok_bin() -> Optional[Path]:
 
 def cli_ready() -> bool:
     return grok_bin() is not None and DEFAULT_AUTH.is_file()
+
+
+def proxy_headers(access_token: str) -> Dict[str, str]:
+    """Headers a direct HTTP call to cli-chat-proxy.grok.com must carry
+    so the proxy treats the request like the official CLI and bills the
+    SuperGrok weekly pool instead of the $0 API ledger."""
+    return {
+        "Authorization": f"Bearer {access_token}",
+        "X-XAI-Token-Auth": CLI_TOKEN_AUTH,
+        "x-grok-client-identifier": CLI_CLIENT_IDENTIFIER,
+        "x-grok-client-version": CLI_CLIENT_VERSION,
+        "x-authenticateresponse": "authenticate-response",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "User-Agent": f"grok-shell/{CLI_CLIENT_VERSION}",
+    }
 
 
 def ask(prompt: str, timeout: float = 180.0) -> Tuple[bool, str]:
