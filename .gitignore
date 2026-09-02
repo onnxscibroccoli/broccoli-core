@@ -21,6 +21,11 @@ reports/research/
 .drive_sync/
 runtime/event_bus/processed/*.json
 
+# Local vector indexes (user data; never commit)
+**/.broccoli/vectors/
+data/vectors/*.jsonl
+*.jsonl.tmp
+
 # Python
 __pycache__/
 *.py[cod]
