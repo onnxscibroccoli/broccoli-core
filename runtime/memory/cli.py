@@ -53,6 +53,8 @@ def main(argv: List[str] | None = None) -> int:
     p_recall = sub.add_parser("recall", help="Semantic recall")
     p_recall.add_argument("query")
     p_recall.add_argument("--top-k", type=int, default=5)
+    p_harvest = sub.add_parser("harvest", help="Embed harvest JSONL into the store")
+    p_harvest.add_argument("path")
     sub.add_parser("health")
     args = parser.parse_args(argv)
     root = Path(args.root) if args.root else None
@@ -66,6 +68,10 @@ def main(argv: List[str] | None = None) -> int:
         return 0
     if args.cmd == "recall":
         print(json.dumps(recall(args.query, root=root, top_k=args.top_k), indent=2))
+        return 0
+    if args.cmd == "harvest":
+        from runtime.ingest.harvest import embed_harvest
+        print(json.dumps(embed_harvest(args.path, store_root=root), indent=2))
         return 0
     if args.cmd == "health":
         print(json.dumps(build_stack(root)["store"].health()))

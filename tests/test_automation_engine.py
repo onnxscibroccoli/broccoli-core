@@ -29,3 +29,17 @@ def test_health_lists_intents():
     h = eng.health()
     assert "toggle_bluetooth" in h["registered_intents"]
     assert "set_reminder" in h["registered_intents"]
+
+
+def test_search_memory_without_recall_is_stub():
+    eng = AutomationEngine()
+    r = eng.run("search_memory", {"text": "medication"})
+    assert r["ok"] is True
+    assert r["stub"] is True
+
+
+def test_search_memory_with_recall():
+    eng = AutomationEngine(recall=lambda q: [{"text": q, "score": 1.0}])
+    r = eng.run("search_memory", {"query": "meds"})
+    assert r["stub"] is False
+    assert r["hits"][0]["text"] == "meds"
