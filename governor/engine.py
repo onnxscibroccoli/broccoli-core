@@ -27,8 +27,8 @@ class Governor:
         self.health_score = 100
         self.cycle_count = 0
         self.rish = RishDriver() if SHIZUKU_AVAILABLE else None
-        if self.rish and self.rish.available:
-            self.logger.info("✅ Shizuku/rish ready")
+        if self.rish and getattr(self.rish, "available", False):
+            self.logger.info("Shizuku/rish ready")
 
     def health_check(self):
         return True
@@ -51,10 +51,10 @@ class Governor:
         result = self.executor.execute(task)
         self.queue.complete(task, result)
 
-        self.logger.info(f"Governor cycle {self.cycle_count} completed")
+        self.logger.info("Governor cycle %s completed", self.cycle_count)
 
     def start(self):
-        self.logger.info("🧠 Intelligent Governor started")
+        self.logger.info("Intelligent Governor started")
         while self.running:
             self.run_cycle()
             time.sleep(3)
@@ -62,18 +62,3 @@ class Governor:
     def stop(self):
         self.running = False
         self.logger.info("Governor stopped")
-from drivers.overlay.virtual_display import VirtualSecondaryDisplay
-
-    def __init__(self):
-        ...  # previous init
-        self.overlay = VirtualSecondaryDisplay()
-
-    def run_cycle(self):
-        self.cycle_count += 1
-        snapshot = self.accessibility.snapshot()
-
-        if self.overlay.is_idle():
-            self.overlay.show_prompt("Codevelopment active - awaiting task or command...")
-
-        decision = self.decision.decide(snapshot, None)
-        # ... rest of cycle
