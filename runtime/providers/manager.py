@@ -8,6 +8,7 @@ from typing import Any, Dict, Iterable, List, Optional
 
 from runtime.account_pool import AccountPool
 from runtime.eventbus import EventBus
+from runtime.policy.execution_guard import ExecutionGuard
 from runtime.providers.base import Provider
 
 
@@ -16,9 +17,11 @@ class ProviderManager:
         self,
         bus: EventBus,
         account_pool: Optional[AccountPool] = None,
+        execution_guard: Optional[ExecutionGuard] = None,
     ) -> None:
         self.bus = bus
         self.account_pool = account_pool
+        self.execution_guard = execution_guard
         self.providers: Dict[str, Provider] = {}
         self.order: List[str] = []
         self.account_providers: Dict[str, Provider] = {}
@@ -56,7 +59,17 @@ class ProviderManager:
             source="ProviderManager",
         )
 
-    def send(self, message: str, preferred_provider: Optional[str] = None) -> bool:
+    def send(self, message: str, preferred_provider: Optional[str] = None, *, initial_fill: bool = False, verb: str = "SEND") -> bool:
+        # Authorization MUST precede provider preference, account
+        # selection, initialization, failover, and provider execution.
+        # Keep this outside provider try/except so GONE cannot become
+        # ordinary provider failover.
+        if self.execution_guard is not None:
+            self.execution_guard.authorize(
+                initial_fill=initial_fill,
+                verb=verb,
+            )
+
         if self.account_pool is not None and self.account_providers:
             return self._send_with_account_pool(
                 message,
