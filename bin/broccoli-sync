@@ -1,22 +1,5 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # broccoli-sync — long-lived OnDevice Git bridge
-#
-# What this does:
-#   Polls origin/<branch>, fast-forward updates broccoli-core,
-#   runs a repo-versioned post-sync hook, applies allowlisted
-#   instruction files from ops/ondevice-inbox/.
-#
-# What this does NOT do:
-#   virtual-display login, credential harvest, eval of remote
-#   strings, curl|bash, force-push overwrite of dirty work.
-#
-# Usage:
-#   chmod +x bin/broccoli-sync
-#   ./bin/broccoli-sync once
-#   ./bin/broccoli-sync loop
-#   ./bin/broccoli-sync status
-#   ./bin/broccoli-sync stop
-
 set -u
 
 ROOT="${BROCC_ROOT:-$HOME/broccoli-core}"
@@ -76,23 +59,35 @@ require_repo() {
   fi
 }
 
+# Content-only dirty. Ignore chmod on bin/, consumed inbox, untracked.
 git_dirty() {
-  [ -n "$(git status --porcelain --untracked-files=no 2>/dev/null)" ]
+  local f
+  local names
+  names="$(git diff --name-only HEAD -- . \
+    ':!ops/ondevice-inbox' \
+    ':!ops/ondevice-done' \
+    2>/dev/null || true)"
+  [ -z "$names" ] && return 1
+  while IFS= read -r f; do
+    [ -z "$f" ] && continue
+    if git diff HEAD -- "$f" | grep -qE '^[+-][^+-]'; then
+      return 0
+    fi
+  done <<EOF
+$names
+EOF
+  return 1
 }
 
 write_last() {
-  local local_sha remote_sha status
-  local_sha="$1"
-  remote_sha="$2"
-  status="$3"
   cat > "$LAST" <<JSON
 {
   "ts": "$(date -Iseconds 2>/dev/null || date)",
   "root": "$ROOT",
   "branch": "$BRANCH",
-  "local": "$local_sha",
-  "remote": "$remote_sha",
-  "status": "$status",
+  "local": "$1",
+  "remote": "$2",
+  "status": "$3",
   "pid": $$
 }
 JSON
@@ -100,8 +95,7 @@ JSON
 
 fetch_with_retry() {
   local attempt=1
-  local err
-  local rc
+  local err rc
   while [ "$attempt" -le "$FETCH_TRIES" ]; do
     err="$(git fetch --prune "$REMOTE_NAME" "$BRANCH" 2>&1)"
     rc=$?
@@ -136,7 +130,6 @@ apply_inbox() {
   local inbox="$ROOT/$INBOX_REL"
   local done="$ROOT/$DONE_REL"
   mkdir -p "$inbox" "$done" 2>/dev/null || true
-
   local f action rc
   shopt -s nullglob
   for f in "$inbox"/*.json; do
@@ -155,9 +148,7 @@ PY
     log "inbox $(basename "$f") action=$action"
     rc=0
     case "$action" in
-      chmod_bins)
-        chmod +x "$ROOT"/bin/* 2>/dev/null || rc=$?
-        ;;
+      chmod_bins) chmod +x "$ROOT"/bin/* 2>/dev/null || rc=$? ;;
       brocc)
         cmd="$(python3 - "$f" <<'PY'
 import json, sys
@@ -170,13 +161,9 @@ else:
     print(" ".join(args[:4]))
 PY
 )"
-        if [ -z "$cmd" ]; then
-          log "inbox reject brocc args"
-          rc=2
-        else
-          "$ROOT/bin/brocc" $cmd >>"$LOG" 2>&1 || rc=$?
-        fi
-        ;;
+        if [ -z "$cmd" ]; then log "inbox reject brocc args"; rc=2
+        else "$ROOT/bin/brocc" $cmd >>"$LOG" 2>&1 || rc=$?
+        fi ;;
       python_module)
         mod="$(python3 - "$f" <<'PY'
 import json, sys, re
@@ -186,24 +173,12 @@ if re.fullmatch(r"[a-zA-Z_][a-zA-Z0-9_\.]*", m):
     print(m)
 PY
 )"
-        if [ -z "$mod" ]; then
-          log "inbox reject module"
-          rc=2
-        else
-          PYTHONPATH="$ROOT${PYTHONPATH:+:$PYTHONPATH}" python3 -m "$mod" >>"$LOG" 2>&1 || rc=$?
-        fi
-        ;;
-      health)
-        git rev-parse --short HEAD >>"$LOG" 2>&1 || rc=$?
-        ;;
-      INVALID|MISSING|"")
-        log "inbox skip invalid json"
-        rc=2
-        ;;
-      *)
-        log "inbox reject unknown action=$action"
-        rc=2
-        ;;
+        if [ -z "$mod" ]; then log "inbox reject module"; rc=2
+        else PYTHONPATH="$ROOT${PYTHONPATH:+:$PYTHONPATH}" python3 -m "$mod" >>"$LOG" 2>&1 || rc=$?
+        fi ;;
+      health) git rev-parse --short HEAD >>"$LOG" 2>&1 || rc=$? ;;
+      INVALID|MISSING|"") log "inbox skip invalid json"; rc=2 ;;
+      *) log "inbox reject unknown action=$action"; rc=2 ;;
     esac
     mv "$f" "$done/$(date +%Y%m%dT%H%M%S)_$(basename "$f")" 2>/dev/null || rm -f "$f"
     log "inbox done rc=$rc"
@@ -214,36 +189,30 @@ PY
 sync_once() {
   require_repo
   local local_sha remote_sha
-
   if ! fetch_with_retry; then
     log "fetch failed after $FETCH_TRIES tries"
     write_last "$(git rev-parse HEAD 2>/dev/null || echo none)" "unknown" "fetch_failed"
     return 1
   fi
-
   local_sha="$(git rev-parse HEAD)"
   remote_sha="$(git rev-parse "$REMOTE_NAME/$BRANCH" 2>/dev/null || echo missing)"
-
   if [ "$remote_sha" = "missing" ]; then
     log "no $REMOTE_NAME/$BRANCH"
     write_last "$local_sha" "$remote_sha" "no_remote_branch"
     return 1
   fi
-
   if [ "$local_sha" = "$remote_sha" ]; then
     log "up to date $(git rev-parse --short HEAD)"
     write_last "$local_sha" "$remote_sha" "up_to_date"
     apply_inbox
     return 0
   fi
-
   if git_dirty; then
-    log "DIRTY worktree; refusing pull. Commit or stash OnDevice first."
+    log "DIRTY worktree (content); refusing pull."
     log "$(git status --short | head -40)"
     write_last "$local_sha" "$remote_sha" "dirty_skipped"
     return 2
   fi
-
   log "fast-forward $local_sha -> $remote_sha"
   if git merge --ff-only "$REMOTE_NAME/$BRANCH" >>"$LOG" 2>&1; then
     log "updated to $(git rev-parse --short HEAD)"
@@ -253,7 +222,6 @@ sync_once() {
     apply_inbox
     return 0
   fi
-
   log "ff-only merge failed"
   write_last "$local_sha" "$remote_sha" "merge_failed"
   return 1
@@ -305,8 +273,5 @@ case "${1:-loop}" in
   loop)   cmd_loop ;;
   status) cmd_status ;;
   stop)   cmd_stop ;;
-  *)
-    echo "usage: broccoli-sync once|loop|status|stop"
-    exit 2
-    ;;
+  *) echo "usage: broccoli-sync once|loop|status|stop"; exit 2 ;;
 esac

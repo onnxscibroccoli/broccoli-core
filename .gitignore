@@ -11,6 +11,7 @@ id_dsa.pub
 
 # Runtime state
 tools/sync_state.json
+ops/ondevice-done/
 # Generated notification cache
 meta/notif_mine/
 # Generated research
