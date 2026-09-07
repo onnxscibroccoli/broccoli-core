@@ -27,9 +27,12 @@ LAST="$STATE/sync.last.json"
 REMOTE_NAME="${BROCCOLI_REMOTE:-origin}"
 BRANCH="${BROCCOLI_BRANCH:-}"
 INTERVAL="${BROCCOLI_SYNC_INTERVAL:-45}"
+FETCH_TRIES="${BROCCOLI_FETCH_TRIES:-3}"
 HOOK_REL="ondevice/hooks/post-sync.sh"
 INBOX_REL="ops/ondevice-inbox"
 DONE_REL="ops/ondevice-done"
+
+export GIT_TERMINAL_PROMPT=0
 
 mkdir -p "$STATE" "$ROOT/logs" 2>/dev/null || true
 
@@ -95,6 +98,25 @@ write_last() {
 JSON
 }
 
+fetch_with_retry() {
+  local attempt=1
+  local err
+  local rc
+  while [ "$attempt" -le "$FETCH_TRIES" ]; do
+    err="$(git fetch --prune "$REMOTE_NAME" "$BRANCH" 2>&1)"
+    rc=$?
+    if [ "$rc" -eq 0 ]; then
+      [ -n "$err" ] && log "fetch ok: $(echo "$err" | tr '\n' ' ' | head -c 240)"
+      return 0
+    fi
+    log "fetch attempt $attempt/$FETCH_TRIES rc=$rc"
+    [ -n "$err" ] && log "fetch err: $(echo "$err" | tr '\n' ' ' | head -c 400)"
+    attempt=$((attempt + 1))
+    sleep $((attempt * 2))
+  done
+  return 1
+}
+
 run_hook() {
   local hook="$ROOT/$HOOK_REL"
   if [ -f "$hook" ]; then
@@ -110,7 +132,6 @@ run_hook() {
   fi
 }
 
-# Allowlisted instruction actions only. No shell strings.
 apply_inbox() {
   local inbox="$ROOT/$INBOX_REL"
   local done="$ROOT/$DONE_REL"
@@ -194,8 +215,8 @@ sync_once() {
   require_repo
   local local_sha remote_sha
 
-  if ! git fetch --quiet "$REMOTE_NAME" "$BRANCH" 2>>"$LOG"; then
-    log "fetch failed"
+  if ! fetch_with_retry; then
+    log "fetch failed after $FETCH_TRIES tries"
     write_last "$(git rev-parse HEAD 2>/dev/null || echo none)" "unknown" "fetch_failed"
     return 1
   fi
@@ -210,7 +231,7 @@ sync_once() {
   fi
 
   if [ "$local_sha" = "$remote_sha" ]; then
-    log "up to date $local_sha"
+    log "up to date $(git rev-parse --short HEAD)"
     write_last "$local_sha" "$remote_sha" "up_to_date"
     apply_inbox
     return 0
