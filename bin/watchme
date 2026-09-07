@@ -1,0 +1,6 @@
+#!/data/data/com.termux/files/usr/bin/bash
+set -u
+_here="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ROOT="${BROCC_ROOT:-$_here}"
+export PYTHONPATH="$ROOT${PYTHONPATH:+:$PYTHONPATH}"
+exec python3 -m runtime.watchme "$@"

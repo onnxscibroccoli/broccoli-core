@@ -1,8 +1,4 @@
 #!/usr/bin/env python3
-"""Stdlib test runner so Termux does not need pytest.
-
-    python tests/run_ondevice_tests.py
-"""
 from __future__ import annotations
 
 import sys
@@ -17,7 +13,8 @@ if str(ROOT) not in sys.path:
 def main() -> int:
     loader = unittest.TestLoader()
     suite = unittest.TestSuite()
-    suite.addTests(loader.loadTestsFromName("tests.test_watchme"))
+    for name in ("tests.test_watchme", "tests.test_watch_bridge"):
+        suite.addTests(loader.loadTestsFromName(name))
     try:
         import tests.test_virtual_surface as tvs
 

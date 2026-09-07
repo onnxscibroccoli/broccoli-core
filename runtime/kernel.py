@@ -43,6 +43,13 @@ class Kernel:
         ):
             self.intents.register_executor(action, bind(action))
 
+        def _watchme(step: Step) -> bool:
+            from runtime.watchme.replay import replay_from_text
+            text = str((step.params or {}).get("text") or "")
+            return bool(replay_from_text(text).get("ok"))
+
+        self.intents.register_executor("watchme.replay", _watchme)
+
     def _emit(self, topic: str, payload: Dict[str, Any]) -> None:
         if hasattr(self.bus, "emit"):
             self.bus.emit(topic, payload)
@@ -50,14 +57,38 @@ class Kernel:
             self.bus.publish(topic, payload)
 
     def tick(self, text: str, dry_run: bool = True) -> Dict[str, Any]:
+        low = (text or "").strip().lower()
+        if low.startswith(("run task", "run watch", "watchme run", "replay task")):
+            from runtime.watchme.replay import replay_from_text
+            if dry_run:
+                out = {
+                    "ok": True,
+                    "text": text,
+                    "intent": "watchme.replay",
+                    "schema": "run_saved_task",
+                    "confidence": 0.9,
+                    "schema_run": {"status": "dry", "schema": "run_saved_task", "steps": ["watchme.replay"]},
+                }
+                self._emit("IntentDone", out)
+                return out
+            ran = replay_from_text(text)
+            out = {
+                "ok": bool(ran.get("ok")),
+                "text": text,
+                "intent": "watchme.replay",
+                "schema": "run_saved_task",
+                "confidence": 0.9,
+                "schema_run": ran,
+            }
+            self._emit("IntentDone", out)
+            return out
+
         classified = self.classifier.classify(text)
         schema = self.intents.resolve(text)
         self._emit(
             "IntentSeen",
             {"text": text, "classified": classified["intent"], "schema": schema.key},
         )
-        # Schema is the only actuator. A second engine.run() on the
-        # classified label turned Bluetooth back off after schema on.
         ran = self.intents.run(text, dry_run=dry_run)
         ok = ran.get("status") in ("done", "dry")
         out = {
