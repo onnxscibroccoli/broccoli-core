@@ -1,0 +1,291 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# broccoli-sync — long-lived OnDevice Git bridge
+#
+# What this does:
+#   Polls origin/<branch>, fast-forward updates broccoli-core,
+#   runs a repo-versioned post-sync hook, applies allowlisted
+#   instruction files from ops/ondevice-inbox/.
+#
+# What this does NOT do:
+#   virtual-display login, credential harvest, eval of remote
+#   strings, curl|bash, force-push overwrite of dirty work.
+#
+# Usage:
+#   chmod +x bin/broccoli-sync
+#   ./bin/broccoli-sync once
+#   ./bin/broccoli-sync loop
+#   ./bin/broccoli-sync status
+#   ./bin/broccoli-sync stop
+
+set -u
+
+ROOT="${BROCC_ROOT:-$HOME/broccoli-core}"
+STATE="$HOME/.broccoli"
+LOG="$STATE/sync.log"
+PIDFILE="$STATE/sync.pid"
+LAST="$STATE/sync.last.json"
+REMOTE_NAME="${BROCCOLI_REMOTE:-origin}"
+BRANCH="${BROCCOLI_BRANCH:-}"
+INTERVAL="${BROCCOLI_SYNC_INTERVAL:-45}"
+HOOK_REL="ondevice/hooks/post-sync.sh"
+INBOX_REL="ops/ondevice-inbox"
+DONE_REL="ops/ondevice-done"
+
+mkdir -p "$STATE" "$ROOT/logs" 2>/dev/null || true
+
+log() {
+  printf '%s %s\n' "$(date -Iseconds 2>/dev/null || date)" "$*" | tee -a "$LOG"
+}
+
+die() { log "ERROR: $*"; exit 1; }
+
+acquire_lock() {
+  if [ -f "$PIDFILE" ]; then
+    old="$(cat "$PIDFILE" 2>/dev/null || true)"
+    if [ -n "${old:-}" ] && kill -0 "$old" 2>/dev/null; then
+      if [ "${1:-}" = "status" ]; then
+        return 0
+      fi
+      log "already running pid=$old"
+      exit 0
+    fi
+  fi
+  echo $$ > "$PIDFILE"
+}
+
+release_lock() {
+  rm -f "$PIDFILE"
+}
+
+wake_on() {
+  command -v termux-wake-lock >/dev/null 2>&1 && termux-wake-lock >/dev/null 2>&1 || true
+}
+
+wake_off() {
+  command -v termux-wake-unlock >/dev/null 2>&1 && termux-wake-unlock >/dev/null 2>&1 || true
+}
+
+require_repo() {
+  [ -d "$ROOT/.git" ] || die "not a git repo: $ROOT"
+  cd "$ROOT" || die "cannot cd $ROOT"
+  if [ -z "$BRANCH" ]; then
+    BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo main)"
+  fi
+}
+
+git_dirty() {
+  [ -n "$(git status --porcelain --untracked-files=no 2>/dev/null)" ]
+}
+
+write_last() {
+  local local_sha remote_sha status
+  local_sha="$1"
+  remote_sha="$2"
+  status="$3"
+  cat > "$LAST" <<JSON
+{
+  "ts": "$(date -Iseconds 2>/dev/null || date)",
+  "root": "$ROOT",
+  "branch": "$BRANCH",
+  "local": "$local_sha",
+  "remote": "$remote_sha",
+  "status": "$status",
+  "pid": $$
+}
+JSON
+}
+
+run_hook() {
+  local hook="$ROOT/$HOOK_REL"
+  if [ -f "$hook" ]; then
+    chmod +x "$hook" 2>/dev/null || true
+    log "post-sync hook start"
+    if bash "$hook" >>"$LOG" 2>&1; then
+      log "post-sync hook ok"
+    else
+      log "post-sync hook failed rc=$?"
+    fi
+  else
+    log "no hook at $HOOK_REL (ok)"
+  fi
+}
+
+# Allowlisted instruction actions only. No shell strings.
+apply_inbox() {
+  local inbox="$ROOT/$INBOX_REL"
+  local done="$ROOT/$DONE_REL"
+  mkdir -p "$inbox" "$done" 2>/dev/null || true
+
+  local f action rc
+  shopt -s nullglob
+  for f in "$inbox"/*.json; do
+    [ -f "$f" ] || continue
+    action="$(python3 - "$f" <<'PY'
+import json, sys
+p = sys.argv[1]
+try:
+    d = json.load(open(p))
+except Exception:
+    print("INVALID")
+    sys.exit(0)
+print(str(d.get("action") or "MISSING"))
+PY
+)"
+    log "inbox $(basename "$f") action=$action"
+    rc=0
+    case "$action" in
+      chmod_bins)
+        chmod +x "$ROOT"/bin/* 2>/dev/null || rc=$?
+        ;;
+      brocc)
+        cmd="$(python3 - "$f" <<'PY'
+import json, sys
+d = json.load(open(sys.argv[1]))
+args = d.get("args") or []
+allow = {"status","ping","probe","smoke","help","user-done","log","report"}
+if not args or args[0] not in allow:
+    print("")
+else:
+    print(" ".join(args[:4]))
+PY
+)"
+        if [ -z "$cmd" ]; then
+          log "inbox reject brocc args"
+          rc=2
+        else
+          "$ROOT/bin/brocc" $cmd >>"$LOG" 2>&1 || rc=$?
+        fi
+        ;;
+      python_module)
+        mod="$(python3 - "$f" <<'PY'
+import json, sys, re
+d = json.load(open(sys.argv[1]))
+m = str(d.get("module") or "")
+if re.fullmatch(r"[a-zA-Z_][a-zA-Z0-9_\.]*", m):
+    print(m)
+PY
+)"
+        if [ -z "$mod" ]; then
+          log "inbox reject module"
+          rc=2
+        else
+          PYTHONPATH="$ROOT${PYTHONPATH:+:$PYTHONPATH}" python3 -m "$mod" >>"$LOG" 2>&1 || rc=$?
+        fi
+        ;;
+      health)
+        git rev-parse --short HEAD >>"$LOG" 2>&1 || rc=$?
+        ;;
+      INVALID|MISSING|"")
+        log "inbox skip invalid json"
+        rc=2
+        ;;
+      *)
+        log "inbox reject unknown action=$action"
+        rc=2
+        ;;
+    esac
+    mv "$f" "$done/$(date +%Y%m%dT%H%M%S)_$(basename "$f")" 2>/dev/null || rm -f "$f"
+    log "inbox done rc=$rc"
+  done
+  shopt -u nullglob
+}
+
+sync_once() {
+  require_repo
+  local local_sha remote_sha
+
+  if ! git fetch --quiet "$REMOTE_NAME" "$BRANCH" 2>>"$LOG"; then
+    log "fetch failed"
+    write_last "$(git rev-parse HEAD 2>/dev/null || echo none)" "unknown" "fetch_failed"
+    return 1
+  fi
+
+  local_sha="$(git rev-parse HEAD)"
+  remote_sha="$(git rev-parse "$REMOTE_NAME/$BRANCH" 2>/dev/null || echo missing)"
+
+  if [ "$remote_sha" = "missing" ]; then
+    log "no $REMOTE_NAME/$BRANCH"
+    write_last "$local_sha" "$remote_sha" "no_remote_branch"
+    return 1
+  fi
+
+  if [ "$local_sha" = "$remote_sha" ]; then
+    log "up to date $local_sha"
+    write_last "$local_sha" "$remote_sha" "up_to_date"
+    apply_inbox
+    return 0
+  fi
+
+  if git_dirty; then
+    log "DIRTY worktree; refusing pull. Commit or stash OnDevice first."
+    log "$(git status --short | head -40)"
+    write_last "$local_sha" "$remote_sha" "dirty_skipped"
+    return 2
+  fi
+
+  log "fast-forward $local_sha -> $remote_sha"
+  if git merge --ff-only "$REMOTE_NAME/$BRANCH" >>"$LOG" 2>&1; then
+    log "updated to $(git rev-parse --short HEAD)"
+    chmod +x "$ROOT"/bin/* 2>/dev/null || true
+    write_last "$(git rev-parse HEAD)" "$remote_sha" "updated"
+    run_hook
+    apply_inbox
+    return 0
+  fi
+
+  log "ff-only merge failed"
+  write_last "$local_sha" "$remote_sha" "merge_failed"
+  return 1
+}
+
+cmd_status() {
+  require_repo
+  echo "ROOT=$ROOT"
+  echo "BRANCH=${BRANCH:-?}"
+  echo "LOG=$LOG"
+  if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
+    echo "DAEMON=running pid=$(cat "$PIDFILE")"
+  else
+    echo "DAEMON=stopped"
+  fi
+  git status --short --branch | head -20
+  [ -f "$LAST" ] && cat "$LAST"
+}
+
+cmd_stop() {
+  if [ -f "$PIDFILE" ]; then
+    pid="$(cat "$PIDFILE")"
+    if kill -0 "$pid" 2>/dev/null; then
+      kill "$pid" 2>/dev/null || true
+      sleep 1
+      kill -9 "$pid" 2>/dev/null || true
+      log "stopped pid=$pid"
+    fi
+    rm -f "$PIDFILE"
+  else
+    echo "not running"
+  fi
+  wake_off
+}
+
+cmd_loop() {
+  acquire_lock
+  trap 'release_lock; wake_off; exit 0' INT TERM
+  wake_on
+  log "loop start interval=${INTERVAL}s root=$ROOT"
+  while true; do
+    sync_once || true
+    sleep "$INTERVAL" || true
+  done
+}
+
+case "${1:-loop}" in
+  once)   acquire_lock; trap release_lock EXIT; sync_once ;;
+  loop)   cmd_loop ;;
+  status) cmd_status ;;
+  stop)   cmd_stop ;;
+  *)
+    echo "usage: broccoli-sync once|loop|status|stop"
+    exit 2
+    ;;
+esac

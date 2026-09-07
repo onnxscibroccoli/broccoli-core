@@ -1,0 +1,4 @@
+{
+  "action": "health",
+  "note": "first heartbeat after sync daemon lands"
+}
