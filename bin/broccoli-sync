@@ -59,10 +59,8 @@ require_repo() {
   fi
 }
 
-# Content-only dirty. Ignore chmod on bin/, consumed inbox, untracked.
 git_dirty() {
-  local f
-  local names
+  local f names
   names="$(git diff --name-only HEAD -- . \
     ':!ops/ondevice-inbox' \
     ':!ops/ondevice-done' \
@@ -94,8 +92,7 @@ JSON
 }
 
 fetch_with_retry() {
-  local attempt=1
-  local err rc
+  local attempt=1 err rc
   while [ "$attempt" -le "$FETCH_TRIES" ]; do
     err="$(git fetch --prune "$REMOTE_NAME" "$BRANCH" 2>&1)"
     rc=$?
@@ -109,6 +106,27 @@ fetch_with_retry() {
     sleep $((attempt * 2))
   done
   return 1
+}
+
+overlay_origin() {
+  log "overlay $REMOTE_NAME/$BRANCH (dirty-safe; HEAD unchanged)"
+  git checkout "$REMOTE_NAME/$BRANCH" -- \
+    runtime/surface \
+    runtime/watchme \
+    runtime/kernel.py \
+    tests/run_ondevice_tests.py \
+    tests/test_watchme.py \
+    tests/test_watch_bridge.py \
+    tests/test_virtual_surface.py \
+    bin/watchme \
+    bin/take-origin \
+    bin/broccoli-sync \
+    docs/WATCHME.md \
+    docs/GOALS_STATUS.md \
+    2>>"$LOG" || return 1
+  chmod +x "$ROOT"/bin/watchme "$ROOT"/bin/take-origin "$ROOT"/bin/broccoli-sync 2>/dev/null || true
+  log "overlay ok files from $(git rev-parse --short "$REMOTE_NAME/$BRANCH")"
+  return 0
 }
 
 run_hook() {
@@ -127,10 +145,8 @@ run_hook() {
 }
 
 apply_inbox() {
-  local inbox="$ROOT/$INBOX_REL"
-  local done="$ROOT/$DONE_REL"
+  local inbox="$ROOT/$INBOX_REL" done="$ROOT/$DONE_REL" f action rc
   mkdir -p "$inbox" "$done" 2>/dev/null || true
-  local f action rc
   shopt -s nullglob
   for f in "$inbox"/*.json; do
     [ -f "$f" ] || continue
@@ -208,7 +224,12 @@ sync_once() {
     return 0
   fi
   if git_dirty; then
-    log "DIRTY worktree (content); refusing pull."
+    log "DIRTY worktree; overlaying Core paths instead of merge"
+    if overlay_origin; then
+      write_last "$local_sha" "$remote_sha" "overlay"
+      apply_inbox
+      return 0
+    fi
     log "$(git status --short | head -40)"
     write_last "$local_sha" "$remote_sha" "dirty_skipped"
     return 2
@@ -222,7 +243,12 @@ sync_once() {
     apply_inbox
     return 0
   fi
-  log "ff-only merge failed"
+  log "ff-only merge failed; trying overlay"
+  if overlay_origin; then
+    write_last "$local_sha" "$remote_sha" "overlay"
+    apply_inbox
+    return 0
+  fi
   write_last "$local_sha" "$remote_sha" "merge_failed"
   return 1
 }
@@ -269,9 +295,10 @@ cmd_loop() {
 }
 
 case "${1:-loop}" in
-  once)   acquire_lock; trap release_lock EXIT; sync_once ;;
-  loop)   cmd_loop ;;
-  status) cmd_status ;;
-  stop)   cmd_stop ;;
-  *) echo "usage: broccoli-sync once|loop|status|stop"; exit 2 ;;
+  once)    acquire_lock; trap release_lock EXIT; sync_once ;;
+  loop)    cmd_loop ;;
+  overlay) require_repo; fetch_with_retry; overlay_origin ;;
+  status)  cmd_status ;;
+  stop)    cmd_stop ;;
+  *) echo "usage: broccoli-sync once|loop|overlay|status|stop"; exit 2 ;;
 esac

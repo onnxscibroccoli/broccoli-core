@@ -1,0 +1,28 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# Overlay runtime/test/bin files from origin/main without resetting the tree.
+# Does not touch tools/, untracked OnDevice files, or force-reset HEAD.
+set -u
+ROOT="${BROCC_ROOT:-$HOME/broccoli-core}"
+cd "$ROOT" || exit 1
+export GIT_TERMINAL_PROMPT=0
+git fetch origin main || exit 1
+git checkout origin/main -- \
+  runtime/surface \
+  runtime/watchme \
+  runtime/kernel.py \
+  tests/run_ondevice_tests.py \
+  tests/test_watchme.py \
+  tests/test_watch_bridge.py \
+  tests/test_virtual_surface.py \
+  bin/watchme \
+  bin/take-origin \
+  bin/broccoli-sync \
+  docs/WATCHME.md \
+  docs/GOALS_STATUS.md \
+  ops/AGENT_BRIDGE.md \
+  prompts/chatgpt_bridge.md
+chmod +x bin/watchme bin/take-origin bin/broccoli-sync bin/brocc 2>/dev/null || true
+printf 'overlay done. HEAD=%s origin/main=%s\n' \
+  "$(git rev-parse --short HEAD)" \
+  "$(git rev-parse --short origin/main)"
+ls -l tests/run_ondevice_tests.py bin/watchme runtime/watchme/cli.py
