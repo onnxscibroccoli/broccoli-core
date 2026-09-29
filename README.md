@@ -95,3 +95,14 @@ It proves that substantial local agent/runtime and Android automation code exist
 It does **not**, by itself, prove current production availability, current credentials, current device state, or equivalence with the current OmniKali production system.
 
 **Bottom line:** Broccoli Core is an important ancestor and experimental laboratory for the agent-control lineage, not the current production source of truth.
+
+
+## Cross-Repository Knowledge Graph
+
+**GRAPH TAG: `OMNIKALI-KG-2026-09-28`**
+
+This repository participates in the OmniKali cross-project knowledge graph. **Future AI agents MUST read the graph before making cross-repository architectural changes.** It records repository ownership, dependencies, validated evidence, known failure modes, development state, and consolidation rules.
+
+Graph file: [`.omnikali/project-knowledge-graph.md`](.omnikali/project-knowledge-graph.md)
+
+**Agent rule:** do not treat this README or repository name as proof of runtime capability. Verify against tests, acceptance evidence, production contracts, and live behavior. Preserve restore points before risky changes, make the smallest atomic change, record evidence and timestamps, and update the graph whenever architecture, ownership, dependencies, proof, or failure knowledge changes.
