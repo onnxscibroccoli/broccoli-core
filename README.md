@@ -1,69 +1,61 @@
 # Broccoli Core
 
-**Status:** Active legacy/experimental automation platform  
+**Status:** Active historical automation platform / experimental runtime  
 **Repository:** `onnxscibroccoli/broccoli-core`  
 **Documentation snapshot:** 2026-09-28 23:12 EDT
 
-Broccoli Core is the oldest and largest automation-oriented repository in this account. It is an Android/Termux-centric agent runtime built around a local execution loop, provider integrations, persistent agent state, UI observation, and a large body of operational experiments.
+Broccoli Core is the oldest and largest automation-oriented repository in this account. It contains an Android/Termux-centric agent runtime, local execution kernel, provider integrations, UI observation, agent state, operational tooling, and a very large historical mirror.
 
-It is important to understand what this repository is **and what it is not**. It is not the current canonical OmniKali production implementation. It is historical engineering material and a functioning collection of automation/runtime components that influenced later work. Its tree contains thousands of files, including source code, agent state, run records, mirrors, diagnostics, documentation, and generated artifacts. Treating the entire tree as clean application source would be a mistake.
+It is **not the current canonical OmniKali production implementation**. New production work should inspect Helix, Grasshopper, and grasshopper-kubernetes first.
 
-## What it does
+## Core execution model
 
-The core execution model is expressed around a local kernel:
+The documented kernel is:
 
 ```
 text → classify → resolve schema → execute → confirm
 ```
 
-The current README identifies `runtime/kernel.py` as the important starting point and exposes a direct smoke invocation:
+The repository exposes a direct local smoke invocation:
 
 ```bash
 python -c "from runtime.kernel import Kernel; print(Kernel().tick('turn on bluetooth'))"
 ```
 
-The repository also contains a provider-agnostic problem-solving pipeline and managed transports. The documented managed set includes accessibility, clipboard, Grok provider integration, workflow execution, adaptive planning, knowledge graph, agent coordination, and plugin loading.
+The project also contains a provider-agnostic problem-solving pipeline and managed transports for accessibility, clipboard, provider, workflow, planning, knowledge, agent coordination, and plugins.
 
-The repository also contains a real xAI/Grok integration intended for Termux. The checked-in documentation says the runtime uses an OAuth session when available and can fall back to an API key. Credentials themselves must never be committed.
+## Contents
 
-## Major contents
+The tree contains roughly **5,900 entries**, far more than a normal application repository. Major areas include:
 
-The repository currently contains roughly **5,900 tracked tree entries**. The important architectural areas include:
-
-- `runtime/` — local kernel and runtime primitives.
-- `Agent/Broccoli/` — agent implementation, bootstrap logic, worker scripts, context/state, tools, and historical automation.
-- `Agent/Broccoli/mirror/` — a substantial mirror of prior Android/Termux automation work.
+- `runtime/` — kernel/runtime implementation.
+- `Agent/Broccoli/` — agent source, bootstrap, worker, context, tools, and state.
+- `Agent/Broccoli/mirror/` — large historical Android/Termux automation mirror.
 - `Agent/Broccoli/docs/` — tool and workflow documentation.
-- `Agent/Broccoli/meta/` — operational state, queues, iteration metadata, health information, and historical machine state.
-- `.github/workflows/` — CI and edge-related workflows.
-- Numerous `runs/`, `done/`, `fail/`, logs, snapshots, XML/UI captures, and generated state files.
+- `Agent/Broccoli/meta/` — queues, iteration state, health, task metadata, and operational records.
+- `.github/workflows/` — CI and edge workflows.
+- historical `runs/`, `done/`, `fail/`, UI captures, diagnostics, and generated artifacts.
 
-There are also files that look like credential or secret-storage material in historical paths. **Do not publish or expose those files.** The README is documentation, not a claim that every historical artifact is safe to redistribute.
+Some historical paths look like credential or secret-storage locations. **Never expose or publish credential material.** The repository's existence does not mean every historical artifact is safe to redistribute.
 
-## Development-cycle assessment
+## Development cycle
 
-This repository is best classified as **mature prototype / historical platform**, not as a clean greenfield project.
+**MATURE PROTOTYPE / HISTORICAL PLATFORM.**
 
-Evidence:
+Recent September 2026 commits still touch the runtime and observer/Watch-Me-Do work, but the repository has accumulated years-equivalent experimental state and mirrors. It should therefore be maintained by provenance, not by indiscriminate cleanup.
 
-- Recent commits in September 2026 continue to improve the runtime and Watch-Me-Do/observer work.
-- The tree contains both current runtime code and extensive historical state.
-- CI workflows exist.
-- The project has evolved through many experiments rather than a single clean release line.
-- Later OmniKali work has separated the production control-plane concerns into newer repositories such as Helix, Grasshopper, and grasshopper-kubernetes.
-
-The correct engineering approach is therefore **extract, preserve, and selectively reuse**, not blindly refactor this repository into the current production system.
+The engineering rule is: **extract, preserve, and selectively reuse.**
 
 ## How to use it
 
-For local kernel experimentation:
+For kernel experiments:
 
 ```bash
 cd broccoli-core
 python -c "from runtime.kernel import Kernel; print(Kernel().tick('turn on bluetooth'))"
 ```
 
-For the documented Termux/Grok path:
+For the documented Termux provider path:
 
 ```bash
 cd "$HOME/broccoli-core"
@@ -73,35 +65,33 @@ chmod +x bin/broccoli bin/xai-oauth bin/brocc
 ./bin/broccoli ask "Say hello from Broccoli Core."
 ```
 
-OAuth setup, when intentionally using the historical Grok integration, is documented as:
+OAuth setup is documented through `bin/xai-oauth`. Keep credentials outside Git.
 
-```bash
-./bin/xai-oauth login
-./bin/xai-oauth status
-```
+## AI model instructions
 
-Do not place credentials in Git. Do not assume a successful provider call proves that Android accessibility, the kernel, or the historical agent loop is production ready.
+Before changing anything, classify the target:
 
-## How an AI model should work with this repository
+1. current runtime;
+2. provider integration;
+3. Android/Termux automation;
+4. historical state;
+5. mirror/provenance;
+6. documentation.
 
-**First:** read the root README and the relevant files under `Agent/Broccoli/docs/`.
+Never treat generated state, queues, logs, captures, or mirror artifacts as authoritative source without verifying their provenance.
 
-**Second:** determine whether the task concerns the local kernel, provider integration, Android/Termux automation, historical state, or one of the mirrored subsystems.
+For OmniKali work, compare the requested change against Helix/Grasshopper before copying architecture forward.
 
-**Third:** never treat `meta/`, run logs, queues, captures, or mirror artifacts as authoritative application code unless the task explicitly concerns those artifacts.
+A model should use the sequence:
 
-**Fourth:** preserve human control over the Android device. A model should not assume that a historical automation script is safe to execute merely because it exists.
+**inspect → establish provenance → reproduce a narrow behavior → test → document → modify.**
 
-**Fifth:** before deleting or rewriting large areas, identify the current production successor. For OmniKali work, inspect Helix/Grasshopper/grasshopper-kubernetes first.
+Do not recursively “clean” this repository. Doing so can destroy the evidence that explains later architecture.
 
-Good model behavior is: inspect → identify provenance → reproduce a narrow behavior → test → document → change. Bad behavior is: recursively “clean up” the repository and accidentally erase the evidence that explains why later systems exist.
+## What this repository proves
 
-## What is proven vs. unproven
+It proves that substantial local agent/runtime and Android automation code exists, that a local kernel model is implemented, that provider integration exists, and that extensive operational tooling was developed.
 
-**Proven by repository evidence:** substantial runtime code exists; local kernel execution is documented; provider integration exists; CI/workflow automation exists; extensive Android/Termux automation history exists.
+It does **not**, by itself, prove current production availability, current credentials, current device state, or equivalence with the current OmniKali production system.
 
-**Not proven by this repository alone:** current production availability, current credentials, current Android device state, current xAI account access, or equivalence with the newer OmniKali production control plane.
-
-## Relationship to the broader system
-
-Broccoli Core is best regarded as **ancestral infrastructure and an experimental automation laboratory**. Its ideas and artifacts inform later agent-control work, but it should not be used as the authoritative definition of the current OmniKali architecture.
+**Bottom line:** Broccoli Core is an important ancestor and experimental laboratory for the agent-control lineage, not the current production source of truth.
