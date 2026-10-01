@@ -8,6 +8,8 @@ Cross-repository coordination:
 - `omn-kali-knowledge-graph-master/docs/OMNIKALI_SYSTEM_KNOWLEDGE_GRAPH_2026-10-01.md`
 - `omn-kali-knowledge-graph-master/docs/OMNIKALI_SYSTEM_GOALS_GRAPH_2026-10-01.md`
 - `omn-kali-knowledge-graph-master/docs/BROCCOLI_ITERATION_KNOWLEDGE_2026-10-01.md`
+- `omn-kali-knowledge-graph-master/docs/BROCCOLI_TRANSPORT_CONTRACT_2026-10-01.md`
+- `omn-kali-knowledge-graph-master/goals/broccoli-transport-preflight-2026-10-01.yml`
 
 Local philosophy:
 - `docs/BROCCOLI_KNOWLEDGE_GRAPH.md` (`BROCCOLI-KG-2026-10-01`)
@@ -23,6 +25,15 @@ Use:
 
 `RISH_PRESERVE_ENV=0 bash ./lib/rish_run.sh ...`
 
+The wrapper on `main` fails closed:
+- exit `2` if no command
+- exit `79` if `rish` is missing
+- exit `78` if `android-runtime.env` is missing and live `BOOTCLASSPATH` is absent
+- `env -i` plus an allowlisted Android runtime snapshot when the env file exists
+- `RISH_PRESERVE_ENV` defaults to `0`
+
+Capture `~/.config/broccoli/rish/android-runtime.env` only from interactive Termux that already has `BOOTCLASSPATH`. Never capture it from a reduced RDC caller. A readable bad snapshot is preferred over the live shell.
+
 The 2026-10-01 investigation proved the previous RDC failure was a reduced caller environment/non-TTY boundary problem, not evidence that the known-good Rish layer was broken.
 
 Therefore:
@@ -32,6 +43,7 @@ Therefore:
 - do not create another Rish wrapper
 - do not modify the known-good Rish layer before reproducing the caller boundary
 - prove success with a target artifact and identity, not exit code alone
+- answer the transport preflight before repeating a Rish experiment
 
 ## Philosophy to preserve
 
@@ -51,4 +63,4 @@ Do not adopt:
 - historical checkout modernization without an explicit goal
 - chat-mediated paste-back as the Android execution loop
 
-For detailed transport failures, supervisor recovery, MCP, UI automation, APK inspection, Morphe gates, and historical degradation lessons, read the canonical Broccoli iteration record above.
+For detailed transport failures, supervisor recovery, MCP, UI automation, APK inspection, Morphe gates, and historical degradation lessons, read the canonical Broccoli iteration record and the transport contract above.
