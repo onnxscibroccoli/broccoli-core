@@ -1,0 +1,120 @@
+#!/data/data/com.termux/files/usr/bin/bash
+set -euo pipefail
+
+ROOT="${BROCCOLI_ROOT:-$HOME/broccoli-core}"
+PREFIX_DIR="${PREFIX:-/data/data/com.termux/files/usr}"
+PYTHON="${BROCCOLI_PYTHON:-$PREFIX_DIR/bin/python3}"
+LOG_DIR="$ROOT/reports"
+PID_FILE="$ROOT/runtime-supervisor.pid"
+CHILD_PID_FILE="$ROOT/runtime-supervisor.child.pid"
+LOCK_DIR="$ROOT/runtime-supervisor.lock"
+LOG_FILE="$LOG_DIR/runtime-supervisor.log"
+INTERVAL="${BROCCOLI_SUPERVISOR_INTERVAL:-5}"
+
+mkdir -p "$LOG_DIR"
+cd "$ROOT"
+
+log() { printf '%s %s\n' "$(date -Iseconds)" "$*" >> "$LOG_FILE"; }
+valid_pid() {
+  case "${1:-}" in ''|*[!0-9]*) return 1;; esac
+  kill -0 "$1" 2>/dev/null
+}
+cmdline() { ps -p "$1" -o args= 2>/dev/null || true; }
+process_matches() {
+  local cmd
+  cmd="$(cmdline "$1")"
+  case "$cmd" in *"$ROOT/runtime/main.py"*) return 0;; *) return 1;; esac
+}
+supervisor_matches() {
+  local cmd
+  cmd="$(cmdline "$1")"
+  case "$cmd" in *"$HOME/bin/broccoli-supervisor"*) return 0;; *) return 1;; esac
+}
+find_child() {
+  ps -A -o pid=,args= 2>/dev/null |
+    awk -v root="$ROOT/runtime/main.py" 'index($0, root) && index($0,"python") {print $1; exit}'
+}
+
+acquire_lock() {
+  if mkdir "$LOCK_DIR" 2>/dev/null; then
+    printf '%s\n' "${BASHPID}" > "$LOCK_DIR/pid"
+    return 0
+  fi
+
+  local old=""
+  old="$(cat "$LOCK_DIR/pid" 2>/dev/null || true)"
+  if valid_pid "$old" && supervisor_matches "$old"; then
+    log "ALREADY_RUNNING supervisor_pid=$old"
+    return 1
+  fi
+
+  rm -rf "$LOCK_DIR"
+  mkdir "$LOCK_DIR"
+  printf '%s\n' "${BASHPID}" > "$LOCK_DIR/pid"
+}
+
+child_alive() {
+  local pid=""
+  if [ -r "$CHILD_PID_FILE" ]; then
+    pid="$(cat "$CHILD_PID_FILE" 2>/dev/null || true)"
+  fi
+
+  if valid_pid "$pid" && process_matches "$pid"; then
+    return 0
+  fi
+
+  pid="$(find_child || true)"
+  if valid_pid "$pid" && process_matches "$pid"; then
+    printf '%s\n' "$pid" > "$CHILD_PID_FILE"
+    printf '%s\n' "$pid" > "$ROOT/runtime.pid"
+    return 0
+  fi
+
+  return 1
+}
+
+start_child() {
+  if child_alive; then
+    return 0
+  fi
+
+  nohup env PYTHONPATH="$ROOT${PYTHONPATH:+:$PYTHONPATH}" \
+    "$PYTHON" -u "$ROOT/runtime/main.py" \
+    >> "$ROOT/runtime.log" 2>&1 &
+
+  local pid=$!
+  printf '%s\n' "$pid" > "$CHILD_PID_FILE"
+  printf '%s\n' "$pid" > "$ROOT/runtime.pid"
+  log "START child pid=$pid"
+}
+
+acquire_lock || exit 0
+printf '%s\n' "${BASHPID}" > "$PID_FILE"
+
+cleanup() {
+  if command -v termux-wake-unlock >/dev/null 2>&1; then
+    termux-wake-unlock >/dev/null 2>&1 || true
+  fi
+  if [ -f "$PID_FILE" ] &&
+     [ "$(cat "$PID_FILE" 2>/dev/null || true)" = "${BASHPID}" ]; then
+    rm -f "$PID_FILE"
+  fi
+  if [ -f "$LOCK_DIR/pid" ] &&
+     [ "$(cat "$LOCK_DIR/pid" 2>/dev/null || true)" = "${BASHPID}" ]; then
+    rm -rf "$LOCK_DIR"
+  fi
+  log "STOP supervisor"
+}
+
+trap cleanup INT TERM EXIT
+log "START supervisor pid=$$ root=$ROOT"
+
+if command -v termux-wake-lock >/dev/null 2>&1; then
+  termux-wake-lock >/dev/null 2>&1 || true
+  log "WAKE_LOCK requested"
+fi
+
+while :; do
+  start_child
+  sleep "$INTERVAL"
+done
