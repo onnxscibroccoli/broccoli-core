@@ -11,6 +11,8 @@ export PATH="$PREFIX/bin:$HOME/bin:${PATH:-/system/bin:/system/xbin}"
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-$PREFIX/lib}"
 export TMPDIR="${TMPDIR:-$PREFIX/tmp}"
 export RISH_APPLICATION_ID="${RISH_APPLICATION_ID:-com.termux}"
+# Proven interactive caller contract, 2026-10-01. Do not inherit Termux linker env into rish.
+export RISH_PRESERVE_ENV=0
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 STAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u)"
@@ -31,8 +33,7 @@ WRAPPER="$ROOT/lib/rish_run.sh"
   echo "sdk_caller=$(getprop ro.build.version.sdk 2>/dev/null || true)"
   echo "home=$HOME"
   echo "prefix=$PREFIX"
-  echo "path=$PATH"
-  echo "ld_library_path=$LD_LIBRARY_PATH"
+  echo "rish_preserve_env=$RISH_PRESERVE_ENV"
   echo "rish_bin=$(command -v rish 2>/dev/null || echo MISSING)"
   echo "wrapper=$WRAPPER"
   ls -l "$PREFIX/bin/rish" "$PREFIX/bin/rish_shizuku.dex" "$WRAPPER" 2>&1 || true
@@ -43,20 +44,19 @@ if [ ! -f "$WRAPPER" ]; then
   exit 2
 fi
 
-# One shell-side write. /data/data/com.termux is not a valid proof path:
-# uid 2000 cannot write the Termux home, so a missing $HOME file is not a Rish failure.
+# uid 2000 cannot write Termux home. Shared storage and /data/local/tmp are the proof paths.
 INNER='{
   echo RDC_TERMUX_ANCHOR_OK
   id
   echo sdk=$(getprop ro.build.version.sdk)
 } > /storage/emulated/0/Download/RDC_TERMUX_ANCHOR.txt
 cp /storage/emulated/0/Download/RDC_TERMUX_ANCHOR.txt /data/local/tmp/RDC_TERMUX_ANCHOR.txt
+echo RDC_TERMUX_ANCHOR_OK
 id
-echo sdk=$(getprop ro.build.version.sdk)
-echo RDC_TERMUX_ANCHOR_OK'
+echo sdk=$(getprop ro.build.version.sdk)'
 
 set +e
-bash "$WRAPPER" "$INNER" >"$RISH_OUT" 2>"$RISH_ERR"
+RISH_PRESERVE_ENV=0 bash "$WRAPPER" "$INNER" >"$RISH_OUT" 2>"$RISH_ERR"
 RC=$?
 set +u
 
