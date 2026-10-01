@@ -28,3 +28,25 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}
         run: |
           python -m pytest -q tests/test_intent_schema.py tests/test_cloudflare_edge.py tests/test_memory_vector.py tests/test_onyx_runtime.py tests/test_provider_manager.py tests/test_vector_index.py tests/test_onnx_runtime.py tests/test_ingest_adapters.py
+
+
+  build-rdc-supervisor:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android/rdc-supervisor
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+      - run: gradle assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: omnikali-rdc-supervisor-debug
+          path: android/rdc-supervisor/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
