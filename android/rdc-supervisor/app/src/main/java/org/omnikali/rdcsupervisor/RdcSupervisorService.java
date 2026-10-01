@@ -26,7 +26,7 @@ public final class RdcSupervisorService extends Service {
     private static final long RESTART_BACKOFF_MS = 60_000L;
 
     private ScheduledExecutorService executor;
-    private long lastRestartElapsed = Long.MIN_VALUE;
+    private long lastRecoveryElapsed = Long.MIN_VALUE;
 
     public static void start(Context context) {
         Intent intent = new Intent(context, RdcSupervisorService.class);
@@ -44,7 +44,7 @@ public final class RdcSupervisorService extends Service {
 
         Notification notification = new Notification.Builder(this, CHANNEL)
                 .setContentTitle("OmniKali RDC Supervisor")
-                .setContentText("Monitoring Termux and Remote Desktop Commander")
+                .setContentText("Reconciling Termux and Remote Desktop Commander")
                 .setSmallIcon(android.R.drawable.stat_notify_sync_noanim)
                 .setOngoing(true)
                 .build();
@@ -62,9 +62,14 @@ public final class RdcSupervisorService extends Service {
 
     private void tick() {
         try {
-            if (!isTermuxRunningBestEffort()
-                    && SystemClock.elapsedRealtime() - lastRestartElapsed >= RESTART_BACKOFF_MS) {
-                restartRemoteThroughTermux();
+            boolean termuxVisible = isTermuxRunningBestEffort();
+            long now = SystemClock.elapsedRealtime();
+
+            // Process visibility is diagnostic, not authoritative. Reconcile the
+            // desired RDC state on every tick. The Termux-side command is idempotent:
+            // it starts RDC only when no matching remote process exists.
+            if (!termuxVisible || now - lastRecoveryElapsed >= RESTART_BACKOFF_MS) {
+                reconcileRemote();
             }
         } catch (Throwable ignored) {
             // A failed probe must never kill the watchdog.
@@ -83,7 +88,7 @@ public final class RdcSupervisorService extends Service {
         return false;
     }
 
-    private void restartRemoteThroughTermux() {
+    private void reconcileRemote() {
         if (checkSelfPermission("com.termux.permission.RUN_COMMAND")
                 != PackageManager.PERMISSION_GRANTED) return;
 
@@ -102,7 +107,7 @@ public final class RdcSupervisorService extends Service {
 
         try {
             startService(intent);
-            lastRestartElapsed = SystemClock.elapsedRealtime();
+            lastRecoveryElapsed = SystemClock.elapsedRealtime();
         } catch (SecurityException ignored) {
             // RUN_COMMAND or Termux external-app policy is not satisfied.
         } catch (RuntimeException ignored) {
