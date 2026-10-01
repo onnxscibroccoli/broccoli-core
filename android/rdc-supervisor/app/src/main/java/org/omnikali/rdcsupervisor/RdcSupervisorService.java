@@ -141,7 +141,7 @@ public final class RdcSupervisorService extends Service {
                 "if mkdir \"$STATE/.lock\" 2>/dev/null; then " +
                 "trap 'rmdir \"$STATE/.lock\" 2>/dev/null || true' EXIT; " +
                 "date +%s > \"$STATE/last-supervisor-invoke\"; " +
-                "if pgrep -af 'desktop-commander.* remote' >/dev/null 2>&1; then " +
+                "if pgrep -f 'node .*desktop-commander remote' >/dev/null 2>&1; then " +
                 "printf '%s\\n' ALREADY_RUNNING > \"$STATE/status\"; " +
                 "else " +
                 "nohup npx --yes @wonderwhy-er/desktop-commander@latest remote " +
