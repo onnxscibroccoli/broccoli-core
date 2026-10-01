@@ -1,37 +1,33 @@
+import io
 import json
-import subprocess
-import sys
 import unittest
+from contextlib import redirect_stdout
+from unittest.mock import patch
+
+from tools.android_action_cli import main
 
 
 class AndroidActionCliTests(unittest.TestCase):
     def run_cli(self, payload):
-        proc = subprocess.run(
-            [sys.executable, "tools/android_action_cli.py"],
-            input=json.dumps(payload),
-            text=True,
-            capture_output=True,
-            check=False,
-        )
-        return proc
+        stream = io.StringIO(json.dumps(payload))
+        output = io.StringIO()
+        with patch("sys.stdin", stream), redirect_stdout(output):
+            rc = main()
+        return rc, json.loads(output.getvalue())
 
     def test_unknown_shell_is_rejected(self):
-        proc = self.run_cli({"action": "shell", "command": "id"})
-        self.assertEqual(proc.returncode, 2)
-        body = json.loads(proc.stdout)
+        rc, body = self.run_cli({"action": "shell", "command": "id"})
+        self.assertEqual(rc, 2)
         self.assertFalse(body["ok"])
         self.assertEqual(body["error"], "ValueError")
 
     def test_invalid_json_contract(self):
-        proc = subprocess.run(
-            [sys.executable, "tools/android_action_cli.py"],
-            input="[]",
-            text=True,
-            capture_output=True,
-            check=False,
-        )
-        self.assertEqual(proc.returncode, 2)
-        self.assertFalse(json.loads(proc.stdout)["ok"])
+        stream = io.StringIO("[]")
+        output = io.StringIO()
+        with patch("sys.stdin", stream), redirect_stdout(output):
+            rc = main()
+        self.assertEqual(rc, 2)
+        self.assertFalse(json.loads(output.getvalue())["ok"])
 
 
 if __name__ == "__main__":
