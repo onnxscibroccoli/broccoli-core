@@ -10,6 +10,9 @@ public final class BootReceiver extends BroadcastReceiver {
         if (Intent.ACTION_BOOT_COMPLETED.equals(action)
                 || Intent.ACTION_LOCKED_BOOT_COMPLETED.equals(action)
                 || Intent.ACTION_MY_PACKAGE_REPLACED.equals(action)) {
+            RecoveryJournal.append(
+                    context, "BOOT_OR_REPLACEMENT", String.valueOf(action));
+            RecoveryScheduler.enqueue(context);
             RdcSupervisorService.start(context);
         }
     }
