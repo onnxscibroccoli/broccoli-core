@@ -1,0 +1,7 @@
+#!/data/data/com.termux/files/usr/bin/bash
+set -euo pipefail
+
+HERE="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+ROOT="$(CDPATH= cd -- "$HERE/.." && pwd)"
+
+exec "$ROOT/lib/rish_run.sh" "$@"
