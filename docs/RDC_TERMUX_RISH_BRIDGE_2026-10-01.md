@@ -33,7 +33,7 @@ No alternate Rish implementation was introduced. `lib/rish_run.sh` remains autho
 ## Live evidence
 
 - `device.identity`: PASS
-- `ui.dump`: PASS, returned a real `com.openai.chatgpt` hierarchy
+- `ui.dump` through the lower-level canonical Rish path: PASS historically; a fresh RDC-originated `uiautomator dump` is currently NOT_PROVEN because the Android `uiautomator` process can hang on this live device.
 - `package.inspect` for `com.openai.chatgpt`: PASS
 - Rish result: `uid=2000(shell)`, API 35, device `a14xm`
 - focused regression suite: 21/21 PASS
