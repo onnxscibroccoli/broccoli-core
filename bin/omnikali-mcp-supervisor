@@ -1,0 +1,44 @@
+#!/data/data/com.termux/files/usr/bin/bash
+set -euo pipefail
+PREFIX_DIR="${PREFIX:-/data/data/com.termux/files/usr}"
+NODE="${OMNIKALI_NODE:-$PREFIX_DIR/bin/node}"
+MCP_ROOT="${OMNIKALI_MCP_ROOT:-$HOME/mcp-control-plane/mcp/omnikali-control-plane}"
+BROCCOLI_ROOT="${BROCCOLI_ROOT:-$HOME/broccoli-core}"
+TOKEN_FILE="${OMNIKALI_MCP_TOKEN_FILE:-$HOME/.config/omnikali/mcp.token}"
+SUPERVISOR_PID_FILE="${OMNIKALI_MCP_SUPERVISOR_PID_FILE:-$HOME/.config/omnikali/mcp-supervisor.pid}"
+SERVER_PID_FILE="${OMNIKALI_MCP_PID_FILE:-$HOME/.config/omnikali/mcp.pid}"
+LOG_FILE="${OMNIKALI_MCP_LOG_FILE:-$HOME/.config/omnikali/mcp.log}"
+INTERVAL="${OMNIKALI_MCP_INTERVAL:-10}"
+PORT="${OMNIKALI_MCP_PORT:-8787}"
+mkdir -p "$(dirname "$SUPERVISOR_PID_FILE")"
+LOCK_DIR="${OMNIKALI_MCP_LOCK_DIR:-$HOME/.config/omnikali/mcp-supervisor.lock}"
+if [ -d "$LOCK_DIR" ]; then old="$(cat "$LOCK_DIR/pid" 2>/dev/null || true)"; if [ -n "$old" ] && kill -0 "$old" 2>/dev/null && ps -p "$old" -o args= 2>/dev/null | grep -F -- "$HOME/bin/omnikali-mcp-supervisor" >/dev/null; then exit 0; fi; rm -rf "$LOCK_DIR"; fi
+mkdir "$LOCK_DIR"
+printf "%s\n" "$$" > "$LOCK_DIR/pid"
+printf '%s\n' "$$" > "$SUPERVISOR_PID_FILE"
+log() { printf '%s %s\n' "$(date -Iseconds)" "$*" >> "$LOG_FILE"; }
+server_alive() {
+  local pid="${1:-}"
+  case "$pid" in ''|*[!0-9]*) return 1;; esac
+  kill -0 "$pid" 2>/dev/null || return 1
+  ps -p "$pid" -o args= 2>/dev/null | grep -F -- "$MCP_ROOT/src/server.mjs" >/dev/null
+}
+start_server() {
+  [ -x "$NODE" ] || { log "WAIT node_missing=$NODE"; return 0; }
+  [ -f "$MCP_ROOT/src/server.mjs" ] || { log "WAIT mcp_missing=$MCP_ROOT/src/server.mjs"; return 0; }
+  [ -r "$TOKEN_FILE" ] || { log "WAIT token_missing=$TOKEN_FILE"; return 0; }
+  local token pid
+  token="$(cat "$TOKEN_FILE")"
+  [ -n "$token" ] || { log "WAIT token_empty"; return 0; }
+  nohup env OMNIKALI_MCP_TOKEN="$token" BROCCOLI_ROOT="$BROCCOLI_ROOT" PORT="$PORT" HOST=127.0.0.1 "$NODE" "$MCP_ROOT/src/server.mjs" >> "$LOG_FILE" 2>&1 &
+  pid=$!
+  printf '%s\n' "$pid" > "$SERVER_PID_FILE"
+  log "START mcp pid=$pid root=$MCP_ROOT broccoli=$BROCCOLI_ROOT port=$PORT"
+}
+log "START mcp-supervisor pid=$$"
+trap 'log "STOP mcp-supervisor"; rm -f "$SUPERVISOR_PID_FILE"; rm -rf "$LOCK_DIR"' INT TERM EXIT
+while :; do
+  pid="$(cat "$SERVER_PID_FILE" 2>/dev/null || true)"
+  if ! server_alive "$pid"; then start_server; fi
+  sleep "$INTERVAL"
+done
