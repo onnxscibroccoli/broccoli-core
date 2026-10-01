@@ -35,27 +35,38 @@ public final class MainActivity extends Activity {
         start.setText("Start Supervisor");
         start.setOnClickListener(v -> {
             RdcSupervisorService.start(this);
+            RecoveryScheduler.enqueue(this);
             refresh();
         });
         root.addView(start);
 
         setContentView(root);
+        RdcSupervisorService.start(this);
+        RecoveryScheduler.enqueue(this);
         refresh();
     }
 
-    @Override protected void onResume() { super.onResume(); refresh(); }
+    @Override protected void onResume() {
+        super.onResume();
+        RecoveryScheduler.enqueue(this);
+        refresh();
+    }
 
     private void openAppInfo(String packageName) {
-        startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+        startActivity(new Intent(
+                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                 Uri.parse("package:" + packageName)));
     }
 
     private void refresh() {
-        boolean granted = checkSelfPermission("com.termux.permission.RUN_COMMAND")
+        boolean granted = checkSelfPermission(
+                "com.termux.permission.RUN_COMMAND")
                 == android.content.pm.PackageManager.PERMISSION_GRANTED;
         status.setText("OmniKali RDC Supervisor\n\nRUN_COMMAND permission: "
                 + (granted ? "GRANTED" : "MISSING")
                 + "\n\nTermux must also have allow-external-apps=true."
-                + "\n\nThe service fails closed until both security gates are satisfied.");
+                + "\n\nAndroid supervisor: foreground watchdog"
+                + "\nWorkManager: persistent reconciliation/checkpoint"
+                + "\nTermux: supervisord owns individual services.");
     }
 }
