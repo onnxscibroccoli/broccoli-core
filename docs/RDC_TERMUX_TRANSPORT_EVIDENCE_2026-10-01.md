@@ -42,16 +42,48 @@ RDC
 
 The known-good path must remain untouched while this boundary is investigated.
 
+## Failure-mode correction (2026-10-01, not a pass)
+
+Two observations explain the empty RC=0 without treating Rish as broken:
+
+1. `lib/rish_run.sh` execs `rish -c`. `app_process` does not reliably inherit the RDC pipe. Empty stdout plus RC=0 is not evidence that the shell command ran.
+2. uid 2000(shell) cannot write `/data/data/com.termux`. A missing file under Termux home is the expected permission boundary, not a Rish failure. `am broadcast` / `am startservice` returning 0 only means ActivityManager accepted the intent.
+
+Proof path that shell can write:
+
+- `/storage/emulated/0/Download/RDC_TERMUX_ANCHOR.txt`
+- `/data/local/tmp/RDC_TERMUX_ANCHOR.txt`
+
+Probe, after `git pull` on device. It calls `lib/rish_run.sh` and does not edit it:
+
+```
+/data/data/com.termux/files/usr/bin/bash -lc 'bash $HOME/broccoli-core/tools/rdc_termux_anchor.sh'
+```
+
+Required artifact shape, produced inside the Rish command:
+
+```
+RDC_TERMUX_ANCHOR_OK
+uid=2000(shell) ...
+sdk=35
+```
+
+Until that file is fetched back from the device, this gate stays **NOT_PROVEN**.
+
+## Off-device check
+
+OmniKali (`kali`, 7.1.5) has no `adb` binary and no attached Android device. Desktop Commander `remote` is an OAuth bridge to mcp.desktopcommander.app for the host that runs it. It is not an Android transport and was not started.
+
 ## Next gate
 
 Use the working Termux execution environment as the trusted anchor:
 
 ```
 RDC
-  -> supported Termux external-command mechanism
-  -> existing Broccoli entrypoint
-  -> existing Rish/Shizuku path
-  -> persistent proof artifact
+  -> login Termux bash
+  -> tools/rdc_termux_anchor.sh
+  -> existing lib/rish_run.sh
+  -> shell-written shared artifact
 ```
 
 Minimum success artifact:
