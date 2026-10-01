@@ -160,3 +160,14 @@ G. Android reboot restores the chain.
 H. Termux force-stop recovery is either proven or explicitly marked NOT_PROVEN.
 
 No document or successful build counts as live acceptance evidence.
+
+
+## Automation execution plane
+
+Browser and mobile automation use the same recovery boundary rather than creating an independent Android control path:
+
+Android lifecycle supervisor -> Termux RUN_COMMAND -> supervisord -> named automation service/job -> result journal.
+
+Desktop Commander remains the transport and observation surface. Playwright is treated as a bounded browser task runner. Appium is treated as an optional long-lived WebDriver service, bound to loopback and enabled only after its driver installation is explicitly verified. RUTO is treated as an external execution surface; its adapter fails closed until a reviewed command or endpoint is configured.
+
+Human-only gates such as OAuth approval, CAPTCHA, bot checks, or consent pause the specific job in a recoverable HUMAN_REQUIRED state. No automation layer attempts to bypass the gate.
