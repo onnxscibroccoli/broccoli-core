@@ -9,7 +9,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 import os
 import subprocess
-from typing import Sequence
 
 
 @dataclass(frozen=True)
@@ -21,6 +20,10 @@ class TransportResult:
     @property
     def ok(self) -> bool:
         return self.returncode == 0
+
+    @property
+    def combined_output(self) -> str:
+        return self.stdout + self.stderr
 
 
 class RishTransport:
