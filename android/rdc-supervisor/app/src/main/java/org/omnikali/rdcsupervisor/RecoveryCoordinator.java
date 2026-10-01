@@ -40,13 +40,13 @@ final class RecoveryCoordinator {
     static final class SupervisorBootstrap {
         static final String COMMAND =
                 "set -eu; "
-                + "STATE="$HOME/.omnikali/rdc-supervisor"; "
-                + "mkdir -p "$STATE"; "
-                + "if [ -f "$STATE/supervisord.conf" ]; then "
-                + "supervisorctl -c "$STATE/supervisord.conf" status >/dev/null 2>&1 "
-                + "|| supervisord -c "$STATE/supervisord.conf"; "
+                + "STATE=$HOME/.omnikali/rdc-supervisor; "
+                + "mkdir -p $STATE; "
+                + "if [ -f $STATE/supervisord.conf ]; then "
+                + "supervisorctl -c $STATE/supervisord.conf status >/dev/null 2>&1 "
+                + "|| supervisord -c $STATE/supervisord.conf; "
                 + "else "
-                + "printf '%s\\n' CONFIG_MISSING > "$STATE/status"; "
+                + "printf '%s\\n' CONFIG_MISSING > $STATE/status; "
                 + "fi";
     }
 }
