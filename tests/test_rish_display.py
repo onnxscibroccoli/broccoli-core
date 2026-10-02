@@ -1,5 +1,6 @@
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from runtime.surface.factory import open_surface
 from tools.rish_display import (
@@ -104,8 +105,9 @@ class RishDisplayTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             surface.create("com.example;id")
 
-    def test_factory_loads_rish_surface_without_silent_memory_fallback(self):
-        surface, kind = open_surface()
+    def test_factory_loads_rish_surface_on_android_without_silent_fallback(self):
+        with patch("runtime.surface.factory._android_rish_available", return_value=True):
+            surface, kind = open_surface()
         self.assertEqual(kind, "rish")
         self.assertEqual(type(surface).__name__, "RishSurface")
 

@@ -6,11 +6,13 @@ Never imports provider package names. Falls back to MemorySurface.
 from __future__ import annotations
 
 import importlib.util
+import os
 import sys
 from pathlib import Path
 from typing import Any
 
 from runtime.surface.memory import MemorySurface
+from tools.termux_run_command import available as termux_bridge_available
 
 
 def _repo_root() -> Path:
@@ -36,7 +38,15 @@ def _load_rish_module() -> Any:
     return mod
 
 
+def _android_rish_available() -> bool:
+    # Interactive Termux exposes BOOTCLASSPATH. RDC/background callers may not,
+    # but the fixed RunCommand bridge is present only on the Android host.
+    return bool(os.environ.get("BOOTCLASSPATH")) or termux_bridge_available()
+
+
 def open_surface(session: str = "ready"):
+    if not _android_rish_available():
+        return MemorySurface(session=session), "memory"
     try:
         mod = _load_rish_module()
     except Exception:
