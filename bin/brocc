@@ -116,6 +116,7 @@ brocc cycle
 brocc report
 brocc log [lines]
 brocc user-done
+brocc grok status [--json] [--no-store] [--provider] [--device] [--run-tests]
 brocc help
 
 Production (live Grok via OAuth):
@@ -133,6 +134,9 @@ Phase 1 harvest:
   report      display reports/latest.txt
   log         display recent Broccoli log information
   user-done   clear WAITING_USER compatibility state
+
+Grok DevOps (evidence only, no provider call):
+  grok status collect a current-state packet for an external reasoner
 HELP
 }
 
@@ -258,6 +262,20 @@ print(json.dumps(read_thread(), indent=2))
             'send cycle disabled until harvest stable; use: brocc harvest'
 
         exit 0
+        ;;
+
+    grok)
+        sub="${1:-status}"
+        shift || true
+        case "$sub" in
+            status)
+                exec python3 -m runtime.grok.status "$@"
+                ;;
+            *)
+                printf 'brocc grok status [--json] [--no-store] [--provider] [--device] [--run-tests]\n' >&2
+                exit 2
+                ;;
+        esac
         ;;
 
     report)
