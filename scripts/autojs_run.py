@@ -2,7 +2,7 @@
 import os,subprocess,sys,time,json
 ROOT=os.path.expanduser("~/broccoli")
 SD="/sdcard/broccoli/autojs"
-PKG=os.environ.get("AUTOJS_PKG","org.autojs.autojs6")
+PKG=os.environ.get("AUTOJS_PKG","org.autojs.autojs.modify")
 ACT=os.environ.get("AUTOJS_ACT","org.autojs.autojs.external.open.RunIntentActivity")
 def run_js(name,wait_out=None,timeout=90):
     path=f"{SD}/{name}"
