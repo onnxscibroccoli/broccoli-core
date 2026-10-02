@@ -91,14 +91,26 @@ def smoke(timeout: float = 12.0, attempts: int = 2) -> str:
         encoding="utf-8",
     )
     try:
+        last_error: AutoJSError | None = None
         for attempt in range(1, attempts + 1):
-            if run_js(script.name, marker, timeout=timeout):
+            try:
+                completed = run_js(script.name, marker, timeout=timeout)
+            except AutoJSError as exc:
+                last_error = exc
+                completed = False
+
+            if completed:
                 value = marker.read_text(encoding="utf-8", errors="replace").strip()
                 if not value.startswith(expected):
                     raise AutoJSError(f"Unexpected AutoJS smoke marker: {value!r}")
                 return value
             if attempt < attempts:
                 time.sleep(0.5)
+
+        if last_error is not None:
+            raise AutoJSError(
+                f"AutoJS smoke failed after {attempts} attempts: {last_error}"
+            ) from last_error
         raise AutoJSError(
             f"AutoJS smoke output timed out after {attempts} attempts: {marker}"
         )
