@@ -11,7 +11,8 @@ except ImportError:
     from broccoli.lib.broccoli_rish_shell import shell, rish_ok  # type: ignore
 
 def device_ready() -> dict:
-    return {"rish_ok": rish_ok(), "layer": "shizuku_rish"}
+    ok, info = rish_ok()
+    return {"rish_ok": ok, "rish_info": info, "layer": "shizuku_rish"}
 
 def tap(x: int, y: int) -> str:
     return shell(f"input tap {int(x)} {int(y)}")
@@ -33,7 +34,9 @@ def open_url(url: str) -> str:
     return shell(f'am start -a android.intent.action.VIEW -d "{url}"')
 
 def foreground_pkg() -> str:
-    out = shell("dumpsys window | grep -E 'mCurrentFocus|mFocusedApp' | head -2")
+    rc, out = shell("dumpsys window | grep -E 'mCurrentFocus|mFocusedApp' | head -2")
+    if rc != 0:
+        return ""
     m = re.search(r"u0 ([\w.]+)/", out)
     return m.group(1) if m else ""
 

@@ -14,11 +14,11 @@ A transport invocation is PASS only when all of these are true:
 
 An exit code of zero with empty stdout/stderr is NOT_PROVEN.
 
-## RDC limitation
+## RDC caller boundary
 
-Remote Desktop Commander starts Termux commands as the application UID. Rish requires an active Shizuku service. A non-interactive RDC process can invoke the Rish launcher while still receiving no target output if Shizuku is not running.
+Remote Desktop Commander starts background children in a reduced Termux environment that can omit Android runtime variables such as `BOOTCLASSPATH`. Direct `rish` from that child is therefore not a valid health check even when it returns exit code 0. The supported path is `tools.android_transport.RishTransport`, which re-enters Termux through `RunCommandService` and then invokes the canonical `lib/rish_run.sh` wrapper.
 
-Do not repair this by granting Android shell permissions from the Termux UID. Android correctly rejects cmd deviceidle whitelist with android.permission.DEVICE_POWER for this UID.
+An active Shizuku service is still required. Do not replace this boundary with Android permission grants to the Termux UID.
 
 ## Probe
 
@@ -30,13 +30,11 @@ The probe is deliberately fail-closed. It writes a target-side marker and reject
 
 ## RDC-specific gate
 
-RDC -> Rish remains NOT_PROVEN until the same probe is launched through RDC and the target artifact is observable.
+PASS. The supported bridge is:
 
-The supported bridge is:
+    RDC child -> Termux RunCommandService -> lib/rish_run.sh -> Shizuku/Rish -> Android shell
 
-    RDC -> Termux process -> Rish -> Shizuku service -> Android shell
-
-The missing dependency is the active Shizuku service, not the Broccoli wrapper.
+Live evidence on 2026-10-01 returned `uid=2000(shell)` and Android API 35. The compatibility module `lib/broccoli_rish_shell.py` was revalidated on 2026-10-02 through the same transport and returned shell UID 2000, API 35, `wm size` 1080x2408, and a valid foreground package.
 
 ## Security rule
 

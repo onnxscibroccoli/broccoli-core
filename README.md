@@ -111,6 +111,8 @@ Graph file: [`.omnikali/project-knowledge-graph.md`](.omnikali/project-knowledge
 
 On the Samsung Android 15 device, privileged Android automation from Remote Desktop Commander must use `tools.android_transport.RishTransport`. RDC/background children can lack Android runtime variables such as `BOOTCLASSPATH`; direct `rish` calls from that reduced environment can return misleading results. `RishTransport` re-enters the full Termux context through `RunCommandService` and then invokes the canonical `lib/rish_run.sh` wrapper.
 
+Legacy callers using `lib/broccoli_rish_shell.py` also delegate to `RishTransport`; its `rish_ok()` contract is `(ok: bool, evidence: str)`, matching the tracked self-test callers.
+
 AutoJS remains an **optional** adapter. The installed default package is `org.autojs.autojs.modify`. Verify the package/activity/transport without Grok-specific payloads with:
 
 ```bash
