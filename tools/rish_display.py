@@ -258,6 +258,10 @@ class RishSurface:
     def _select_provider(self, display_id: int, package: str) -> bool:
         if not self._open_display_detail(display_id) or not self._tap_label("Select App"):
             return False
+        # AppPickerDialog opens with a Search icon. The editable field and its
+        # "Search apps..." placeholder do not exist until that icon is pressed.
+        if not self._wait_label("Search") or not self._tap_label("Search"):
+            return False
         if not self._wait_label("Search apps...") or not self._tap_label("Search apps..."):
             return False
         self._run(f"input -d 0 text {shlex.quote(package)}")

@@ -81,6 +81,30 @@ class RishDisplayTests(unittest.TestCase):
         </hierarchy>"""
         self.assertEqual(semantic_center(xml, "Screens"), (540, 788))
 
+    def test_app_picker_uses_search_icon_before_search_field(self):
+        surface = RishSurface(backend=Backend([]), sleeper=lambda _: None)
+        labels = []
+        surface._open_display_detail = lambda display_id: True
+        surface._wait_label = lambda label, attempts=6, delay=0.35: labels.append(("wait", label)) or True
+        surface._tap_label = lambda label: labels.append(("tap", label)) or True
+        surface._run = lambda command: labels.append(("run", command)) or Result("")
+        surface._dump_ui = lambda: (
+            '<hierarchy><node clickable="true" bounds="[0,0][100,100]">'
+            '<node text="com.example.provider" bounds="[10,10][90,90]"/>'
+            '</node></hierarchy>'
+        )
+        self.assertTrue(surface._select_provider(30, "com.example.provider"))
+        self.assertEqual(
+            labels[:5],
+            [
+                ("tap", "Select App"),
+                ("wait", "Search"),
+                ("tap", "Search"),
+                ("wait", "Search apps..."),
+                ("tap", "Search apps..."),
+            ],
+        )
+
     def test_probe_requires_all_live_evidence(self):
         backend = Backend([
             ("dumpsys display", DISPLAY),
