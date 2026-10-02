@@ -106,3 +106,16 @@ This repository participates in the OmniKali cross-project knowledge graph. **Fu
 Graph file: [`.omnikali/project-knowledge-graph.md`](.omnikali/project-knowledge-graph.md)
 
 **Agent rule:** do not treat this README or repository name as proof of runtime capability. Verify against tests, acceptance evidence, production contracts, and live behavior. Preserve restore points before risky changes, make the smallest atomic change, record evidence and timestamps, and update the graph whenever architecture, ownership, dependencies, proof, or failure knowledge changes.
+
+## Android / Termux transport status (2026-10-02)
+
+On the Samsung Android 15 device, privileged Android automation from Remote Desktop Commander must use `tools.android_transport.RishTransport`. RDC/background children can lack Android runtime variables such as `BOOTCLASSPATH`; direct `rish` calls from that reduced environment can return misleading results. `RishTransport` re-enters the full Termux context through `RunCommandService` and then invokes the canonical `lib/rish_run.sh` wrapper.
+
+AutoJS remains an **optional** adapter. The installed default package is `org.autojs.autojs.modify`. Verify the package/activity/transport without Grok-specific payloads with:
+
+```bash
+cd "$HOME/broccoli-core"
+python3 scripts/autojs_run.py smoke
+```
+
+The legacy `read` and `fsm` modes require `/sdcard/broccoli/autojs/grok_read_chat.js` and `/sdcard/broccoli/autojs/grok_button_fsm.js`. If those payloads are absent, the adapter now fails immediately instead of waiting for an output file that cannot be produced. The primary production-capable Android path remains Rish + UIAutomator / accessibility surfaces; AutoJS should not be made a hard dependency.

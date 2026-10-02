@@ -32,3 +32,9 @@ OMNIKALI
 Helix task lifecycle, PostgreSQL persistence, worker lease recovery, replacement-worker recovery, real Kali execution, and fencing/idempotency behavior have previously been exercised. Re-verify after changes.
 
 **Canonical graph marker:** `OMNIKALI-KG-2026-09-28`
+
+## Broccoli Android transport evidence — 2026-10-02
+
+- Live RDC-to-Termux-to-Rish proof returned Android shell uid 2000, API 35, device a14xm.
+- scripts/autojs_run.py smoke passed against org.autojs.autojs.modify through the canonical RishTransport bridge.
+- Legacy AutoJS read/fsm payloads are currently absent and now fail fast; AutoJS remains optional behind the Rish/UIAutomator/accessibility path.
