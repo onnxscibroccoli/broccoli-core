@@ -239,6 +239,10 @@ class RishSurface:
             return None
         if not self._wait_label("Screen List") or not self._tap_label("Create Screen"):
             return None
+        # Create Screen opens a dialog with valid defaults derived from the
+        # primary display. Allocation happens only after its Create button.
+        if not self._wait_label("Create New Display") or not self._tap_label("Create"):
+            return None
         for _ in range(8):
             self.sleep(0.4)
             after = {d.display_id for d in self._displays()}
@@ -262,7 +266,8 @@ class RishSurface:
         # "Search apps..." placeholder do not exist until that icon is pressed.
         if not self._wait_label("Search") or not self._tap_label("Search"):
             return False
-        if not self._wait_label("Search apps...") or not self._tap_label("Search apps..."):
+        # The field requests focus automatically when search mode opens.
+        if not self._wait_label("Search apps..."):
             return False
         self._run(f"input -d 0 text {shlex.quote(package)}")
         self.sleep(0.5)

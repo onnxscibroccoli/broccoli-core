@@ -81,6 +81,28 @@ class RishDisplayTests(unittest.TestCase):
         </hierarchy>"""
         self.assertEqual(semantic_center(xml, "Screens"), (540, 788))
 
+    def test_create_display_confirms_default_dialog_before_polling(self):
+        surface = RishSurface(backend=Backend([]), sleeper=lambda _: None)
+        calls = []
+        display_sets = [[], [30]]
+        surface._displays = lambda: [
+            type("D", (), {"display_id": x})() for x in display_sets.pop(0)
+        ]
+        surface._open_ruto_home = lambda: True
+        surface._wait_label = lambda label, attempts=6, delay=0.35: calls.append(("wait", label)) or True
+        surface._tap_label = lambda label: calls.append(("tap", label)) or True
+        self.assertEqual(surface._create_display(), 30)
+        self.assertEqual(
+            calls,
+            [
+                ("tap", "Screens"),
+                ("wait", "Screen List"),
+                ("tap", "Create Screen"),
+                ("wait", "Create New Display"),
+                ("tap", "Create"),
+            ],
+        )
+
     def test_app_picker_uses_search_icon_before_search_field(self):
         surface = RishSurface(backend=Backend([]), sleeper=lambda _: None)
         labels = []
@@ -95,13 +117,12 @@ class RishDisplayTests(unittest.TestCase):
         )
         self.assertTrue(surface._select_provider(30, "com.example.provider"))
         self.assertEqual(
-            labels[:5],
+            labels[:4],
             [
                 ("tap", "Select App"),
                 ("wait", "Search"),
                 ("tap", "Search"),
                 ("wait", "Search apps..."),
-                ("tap", "Search apps..."),
             ],
         )
 
