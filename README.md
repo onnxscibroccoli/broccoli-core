@@ -106,3 +106,17 @@ This repository participates in the OmniKali cross-project knowledge graph. **Fu
 Graph file: [`.omnikali/project-knowledge-graph.md`](.omnikali/project-knowledge-graph.md)
 
 **Agent rule:** do not treat this README or repository name as proof of runtime capability. Verify against tests, acceptance evidence, production contracts, and live behavior. Preserve restore points before risky changes, make the smallest atomic change, record evidence and timestamps, and update the graph whenever architecture, ownership, dependencies, proof, or failure knowledge changes.
+
+
+## Ruto virtual surface
+
+Live Android testing on 2026-10-01 proved Ruto/Shizuku `VirtualDisplayAdapter` as the secondary-display path. The adapter is `tools/rish_display.py` and is loaded through `runtime.surface.factory`.
+
+Use:
+
+```bash
+python3 tools/rish_display.py inspect ai.x.grok
+python3 tools/rish_display.py ensure ai.x.grok
+```
+
+Readiness is not inferred from a task record alone. The adapter requires a Ruto-owned display, provider task, live process, drawn visible window, and SurfaceFlinger evidence. Direct `am start --display` and `overlay_display_devices` are explicitly excluded because both were disproven on the target phone.

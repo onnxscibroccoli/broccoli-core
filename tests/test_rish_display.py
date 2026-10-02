@@ -1,0 +1,238 @@
+import unittest
+from pathlib import Path
+from unittest.mock import patch
+
+from runtime.surface.factory import open_surface
+from tools.rish_display import (
+    RishSurface,
+    parse_ruto_displays,
+    semantic_center,
+    semantic_descendant_center,
+    surface_on_display,
+    task_on_display,
+    window_on_display,
+)
+
+
+DISPLAY = """
+    mBaseDisplayInfo=DisplayInfo{"Built-in Screen", displayId 0, FLAG_SECURE, owner android (uid 1000)}
+    mBaseDisplayInfo=DisplayInfo{"Virtual Screen", displayId 30, displayGroupId 0, FLAG_PRIVATE, real 1080 x 2408, owner com.android.shell (uid 2000)}
+    mBaseDisplayInfo=DisplayInfo{"Virtual Screen", displayId 31, displayGroupId 0, FLAG_PRIVATE, real 1080 x 2408, owner com.android.shell (uid 2000)}
+"""
+ACTIVITY = """
+  displayId=30
+      * Task{17a5d85 #1127 type=standard A=10298:com.example.provider}
+        * ActivityRecord{b4a2fc u0 com.example.provider/.MainActivity t1127}
+  displayId=31
+      Application tokens in top down Z order:
+"""
+WINDOW = """
+  Window #17 Window{90b2d44 u0 com.example.provider/com.example.provider.MainActivity}:
+    mDisplayId=30 rootTaskId=1127
+    mHasSurface=true isReadyForDisplay()=true
+    Surface: shown=true      mDrawState=HAS_DRAWN
+    isOnScreen=true
+    isVisible=true
+"""
+SF = """
+RequestedLayerState{com.example.provider/com.example.provider.MainActivity$_23569#29044 parentId=29043}
+RequestedLayerState{Display 30 name="Virtual Screen"#28985 layerStack=30}
+"""
+
+
+class Result:
+    def __init__(self, stdout="", returncode=0, stderr=""):
+        self.stdout = stdout
+        self.stderr = stderr
+        self.returncode = returncode
+        self.ok = returncode == 0
+        self.combined_output = stdout + stderr
+
+
+class Backend:
+    def __init__(self, mapping):
+        self.mapping = mapping
+        self.calls = []
+
+    def run(self, command):
+        self.calls.append(command)
+        for key, value in self.mapping:
+            if key in command:
+                return Result(value)
+        return Result("")
+
+
+class FailingBackend:
+    def run(self, command):
+        return Result("Server is not running\\n", returncode=1)
+
+
+class RishDisplayTests(unittest.TestCase):
+    def test_parse_only_ruto_shell_virtual_displays(self):
+        rows = parse_ruto_displays(DISPLAY)
+        self.assertEqual([r.display_id for r in rows], [30, 31])
+        self.assertTrue(all(r.private for r in rows))
+
+    def test_live_evidence_parsers_agree(self):
+        self.assertTrue(task_on_display(ACTIVITY, "com.example.provider", 30))
+        self.assertFalse(task_on_display(ACTIVITY, "com.example.provider", 31))
+        self.assertTrue(window_on_display(WINDOW, "com.example.provider", 30))
+        self.assertTrue(surface_on_display(SF, "com.example.provider", 30))
+
+    def test_semantic_center_uses_clickable_parent(self):
+        xml = """<hierarchy>
+        <node clickable="true" bounds="[42,694][1038,883]">
+          <node text="Screens" content-desc="" clickable="false" bounds="[189,742][315,793]"/>
+        </node>
+        </hierarchy>"""
+        self.assertEqual(semantic_center(xml, "Screens"), (540, 788))
+
+    def test_descendant_action_is_scoped_to_display_card(self):
+        xml = """<hierarchy>
+        <node bounds="[0,0][200,100]">
+          <node text="#30 Virtual Screen" bounds="[10,10][120,40]"/>
+          <node clickable="true" bounds="[150,10][190,50]">
+            <node content-desc="Delete" bounds="[155,15][185,45]"/>
+          </node>
+        </node>
+        <node bounds="[0,100][200,200]">
+          <node text="#31 Virtual Screen" bounds="[10,110][120,140]"/>
+          <node clickable="true" bounds="[150,110][190,150]">
+            <node content-desc="Delete" bounds="[155,115][185,145]"/>
+          </node>
+        </node>
+        </hierarchy>"""
+        self.assertEqual(
+            semantic_descendant_center(xml, "#31 Virtual Screen", "Delete"),
+            (170, 130),
+        )
+
+    def test_create_display_confirms_default_dialog_before_polling(self):
+        surface = RishSurface(backend=Backend([]), sleeper=lambda _: None)
+        calls = []
+        display_sets = [[], [30]]
+        surface._displays = lambda: [
+            type("D", (), {"display_id": x})() for x in display_sets.pop(0)
+        ]
+        surface._open_ruto_home = lambda: True
+        surface._wait_label = lambda label, attempts=6, delay=0.35: calls.append(("wait", label)) or True
+        surface._tap_label = lambda label: calls.append(("tap", label)) or True
+        self.assertEqual(surface._create_display(), 30)
+        self.assertEqual(
+            calls,
+            [
+                ("tap", "Screens"),
+                ("wait", "Screen List"),
+                ("tap", "Create Screen"),
+                ("wait", "Create New Display"),
+                ("tap", "Create"),
+            ],
+        )
+
+    def test_app_picker_uses_search_icon_before_search_field(self):
+        surface = RishSurface(backend=Backend([]), sleeper=lambda _: None)
+        labels = []
+        surface._open_display_detail = lambda display_id: True
+        surface._wait_label = lambda label, attempts=6, delay=0.35: labels.append(("wait", label)) or True
+        surface._tap_label = lambda label: labels.append(("tap", label)) or True
+        surface._run = lambda command: labels.append(("run", command)) or Result("")
+        surface._dump_ui = lambda: (
+            '<hierarchy><node clickable="true" bounds="[0,0][100,100]">'
+            '<node text="com.example.provider" bounds="[10,10][90,90]"/>'
+            '</node></hierarchy>'
+        )
+        self.assertTrue(surface._select_provider(30, "com.example.provider"))
+        self.assertEqual(
+            labels[:4],
+            [
+                ("tap", "Select App"),
+                ("wait", "Search"),
+                ("tap", "Search"),
+                ("wait", "Search apps..."),
+            ],
+        )
+
+    def test_probe_requires_all_live_evidence(self):
+        backend = Backend([
+            ("dumpsys display", DISPLAY),
+            ("dumpsys activity", ACTIVITY),
+            ("dumpsys window", WINDOW),
+            ("SurfaceFlinger", SF),
+            ("pidof", "23569\n"),
+        ])
+        surface = RishSurface(backend=backend, sleeper=lambda _: None)
+        probe = surface._probe("com.example.provider")
+        self.assertTrue(probe.healthy)
+        self.assertEqual(probe.display_id, 30)
+
+    def test_direct_display_launch_is_never_used(self):
+        source = Path("tools/rish_display.py").read_text(encoding="utf-8")
+        forbidden = "am start " + "--" + "display"
+        self.assertNotIn(forbidden, source)
+        self.assertNotIn("overlay" + "_display_devices", source)
+
+    def test_destroy_releases_only_selected_ruto_display(self):
+        surface = RishSurface(backend=Backend([]), sleeper=lambda _: None)
+        surface.display_id = 31
+        surface.provider_id = "com.example.provider"
+        surface._attached = True
+        display_sets = [[30, 31], [30]]
+        surface._displays = lambda: [
+            type("D", (), {"display_id": x})() for x in display_sets.pop(0)
+        ]
+        surface._open_ruto_home = lambda: True
+        surface._tap_label = lambda label: True
+        surface._wait_label = lambda label, attempts=6, delay=0.35: True
+        surface._dump_ui = lambda: """<hierarchy>
+          <node bounds="[0,100][200,200]">
+            <node text="#31 Virtual Screen" bounds="[10,110][120,140]"/>
+            <node clickable="true" bounds="[150,110][190,150]">
+              <node content-desc="Delete" bounds="[155,115][185,145]"/>
+            </node>
+          </node>
+        </hierarchy>"""
+        commands = []
+        surface._run = lambda command: commands.append(command) or Result("")
+        event = surface.destroy()
+        self.assertTrue(event.ok)
+        self.assertEqual(surface.display_id, None)
+        self.assertEqual(commands, ["input -d 0 tap 170 130"])
+
+    def test_shizuku_loss_degrades_without_raising(self):
+        surface = RishSurface(backend=FailingBackend(), sleeper=lambda _: None)
+        create = surface.create("com.example.provider")
+        self.assertFalse(create.ok)
+        self.assertEqual(create.state, "unavailable")
+        self.assertEqual(create.code, "shizuku_unavailable")
+
+        surface.provider_id = "com.example.provider"
+        state = surface.inspect()
+        self.assertFalse(state.attached)
+        self.assertEqual(state.session, "unavailable")
+        self.assertIn("shizuku_unavailable", state.notes[0])
+
+        surface.display_id = 30
+        surface._focused = True
+        inp = surface.input("hello")
+        self.assertFalse(inp.ok)
+        self.assertEqual(inp.code, "shizuku_unavailable")
+
+        destroyed = surface.destroy()
+        self.assertFalse(destroyed.ok)
+        self.assertEqual(destroyed.state, "unavailable")
+        self.assertEqual(destroyed.code, "shizuku_unavailable")
+
+    def test_invalid_package_fails_closed(self):
+        surface = RishSurface(backend=Backend([]), sleeper=lambda _: None)
+        with self.assertRaises(ValueError):
+            surface.create("com.example;id")
+
+    def test_factory_loads_rish_surface_on_android_without_silent_fallback(self):
+        with patch("runtime.surface.factory._android_rish_available", return_value=True):
+            surface, kind = open_surface()
+        self.assertEqual(kind, "rish")
+        self.assertEqual(type(surface).__name__, "RishSurface")
+
+
+if __name__ == "__main__":
+    unittest.main()
