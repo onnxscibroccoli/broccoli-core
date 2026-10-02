@@ -144,6 +144,51 @@ def semantic_center(xml_text: str, label: str) -> Optional[tuple[int, int]]:
     return None
 
 
+def semantic_descendant_center(
+    xml_text: str, anchor_label: str, target_label: str
+) -> Optional[tuple[int, int]]:
+    """Find target_label only inside the UI container that owns anchor_label."""
+    try:
+        root = ET.fromstring(xml_text)
+    except ET.ParseError:
+        return None
+    parent = {child: node for node in root.iter() for child in node}
+    for anchor_node in root.iter("node"):
+        if (
+            anchor_node.attrib.get("text") != anchor_label
+            and anchor_node.attrib.get("content-desc") != anchor_label
+        ):
+            continue
+        container = anchor_node
+        while container in parent:
+            candidate = parent[container]
+            matches = [
+                node
+                for node in candidate.iter("node")
+                if node.attrib.get("text") == target_label
+                or node.attrib.get("content-desc") == target_label
+            ]
+            if matches:
+                target = matches[0]
+                cur = target
+                while cur in parent and cur is not candidate:
+                    if (
+                        cur.attrib.get("clickable") == "true"
+                        and _bounds(cur.attrib.get("bounds", ""))
+                    ):
+                        target = cur
+                        break
+                    cur = parent[cur]
+                box = _bounds(target.attrib.get("bounds", "")) or _bounds(
+                    matches[0].attrib.get("bounds", "")
+                )
+                if box:
+                    x1, y1, x2, y2 = box
+                    return ((x1 + x2) // 2, (y1 + y2) // 2)
+            container = candidate
+    return None
+
+
 class RishSurface:
     """VirtualSurface implementation using Ruto + Shizuku/Rish."""
 
@@ -393,10 +438,50 @@ class RishSurface:
         return SurfaceEvent(True, "detach", "ready", details={"display_id": self.display_id})
 
     def destroy(self) -> SurfaceEvent:
+        display_id = self.display_id
+        if display_id is None:
+            return SurfaceEvent(True, "destroy", "ready", "already_absent")
+        if display_id not in {d.display_id for d in self._displays()}:
+            self.display_id = None
+            self._attached = False
+            self._focused = False
+            return SurfaceEvent(True, "destroy", "ready", "already_absent")
+
+        if not self._open_ruto_home() or not self._tap_label("Screens"):
+            return SurfaceEvent(False, "destroy", "stale", "screen_list_unavailable")
+        if not self._wait_label("Screen List"):
+            return SurfaceEvent(False, "destroy", "stale", "screen_list_unavailable")
+
+        xml_text = self._dump_ui()
+        center = semantic_descendant_center(
+            xml_text, f"#{display_id} {RUTO_DISPLAY_NAME}", "Delete"
+        )
+        if center is None:
+            return SurfaceEvent(
+                False,
+                "destroy",
+                "failed",
+                "delete_control_missing",
+                details={"display_id": display_id},
+            )
+        x, y = center
+        self._run(f"input -d 0 tap {x} {y}")
+
+        for _ in range(8):
+            self.sleep(0.35)
+            if display_id not in {d.display_id for d in self._displays()}:
+                self.display_id = None
+                self._attached = False
+                self._focused = False
+                return SurfaceEvent(
+                    True, "destroy", "ready", details={"released_display_id": display_id}
+                )
         return SurfaceEvent(
-            False, "destroy", "ready", "unsupported",
-            "display release requires a separately verified Ruto semantic action",
-            {"display_id": self.display_id},
+            False,
+            "destroy",
+            "stale",
+            "release_not_observed",
+            details={"display_id": display_id},
         )
 
 

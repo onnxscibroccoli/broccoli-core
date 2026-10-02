@@ -35,8 +35,10 @@ Therefore Broccoli must never use direct display launch as a recovery fallback.
 
 1. discovers only Ruto-owned private virtual displays;
 2. navigates Ruto by accessibility semantics such as `Screens`, `Screen List`, `Create Screen`, and `Select App`;
-3. uses the durable shared-storage UI dump surface under `/sdcard/OmniKali/ui`;
-4. verifies display + task + process + drawn window + SurfaceFlinger evidence before reporting ready;
-5. fails closed when evidence is incomplete.
+3. confirms the default-backed `Create New Display` dialog before polling for the new display;
+4. follows Ruto's app-picker state: `Select App` → `Search` → focused search field → exact package row;
+5. uses the durable shared-storage UI dump surface under `/sdcard/OmniKali/ui`;
+6. verifies display + task + process + drawn window + SurfaceFlinger evidence before reporting ready;
+7. fails closed when evidence is incomplete.
 
-The adapter intentionally does not guess display-release semantics. `destroy()` remains unsupported until that Ruto UI action is independently reproduced and verified.
+`destroy()` follows Ruto's source-defined release path: it finds the target display card, scopes the `Delete` action to that card, invokes it, and reports success only after that display ID disappears. This path is source-backed and unit-tested; live phone acceptance is still pending bridge restoration.

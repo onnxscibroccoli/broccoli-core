@@ -7,6 +7,7 @@ from tools.rish_display import (
     RishSurface,
     parse_ruto_displays,
     semantic_center,
+    semantic_descendant_center,
     surface_on_display,
     task_on_display,
     window_on_display,
@@ -81,6 +82,26 @@ class RishDisplayTests(unittest.TestCase):
         </hierarchy>"""
         self.assertEqual(semantic_center(xml, "Screens"), (540, 788))
 
+    def test_descendant_action_is_scoped_to_display_card(self):
+        xml = """<hierarchy>
+        <node bounds="[0,0][200,100]">
+          <node text="#30 Virtual Screen" bounds="[10,10][120,40]"/>
+          <node clickable="true" bounds="[150,10][190,50]">
+            <node content-desc="Delete" bounds="[155,15][185,45]"/>
+          </node>
+        </node>
+        <node bounds="[0,100][200,200]">
+          <node text="#31 Virtual Screen" bounds="[10,110][120,140]"/>
+          <node clickable="true" bounds="[150,110][190,150]">
+            <node content-desc="Delete" bounds="[155,115][185,145]"/>
+          </node>
+        </node>
+        </hierarchy>"""
+        self.assertEqual(
+            semantic_descendant_center(xml, "#31 Virtual Screen", "Delete"),
+            (170, 130),
+        )
+
     def test_create_display_confirms_default_dialog_before_polling(self):
         surface = RishSurface(backend=Backend([]), sleeper=lambda _: None)
         calls = []
@@ -144,6 +165,33 @@ class RishDisplayTests(unittest.TestCase):
         forbidden = "am start " + "--" + "display"
         self.assertNotIn(forbidden, source)
         self.assertNotIn("overlay" + "_display_devices", source)
+
+    def test_destroy_releases_only_selected_ruto_display(self):
+        surface = RishSurface(backend=Backend([]), sleeper=lambda _: None)
+        surface.display_id = 31
+        surface.provider_id = "com.example.provider"
+        surface._attached = True
+        display_sets = [[30, 31], [30]]
+        surface._displays = lambda: [
+            type("D", (), {"display_id": x})() for x in display_sets.pop(0)
+        ]
+        surface._open_ruto_home = lambda: True
+        surface._tap_label = lambda label: True
+        surface._wait_label = lambda label, attempts=6, delay=0.35: True
+        surface._dump_ui = lambda: """<hierarchy>
+          <node bounds="[0,100][200,200]">
+            <node text="#31 Virtual Screen" bounds="[10,110][120,140]"/>
+            <node clickable="true" bounds="[150,110][190,150]">
+              <node content-desc="Delete" bounds="[155,115][185,145]"/>
+            </node>
+          </node>
+        </hierarchy>"""
+        commands = []
+        surface._run = lambda command: commands.append(command) or Result("")
+        event = surface.destroy()
+        self.assertTrue(event.ok)
+        self.assertEqual(surface.display_id, None)
+        self.assertEqual(commands, ["input -d 0 tap 170 130"])
 
     def test_invalid_package_fails_closed(self):
         surface = RishSurface(backend=Backend([]), sleeper=lambda _: None)

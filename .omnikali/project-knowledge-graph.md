@@ -33,7 +33,6 @@ Helix task lifecycle, PostgreSQL persistence, worker lease recovery, replacement
 
 **Canonical graph marker:** `OMNIKALI-KG-2026-09-28`
 
-
 ## 2026-10-01 Ruto virtual-display evidence
 
 **PROVEN on live Samsung Android hardware**
@@ -42,7 +41,7 @@ Helix task lifecycle, PostgreSQL persistence, worker lease recovery, replacement
 - Ruto's privileged service launches apps with `ActivityOptions.setLaunchDisplayId` through a display-scoped Context and PendingIntent.
 - Ruto's own flow produced a live Grok process, task, drawn/visible window, and SurfaceFlinger layers on virtual display 30.
 - Direct `am start --display` is **DISPROVEN** as an equivalent attachment mechanism. Repeated tests produced task-only/stale states and could terminate the provider process/display lifecycle.
-- Broccoli now has a provider-agnostic Ruto-backed surface adapter with five-part readiness evidence and fail-closed recovery.
-- Final end-to-end recovery/ensure testing is pending restoration of the phone's Shizuku/Rish bridge after it reported `Server is not running`.
+- Broccoli now has a provider-agnostic Ruto-backed surface adapter with five-part readiness evidence, fail-closed recovery, source-backed create/app-picker state transitions, and card-scoped display release.
+- Final end-to-end recovery/ensure and release testing is pending restoration of the phone's Shizuku/Rish bridge after it reported `Server is not running`.
 
 **Production invariant:** never report a provider surface ready from ActivityManager task presence alone.
