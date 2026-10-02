@@ -39,6 +39,7 @@ Therefore Broccoli must never use direct display launch as a recovery fallback.
 4. follows Ruto's app-picker state: `Select App` → `Search` → focused search field → exact package row;
 5. uses the durable shared-storage UI dump surface under `/sdcard/OmniKali/ui`;
 6. verifies display + task + process + drawn window + SurfaceFlinger evidence before reporting ready;
-7. fails closed when evidence is incomplete.
+7. fails closed when evidence is incomplete;
+8. converts Rish/Shizuku transport loss into structured unavailable states instead of throwing. The observed `Server is not running` condition maps to `shizuku_unavailable`, allowing the Governor to degrade safely without inventing a privileged fallback.
 
 `destroy()` follows Ruto's source-defined release path: it finds the target display card, scopes the `Delete` action to that card, invokes it, and reports success only after that display ID disappears. This path is source-backed and unit-tested; live phone acceptance is still pending bridge restoration.

@@ -62,6 +62,11 @@ class Backend:
         return Result("")
 
 
+class FailingBackend:
+    def run(self, command):
+        return Result("Server is not running\\n", returncode=1)
+
+
 class RishDisplayTests(unittest.TestCase):
     def test_parse_only_ruto_shell_virtual_displays(self):
         rows = parse_ruto_displays(DISPLAY)
@@ -192,6 +197,30 @@ class RishDisplayTests(unittest.TestCase):
         self.assertTrue(event.ok)
         self.assertEqual(surface.display_id, None)
         self.assertEqual(commands, ["input -d 0 tap 170 130"])
+
+    def test_shizuku_loss_degrades_without_raising(self):
+        surface = RishSurface(backend=FailingBackend(), sleeper=lambda _: None)
+        create = surface.create("com.example.provider")
+        self.assertFalse(create.ok)
+        self.assertEqual(create.state, "unavailable")
+        self.assertEqual(create.code, "shizuku_unavailable")
+
+        surface.provider_id = "com.example.provider"
+        state = surface.inspect()
+        self.assertFalse(state.attached)
+        self.assertEqual(state.session, "unavailable")
+        self.assertIn("shizuku_unavailable", state.notes[0])
+
+        surface.display_id = 30
+        surface._focused = True
+        inp = surface.input("hello")
+        self.assertFalse(inp.ok)
+        self.assertEqual(inp.code, "shizuku_unavailable")
+
+        destroyed = surface.destroy()
+        self.assertFalse(destroyed.ok)
+        self.assertEqual(destroyed.state, "unavailable")
+        self.assertEqual(destroyed.code, "shizuku_unavailable")
 
     def test_invalid_package_fails_closed(self):
         surface = RishSurface(backend=Backend([]), sleeper=lambda _: None)

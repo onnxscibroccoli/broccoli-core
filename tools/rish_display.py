@@ -189,6 +189,23 @@ def semantic_descendant_center(
     return None
 
 
+class RishUnavailable(RuntimeError):
+    """Canonical transport failure at the Rish/Shizuku boundary."""
+
+
+def transport_code(message: str) -> str:
+    value = message.lower()
+    if "server is not running" in value:
+        return "shizuku_unavailable"
+    if "rish_env_missing" in value:
+        return "rish_env_missing"
+    if "termux_run_command_unavailable" in value:
+        return "termux_bridge_unavailable"
+    if "timed out" in value or "timeout" in value:
+        return "transport_timeout"
+    return "transport_unavailable"
+
+
 class RishSurface:
     """VirtualSurface implementation using Ruto + Shizuku/Rish."""
 
@@ -207,10 +224,15 @@ class RishSurface:
         return value
 
     def _run(self, command: str):
-        result = self.backend.run(command)
+        try:
+            result = self.backend.run(command)
+        except Exception as exc:
+            raise RishUnavailable(str(exc)) from exc
         ok = getattr(result, "ok", getattr(result, "returncode", 1) == 0)
         if not ok:
-            raise RuntimeError(getattr(result, "combined_output", "Android shell command failed"))
+            raise RishUnavailable(
+                getattr(result, "combined_output", "Android shell command failed")
+            )
         return result
 
     def _stdout(self, command: str) -> str:
@@ -324,6 +346,20 @@ class RishSurface:
         return True
 
     def create(self, provider_id: str = "") -> SurfaceEvent:
+        try:
+            return self._create_impl(provider_id)
+        except RishUnavailable as exc:
+            self._attached = False
+            self._focused = False
+            return SurfaceEvent(
+                False,
+                "create",
+                "unavailable",
+                transport_code(str(exc)),
+                str(exc),
+            )
+
+    def _create_impl(self, provider_id: str = "") -> SurfaceEvent:
         package = self._package(provider_id)
         self.provider_id = package
         probe = self._probe(package, self.display_id)
@@ -368,7 +404,14 @@ class RishSurface:
     def attach(self) -> SurfaceEvent:
         if not self.provider_id:
             return SurfaceEvent(False, "attach", "unknown", "provider_required", "create(provider_id) first")
-        probe = self._probe(self.provider_id, self.display_id)
+        try:
+            probe = self._probe(self.provider_id, self.display_id)
+        except RishUnavailable as exc:
+            self._attached = False
+            self._focused = False
+            return SurfaceEvent(
+                False, "attach", "unavailable", transport_code(str(exc)), str(exc)
+            )
         if probe.healthy:
             self.display_id = probe.display_id
             self._attached = True
@@ -381,7 +424,20 @@ class RishSurface:
     def inspect(self) -> SurfaceState:
         if not self.provider_id:
             return SurfaceState("ruto:unknown", False, False, "unknown", "")
-        probe = self._probe(self.provider_id, self.display_id)
+        try:
+            probe = self._probe(self.provider_id, self.display_id)
+        except RishUnavailable as exc:
+            self._attached = False
+            self._focused = False
+            code = transport_code(str(exc))
+            return SurfaceState(
+                "ruto:none",
+                False,
+                False,
+                "unavailable",
+                self.provider_id,
+                notes=[f"{code}: {exc}"],
+            )
         if probe.healthy:
             self.display_id = probe.display_id
             self._attached = True
@@ -408,7 +464,12 @@ class RishSurface:
         if len(text) > 4096:
             return SurfaceEvent(False, "input", "failed", "too_long", "text exceeds 4096 characters")
         encoded = text.replace("%", "%25").replace(" ", "%s")
-        self._run(f"input -d {self.display_id} text {shlex.quote(encoded)}")
+        try:
+            self._run(f"input -d {self.display_id} text {shlex.quote(encoded)}")
+        except RishUnavailable as exc:
+            return SurfaceEvent(
+                False, "input", "unavailable", transport_code(str(exc)), str(exc)
+            )
         return SurfaceEvent(
             True, "input", "ready",
             details={"chars": len(text), "display_id": self.display_id},
@@ -416,7 +477,12 @@ class RishSurface:
     def submit(self) -> SurfaceEvent:
         if not self._focused or self.display_id is None:
             return SurfaceEvent(False, "submit", "stale", "not_focused", "focus before submit")
-        self._run(f"input -d {self.display_id} keyevent ENTER")
+        try:
+            self._run(f"input -d {self.display_id} keyevent ENTER")
+        except RishUnavailable as exc:
+            return SurfaceEvent(
+                False, "submit", "unavailable", transport_code(str(exc)), str(exc)
+            )
         return SurfaceEvent(True, "submit", "ready", details={"display_id": self.display_id})
 
     def observe(self) -> SurfaceEvent:
@@ -438,6 +504,21 @@ class RishSurface:
         return SurfaceEvent(True, "detach", "ready", details={"display_id": self.display_id})
 
     def destroy(self) -> SurfaceEvent:
+        try:
+            return self._destroy_impl()
+        except RishUnavailable as exc:
+            self._attached = False
+            self._focused = False
+            return SurfaceEvent(
+                False,
+                "destroy",
+                "unavailable",
+                transport_code(str(exc)),
+                str(exc),
+                {"display_id": self.display_id},
+            )
+
+    def _destroy_impl(self) -> SurfaceEvent:
         display_id = self.display_id
         if display_id is None:
             return SurfaceEvent(True, "destroy", "ready", "already_absent")
