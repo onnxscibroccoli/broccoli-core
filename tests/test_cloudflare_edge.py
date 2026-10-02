@@ -16,7 +16,8 @@ class TestCloudflareEdge(unittest.TestCase):
 
     def test_d1_rate_limit_string(self):
         from runtime import cloudflare_edge as m
-        self.assertIn("d1_rate_limited", open(m.__file__).read())
+        with open(m.__file__, encoding="utf-8") as source:
+            self.assertIn("d1_rate_limited", source.read())
 
 
 if __name__ == "__main__":

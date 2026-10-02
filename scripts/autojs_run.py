@@ -73,7 +73,11 @@ def run_js(name: str, wait_out: str | Path | None = None, timeout: float = 20.0)
     return False
 
 
-def smoke(timeout: float = 8.0) -> str:
+def smoke(timeout: float = 12.0, attempts: int = 2) -> str:
+    """Run a side-effect-free AutoJS execution proof with bounded cold-start retry."""
+    if attempts < 1:
+        raise ValueError("attempts must be >= 1")
+
     SD.mkdir(parents=True, exist_ok=True)
     UI.mkdir(parents=True, exist_ok=True)
     token = secrets.token_hex(8)
@@ -87,12 +91,17 @@ def smoke(timeout: float = 8.0) -> str:
         encoding="utf-8",
     )
     try:
-        if not run_js(script.name, marker, timeout=timeout):
-            raise AutoJSError(f"AutoJS smoke output timed out: {marker}")
-        value = marker.read_text(encoding="utf-8", errors="replace").strip()
-        if not value.startswith(expected):
-            raise AutoJSError(f"Unexpected AutoJS smoke marker: {value!r}")
-        return value
+        for attempt in range(1, attempts + 1):
+            if run_js(script.name, marker, timeout=timeout):
+                value = marker.read_text(encoding="utf-8", errors="replace").strip()
+                if not value.startswith(expected):
+                    raise AutoJSError(f"Unexpected AutoJS smoke marker: {value!r}")
+                return value
+            if attempt < attempts:
+                time.sleep(0.5)
+        raise AutoJSError(
+            f"AutoJS smoke output timed out after {attempts} attempts: {marker}"
+        )
     finally:
         script.unlink(missing_ok=True)
         marker.unlink(missing_ok=True)
