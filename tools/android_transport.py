@@ -9,6 +9,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 import os
 import subprocess
+import shlex
+
+from tools.termux_run_command import available as termux_bridge_available
+from tools.termux_run_command import run as termux_bridge_run
 
 
 @dataclass(frozen=True)
@@ -37,6 +41,17 @@ class RishTransport:
     def run(self, command: str, *, timeout: float | None = None) -> TransportResult:
         if not isinstance(command, str) or not command.strip():
             raise ValueError("command must be a non-empty string")
+        # An interactive Termux process has Android runtime variables such as
+        # BOOTCLASSPATH. RDC/background child processes do not. Do not invoke
+        # Rish from the reduced environment because that can hang after a
+        # mutation has already happened and must never be blindly retried.
+        if not os.environ.get("BOOTCLASSPATH") and termux_bridge_available():
+            rc, stdout, stderr = termux_bridge_run(
+                f"RISH_PRESERVE_ENV=0 bash {shlex.quote(self.wrapper)} {shlex.quote(command)}",
+                timeout=self.timeout if timeout is None else float(timeout),
+            )
+            return TransportResult(rc, stdout, stderr)
+
         proc = subprocess.run(
             ["bash", self.wrapper, command],
             stdout=subprocess.PIPE,

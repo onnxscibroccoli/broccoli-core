@@ -1,28 +1,91 @@
-import os, re, subprocess, shutil
+"""Compatibility helpers for Broccoli's Shizuku/Rish Android shell path.
+
+New callers should prefer tools.android_transport.RishTransport directly. This
+module delegates to that transport when it is available so legacy callers keep
+the same `(returncode, output)` contract without bypassing the RDC-safe bridge.
+"""
+from __future__ import annotations
+
+import os
 from pathlib import Path
+import re
+import shutil
+import subprocess
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
 def rish_path():
-    for c in (os.environ.get("BROCCOLI_RISH"), Path(os.environ.get("PREFIX",""))/"bin/rish", Path.home()/"rish"):
-        if c and Path(str(c)).is_file(): return str(c)
+    for candidate in (
+        os.environ.get("BROCCOLI_RISH"),
+        Path(os.environ.get("PREFIX", "")) / "bin/rish",
+        Path.home() / "rish",
+    ):
+        if candidate and Path(str(candidate)).is_file():
+            return str(candidate)
     return shutil.which("rish")
+
+
+def _transport_class():
+    """Return the canonical transport class when this checkout contains it."""
+    if not (ROOT / "tools" / "android_transport.py").is_file():
+        return None
+    root = str(ROOT)
+    if root not in sys.path:
+        sys.path.insert(0, root)
+    try:
+        from tools.android_transport import RishTransport
+    except ImportError:
+        return None
+    return RishTransport
+
+
 def shell(cmd, timeout=45):
+    transport = _transport_class()
+    if transport is not None:
+        result = transport(timeout=timeout).run(cmd, timeout=timeout)
+        return result.returncode, result.combined_output
+
+    # Historical fallback for copied/standalone versions of this module that do
+    # not contain the current tools.android_transport implementation.
     env = os.environ.copy()
     env.setdefault("RISH_APPLICATION_ID", "com.termux")
     rish = rish_path()
     if rish:
-        p = subprocess.run([rish, "-c", cmd], capture_output=True, text=True, timeout=timeout, env=env)
-        return p.returncode, (p.stdout or "") + (p.stderr or "")
-    p = subprocess.run(["sh", "-c", cmd], capture_output=True, text=True, timeout=timeout)
-    return p.returncode, (p.stdout or "") + (p.stderr or "")
+        proc = subprocess.run(
+            [rish, "-c", cmd],
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+            env=env,
+        )
+        return proc.returncode, (proc.stdout or "") + (proc.stderr or "")
+    proc = subprocess.run(
+        ["sh", "-c", cmd], capture_output=True, text=True, timeout=timeout
+    )
+    return proc.returncode, (proc.stdout or "") + (proc.stderr or "")
+
+
 def wm_size():
-    rc, out = shell("wm size")
-    m = re.search(r"(\d+)x(\d+)", out)
-    return (int(m.group(1)), int(m.group(2))) if m else (1080, 2400)
+    _rc, out = shell("wm size")
+    match = re.search(r"(\d+)x(\d+)", out)
+    return (int(match.group(1)), int(match.group(2))) if match else (1080, 2400)
+
 
 def rish_ok(timeout=8):
-    """Selftest hook: True if privileged shell responds."""
+    """Return `(ok, evidence)` for a verified Android shell response."""
     try:
-        out = shell("echo RISH_OK", timeout=timeout)
-        return "RISH_OK" in (out or "")
-    except Exception:
-        return False
-
+        rc, out = shell(
+            "echo BROCCOLI_RISH_OK; id; getprop ro.build.version.sdk",
+            timeout=timeout,
+        )
+        evidence = (out or "").strip()[:400]
+        ok = (
+            rc == 0
+            and "BROCCOLI_RISH_OK" in evidence
+            and "uid=2000(shell)" in evidence
+        )
+        return ok, evidence
+    except Exception as exc:
+        return False, str(exc)[:400]

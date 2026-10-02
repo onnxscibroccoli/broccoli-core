@@ -46,6 +46,16 @@ Recent September 2026 commits still touch the runtime and observer/Watch-Me-Do w
 
 The engineering rule is: **extract, preserve, and selectively reuse.**
 
+### Validation
+
+Run the complete offline Python suite from the repository root with:
+
+```bash
+python3 -m unittest discover -s tests -t . -v
+```
+
+The explicit `-t .` is required: using `unittest discover -s tests` alone can put `tests/` on the import path and allow `tests/runtime` to shadow the real `runtime` package. On 2026-10-02 the rooted suite passed 135/135 tests on the Android/Termux target. CI uses the same command.
+
 ## How to use it
 
 For kernel experiments:
@@ -106,3 +116,20 @@ This repository participates in the OmniKali cross-project knowledge graph. **Fu
 Graph file: [`.omnikali/project-knowledge-graph.md`](.omnikali/project-knowledge-graph.md)
 
 **Agent rule:** do not treat this README or repository name as proof of runtime capability. Verify against tests, acceptance evidence, production contracts, and live behavior. Preserve restore points before risky changes, make the smallest atomic change, record evidence and timestamps, and update the graph whenever architecture, ownership, dependencies, proof, or failure knowledge changes.
+
+## Android / Termux transport status (2026-10-02)
+
+On the Samsung Android 15 device, privileged Android automation from Remote Desktop Commander must use `tools.android_transport.RishTransport`. RDC/background children can lack Android runtime variables such as `BOOTCLASSPATH`; direct `rish` calls from that reduced environment can return misleading results. `RishTransport` re-enters the full Termux context through `RunCommandService` and then invokes the canonical `lib/rish_run.sh` wrapper.
+
+Legacy callers using `lib/broccoli_rish_shell.py` also delegate to `RishTransport`; its `rish_ok()` contract is `(ok: bool, evidence: str)`, matching the tracked self-test callers.
+
+For a fail-closed live transport proof from either Termux or an RDC/background caller, run `bash lib/rish_transport_probe.sh`. The probe writes its target-side evidence to `/sdcard/OmniKali/broccoli/rish-transport-proof.txt`.
+
+AutoJS remains an **optional** adapter. The installed default package is `org.autojs.autojs.modify`. Verify the package/activity/transport without Grok-specific payloads with:
+
+```bash
+cd "$HOME/broccoli-core"
+python3 scripts/autojs_run.py smoke
+```
+
+The legacy `read` and `fsm` modes require `/sdcard/broccoli/autojs/grok_read_chat.js` and `/sdcard/broccoli/autojs/grok_button_fsm.js`. If those payloads are absent, the adapter now fails immediately instead of waiting for an output file that cannot be produced. The side-effect-free `smoke` check uses a bounded two-attempt cold-start retry because AutoJS can be reclaimed under memory pressure; `read` and `fsm` remain single-shot to avoid duplicate UI actions. The primary production-capable Android path remains Rish + UIAutomator / accessibility surfaces; AutoJS should not be made a hard dependency.

@@ -56,9 +56,13 @@ class ActionDispatcher:
             )
 
         if name == "ui.dump":
+            # Shared storage is the proven durable UI-dump surface on this
+            # Samsung device. /data/local/tmp has shown caller-dependent
+            # hangs when the action originates from RunCommandService.
             return self.backend.run(
-                "uiautomator dump /data/local/tmp/omnikali-ui.xml >/dev/null 2>&1 "
-                "&& cat /data/local/tmp/omnikali-ui.xml"
+                "mkdir -p /sdcard/OmniKali/ui "
+                "&& uiautomator dump /sdcard/OmniKali/ui/omnikali-ui.xml >/dev/null 2>&1 "
+                "&& cat /sdcard/OmniKali/ui/omnikali-ui.xml"
             )
 
         if name == "package.inspect":

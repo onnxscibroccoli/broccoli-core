@@ -32,3 +32,11 @@ OMNIKALI
 Helix task lifecycle, PostgreSQL persistence, worker lease recovery, replacement-worker recovery, real Kali execution, and fencing/idempotency behavior have previously been exercised. Re-verify after changes.
 
 **Canonical graph marker:** `OMNIKALI-KG-2026-09-28`
+
+## Broccoli Android transport evidence — 2026-10-02
+
+- Live RDC-to-Termux-to-Rish proof returned Android shell uid 2000, API 35, device a14xm. The fail-closed `lib/rish_transport_probe.sh` now routes through `RishTransport` and writes verifiable evidence to shared storage.
+- scripts/autojs_run.py smoke passed against org.autojs.autojs.modify through the canonical RishTransport bridge.
+- A transient AutoJS cold-start timeout was observed under memory pressure; the side-effect-free smoke probe now has a bounded two-attempt retry, while read/fsm remain single-shot.
+- Legacy AutoJS read/fsm payloads are currently absent and now fail fast; AutoJS remains optional behind the Rish/UIAutomator/accessibility path.
+- Rooted full-suite validation (`python3 -m unittest discover -s tests -t . -v`) passed 135/135 tests on-device. The earlier discovery failure was import-path shadowing from `tests/runtime`, not missing production modules. CI is aligned to this rooted command.
