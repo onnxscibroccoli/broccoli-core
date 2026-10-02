@@ -37,6 +37,6 @@ Helix task lifecycle, PostgreSQL persistence, worker lease recovery, replacement
 
 - Live RDC-to-Termux-to-Rish proof returned Android shell uid 2000, API 35, device a14xm. The fail-closed `lib/rish_transport_probe.sh` now routes through `RishTransport` and writes verifiable evidence to shared storage.
 - scripts/autojs_run.py smoke passed against org.autojs.autojs.modify through the canonical RishTransport bridge.
-- A transient AutoJS cold-start timeout was observed under memory pressure; the side-effect-free smoke probe now has a bounded two-attempt retry, while read/fsm remain single-shot.
+- Transient AutoJS health failures were observed both as cold-start marker timeouts and a one-off Rish launch `Server is not running` result; the side-effect-free smoke probe now retries either case at most once, while read/fsm remain single-shot.
 - Legacy AutoJS read/fsm payloads are currently absent and now fail fast; AutoJS remains optional behind the Rish/UIAutomator/accessibility path.
-- Rooted full-suite validation (`python3 -m unittest discover -s tests -t . -v`) passed 135/135 tests on-device. The earlier discovery failure was import-path shadowing from `tests/runtime`, not missing production modules. CI is aligned to this rooted command.
+- Rooted full-suite validation (`python3 -m unittest discover -s tests -t . -v`) passed 136/136 tests on-device. The earlier discovery failure was import-path shadowing from `tests/runtime`, not missing production modules. CI is aligned to this rooted command.

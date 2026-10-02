@@ -54,7 +54,7 @@ Run the complete offline Python suite from the repository root with:
 python3 -m unittest discover -s tests -t . -v
 ```
 
-The explicit `-t .` is required: using `unittest discover -s tests` alone can put `tests/` on the import path and allow `tests/runtime` to shadow the real `runtime` package. On 2026-10-02 the rooted suite passed 135/135 tests on the Android/Termux target. CI uses the same command.
+The explicit `-t .` is required: using `unittest discover -s tests` alone can put `tests/` on the import path and allow `tests/runtime` to shadow the real `runtime` package. On 2026-10-02 the rooted suite passed 136/136 tests on the Android/Termux target. CI uses the same command.
 
 ## How to use it
 
@@ -132,4 +132,4 @@ cd "$HOME/broccoli-core"
 python3 scripts/autojs_run.py smoke
 ```
 
-The legacy `read` and `fsm` modes require `/sdcard/broccoli/autojs/grok_read_chat.js` and `/sdcard/broccoli/autojs/grok_button_fsm.js`. If those payloads are absent, the adapter now fails immediately instead of waiting for an output file that cannot be produced. The side-effect-free `smoke` check uses a bounded two-attempt cold-start retry because AutoJS can be reclaimed under memory pressure; `read` and `fsm` remain single-shot to avoid duplicate UI actions. The primary production-capable Android path remains Rish + UIAutomator / accessibility surfaces; AutoJS should not be made a hard dependency.
+The legacy `read` and `fsm` modes require `/sdcard/broccoli/autojs/grok_read_chat.js` and `/sdcard/broccoli/autojs/grok_button_fsm.js`. If those payloads are absent, the adapter now fails immediately instead of waiting for an output file that cannot be produced. The side-effect-free `smoke` check uses a bounded two-attempt retry for cold-start or transient Rish launch failures because AutoJS/Shizuku can be reclaimed under memory pressure; `read` and `fsm` remain single-shot to avoid duplicate UI actions. The primary production-capable Android path remains Rish + UIAutomator / accessibility surfaces; AutoJS should not be made a hard dependency.

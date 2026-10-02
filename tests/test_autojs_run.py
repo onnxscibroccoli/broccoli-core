@@ -47,6 +47,36 @@ class AutoJSRunTests(unittest.TestCase):
             self.assertIn("org.autojs.autojs.modify", commands[0])
             self.assertIn("file://", commands[0])
 
+    def test_smoke_retries_transient_transport_error_once(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            sd = root / "autojs"
+            ui = root / "ui"
+            calls = []
+            token = "fedcba9876543210"
+
+            def fake_run(name, wait_out=None, timeout=20.0):
+                calls.append((name, Path(wait_out), timeout))
+                if len(calls) == 1:
+                    raise autojs.AutoJSError("Server is not running")
+                Path(wait_out).write_text(
+                    f"BROCCOLI_AUTOJS_OK {token} 2026-10-02T00:00:00Z",
+                    encoding="utf-8",
+                )
+                return True
+
+            with (
+                patch.object(autojs, "SD", sd),
+                patch.object(autojs, "UI", ui),
+                patch.object(autojs.secrets, "token_hex", return_value=token),
+                patch.object(autojs, "run_js", side_effect=fake_run),
+                patch.object(autojs.time, "sleep"),
+            ):
+                value = autojs.smoke(timeout=0.01, attempts=2)
+
+            self.assertTrue(value.startswith(f"BROCCOLI_AUTOJS_OK {token} "))
+            self.assertEqual(len(calls), 2)
+
     def test_smoke_retries_transient_cold_start_once(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
