@@ -113,6 +113,8 @@ On the Samsung Android 15 device, privileged Android automation from Remote Desk
 
 Legacy callers using `lib/broccoli_rish_shell.py` also delegate to `RishTransport`; its `rish_ok()` contract is `(ok: bool, evidence: str)`, matching the tracked self-test callers.
 
+For a fail-closed live transport proof from either Termux or an RDC/background caller, run `bash lib/rish_transport_probe.sh`. The probe writes its target-side evidence to `/sdcard/OmniKali/broccoli/rish-transport-proof.txt`.
+
 AutoJS remains an **optional** adapter. The installed default package is `org.autojs.autojs.modify`. Verify the package/activity/transport without Grok-specific payloads with:
 
 ```bash

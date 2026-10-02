@@ -35,6 +35,6 @@ Helix task lifecycle, PostgreSQL persistence, worker lease recovery, replacement
 
 ## Broccoli Android transport evidence — 2026-10-02
 
-- Live RDC-to-Termux-to-Rish proof returned Android shell uid 2000, API 35, device a14xm.
+- Live RDC-to-Termux-to-Rish proof returned Android shell uid 2000, API 35, device a14xm. The fail-closed `lib/rish_transport_probe.sh` now routes through `RishTransport` and writes verifiable evidence to shared storage.
 - scripts/autojs_run.py smoke passed against org.autojs.autojs.modify through the canonical RishTransport bridge.
 - Legacy AutoJS read/fsm payloads are currently absent and now fail fast; AutoJS remains optional behind the Rish/UIAutomator/accessibility path.

@@ -22,11 +22,11 @@ An active Shizuku service is still required. Do not replace this boundary with A
 
 ## Probe
 
-Run from an actual Termux session after Shizuku is active:
+Run from Termux or an RDC/background caller after Shizuku is active:
 
     bash ~/broccoli-core/lib/rish_transport_probe.sh
 
-The probe is deliberately fail-closed. It writes a target-side marker and rejects rc=0 with no artifact.
+The entrypoint delegates to `tools/rish_transport_probe.py`, which uses `RishTransport`. The default proof artifact is `/sdcard/OmniKali/broccoli/rish-transport-proof.txt`, a shared-storage surface writable by Android shell UID 2000 and observable from Termux. The probe is deliberately fail-closed: it generates a unique target marker and requires both that marker and `uid=2000(shell)` evidence.
 
 ## RDC-specific gate
 
