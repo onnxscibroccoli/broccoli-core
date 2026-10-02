@@ -6,6 +6,7 @@ Never imports provider package names. Falls back to MemorySurface.
 from __future__ import annotations
 
 import importlib.util
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -24,7 +25,14 @@ def _load_rish_module() -> Any:
     if spec is None or spec.loader is None:
         return None
     mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
+    # dataclasses and other runtime type helpers resolve cls.__module__ through
+    # sys.modules while the module is executing. Register before exec_module.
+    sys.modules[spec.name] = mod
+    try:
+        spec.loader.exec_module(mod)
+    except Exception:
+        sys.modules.pop(spec.name, None)
+        raise
     return mod
 
 
