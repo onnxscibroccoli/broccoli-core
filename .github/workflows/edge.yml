@@ -22,6 +22,20 @@ jobs:
         run: npm install -g wrangler@3.80.0
       - name: dry-run (no secrets, no deploy)
         working-directory: edge
-        run: npx wrangler deploy --dry-run --outdir=/tmp/broccoli-edge-out || true
+        run: |
+          set +e
+          out="$(npx wrangler deploy --dry-run --outdir=/tmp/broccoli-edge-out 2>&1)"
+          status=$?
+          printf '%s\n' "$out"
+          if [ "$status" -eq 0 ]; then
+            exit 0
+          fi
+          # Placeholder account/KV ids are not a bundle failure. Swallowing
+          # every error hid invalid worker config. Only auth gaps are skipped.
+          if printf '%s\n' "$out" | grep -Eqi "account_id|Not logged in|CLOUDFLARE_API_TOKEN|Authentication error|workers.dev"; then
+            echo "Dry-run could not reach Cloudflare. node --check still enforces syntax."
+            exit 0
+          fi
+          exit "$status"
       - name: basic JS sanity
         run: node --check edge/worker.js

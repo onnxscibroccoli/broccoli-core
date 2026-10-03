@@ -19,8 +19,8 @@ class HiddenBackend(AccessibilityBackend):
     def subscribe(self, callback):
         pass
 
-    def health(self) -> Dict:
+    def health(self) -> dict:
         return {"status": "healthy", "latency_ms": 45, "backend": "hidden"}
 
-    def capabilities(self) -> Dict:
+    def capabilities(self) -> dict:
         return {"supports_incremental": True, "supports_notifications": True, "supports_windows": True, "supports_hidden_api": True}

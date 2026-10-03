@@ -16,7 +16,7 @@ class PublicBackend(AccessibilityBackend):
 
     def current_snapshot(self) -> str:
         try:
-            result = subprocess.run(["rish", "-c", "uiautomator dump /sdcard/broccoli_ui.xml && cat /sdcard/broccoli_ui.xml"], 
+            result = subprocess.run(["rish", "-c", "uiautomator dump /sdcard/broccoli_ui.xml && cat /sdcard/broccoli_ui.xml"],
                                   capture_output=True, text=True, timeout=8)
             return result.stdout
         except Exception:
@@ -25,8 +25,8 @@ class PublicBackend(AccessibilityBackend):
     def subscribe(self, callback):
         pass  # Event loop handled by manager
 
-    def health(self) -> Dict:
+    def health(self) -> dict:
         return {"status": "healthy", "latency_ms": 120, "backend": "public"}
 
-    def capabilities(self) -> Dict:
+    def capabilities(self) -> dict:
         return {"supports_incremental": True, "supports_notifications": True, "supports_windows": True, "supports_hidden_api": False}
