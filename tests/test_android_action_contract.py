@@ -47,7 +47,7 @@ class AndroidActionContractTests(unittest.TestCase):
 
     def test_display_list_is_allowlisted(self):
         self.dispatcher.execute({"action": "display.list"})
-        self.assertTrue(self.backend.calls[0].startswith("dumpsys display"))
+        self.assertEqual(self.backend.calls[0], "cmd display get-displays")
 
     def test_tap_is_bounded(self):
         self.dispatcher.execute({"action": "tap", "display_id": 0, "x": 10, "y": 20})

@@ -51,9 +51,10 @@ class ActionDispatcher:
             )
 
         if name == "display.list":
-            return self.backend.run(
-                "dumpsys display | grep -E 'mDisplayId=[0-9]+'"
-            )
+            # Samsung Android 15 can leave dumpsys display blocked when reached
+            # through the Rish/RunCommandService bridge. The framework cmd surface
+            # returns the same display identity without that hang.
+            return self.backend.run("cmd display get-displays")
 
         if name == "ui.dump":
             # Shared storage is the proven durable UI-dump surface on this
