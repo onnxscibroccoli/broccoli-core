@@ -108,6 +108,7 @@ brocc login
 brocc status
 brocc ping
 brocc ask <message>
+brocc grok status [--json] [--no-store]
 brocc probe
 brocc harvest [args...]
 brocc read
@@ -123,6 +124,10 @@ Production (live Grok via OAuth):
   status      oauth + Grok provider health
   ping        live round-trip to Grok
   ask         send a real prompt to Grok
+
+Grok DevOps (collection only; does not call Grok):
+  grok status evidence packet for the current repo/runtime
+              run from Termux, not inside rish
 
 Phase 1 harvest:
   probe       inspect current Android/UI state
@@ -149,6 +154,20 @@ case "$cmd" in
 
     ask)
         prod ask "$@"
+        ;;
+
+    grok)
+        sub="${1:-status}"
+        shift || true
+        case "$sub" in
+            status)
+                exec python3 -m runtime.grok.status "$@"
+                ;;
+            *)
+                printf 'brocc grok status [--json] [--no-store]\n' >&2
+                exit 2
+                ;;
+        esac
         ;;
 
     agent)
