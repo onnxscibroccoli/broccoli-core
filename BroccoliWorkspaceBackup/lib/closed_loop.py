@@ -1,6 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/env python3
 """Closed loop v2"""
 from __future__ import annotations
+raise RuntimeError("RETIRED_PHYSICAL_RISH: archived launcher; use broccoli-core/lib/rish_run.sh")
 
 import hashlib
 import json

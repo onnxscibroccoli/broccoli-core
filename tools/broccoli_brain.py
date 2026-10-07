@@ -27,7 +27,7 @@ def load_env():
     return o
 
 def rish(cmd, t=60):
-    return subprocess.run(["rish", "-c", cmd], capture_output=True, text=True, timeout=t)
+    return subprocess.run(["bash", "/data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh", cmd], capture_output=True, text=True, timeout=t)
 
 def foreground_grok(cfg):
     pkg = cfg.get("GROK_PKG", "ai.x.grok")

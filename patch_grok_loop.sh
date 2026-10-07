@@ -40,7 +40,7 @@ import sys
 
 def rish(cmd):
     p = subprocess.run(
-        ["bash", "-c", f"printf '%s\nexit\n' '{cmd}' | rish"],
+        ["bash", "-c", f"printf '%s\nexit\n' '{cmd}' | bash /data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh"],
         capture_output=True,
         text=True
     )
@@ -137,7 +137,7 @@ if shutil.which("termux-clipboard-get"):
 
 # Android clipboard through Shizuku/RISH
 data = run(
-    "printf 'cmd clipboard get\\nexit\\n' | rish"
+    "printf 'cmd clipboard get\\nexit\\n' | bash /data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh"
 )
 
 if data:

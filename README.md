@@ -133,3 +133,11 @@ python3 scripts/autojs_run.py smoke
 ```
 
 The legacy `read` and `fsm` modes require `/sdcard/broccoli/autojs/grok_read_chat.js` and `/sdcard/broccoli/autojs/grok_button_fsm.js`. If those payloads are absent, the adapter now fails immediately instead of waiting for an output file that cannot be produced. The side-effect-free `smoke` check uses a bounded two-attempt retry for cold-start or transient Rish launch failures because AutoJS/Shizuku can be reclaimed under memory pressure; `read` and `fsm` remain single-shot to avoid duplicate UI actions. The primary production-capable Android path remains Rish + UIAutomator / accessibility surfaces; AutoJS should not be made a hard dependency.
+
+## Physical Android transport retirement (2026-10-07)
+
+All physical automation enters `lib/rish_run.sh`; the exported Shizuku `rish`
+launcher is its internal dependency. Legacy entrypoints delegate to the canonical
+wrapper and do not fall back to ADB or a local shell. Archived raw launchers are
+explicitly retired. See [transport retirement and verification](docs/PHYSICAL_RISH_RETIREMENT.md).
+Cloud/remote Android transports remain separately configurable.

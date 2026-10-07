@@ -1,3 +1,4 @@
+raise RuntimeError("RETIRED_PHYSICAL_RISH: archived launcher; use broccoli-core/lib/rish_run.sh")
 import subprocess
 from semantic import SemanticAccessibilityModel
 

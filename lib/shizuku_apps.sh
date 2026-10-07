@@ -28,17 +28,17 @@ LAUNCH="${_lines[1]:-am start -p $PKG}"
 
 case "$ACTION" in
   launch|foreground)
-    rish -c "$LAUNCH" || rish -c "monkey -p $PKG -c android.intent.category.LAUNCHER 1"
+    bash /data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh "$LAUNCH" || bash /data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh "monkey -p $PKG -c android.intent.category.LAUNCHER 1"
     sleep 1.2
-    rish -c "am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p $PKG" 2>/dev/null || true
+    bash /data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh "am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p $PKG" 2>/dev/null || true
     echo "SHIZUKU_APP ok pkg=$PKG action=$ACTION"
     ;;
   stop)
-    rish -c "am force-stop $PKG" && echo "stopped $PKG"
+    bash /data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh "am force-stop $PKG" && echo "stopped $PKG"
     ;;
   resolve)
     echo "pkg=$PKG"
-    rish -c "pm path $PKG" 2>/dev/null || echo "pm path failed (not installed?)"
+    bash /data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh "pm path $PKG" 2>/dev/null || echo "pm path failed (not installed?)"
     ;;
   *)
     echo "usage: shizuku_apps.sh [grok|chatgpt|gemini] launch|foreground|stop|resolve"

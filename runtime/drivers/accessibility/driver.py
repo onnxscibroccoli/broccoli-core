@@ -73,9 +73,7 @@ class AccessibilityDriver:
 
             try:
                 subprocess.run(
-                    [
-                        "rish",
-                        "-c",
+                    ["bash", "/data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh",
                         "uiautomator dump /data/local/tmp/uidump.xml",
                     ],
                     stdout=subprocess.DEVNULL,
@@ -84,9 +82,7 @@ class AccessibilityDriver:
                 )
 
                 proc = subprocess.run(
-                    [
-                        "rish",
-                        "-c",
+                    ["bash", "/data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh",
                         "cat /data/local/tmp/uidump.xml",
                     ],
                     capture_output=True,
@@ -176,4 +172,4 @@ class AccessibilityDriver:
         }
 
     def tap(self, x=540, y=1274):
-        subprocess.run(["rish", "-c", f"input tap {x} {y}"], timeout=5)
+        subprocess.run(["bash", "/data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh", f"input tap {x} {y}"], timeout=5)

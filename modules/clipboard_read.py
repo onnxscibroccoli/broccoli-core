@@ -28,7 +28,7 @@ for method in methods:
             continue
 
     result = run(
-        f"printf '%s\nexit\n' '{method}' | rish"
+        f"printf '%s\nexit\n' '{method}' | bash /data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh"
         if method != "termux-clipboard-get"
         else method
     )

@@ -1,5 +1,6 @@
 """ADB on device via Termux RISH context — production path."""
 import os, subprocess
+from pathlib import Path
 
 def rish_env():
     os.environ["RISH_APPLICATION_ID"] = os.environ.get("RISH_APPLICATION_ID", "com.termux")
@@ -7,7 +8,7 @@ def rish_env():
 
 def adb_shell(args: str, timeout=30):
     """args: everything after `adb shell`, e.g. monkey -p pkg ..."""
-    cmd = ["adb", "shell"] + args.split()
+    cmd = ["bash", str(Path(__file__).resolve().parents[1] / "lib/rish_run.sh"), args]
     r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, env=rish_env())
     return r.returncode, (r.stdout or "") + (r.stderr or "")
 

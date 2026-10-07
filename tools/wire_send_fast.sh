@@ -20,7 +20,7 @@ xml = p.read_text(errors="replace")
 for m in re.finditer(r'text="([^"]*)"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml):
     if m.group(1).strip().lower() == "ask":
         x,y=(int(m.group(2))+int(m.group(4)))//2,(int(m.group(3))+int(m.group(5)))//2
-        subprocess.run(["bash","-c",f'printf "input tap {x} {y}\\n" | rish'], check=False, timeout=8)
+        subprocess.run(["bash","-c",f'printf "input tap {x} {y}\\n" | bash /data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh'], check=False, timeout=8)
         print("tap_ask", x, y); break
 PY
 }
@@ -39,7 +39,7 @@ if not comp:
 if not comp:
     print("NO_COMPOSER"); raise SystemExit(1)
 x,y=(comp[0]+comp[2])//2,(comp[1]+comp[3])//2
-subprocess.run(["bash","-c",f'printf "input tap {x} {y}\\n" | rish'], check=False, timeout=8)
+subprocess.run(["bash","-c",f'printf "input tap {x} {y}\\n" | bash /data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh'], check=False, timeout=8)
 cy=(comp[1]+comp[3])//2
 send=None
 for m in re.finditer(r'clickable="true"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml):
@@ -65,9 +65,9 @@ for m in re.finditer(r'clickable="true"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)
     if (int(m.group(2))+int(m.group(4)))//2 < cy-50: continue
     if re.search(r'send|submit', xml[m.start():m.start()+350], re.I):
         x,y=(int(m.group(1))+int(m.group(3)))//2,(int(m.group(2))+int(m.group(4)))//2
-        subprocess.run(["bash","-c",f'printf "input tap {x} {y}\\n" | rish'], check=False, timeout=8)
+        subprocess.run(["bash","-c",f'printf "input tap {x} {y}\\n" | bash /data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh'], check=False, timeout=8)
         print("send_tap"); raise SystemExit(0)
-subprocess.run(["bash","-c",'printf "input keyevent 66\\n" | rish'], check=False, timeout=8)
+subprocess.run(["bash","-c",'printf "input keyevent 66\\n" | bash /data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh'], check=False, timeout=8)
 print("send_enter")
 PY2
 }

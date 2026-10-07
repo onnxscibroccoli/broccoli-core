@@ -4,9 +4,7 @@ import subprocess
 def check():
     try:
         result = subprocess.run(
-            [
-                "rish",
-                "-c",
+            ["bash", "/data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh",
                 "echo shizuku_ok"
             ],
             capture_output=True,
