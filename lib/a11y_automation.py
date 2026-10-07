@@ -27,7 +27,7 @@ def rish(cmd: str, timeout: int = 25) -> tuple[int, str]:
     env = {**os.environ, "RISH_APPLICATION_ID": RISH_APP}
     try:
         r = subprocess.run(
-            ["rish", "-c", cmd],
+            ["bash", "/data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh", cmd],
             capture_output=True,
             text=True,
             timeout=timeout,
@@ -39,9 +39,6 @@ def rish(cmd: str, timeout: int = 25) -> tuple[int, str]:
 
 
 def ensure_rish() -> bool:
-    p = HOME / "aim_rish_ensure.sh"
-    if p.is_file():
-        subprocess.run(["bash", str(p)], timeout=30, check=False)
     c, o = rish("echo RISH_OK")
     return c == 0 and "RISH_OK" in o
 

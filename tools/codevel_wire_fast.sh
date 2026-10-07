@@ -32,7 +32,7 @@ for m in re.finditer(r'bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"[^>]*(?:text|conte
 for m in re.finditer(r'(?:text|content-desc)="([^"]*)"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml):
     if re.search(pat, m.group(1), re.I):
         x,y=(int(m.group(2))+int(m.group(4)))//2,(int(m.group(3))+int(m.group(5)))//2
-        subprocess.run(["bash","-c", f'printf "input tap {x} {y}\\n" | rish'], check=False)
+        subprocess.run(["bash","-c", f'printf "input tap {x} {y}\\n" | bash /data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh'], check=False)
         print(x,y); break
 PY
 }
@@ -53,7 +53,7 @@ if not comp:
         comp=tuple(map(int,m.groups())); break
 if comp:
     x,y=(comp[0]+comp[2])//2,(comp[1]+comp[3])//2
-    subprocess.run(["bash","-c", f'printf "input tap {x} {y}\\n" | rish'], check=False)
+    subprocess.run(["bash","-c", f'printf "input tap {x} {y}\\n" | bash /data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh'], check=False)
 cy=y
 send=None
 for m in re.finditer(r'clickable="true"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml):
@@ -64,10 +64,10 @@ for m in re.finditer(r'clickable="true"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)
     if re.search(r'send|submit|ImageButton', chunk, re.I):
         send=(x1+x2)//2,cy2; break
 if send:
-    subprocess.run(["bash","-c", f'printf "input tap {send[0]} {send[1]}\\n" | rish'], check=False)
+    subprocess.run(["bash","-c", f'printf "input tap {send[0]} {send[1]}\\n" | bash /data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh'], check=False)
     print("send_tap", send)
 else:
-    subprocess.run(["bash","-c", 'printf "input keyevent 66\\n" | rish'], check=False)
+    subprocess.run(["bash","-c", 'printf "input keyevent 66\\n" | bash /data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh'], check=False)
     print("send_enter")
 PY
 }
@@ -96,10 +96,10 @@ wire_out(){
     dump >/dev/null
   fi
   termux-clipboard-set <<< "$MSG"
-  printf 'input tap 0 0\n' | rish >/dev/null 2>&1 || true
+  printf 'input tap 0 0\n' | bash /data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh >/dev/null 2>&1 || true
   composer_send
   sleep "$STEP"
-  printf 'input keyevent 279\n' | rish
+  printf 'input keyevent 279\n' | bash /data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh
   sleep "$STEP"
   composer_send
   # poll reply — fast loop, no 8s block

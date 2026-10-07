@@ -1,6 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/env python3
 """Accessibility automation: dump UI, find nodes, tap, inject text. Uses RISH + optional Broccoli a11y APK."""
 from __future__ import annotations
+raise RuntimeError("RETIRED_PHYSICAL_RISH: archived launcher; use broccoli-core/lib/rish_run.sh")
 
 import json
 import os

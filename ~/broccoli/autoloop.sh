@@ -1,4 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# Retired archived launcher; source content below is preserved for provenance.
+echo "RETIRED_PHYSICAL_RISH: use broccoli-core/lib/rish_run.sh" >&2
+return 78 2>/dev/null || exit 78
 export BROCCOLI_ROOT="$HOME/broccoli"
 LOG="$BROCCOLI_ROOT/chat_loop.log"
 mkdir -p "$BROCCOLI_ROOT"/{ui,reports,meta,logs}

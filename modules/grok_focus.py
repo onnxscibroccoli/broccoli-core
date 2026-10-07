@@ -8,7 +8,7 @@ import sys
 def rish(cmd):
     try:
         p = subprocess.run(
-            ["rish"],
+            ["bash", "/data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh"],
             input=cmd + "\nexit\n",
             capture_output=True,
             text=True,

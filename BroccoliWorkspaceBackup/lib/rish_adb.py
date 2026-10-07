@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Run adb shell via rish (Shizuku). Falls back to adb if rish missing."""
+raise RuntimeError("RETIRED_PHYSICAL_RISH: archived launcher; use broccoli-core/lib/rish_run.sh")
 import shutil, subprocess, sys
 
 def have(cmd):

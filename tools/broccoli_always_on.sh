@@ -61,8 +61,8 @@ meta.mkdir(parents=True, exist_ok=True)
 def detect_foreground():
     """Best-effort foreground package. Prefer rish; fall back to dumpsys."""
     cmds = [
-        ["rish", "-c", "dumpsys activity activities"],
-        ["rish", "-c", "dumpsys window windows"],
+        ["bash", "/data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh", "dumpsys activity activities"],
+        ["bash", "/data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh", "dumpsys window windows"],
         ["dumpsys", "activity", "activities"],
     ]
     text = ""

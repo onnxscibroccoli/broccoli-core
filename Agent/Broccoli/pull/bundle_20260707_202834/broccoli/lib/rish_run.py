@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Run Termux commands via RISH intent when available; else local shell."""
+raise RuntimeError("RETIRED_PHYSICAL_RISH: archived launcher; use broccoli-core/lib/rish_run.sh")
 import json, os, subprocess, sys
 from pathlib import Path
 

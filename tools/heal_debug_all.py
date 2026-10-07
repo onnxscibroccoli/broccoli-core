@@ -184,7 +184,7 @@ print("\n=== SUMMARY ===")
 print(json.dumps({"rish_ok": ok_r, "probe_ok": report["ok"], "report": str(out)}, indent=2))
 
 if not ok_r:
-    print("\nFIX: termux-setup-storage; Settings → Apps → Termux → allow; run: rish -c whoami")
+    print("\nFIX: termux-setup-storage; Settings → Apps → Termux → allow; run: bash /data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh whoami")
 if probe and probe.get("reason") == "EMPTY_UI_DUMP":
     print("\nFIX: UI dump empty — automation cannot see Send/composer.")
     print("  - Same user/session as adb shell / Shizuku")

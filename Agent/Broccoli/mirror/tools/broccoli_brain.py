@@ -1,6 +1,7 @@
 
 #!/usr/bin/env python3
 """Heal co-dev loop: brocc launch-grok (foreground) + brocc ask|send. pkg=ai.x.grok."""
+raise RuntimeError("RETIRED_PHYSICAL_RISH: archived launcher; use broccoli-core/lib/rish_run.sh")
 import subprocess, sys, time, shutil
 from pathlib import Path
 

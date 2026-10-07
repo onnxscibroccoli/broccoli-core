@@ -1,6 +1,7 @@
 
 #!/usr/bin/env python3
 """Agentic Broccoli: health, repair, mac ingest, worker — routine ops without Mac TERMINUX."""
+raise RuntimeError("RETIRED_PHYSICAL_RISH: archived launcher; use broccoli-core/lib/rish_run.sh")
 import json, subprocess, sys, time
 from pathlib import Path
 

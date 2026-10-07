@@ -35,17 +35,17 @@ def collect():
 
         "foreground":
             run(
-                "printf 'dumpsys activity activities\\nexit\\n' | rish"
+                "printf 'dumpsys activity activities\\nexit\\n' | bash /data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh"
             ),
 
         "window":
             run(
-                "printf 'dumpsys window windows\\nexit\\n' | rish"
+                "printf 'dumpsys window windows\\nexit\\n' | bash /data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh"
             ),
 
         "ui":
             run(
-                "printf 'uiautomator dump /sdcard/sysdump.xml\\nexit\\n' | rish"
+                "printf 'uiautomator dump /sdcard/sysdump.xml\\nexit\\n' | bash /data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh"
             ),
 
         "processes":

@@ -37,13 +37,13 @@ def main():
     pkg=load_pkg(); sxy,cxy=from_json()
     if not sxy: sxy,cxy2=from_xml(); cxy=cxy or cxy2
     lines=["export PATH=\"$HOME/bin:$PATH\"",
-           f"rish -c 'am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p {pkg}'",
+           f"bash /data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh 'am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p {pkg}'",
            "sleep 1.2","brocc dump"]
     if a.msg:
         esc=a.msg.replace("'","'\"'\"'")
         lines+=["brocc send '"+esc+"'","sleep 0.6","brocc dump"]
     if a.emit_send and sxy:
-        x,y=sxy; lines.append(f"rish -c 'input tap {x} {y}'")
+        x,y=sxy; lines.append(f"bash /data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh 'input tap {x} {y}'")
     elif a.emit_send:
         print("# FAIL no Send bounds — foreground Grok chat then brocc dump"); return 1
     print("\n".join(lines)); return 0

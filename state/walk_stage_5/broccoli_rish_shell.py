@@ -1,3 +1,4 @@
+raise RuntimeError("RETIRED_PHYSICAL_RISH: archived launcher; use broccoli-core/lib/rish_run.sh")
 import os, re, subprocess, shutil
 from pathlib import Path
 def rish_path():

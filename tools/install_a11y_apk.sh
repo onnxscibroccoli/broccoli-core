@@ -42,7 +42,7 @@ cmd = f"cp {sys_apk} /data/local/tmp/broccoli_a11y.apk && pm install -r -g /data
 env = os.environ.copy()
 env["RISH_APPLICATION_ID"] = os.environ.get("RISH_APPLICATION_ID", "com.termux")
 rish = shutil.which("rish") or str(Path(os.environ["PREFIX"]) / "bin/rish")
-p = subprocess.run([rish, "-c", cmd], capture_output=True, text=True, timeout=120, env=env)
+p = subprocess.run(["bash", str(Path.home() / "broccoli-core/lib/rish_run.sh"), cmd], capture_output=True, text=True, timeout=120, env=env)
 print(p.stdout or "")
 print(p.stderr or "")
 raise SystemExit(p.returncode)

@@ -1,6 +1,7 @@
 
 #!/usr/bin/env python3
 """Export Broccoli project to /sdcard/Broccoli/pull via shizuku/rish shell (adb-visible)."""
+raise RuntimeError("RETIRED_PHYSICAL_RISH: archived launcher; use broccoli-core/lib/rish_run.sh")
 import json, os, shutil, subprocess, time
 from pathlib import Path
 
