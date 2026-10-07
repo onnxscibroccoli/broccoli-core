@@ -133,3 +133,7 @@ python3 scripts/autojs_run.py smoke
 ```
 
 The legacy `read` and `fsm` modes require `/sdcard/broccoli/autojs/grok_read_chat.js` and `/sdcard/broccoli/autojs/grok_button_fsm.js`. If those payloads are absent, the adapter now fails immediately instead of waiting for an output file that cannot be produced. The side-effect-free `smoke` check uses a bounded two-attempt cold-start retry because AutoJS can be reclaimed under memory pressure; `read` and `fsm` remain single-shot to avoid duplicate UI actions. The primary production-capable Android path remains Rish + UIAutomator / accessibility surfaces; AutoJS should not be made a hard dependency.
+
+## Shevery migration (2026-10-07)
+
+User-provided live tests on the Samsung SM-A146U (Android 15) confirm Shevery 14.1.0 (41) shell access through the default Termux `rish`: `uid=2000(shell)`, `BROCCOLI_RISH_OK`, and `SM-A146U`. The working wrapper currently points to `~/rish-shevery-test.l9BdrI`. See [Shevery rish migration](docs/SHEVERY_RISH_MIGRATION.md) for the permanent private-storage path, rollback, and separate RDC transport probe. Permanent-path installation and RDC retesting remain pending device execution. `lib/rish_run.sh` already uses `$PREFIX/bin/rish`; no transport implementation change is needed.
