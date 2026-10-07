@@ -1,3 +1,4 @@
+from typing import Dict
 from .backend import AccessibilityBackend
 
 class HiddenBackend(AccessibilityBackend):
