@@ -74,3 +74,12 @@ class ArchiveRetirementTests(unittest.TestCase):
             result = subprocess.run([executable, str(ROOT / path)], text=True, capture_output=True, timeout=5)
             self.assertNotEqual(result.returncode, 0)
             self.assertIn('RETIRED_PHYSICAL_RISH', result.stderr)
+
+class AdbCompatibilityTests(unittest.TestCase):
+    def test_on_device_adb_compatibility_enters_core_wrapper(self):
+        import broccoli_rish_adb
+        result = subprocess.CompletedProcess([], 9, 'proof', 'error')
+        with patch.object(broccoli_rish_adb.subprocess, 'run', return_value=result) as run:
+            rc, output = broccoli_rish_adb.adb_shell('echo "a b"; id')
+        self.assertEqual((rc, output), (9, 'prooferror'))
+        self.assertEqual(run.call_args.args[0], ['bash', str(ROOT / 'lib/rish_run.sh'), 'echo "a b"; id'])

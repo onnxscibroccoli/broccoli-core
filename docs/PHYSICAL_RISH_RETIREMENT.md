@@ -39,7 +39,9 @@ six errors due to missing `Dict` in `runtime/drivers/accessibility/public_backen
 `tests.test_core.TestBroccoliCore.test_01_runtime_startup`,
 `tests.test_core.TestBroccoliCore.test_05_accessibility_driver`, and
 `tests.test_hardened_core.HardenedCoreSmokeTest.test_required_runtime_modules_import`.
-That baseline defect is repaired separately, without weakening the assertions.
+The public and hidden backends both required `Dict` imports. Separate fixes restore
+those annotations without weakening assertions. The final complete suite passes
+143 tests, including seven physical-retirement regression tests.
 
 Canonical wrapper SHA-256:
 `73cb4a3840f218f7ad7d102aee62d956bb1de9e7bd895ce089b162e4075ee742`.
