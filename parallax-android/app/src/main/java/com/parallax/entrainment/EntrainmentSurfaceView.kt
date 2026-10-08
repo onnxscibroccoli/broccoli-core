@@ -143,8 +143,13 @@ class EntrainmentSurfaceView(
         val border = (borderWidthDp * density).coerceAtLeast(1f)
         val feather = (border * 0.85f).coerceAtLeast(18f)
         val edgeDistance = minOf(x, y, width - x, height - y).coerceAtLeast(0f)
-        val t = ((border + feather - edgeDistance) / feather).coerceIn(0f, 1f)
-        // Smoothstep: no visible mathematical discontinuity at either end.
+
+        // Border mode is an edge glow, not a screen-sized wash:
+        // zero at the center, rising smoothly toward each edge.
+        // borderWidth controls the inward reach of the fade; borderOpacity
+        // controls the maximum alpha at the physical screen edge.
+        val reach = (border * 2.5f + feather).coerceAtLeast(48f)
+        val t = (1f - edgeDistance / reach).coerceIn(0f, 1f)
         val smooth = t * t * (3f - 2f * t)
         return smooth * borderOpacity.coerceIn(0f, 1f)
     }
