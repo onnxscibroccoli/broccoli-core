@@ -91,7 +91,7 @@ class SettingsActivity : Activity() {
         content.addView(seed)
 
         volume = slider(content, "Volume", 0, 100, (p.getFloat(OverlayService.KEY_VOLUME, .12f) * 100).roundToInt())
-        fullOpacity = slider(content, "Full Screen Opacity", 5, 75, (p.getFloat(OverlayService.KEY_FULL_OPACITY, .75f) * 100).roundToInt().coerceIn(5, 75))
+        fullOpacity = slider(content, "Full Screen Opacity", 5, 100, (p.getFloat(OverlayService.KEY_FULL_OPACITY, .75f) * 100).roundToInt().coerceIn(5, 100))
         borderWidth = slider(content, "Border Width", 8, 240, p.getFloat(OverlayService.KEY_BORDER_WIDTH, 72f).roundToInt().coerceIn(8, 240))
         borderOpacity = slider(content, "Border Opacity", 0, 100, (p.getFloat(OverlayService.KEY_BORDER_OPACITY, .75f) * 100).roundToInt())
 
