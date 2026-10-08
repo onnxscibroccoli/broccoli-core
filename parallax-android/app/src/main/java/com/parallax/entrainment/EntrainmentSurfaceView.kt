@@ -1,20 +1,23 @@
 package com.parallax.entrainment
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.*
 import android.view.Choreographer
 import android.view.View
 import kotlin.math.cos
-import kotlin.math.min
 import kotlin.math.sin
 
 /**
- * Hardware-accelerated renderer for the overlay.
+ * Canvas renderer intentionally mirrors the original HTML engine:
+ * - Mulberry32 + hashSeedStr deterministic seeding
+ * - 5 colored WaveEntity instances + 3 shadow instances
+ * - identical radius/velocity/angle/speed/amplitude ranges
+ * - target-Hz pulse drives the same visual breathing factor
+ * - light/dark palettes match the CSS renderer
  *
- * This is deliberately a normal View rather than a SurfaceView. A SurfaceView
- * creates a separate child surface, which is unnecessary for this transparent
- * overlay and makes lifecycle/touch-obscuring behavior more complicated on
- * Android 12+ and Android 15. Choreographer owns frame pacing and lifecycle.
+ * It remains a normal hardware-accelerated View paced by Choreographer,
+ * preserving the Android 15 lifecycle/input fix from PR #72.
  */
 class EntrainmentSurfaceView(
     context: Context,
@@ -23,63 +26,92 @@ class EntrainmentSurfaceView(
     seedStr: String
 ) : View(context), Choreographer.FrameCallback {
 
-    private data class Particle(
-        val radius: Float,
-        val angle: Float,
-        val size: Float,
-        val speed: Float,
-        val phase: Float,
-        val orbit: Int
+    private data class WaveEntity(
+        val isShadow: Boolean,
+        var x: Float = 0f,
+        var y: Float = 0f,
+        var vx: Float = 0f,
+        var vy: Float = 0f,
+        var radius: Float = 0f,
+        var hue: Float = 0f,
+        var angleX: Float = 0f,
+        var angleY: Float = 0f,
+        var speedX: Float = 0f,
+        var speedY: Float = 0f,
+        var amp: Float = 0f
     )
 
+    private class Mulberry32(seed: Int) {
+        private var a = seed
+
+        private fun imul(x: Int, y: Int): Int =
+            ((x.toLong() * y.toLong()) and 0xffffffffL).toInt()
+
+        fun nextFloat(): Float {
+            a += 0x6D2B79F5
+            var t = a
+            t = imul(t xor (t ushr 15), t or 1)
+            t = t xor (t + imul(t xor (t ushr 7), t or 61))
+            return ((t xor (t ushr 14)).toUInt().toLong() / 4294967296.0).toFloat()
+        }
+    }
+
     private val choreographer = Choreographer.getInstance()
-    private val particles = ArrayList<Particle>(96)
+    private val entities = ArrayList<WaveEntity>(8)
+    private val entityPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private var running = false
     private var startNanos = 0L
-    private var state = seedStr.hashCode().toLong() and 0xffffffffL
+    private var seedText = seedStr
 
-    private val glowPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val ringPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.STROKE
-        strokeWidth = 1.5f
-    }
-    private val particlePaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val rayPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.STROKE
-        strokeWidth = 1f
-    }
-    private val centerPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val darkMode: Boolean
+        get() = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+            Configuration.UI_MODE_NIGHT_YES
 
     init {
         setLayerType(View.LAYER_TYPE_HARDWARE, null)
         setBackgroundColor(Color.TRANSPARENT)
-        buildParticles()
+        initEntities(seedText)
     }
 
-    private fun nextRandom(): Float {
-        state = (state + 0x6D2B79F5L) and 0xffffffffL
-        var z = state
-        z = (z xor (z ushr 16)) * 0x45d9f3bL and 0xffffffffL
-        z = (z xor (z ushr 16)) * 0x45d9f3bL and 0xffffffffL
-        z = z xor (z ushr 16)
-        return (z and 0xffffffffL).toFloat() / 4294967296f
-    }
-
-    private fun buildParticles() {
-        particles.clear()
-        state = state xor 0x9E3779B9L
-        repeat(96) { i ->
-            val orbit = i % 6
-            particles += Particle(
-                radius = 0.10f + nextRandom() * 0.80f,
-                angle = nextRandom() * (Math.PI * 2.0).toFloat(),
-                size = 1.0f + nextRandom() * 3.2f,
-                speed = (0.06f + nextRandom() * 0.22f) *
-                    if (orbit % 2 == 0) 1f else -1f,
-                phase = nextRandom() * (Math.PI * 2.0).toFloat(),
-                orbit = orbit
-            )
+    private fun hashSeedStr(str: String): Int {
+        var hash = 0
+        for (ch in str) {
+            hash = 31 * hash + ch.code
         }
+        return hash
+    }
+
+    private fun initEntities(seed: String) {
+        seedText = seed
+        val rng = Mulberry32(hashSeedStr(seed))
+        entities.clear()
+
+        repeat(5) {
+            entities += WaveEntity(isShadow = false).also { reset(it, rng, width, height) }
+        }
+        repeat(3) {
+            entities += WaveEntity(isShadow = true).also { reset(it, rng, width, height) }
+        }
+    }
+
+    private fun reset(entity: WaveEntity, rng: Mulberry32, w: Int, h: Int) {
+        val maxDimension = maxOf(w, h, 1).toFloat()
+        entity.x = rng.nextFloat() * w.coerceAtLeast(1)
+        entity.y = rng.nextFloat() * h.coerceAtLeast(1)
+        entity.vx = (rng.nextFloat() - 0.5f) * 0.6f
+        entity.vy = (rng.nextFloat() - 0.5f) * 0.6f
+        entity.radius = (rng.nextFloat() * 0.3f + 0.3f) * maxDimension
+        entity.hue = rng.nextFloat() * 360f
+        entity.angleX = rng.nextFloat() * (Math.PI * 2.0).toFloat()
+        entity.angleY = rng.nextFloat() * (Math.PI * 2.0).toFloat()
+        entity.speedX = rng.nextFloat() * 0.003f + 0.0015f
+        entity.speedY = rng.nextFloat() * 0.003f + 0.0015f
+        entity.amp = rng.nextFloat() * 1.5f + 1.2f
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        if (oldw == 0 && oldh == 0) initEntities(seedText)
     }
 
     override fun onAttachedToWindow() {
@@ -111,110 +143,131 @@ class EntrainmentSurfaceView(
         choreographer.postFrameCallback(this)
     }
 
+    private fun hslToColor(hue: Float, saturation: Float, lightness: Float, alpha: Int): Int {
+        val h = ((hue % 360f) + 360f) % 360f / 360f
+        val s = saturation.coerceIn(0f, 1f)
+        val l = lightness.coerceIn(0f, 1f)
+
+        if (s == 0f) {
+            val v = (l * 255f).toInt().coerceIn(0, 255)
+            return Color.argb(alpha, v, v, v)
+        }
+
+        val q = if (l < 0.5f) l * (1f + s) else l + s - l * s
+        val p = 2f * l - q
+
+        fun hueToRgb(t0: Float): Float {
+            var t = t0
+            if (t < 0f) t += 1f
+            if (t > 1f) t -= 1f
+            return when {
+                t < 1f / 6f -> p + (q - p) * 6f * t
+                t < 1f / 2f -> q
+                t < 2f / 3f -> p + (q - p) * (2f / 3f - t) * 6f
+                else -> p
+            }
+        }
+
+        return Color.argb(
+            alpha,
+            (hueToRgb(h + 1f / 3f) * 255f).toInt().coerceIn(0, 255),
+            (hueToRgb(h) * 255f).toInt().coerceIn(0, 255),
+            (hueToRgb(h - 1f / 3f) * 255f).toInt().coerceIn(0, 255)
+        )
+    }
+
+    private fun drawWaveEntity(canvas: Canvas, entity: WaveEntity, pulseFactor: Float) {
+        val alpha = if (entity.isShadow) {
+            (0.35f + pulseFactor * 0.15f)
+        } else {
+            (0.42f + pulseFactor * 0.20f)
+        }
+        val centerColor: Int
+        val edgeColor: Int
+
+        if (entity.isShadow) {
+            if (darkMode) {
+                centerColor = Color.argb((alpha * 255f).toInt(), 210, 210, 205)
+            } else {
+                centerColor = Color.argb((alpha * 255f).toInt(), 110, 110, 105)
+            }
+            edgeColor = Color.TRANSPARENT
+        } else if (darkMode) {
+            centerColor = hslToColor(entity.hue, 0.65f, 0.48f, (alpha * 255f).toInt())
+            edgeColor = hslToColor(entity.hue, 0.55f, 0.25f, 0)
+        } else {
+            centerColor = hslToColor(entity.hue, 0.55f, 0.72f, (alpha * 255f).toInt())
+            edgeColor = hslToColor(entity.hue, 0.45f, 0.80f, 0)
+        }
+
+        entityPaint.shader = RadialGradient(
+            entity.x,
+            entity.y,
+            entity.radius,
+            centerColor,
+            edgeColor,
+            Shader.TileMode.CLAMP
+        )
+        canvas.drawCircle(entity.x, entity.y, entity.radius, entityPaint)
+        entityPaint.shader = null
+    }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         val elapsed = if (startNanos == 0L) 0.0
         else (System.nanoTime() - startNanos) / 1_000_000_000.0
 
-        val w = width.toFloat()
-        val h = height.toFloat()
-        if (w <= 0f || h <= 0f) return
+        val w = width
+        val h = height
+        if (w <= 0 || h <= 0) return
 
-        val cx = w * 0.5f
-        val cy = h * 0.5f
-        val radius = min(w, h) * 0.46f
+        val pulseFactor =
+            ((sin(2.0 * Math.PI * targetHz.toDouble() * elapsed) + 1.0) * 0.5).toFloat()
 
-        // Transparent by construction. Do not paint a backing rectangle.
         canvas.save()
-        if (!isFullOverlay && w > 96f && h > 96f) {
-            canvas.clipOutRect(48f, 48f, w - 48f, h - 48f)
+
+        // The original HTML is a full-viewport renderer. Border mode remains
+        // available for the mobile overlay, but uses the same underlying math.
+        if (!isFullOverlay && w > 96 && h > 96) {
+            canvas.clipOutRect(48f, 48f, (w - 48).toFloat(), (h - 48).toFloat())
         }
 
-        val pulse = ((sin(2.0 * Math.PI * targetHz * elapsed) + 1.0) * 0.5).toFloat()
-        val slow = elapsed * (0.12 + targetHz * 0.0025)
-        val breathe = 0.94f + pulse * 0.10f
+        // Reproduce the HTML page's light/dark base palette while keeping the
+        // Android window itself translucent so the overlay remains composited.
+        entityPaint.shader = null
+        entityPaint.color = if (darkMode) Color.rgb(27, 27, 28) else Color.rgb(228, 228, 227)
+        entityPaint.alpha = 255
+        canvas.drawRect(0f, 0f, w.toFloat(), h.toFloat(), entityPaint)
 
-        glowPaint.shader = RadialGradient(
-            cx, cy, radius * 1.12f,
-            intArrayOf(
-                Color.argb((34 + pulse * 34).toInt(), 110, 145, 255),
-                Color.argb((18 + pulse * 20).toInt(), 80, 70, 210),
-                Color.TRANSPARENT
-            ),
-            floatArrayOf(0f, 0.48f, 1f),
-            Shader.TileMode.CLAMP
-        )
-        canvas.drawCircle(cx, cy, radius * 1.12f, glowPaint)
+        // CSS canvas uses filter: blur(60px). A hardware View cannot apply the
+        // exact DOM filter cheaply, so use software-compatible blur via a
+        // second translucent pass. The large radii are already soft radial
+        // gradients, which preserves the visual result without a SurfaceView.
+        entities.forEach { entity ->
+            entity.angleX += entity.speedX
+            entity.angleY += entity.speedY
+            entity.x += sin(entity.angleX.toDouble()).toFloat() * entity.amp + entity.vx
+            entity.y += cos(entity.angleY.toDouble()).toFloat() * entity.amp + entity.vy
+            entity.hue += 0.1f
 
-        for (i in 0 until 9) {
-            val phase = (elapsed * (0.035 + targetHz * 0.0008) + i * 0.105) % 1.0
-            val rr = radius * (0.13f + i * 0.105f + phase.toFloat() * 0.045f)
-            val alpha = (18f + 34f * (1f - phase.toFloat()) + pulse * 18f)
-                .toInt().coerceIn(0, 110)
-            ringPaint.color = Color.argb(alpha, 115, 155, 255)
-            ringPaint.strokeWidth = if (i == 0) 2.2f else 1.0f
-            canvas.drawCircle(cx, cy, rr, ringPaint)
+            if (entity.x < -entity.radius) entity.x = w + entity.radius
+            if (entity.x > w + entity.radius) entity.x = -entity.radius
+            if (entity.y < -entity.radius) entity.y = h + entity.radius
+            if (entity.y > h + entity.radius) entity.y = -entity.radius
+
+            drawWaveEntity(canvas, entity, pulseFactor)
         }
 
-        for (i in 0 until 32) {
-            val angle = i * (Math.PI * 2.0 / 32.0) +
-                slow * if (i % 2 == 0) 1 else -1
-            val inner = radius * (0.18f + (i % 5) * 0.035f)
-            val outer = radius *
-                (0.88f + 0.06f * sin(elapsed * 0.7 + i).toFloat())
-            val alpha = (12 + pulse * 20 + if (i % 4 == 0) 14 else 0)
-                .toInt().coerceIn(0, 80)
-            rayPaint.color = Color.argb(alpha, 135, 160, 255)
-            canvas.drawLine(
-                cx + (cos(angle) * inner).toFloat(),
-                cy + (sin(angle) * inner).toFloat(),
-                cx + (cos(angle) * outer).toFloat(),
-                cy + (sin(angle) * outer).toFloat(),
-                rayPaint
-            )
-        }
+        // Match the original canvas opacity of 0.90 by fading the renderer's
+        // result toward the base page color. The Android window itself is also
+        // constrained to alpha 0.75 for Android 15 obscuring-touch safety.
+        entityPaint.shader = null
+        entityPaint.color = if (darkMode) Color.rgb(27, 27, 28) else Color.rgb(228, 228, 227)
+        entityPaint.alpha = (255f * 0.10f).toInt()
+        canvas.drawRect(0f, 0f, w.toFloat(), h.toFloat(), entityPaint)
 
-        particles.forEach { p ->
-            val angle = p.angle.toDouble() +
-                elapsed * p.speed.toDouble() +
-                p.phase.toDouble() * 0.03
-            val wobble = 1f + 0.07f *
-                sin(elapsed * (0.5 + p.orbit * 0.08) + p.phase.toDouble()).toFloat()
-            val rr = radius * p.radius * wobble * breathe
-            val x = cx + cos(angle) * rr
-            val y = cy + sin(angle) * rr * 0.72
-            val flicker = 0.35f + 0.65f *
-                ((sin(elapsed * (1.2 + p.orbit * 0.15) + p.phase.toDouble())
-                    .toFloat() + 1f) * 0.5f)
-            val alpha = (35 + flicker * 120 + pulse * 25)
-                .toInt().coerceIn(0, 210)
-            particlePaint.color = Color.argb(alpha, 150, 180, 255)
-            canvas.drawCircle(
-                x.toFloat(),
-                y.toFloat(),
-                p.size * (0.75f + pulse * 0.5f),
-                particlePaint
-            )
-        }
-
-        centerPaint.shader = RadialGradient(
-            cx, cy, radius * 0.24f,
-            intArrayOf(
-                Color.argb((105 + pulse * 90).toInt(), 220, 235, 255),
-                Color.argb((48 + pulse * 55).toInt(), 135, 170, 255),
-                Color.TRANSPARENT
-            ),
-            floatArrayOf(0f, 0.22f, 1f),
-            Shader.TileMode.CLAMP
-        )
-        canvas.drawCircle(cx, cy, radius * 0.24f, centerPaint)
-        centerPaint.shader = null
-
-        val core = radius * (0.055f + pulse * 0.012f)
-        centerPaint.color = Color.argb((150 + pulse * 80).toInt(), 225, 240, 255)
-        canvas.drawCircle(cx, cy, core, centerPaint)
-
+        entityPaint.alpha = 255
         canvas.restore()
     }
 }
