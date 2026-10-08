@@ -137,7 +137,7 @@ class EntrainmentSurfaceView(
                 for (i in 0 until 32) {
                     val angle = i * (Math.PI * 2.0 / 32.0) + slow * if (i % 2 == 0) 1 else -1
                     val inner = radius * (0.18f + (i % 5) * 0.035f)
-                    val outer = radius * (0.88f + 0.06f * sin(elapsed * 0.7 + i))
+                    val outer = radius * (0.88f + 0.06f * sin(elapsed * 0.7 + i).toFloat())
                     val a = (12 + pulse * 20 + if (i % 4 == 0) 14 else 0).toInt()
                     rayPaint.color = Color.argb(a.coerceIn(0, 80), 135, 160, 255)
                     canvas.drawLine(
@@ -151,7 +151,7 @@ class EntrainmentSurfaceView(
 
                 // Seeded orbiting particles. Their paths are deterministic and smooth.
                 particles.forEach { p ->
-                    val angle = p.angle + elapsed * p.speed + p.phase * 0.03f
+                    val angle = p.angle.toDouble() + elapsed * p.speed.toDouble() + p.phase.toDouble() * 0.03
                     val wobble = 1f + 0.07f * sin(elapsed * (0.5 + p.orbit * 0.08) + p.phase)
                     val rr = radius * p.radius * wobble * breathe
                     val x = cx + cos(angle.toDouble()) * rr
