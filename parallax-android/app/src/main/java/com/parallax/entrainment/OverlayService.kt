@@ -168,6 +168,7 @@ class OverlayService : Service() {
         const val KEY_SUNSET_SUNRISE = "sunset_sunrise"
         const val KEY_TIMED = "timed"
         const val KEY_TIMED_MINUTES = "timed_minutes"
+        const val KEY_DARK_THEME = "dark_theme"
 
         const val CHANNEL_ID = "parallax_overlay_channel"
         const val NOTIFICATION_ID = 1001
