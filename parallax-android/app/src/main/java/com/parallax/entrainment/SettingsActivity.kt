@@ -151,7 +151,7 @@ class SettingsActivity : Activity() {
 
         content.addView(sectionTitle("About"))
         val about = TextView(this).apply {
-            text = "Created by Ian Cossette with ChatGPT and Gemini\\n\\nBuy me a coffee ☕️\\nCash App: \$icoss\\n\\nAndroid UI guidance and project source"
+            text = "Created by Ian Cossette with ChatGPT and Gemini\n\nBuy me a coffee ☕️\nCash App: \$icoss\n\nAndroid UI guidance and project source"
             textSize = 14f
             setPadding(dp(16), dp(16), dp(16), dp(16))
             background = rounded(if (darkTheme.isChecked) 0xFF29292C.toInt() else Color.WHITE, 16)
@@ -298,7 +298,7 @@ class SettingsActivity : Activity() {
             }, matchWrap())
         }
         box.addView(TextView(this).apply {
-            text = "Created by Ian Cossette\\nBuilt with ChatGPT and Gemini\\n\\nSupport development\\nBuy me a coffee ☕️\\nCash App: \$icoss"
+            text = "Created by Ian Cossette\nBuilt with ChatGPT and Gemini\n\nSupport development\nBuy me a coffee ☕️\nCash App: \$icoss"
             textSize = 16f; setTextColor(if (darkTheme.isChecked) Color.WHITE else Color.BLACK); setPadding(0, 0, 0, dp(12))
         })
         link("Cash App · \$icoss", "https://cash.app/\$icoss")
