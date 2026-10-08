@@ -152,11 +152,11 @@ class EntrainmentSurfaceView(
                 // Seeded orbiting particles. Their paths are deterministic and smooth.
                 particles.forEach { p ->
                     val angle = p.angle.toDouble() + elapsed * p.speed.toDouble() + p.phase.toDouble() * 0.03
-                    val wobble = 1f + 0.07f * sin(elapsed * (0.5 + p.orbit * 0.08) + p.phase)
+                    val wobble = 1f + 0.07f * sin(elapsed * (0.5 + p.orbit * 0.08) + p.phase.toDouble()).toFloat()
                     val rr = radius * p.radius * wobble * breathe
                     val x = cx + cos(angle.toDouble()) * rr
                     val y = cy + sin(angle.toDouble()) * rr * 0.72
-                    val flicker = 0.35f + 0.65f * ((sin(elapsed * (1.2 + p.orbit * 0.15) + p.phase) + 1f) * 0.5f)
+                    val flicker = 0.35f + 0.65f * ((sin(elapsed * (1.2 + p.orbit * 0.15) + p.phase.toDouble()).toFloat() + 1f) * 0.5f)
                     val a = (35 + flicker * 120 + pulse * 25).toInt().coerceIn(0, 210)
                     particlePaint.color = Color.argb(a, 150, 180, 255)
                     canvas.drawCircle(x.toFloat(), y.toFloat(), p.size * (0.75f + pulse * 0.5f), particlePaint)
