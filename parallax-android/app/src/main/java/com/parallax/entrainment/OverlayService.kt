@@ -40,15 +40,13 @@ class OverlayService : Service() {
     }
 
     private fun setupOverlayView(full: Boolean, hz: Float, seed: String) {
-        overlayView?.let { runCatching { windowManager.removeView(it) } }
+        overlayView?.let { old ->
+            runCatching { windowManager.removeViewImmediate(old) }
+        }
+        overlayView = null
 
-        val type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-
-        // Keep the overlay completely non-touchable. On Android 12+, a full-screen
-        // overlay can otherwise become an obscuring window and cause delayed or
-        // rejected touches in the app underneath. Android's default maximum
-        // obscuring opacity is 0.8, so stay at that ceiling while the renderer
-        // provides the actual visual alpha.
+        // Android 12+ / Android 15: this window must never participate in
+        // touch dispatch. Touches are delivered to the window underneath.
         val flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
             WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
@@ -58,12 +56,16 @@ class OverlayService : Service() {
         val params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.MATCH_PARENT,
-            type,
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
             flags,
             PixelFormat.TRANSLUCENT
         ).apply {
             gravity = Gravity.TOP or Gravity.START
-            alpha = 0.80f
+
+            // Android's documented maximum obscuring opacity is 0.8.
+            // Use margin below it to avoid OEM rounding/float edge cases.
+            alpha = 0.75f
+
             if (Build.VERSION.SDK_INT >= 28) {
                 layoutInDisplayCutoutMode =
                     WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
@@ -71,7 +73,12 @@ class OverlayService : Service() {
         }
 
         overlayView = EntrainmentSurfaceView(this, full, hz, seed)
-        windowManager.addView(overlayView, params)
+        try {
+            windowManager.addView(overlayView, params)
+        } catch (t: Throwable) {
+            overlayView = null
+            throw t
+        }
     }
 
     private fun startAudioEngine(hz: Float, seed: String) {
@@ -80,7 +87,7 @@ class OverlayService : Service() {
     }
 
     private fun stopOverlay() {
-        overlayView?.let { runCatching { windowManager.removeView(it) } }
+        overlayView?.let { runCatching { windowManager.removeViewImmediate(it) } }
         overlayView = null
         audioEngine?.stop()
         audioEngine = null
