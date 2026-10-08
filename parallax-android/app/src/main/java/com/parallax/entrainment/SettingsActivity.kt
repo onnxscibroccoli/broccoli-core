@@ -41,6 +41,7 @@ class SettingsActivity : Activity() {
     private lateinit var sunset: Switch
     private lateinit var timed: Switch
     private lateinit var darkTheme: Switch
+    private lateinit var flashing: Switch
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,6 +107,45 @@ class SettingsActivity : Activity() {
             })
         }
         content.addView(mode)
+
+        content.addView(sectionTitle("Visual safety"))
+        flashing = Switch(this).apply {
+            text = "Enable rhythmic flashing"
+            isChecked = p.getBoolean(OverlayService.KEY_FLASHING, false)
+            minHeight = dp(52)
+            contentDescription = "Enable or disable rhythmic visual pulsing. Disabled by default."
+        }
+        content.addView(flashing, matchWrap())
+        content.addView(TextView(this).apply {
+            text = "Flashing effects can trigger seizures or other symptoms in people with photosensitive epilepsy. Keep this off if you are sensitive to flashing lights."
+            textSize = 13f
+            alpha = .82f
+            setPadding(0, dp(4), 0, dp(8))
+        }, matchWrap())
+        flashing.setOnCheckedChangeListener { button, checked ->
+            if (checked) {
+                // Never enable flashing until the user explicitly acknowledges the safety warning.
+                button.isChecked = false
+                AlertDialog.Builder(this)
+                    .setTitle("Photosensitivity warning")
+                    .setMessage("Rhythmic flashing or pulsing visuals may trigger seizures, dizziness, migraine, or other symptoms, especially for people with photosensitive epilepsy. Do not proceed if you have a history of photosensitive seizures or are unsure whether flashing effects are safe for you. Stop immediately if you feel unwell.\n\nFlashing is disabled by default.")
+                    .setPositiveButton("Proceed") { _, _ ->
+                        p.edit().putBoolean(OverlayService.KEY_FLASHING, true).apply()
+                        button.isChecked = true
+                    }
+                    .setNegativeButton("Cancel") { _, _ ->
+                        p.edit().putBoolean(OverlayService.KEY_FLASHING, false).apply()
+                        button.isChecked = false
+                    }
+                    .setOnCancelListener {
+                        p.edit().putBoolean(OverlayService.KEY_FLASHING, false).apply()
+                        button.isChecked = false
+                    }
+                    .show()
+            } else {
+                p.edit().putBoolean(OverlayService.KEY_FLASHING, false).apply()
+            }
+        }
 
         val seed = EditText(this).apply {
             hint = "Session seed"
