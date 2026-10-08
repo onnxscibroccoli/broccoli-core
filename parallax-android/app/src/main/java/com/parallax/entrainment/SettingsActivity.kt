@@ -3,6 +3,12 @@ package com.parallax.entrainment
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.Typeface
+import android.graphics.drawable.GradientDrawable
+import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout.LayoutParams
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -39,21 +45,24 @@ class SettingsActivity : Activity() {
         super.onCreate(savedInstanceState)
         val content = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(32, 40, 32, 32)
+            setPadding(dp(20), dp(24), dp(20), dp(32))
         }
-        val root = ScrollView(this).apply { addView(content) }
+        val root = ScrollView(this).apply { isFillViewport = true; addView(content) }
         setContentView(root)
 
         content.addView(TextView(this).apply {
-            text = "PARALLAX DISTORTION"
-            textSize = 26f
-            gravity = Gravity.CENTER
+            text = "Parallax Distortion"
+            textSize = 28f
+            typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+            gravity = Gravity.START
+            letterSpacing = -.02f
         })
         content.addView(TextView(this).apply {
             text = "Neural Entrainment Engine"
             textSize = 14f
-            gravity = Gravity.CENTER
-            setPadding(0, 8, 0, 24)
+            gravity = Gravity.START
+            alpha = .75f
+            setPadding(0, dp(4), 0, dp(20))
         })
 
         darkTheme = Switch(this).apply {
@@ -67,7 +76,8 @@ class SettingsActivity : Activity() {
         }
         applySettingsTheme(content, darkTheme.isChecked)
 
-        content.addView(label("Hemi-Sync Target"))
+        content.addView(sectionTitle("Session"))
+        content.addView(label("Target frequency"))
         hz = Spinner(this).apply {
             adapter = ArrayAdapter(
                 this@SettingsActivity,
@@ -80,7 +90,7 @@ class SettingsActivity : Activity() {
         }
         content.addView(hz)
 
-        content.addView(label("Display Mode"))
+        content.addView(label("Visual style"))
         mode = RadioGroup(this).apply {
             orientation = RadioGroup.VERTICAL
             addView(RadioButton(this@SettingsActivity).apply {
@@ -102,12 +112,13 @@ class SettingsActivity : Activity() {
         }
         content.addView(seed)
 
-        volume = slider(content, "Volume", 0, 100, (p.getFloat(OverlayService.KEY_VOLUME, .12f) * 100).roundToInt())
-        fullOpacity = slider(content, "Full Screen Opacity", 5, 100, (p.getFloat(OverlayService.KEY_FULL_OPACITY, .75f) * 100).roundToInt().coerceIn(5, 100))
-        borderWidth = slider(content, "Border Width", 8, 240, p.getFloat(OverlayService.KEY_BORDER_WIDTH, 72f).roundToInt().coerceIn(8, 240))
-        borderOpacity = slider(content, "Border Opacity", 0, 100, (p.getFloat(OverlayService.KEY_BORDER_OPACITY, .75f) * 100).roundToInt())
+        content.addView(sectionTitle("Appearance & sound"))
+        volume = slider(content, "Volume", 0, 100, (p.getFloat(OverlayService.KEY_VOLUME, .12f) * 100).roundToInt(), "%")
+        fullOpacity = slider(content, "Full-screen opacity", 5, 100, (p.getFloat(OverlayService.KEY_FULL_OPACITY, .75f) * 100).roundToInt().coerceIn(5, 100), "%")
+        borderWidth = slider(content, "Border width", 8, 240, p.getFloat(OverlayService.KEY_BORDER_WIDTH, 72f).roundToInt().coerceIn(8, 240), " dp")
+        borderOpacity = slider(content, "Border opacity", 0, 100, (p.getFloat(OverlayService.KEY_BORDER_OPACITY, .75f) * 100).roundToInt(), "%")
 
-        content.addView(label("Automatic Scheduling"))
+        content.addView(sectionTitle("Schedule"))
         sunset = Switch(this).apply {
             text = "Start automatically at sunset and stop at sunrise"
             isChecked = p.getBoolean(OverlayService.KEY_SUNSET_SUNRISE, false)
@@ -121,16 +132,32 @@ class SettingsActivity : Activity() {
         content.addView(timed)
 
         timedMinutes = EditText(this).apply {
-            hint = "Timed duration (minutes)"
+            hint = "Duration in minutes (1–720)"
             inputType = InputType.TYPE_CLASS_NUMBER
             setText(p.getInt(OverlayService.KEY_TIMED_MINUTES, 5).toString())
+            singleLine = true
+            setPadding(dp(14), dp(12), dp(14), dp(12))
         }
-        content.addView(timedMinutes)
+        content.addView(timedMinutes, matchWrap())
 
-        val start = Button(this).apply { text = "Start Session" }
-        val stop = Button(this).apply { text = "Stop Session" }
-        content.addView(start)
-        content.addView(stop)
+        content.addView(sectionTitle("Controls"))
+        val actions = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL; gravity = Gravity.CENTER_VERTICAL }
+        val start = Button(this).apply { text = "Start session"; isAllCaps = false }
+        val stop = Button(this).apply { text = "Stop session"; isAllCaps = false }
+        actions.addView(start, LinearLayout.LayoutParams(0, dp(52), 1f).apply { marginEnd = dp(8) })
+        actions.addView(stop, LinearLayout.LayoutParams(0, dp(52), 1f))
+        content.addView(actions, matchWrap())
+
+        content.addView(sectionTitle("About"))
+        val about = TextView(this).apply {
+            text = "Created by Ian Cossette with ChatGPT and Gemini\\n\\nBuy me a coffee ☕️\\nCash App: $icoss\\n\\nAndroid UI guidance and project source"
+            textSize = 14f
+            setPadding(dp(16), dp(16), dp(16), dp(16))
+            background = rounded(if (darkTheme.isChecked) 0xFF29292C.toInt() else Color.WHITE, 16)
+            contentDescription = "About Parallax Distortion. Tap for credits, support, articles and source."
+        }
+        content.addView(about, matchWrap())
+        about.setOnClickListener { showAboutDialog() }
 
         sunset.setOnCheckedChangeListener { _, checked ->
             p.edit().putBoolean(OverlayService.KEY_SUNSET_SUNRISE, checked).apply()
@@ -147,7 +174,13 @@ class SettingsActivity : Activity() {
             }
 
             val selected = bands[hz.selectedItemPosition].substringBefore(" ").toFloat()
-            val minutes = timedMinutes.text.toString().toLongOrNull()?.coerceIn(1, 720) ?: 5L
+            val parsedMinutes = timedMinutes.text.toString().toLongOrNull()
+            if (timed.isChecked && (parsedMinutes == null || parsedMinutes !in 1L..720L)) {
+                timedMinutes.error = "Enter a duration from 1 to 720 minutes"
+                timedMinutes.requestFocus()
+                return@setOnClickListener
+            }
+            val minutes = parsedMinutes?.coerceIn(1, 720) ?: 5L
             val full = mode.checkedRadioButtonId == 101
             val seedText = seed.text.toString().ifBlank { "PARALLAX_MOBILE" }
             val vol = volume.progress / 100f
@@ -196,8 +229,8 @@ class SettingsActivity : Activity() {
         }
     }
 
-    private fun slider(root: LinearLayout, title: String, min: Int, max: Int, value: Int): SeekBar {
-        val text = label(title + "  " + value)
+    private fun slider(root: LinearLayout, title: String, min: Int, max: Int, value: Int, suffix: String = ""): SeekBar {
+        val text = label(title + "  " + value + suffix)
         root.addView(text)
         val bar = SeekBar(this).apply {
             this.max = max - min
@@ -205,7 +238,7 @@ class SettingsActivity : Activity() {
         }
         bar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(s: SeekBar?, v: Int, fromUser: Boolean) {
-                text.text = title + "  " + (v + min)
+                text.text = title + "  " + (v + min) + suffix
             }
             override fun onStartTrackingTouch(s: SeekBar?) {}
             override fun onStopTrackingTouch(s: SeekBar?) {}
@@ -232,14 +265,48 @@ class SettingsActivity : Activity() {
     }
 
     private fun applySettingsTheme(root: LinearLayout, dark: Boolean) {
-        val bg = if (dark) android.graphics.Color.rgb(27, 27, 28) else android.graphics.Color.rgb(228, 228, 227)
-        val fg = if (dark) android.graphics.Color.rgb(228, 228, 227) else android.graphics.Color.rgb(34, 34, 34)
+        val bg = if (dark) Color.rgb(27, 27, 28) else Color.rgb(228, 228, 227)
+        val fg = if (dark) Color.rgb(228, 228, 227) else Color.rgb(34, 34, 34)
+        window.statusBarColor = bg
+        window.navigationBarColor = bg
+        if (Build.VERSION.SDK_INT >= 23) window.decorView.systemUiVisibility = if (dark) 0 else View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         root.setBackgroundColor(bg)
-        fun paint(view: android.view.View) {
+        fun paint(view: View) {
             if (view is TextView) view.setTextColor(fg)
-            if (view is android.view.ViewGroup) for (i in 0 until view.childCount) paint(view.getChildAt(i))
+            if (view is ViewGroup) for (i in 0 until view.childCount) paint(view.getChildAt(i))
         }
         paint(root)
+    }
+
+    private fun sectionTitle(title: String) = TextView(this).apply {
+        text = title; textSize = 18f; typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+        setPadding(0, dp(22), 0, dp(8))
+    }
+    private fun dp(value: Int) = (value * resources.displayMetrics.density).roundToInt()
+    private fun matchWrap() = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+    private fun rounded(color: Int, radius: Int) = GradientDrawable().apply { setColor(color); cornerRadius = dp(radius).toFloat() }
+
+    private fun showAboutDialog() {
+        val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(20), dp(8), dp(20), dp(8)) }
+        fun link(title: String, url: String) {
+            box.addView(TextView(this).apply {
+                text = title; textSize = 15f
+                setTextColor(if (darkTheme.isChecked) Color.rgb(160, 190, 235) else Color.rgb(45, 85, 145))
+                setPadding(0, dp(10), 0, dp(10))
+                setOnClickListener { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }
+            }, matchWrap())
+        }
+        box.addView(TextView(this).apply {
+            text = "Created by Ian Cossette\\nBuilt with ChatGPT and Gemini\\n\\nSupport development\\nBuy me a coffee ☕️\\nCash App: $icoss"
+            textSize = 16f; setTextColor(if (darkTheme.isChecked) Color.WHITE else Color.BLACK); setPadding(0, 0, 0, dp(12))
+        })
+        link("Cash App · $icoss", "https://cash.app/$icoss")
+        link("Android design: Material 3", "https://m3.material.io/")
+        link("Android UI design guidance", "https://developer.android.com/design/ui")
+        link("Android accessibility guidance", "https://developer.android.com/guide/topics/ui/accessibility")
+        link("Project source · GitHub", "https://github.com/onnxscibroccoli/broccoli-core")
+        AlertDialog.Builder(this).setTitle("About Parallax Distortion")
+            .setView(ScrollView(this).apply { addView(box) }).setPositiveButton("Done", null).show()
     }
 
     private fun label(text: String) = TextView(this).apply {
