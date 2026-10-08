@@ -41,11 +41,19 @@ class OverlayService : Service() {
 
     private fun setupOverlayView(full: Boolean, hz: Float, seed: String) {
         overlayView?.let { runCatching { windowManager.removeView(it) } }
+
         val type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+
+        // Keep the overlay completely non-touchable. On Android 12+, a full-screen
+        // overlay can otherwise become an obscuring window and cause delayed or
+        // rejected touches in the app underneath. Android's default maximum
+        // obscuring opacity is 0.8, so stay at that ceiling while the renderer
+        // provides the actual visual alpha.
         val flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
             WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
+            WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED
 
         val params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.MATCH_PARENT,
@@ -53,7 +61,14 @@ class OverlayService : Service() {
             type,
             flags,
             PixelFormat.TRANSLUCENT
-        ).apply { gravity = Gravity.TOP or Gravity.START }
+        ).apply {
+            gravity = Gravity.TOP or Gravity.START
+            alpha = 0.80f
+            if (Build.VERSION.SDK_INT >= 28) {
+                layoutInDisplayCutoutMode =
+                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+            }
+        }
 
         overlayView = EntrainmentSurfaceView(this, full, hz, seed)
         windowManager.addView(overlayView, params)
@@ -75,7 +90,11 @@ class OverlayService : Service() {
         if (Build.VERSION.SDK_INT >= 26) {
             val nm = getSystemService(NotificationManager::class.java)
             nm.createNotificationChannel(
-                NotificationChannel(CHANNEL_ID, "Parallax Overlay Service", NotificationManager.IMPORTANCE_LOW)
+                NotificationChannel(
+                    CHANNEL_ID,
+                    "Parallax Overlay Service",
+                    NotificationManager.IMPORTANCE_LOW
+                )
             )
         }
     }
