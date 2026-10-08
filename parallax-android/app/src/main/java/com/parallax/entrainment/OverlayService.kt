@@ -75,7 +75,10 @@ class OverlayService : Service() {
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
             WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED
 
-        val windowOpacity = if (full) fullOpacity.coerceIn(.05f, .75f) else .75f
+        // Keep the overlay window at the Android 15 passthrough-safe alpha.
+        // The user-facing full-screen opacity is applied inside the renderer,
+        // so the slider does not double-attenuate the window itself.
+        val windowOpacity = .75f
         val params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.MATCH_PARENT,
@@ -94,7 +97,7 @@ class OverlayService : Service() {
 
         view = EntrainmentSurfaceView(
             this, full, hz, seed,
-            fullOpacity.coerceIn(.05f, .75f),
+            fullOpacity.coerceIn(.05f, 1f),
             borderWidth.coerceIn(8f, 240f),
             borderOpacity.coerceIn(0f, 1f)
         )
