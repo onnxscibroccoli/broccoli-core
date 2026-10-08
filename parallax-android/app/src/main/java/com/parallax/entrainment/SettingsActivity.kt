@@ -136,7 +136,7 @@ class SettingsActivity : Activity() {
             hint = "Duration in minutes (1–720)"
             inputType = InputType.TYPE_CLASS_NUMBER
             setText(p.getInt(OverlayService.KEY_TIMED_MINUTES, 5).toString())
-            singleLine = true
+            setSingleLine(true)
             setPadding(dp(14), dp(12), dp(14), dp(12))
         }
         content.addView(timedMinutes, matchWrap())
