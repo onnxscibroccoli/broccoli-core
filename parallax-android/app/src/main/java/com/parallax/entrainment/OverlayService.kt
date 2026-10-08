@@ -19,6 +19,7 @@ class OverlayService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        migrateVisualDefaults(this)
         wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         createChannel()
     }
@@ -37,9 +38,9 @@ class OverlayService : Service() {
         val hz = intent?.getFloatExtra(EXTRA_TARGET_HZ, p.getFloat(KEY_HZ, 4f)) ?: 4f
         val seed = intent?.getStringExtra(EXTRA_SEED) ?: p.getString(KEY_SEED, "PARALLAX")!!
         val volume = intent?.getFloatExtra(EXTRA_VOLUME, p.getFloat(KEY_VOLUME, .12f)) ?: .12f
-        val fullOpacity = intent?.getFloatExtra(EXTRA_FULL_OPACITY, p.getFloat(KEY_FULL_OPACITY, .75f)) ?: .75f
+        val fullOpacity = intent?.getFloatExtra(EXTRA_FULL_OPACITY, p.getFloat(KEY_FULL_OPACITY, .33f)) ?: .33f
         val borderWidth = intent?.getFloatExtra(EXTRA_BORDER_WIDTH, p.getFloat(KEY_BORDER_WIDTH, 72f)) ?: 72f
-        val borderOpacity = intent?.getFloatExtra(EXTRA_BORDER_OPACITY, p.getFloat(KEY_BORDER_OPACITY, .75f)) ?: .75f
+        val borderOpacity = intent?.getFloatExtra(EXTRA_BORDER_OPACITY, p.getFloat(KEY_BORDER_OPACITY, .33f)) ?: .33f
         val flashing = p.getBoolean(KEY_FLASHING, false)
 
         setupOverlay(full, hz, seed, fullOpacity, borderWidth, borderOpacity, flashing)
@@ -173,6 +174,26 @@ class OverlayService : Service() {
         const val KEY_TIMED_MINUTES = "timed_minutes"
         const val KEY_DARK_THEME = "dark_theme"
         const val KEY_FLASHING = "flashing_enabled"
+        private const val KEY_VISUAL_DEFAULTS_MIGRATED = "visual_defaults_migrated_v16"
+
+        /**
+         * Upgrade untouched legacy defaults while preserving custom opacity values.
+         */
+        fun migrateVisualDefaults(context: Context) {
+            val p = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            if (p.getBoolean(KEY_VISUAL_DEFAULTS_MIGRATED, false)) return
+            val edit = p.edit()
+            if (!p.contains(KEY_DARK_THEME) || !p.getBoolean(KEY_DARK_THEME, false)) {
+                edit.putBoolean(KEY_DARK_THEME, true)
+            }
+            if (kotlin.math.abs(p.getFloat(KEY_FULL_OPACITY, .75f) - .75f) < .001f) {
+                edit.putFloat(KEY_FULL_OPACITY, .33f)
+            }
+            if (kotlin.math.abs(p.getFloat(KEY_BORDER_OPACITY, .75f) - .75f) < .001f) {
+                edit.putFloat(KEY_BORDER_OPACITY, .33f)
+            }
+            edit.putBoolean(KEY_VISUAL_DEFAULTS_MIGRATED, true).apply()
+        }
 
         const val CHANNEL_ID = "parallax_overlay_channel"
         const val NOTIFICATION_ID = 1001
