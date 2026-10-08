@@ -33,6 +33,7 @@ class SettingsActivity : Activity() {
     private lateinit var timedMinutes: EditText
     private lateinit var sunset: Switch
     private lateinit var timed: Switch
+    private lateinit var darkTheme: Switch
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +55,17 @@ class SettingsActivity : Activity() {
             gravity = Gravity.CENTER
             setPadding(0, 8, 0, 24)
         })
+
+        darkTheme = Switch(this).apply {
+            text = "Dark mode"
+            isChecked = p.getBoolean(OverlayService.KEY_DARK_THEME, false)
+        }
+        content.addView(darkTheme)
+        darkTheme.setOnCheckedChangeListener { _, checked ->
+            p.edit().putBoolean(OverlayService.KEY_DARK_THEME, checked).apply()
+            applySettingsTheme(content, checked)
+        }
+        applySettingsTheme(content, darkTheme.isChecked)
 
         content.addView(label("Hemi-Sync Target"))
         hz = Spinner(this).apply {
@@ -217,6 +229,17 @@ class SettingsActivity : Activity() {
         if (requestCode == 3001 && grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
             ScheduleReceiver.reschedule(this)
         }
+    }
+
+    private fun applySettingsTheme(root: LinearLayout, dark: Boolean) {
+        val bg = if (dark) android.graphics.Color.rgb(27, 27, 28) else android.graphics.Color.rgb(228, 228, 227)
+        val fg = if (dark) android.graphics.Color.rgb(228, 228, 227) else android.graphics.Color.rgb(34, 34, 34)
+        root.setBackgroundColor(bg)
+        fun paint(view: android.view.View) {
+            if (view is TextView) view.setTextColor(fg)
+            if (view is android.view.ViewGroup) for (i in 0 until view.childCount) paint(view.getChildAt(i))
+        }
+        paint(root)
     }
 
     private fun label(text: String) = TextView(this).apply {
