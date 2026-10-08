@@ -141,10 +141,10 @@ class EntrainmentSurfaceView(
                     val a = (12 + pulse * 20 + if (i % 4 == 0) 14 else 0).toInt()
                     rayPaint.color = Color.argb(a.coerceIn(0, 80), 135, 160, 255)
                     canvas.drawLine(
-                        cx + cos(angle) * inner,
-                        cy + sin(angle) * inner,
-                        cx + cos(angle) * outer,
-                        cy + sin(angle) * outer,
+                        cx + (cos(angle) * inner).toFloat(),
+                        cy + (sin(angle) * inner).toFloat(),
+                        cx + (cos(angle) * outer).toFloat(),
+                        cy + (sin(angle) * outer).toFloat(),
                         rayPaint
                     )
                 }
