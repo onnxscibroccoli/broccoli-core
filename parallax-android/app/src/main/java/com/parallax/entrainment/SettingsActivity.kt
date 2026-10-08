@@ -46,6 +46,7 @@ class SettingsActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        OverlayService.migrateVisualDefaults(this)
         val content = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(20), dp(24), dp(20), dp(32))
@@ -71,7 +72,7 @@ class SettingsActivity : Activity() {
         darkTheme = Switch(this).apply {
             text = "Dark mode"
             minHeight = dp(52)
-            isChecked = p.getBoolean(OverlayService.KEY_DARK_THEME, false)
+            isChecked = p.getBoolean(OverlayService.KEY_DARK_THEME, true)
         }
         content.addView(darkTheme)
         darkTheme.setOnCheckedChangeListener { _, checked ->
@@ -170,9 +171,9 @@ class SettingsActivity : Activity() {
 
         content.addView(sectionTitle("Appearance & sound"))
         volume = slider(content, "Volume", 0, 100, (p.getFloat(OverlayService.KEY_VOLUME, .12f) * 100).roundToInt(), "%")
-        fullOpacity = slider(content, "Full-screen opacity", 5, 100, (p.getFloat(OverlayService.KEY_FULL_OPACITY, .75f) * 100).roundToInt().coerceIn(5, 100), "%")
+        fullOpacity = slider(content, "Full-screen opacity", 5, 100, (p.getFloat(OverlayService.KEY_FULL_OPACITY, .33f) * 100).roundToInt().coerceIn(5, 100), "%")
         borderWidth = slider(content, "Border width", 8, 240, p.getFloat(OverlayService.KEY_BORDER_WIDTH, 72f).roundToInt().coerceIn(8, 240), " dp")
-        borderOpacity = slider(content, "Border opacity", 0, 100, (p.getFloat(OverlayService.KEY_BORDER_OPACITY, .75f) * 100).roundToInt(), "%")
+        borderOpacity = slider(content, "Border opacity", 0, 100, (p.getFloat(OverlayService.KEY_BORDER_OPACITY, .33f) * 100).roundToInt(), "%")
 
         content.addView(sectionTitle("Schedule"))
         sunset = Switch(this).apply {
