@@ -43,10 +43,15 @@ class SettingsActivity : Activity() {
     private lateinit var darkTheme: Switch
     private lateinit var flashing: Switch
     private var updatingFlashingSwitch = false
+    private var showingPermissionGate = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         OverlayService.migrateVisualDefaults(this)
+        if (!hasRequiredPermissions()) {
+            showPermissionsScreen()
+            return
+        }
         val content = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(20), dp(24), dp(20), dp(32))
@@ -54,20 +59,49 @@ class SettingsActivity : Activity() {
         val root = ScrollView(this).apply { isFillViewport = true; addView(content) }
         setContentView(root)
 
-        content.addView(TextView(this).apply {
+        val header = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+        }
+        val heading = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        heading.addView(TextView(this).apply {
             text = "Parallax Distortion"
             textSize = 28f
             typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
             gravity = Gravity.START
             letterSpacing = -.02f
         })
-        content.addView(TextView(this).apply {
+        heading.addView(TextView(this).apply {
             text = "Neural Entrainment Engine"
             textSize = 14f
             gravity = Gravity.START
             alpha = .75f
-            setPadding(0, dp(4), 0, dp(20))
+            setPadding(0, dp(4), 0, dp(12))
         })
+        header.addView(heading, LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f))
+        val menuButton = Button(this).apply {
+            text = "☰"
+            textSize = 24f
+            minWidth = dp(52)
+            minHeight = dp(52)
+            contentDescription = "Open navigation menu"
+            isAllCaps = false
+        }
+        header.addView(menuButton)
+        content.addView(header, matchWrap())
+        menuButton.setOnClickListener { anchor ->
+            PopupMenu(this, anchor).apply {
+                menu.add(0, 1, 0, "Permissions & access")
+                menu.add(0, 2, 1, "About Parallax Distortion")
+                setOnMenuItemClickListener { item ->
+                    when (item.itemId) {
+                        1 -> showPermissionManagement()
+                        2 -> showAboutDialog()
+                    }
+                    true
+                }
+            }.show()
+        }
 
         darkTheme = Switch(this).apply {
             text = "Dark mode"
@@ -208,17 +242,6 @@ class SettingsActivity : Activity() {
         actions.addView(stop, LinearLayout.LayoutParams(0, dp(52), 1f))
         content.addView(actions, matchWrap())
 
-        content.addView(sectionTitle("About"))
-        val about = TextView(this).apply {
-            text = "Created by Ian Cossette with ChatGPT and Gemini\n\nBuy me a coffee ☕️\nCash App: \$icoss\n\nAndroid UI guidance and project source"
-            textSize = 14f
-            setPadding(dp(16), dp(16), dp(16), dp(16))
-            background = rounded(if (darkTheme.isChecked) 0xFF29292C.toInt() else Color.WHITE, 16)
-            contentDescription = "About Parallax Distortion. Tap for credits, support, articles and source."
-        }
-        content.addView(about, matchWrap())
-        about.setOnClickListener { showAboutDialog() }
-
         sunset.setOnCheckedChangeListener { _, checked ->
             p.edit().putBoolean(OverlayService.KEY_SUNSET_SUNRISE, checked).apply()
             if (checked) requestLocationAndSchedule() else ScheduleReceiver.reschedule(this)
@@ -281,11 +304,17 @@ class SettingsActivity : Activity() {
             })
         }
 
-        checkOverlayPermission()
-        if (Build.VERSION.SDK_INT >= 33 &&
-            checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 2001)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (showingPermissionGate) {
+            if (hasRequiredPermissions()) {
+                showingPermissionGate = false
+                recreate()
+            } else {
+                showPermissionsScreen()
+            }
         }
     }
 
@@ -324,6 +353,10 @@ class SettingsActivity : Activity() {
         if (requestCode == 3001 && grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
             ScheduleReceiver.reschedule(this)
         }
+        if (requestCode == 2001 && showingPermissionGate && hasRequiredPermissions()) {
+            showingPermissionGate = false
+            recreate()
+        }
     }
 
     private fun applySettingsTheme(root: LinearLayout, dark: Boolean) {
@@ -348,27 +381,263 @@ class SettingsActivity : Activity() {
     private fun matchWrap() = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
     private fun rounded(color: Int, radius: Int) = GradientDrawable().apply { setColor(color); cornerRadius = dp(radius).toFloat() }
 
-    private fun showAboutDialog() {
-        val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(20), dp(8), dp(20), dp(8)) }
-        fun link(title: String, url: String) {
+    private fun hasRequiredPermissions(): Boolean =
+        Settings.canDrawOverlays(this) &&
+            (Build.VERSION.SDK_INT < 33 ||
+                checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED)
+
+    private fun isNotificationPermissionGranted(): Boolean =
+        Build.VERSION.SDK_INT < 33 ||
+            checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+
+    private fun showPermissionsScreen() {
+        showingPermissionGate = true
+        val dark = p.getBoolean(OverlayService.KEY_DARK_THEME, true)
+        val bg = if (dark) Color.rgb(27, 27, 28) else Color.rgb(244, 244, 242)
+        val fg = if (dark) Color.rgb(238, 238, 238) else Color.rgb(34, 34, 34)
+        window.statusBarColor = bg
+        window.navigationBarColor = bg
+        if (Build.VERSION.SDK_INT >= 23) window.decorView.systemUiVisibility =
+            if (dark) 0 else View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+
+        val content = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(24), dp(32), dp(24), dp(32))
+            setBackgroundColor(bg)
+        }
+        val scroll = ScrollView(this).apply { isFillViewport = true; addView(content) }
+        setContentView(scroll)
+        content.addView(TextView(this).apply {
+            text = "Welcome to Parallax Distortion"
+            textSize = 28f
+            typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+            setTextColor(fg)
+        })
+        content.addView(TextView(this).apply {
+            text = "A couple of Android permissions are needed before the visual overlay can run. You can review each permission below and return here to continue."
+            textSize = 15f
+            setTextColor(fg)
+            alpha = .85f
+            setPadding(0, dp(10), 0, dp(22))
+        })
+        val overlayGranted = Settings.canDrawOverlays(this)
+        permissionRow(content, "Display over other apps", "Required to render the overlay above other apps.", overlayGranted, fg)
+        val overlayButton = Button(this).apply {
+            text = if (overlayGranted) "Overlay access granted" else "Grant overlay access"
+            isEnabled = !overlayGranted
+            isAllCaps = false
+            minHeight = dp(52)
+            setOnClickListener {
+                startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")))
+            }
+        }
+        content.addView(overlayButton, matchWrap())
+
+        val notificationsGranted = isNotificationPermissionGranted()
+        permissionRow(content, "Notifications", if (Build.VERSION.SDK_INT >= 33)
+            "Allows Android to show session status and foreground-service notifications."
+            else "Handled by Android on this version.", notificationsGranted, fg)
+        val notificationButton = Button(this).apply {
+            text = if (notificationsGranted) "Notifications allowed" else "Allow notifications"
+            isEnabled = !notificationsGranted
+            isAllCaps = false
+            minHeight = dp(52)
+            setOnClickListener {
+                if (Build.VERSION.SDK_INT >= 33) {
+                    requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 2001)
+                }
+            }
+        }
+        content.addView(notificationButton, matchWrap())
+        content.addView(TextView(this).apply {
+            text = "Permissions are checked again whenever you return from Android Settings. If you change your mind later, open the menu and choose Permissions & access."
+            textSize = 13f
+            setTextColor(fg)
+            alpha = .75f
+            setPadding(0, dp(20), 0, dp(12))
+        })
+        content.addView(Button(this).apply {
+            text = if (hasRequiredPermissions()) "Continue" else "Check permissions again"
+            isAllCaps = false
+            minHeight = dp(54)
+            setOnClickListener {
+                if (hasRequiredPermissions()) {
+                    showingPermissionGate = false
+                    recreate()
+                } else {
+                    showPermissionsScreen()
+                    if (!Settings.canDrawOverlays(this@SettingsActivity)) {
+                        Toast.makeText(this@SettingsActivity, "Overlay access is still required.", Toast.LENGTH_SHORT).show()
+                    } else if (!isNotificationPermissionGranted()) {
+                        Toast.makeText(this@SettingsActivity, "Please allow notifications to continue.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }, matchWrap())
+    }
+
+    private fun permissionRow(root: LinearLayout, title: String, detail: String, granted: Boolean, fg: Int) {
+        val card = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(16), dp(14), dp(16), dp(14))
+            background = rounded(if (p.getBoolean(OverlayService.KEY_DARK_THEME, true))
+                Color.rgb(43, 43, 46) else Color.WHITE, 14)
+        }
+        card.addView(TextView(this).apply {
+            text = title + if (granted) "  ✓ Granted" else "  • Required"
+            textSize = 16f
+            typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+            setTextColor(fg)
+        })
+        card.addView(TextView(this).apply {
+            text = detail
+            textSize = 13f
+            setTextColor(fg)
+            alpha = .8f
+            setPadding(0, dp(5), 0, 0)
+        })
+        root.addView(card, matchWrap())
+        root.addView(Space(this), LinearLayout.LayoutParams(1, dp(10)))
+    }
+
+    private fun showPermissionManagement() {
+        val dark = p.getBoolean(OverlayService.KEY_DARK_THEME, true)
+        val fg = if (dark) Color.WHITE else Color.rgb(34, 34, 34)
+        val box = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(20), dp(8), dp(20), dp(8))
+        }
+        fun status(title: String, detail: String, granted: Boolean, actionLabel: String, action: () -> Unit) {
             box.addView(TextView(this).apply {
-                text = title; textSize = 15f
-                setTextColor(if (darkTheme.isChecked) Color.rgb(160, 190, 235) else Color.rgb(45, 85, 145))
-                setPadding(0, dp(10), 0, dp(10))
-                setOnClickListener { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }
+                text = title + if (granted) "  ✓ Granted" else "  • Needed"
+                textSize = 16f
+                typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+                setTextColor(fg)
+                setPadding(0, dp(10), 0, dp(3))
+            })
+            box.addView(TextView(this).apply {
+                text = detail
+                textSize = 13f
+                setTextColor(fg)
+                alpha = .8f
+            })
+            box.addView(Button(this).apply {
+                text = actionLabel
+                isAllCaps = false
+                minHeight = dp(48)
+                isEnabled = !granted
+                setOnClickListener(action)
             }, matchWrap())
         }
-        box.addView(TextView(this).apply {
-            text = "Created by Ian Cossette\nBuilt with ChatGPT and Gemini\n\nSupport development\nBuy me a coffee ☕️\nCash App: \$icoss"
-            textSize = 16f; setTextColor(if (darkTheme.isChecked) Color.WHITE else Color.BLACK); setPadding(0, 0, 0, dp(12))
+        val overlay = Settings.canDrawOverlays(this)
+        status("Display over other apps", "Required for the visual overlay.", overlay,
+            if (overlay) "Granted" else "Open overlay settings") {
+            startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")))
+        }
+        val notifications = isNotificationPermissionGranted()
+        status("Notifications", "Used for session and foreground-service status.", notifications,
+            if (notifications) "Granted" else "Request notification permission") {
+            if (Build.VERSION.SDK_INT >= 33) requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 2001)
+        }
+        val location = checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        status("Location for sunset scheduling", "Optional. Only needed when enabling sunset-to-sunrise scheduling.", location,
+            if (location) "Granted" else "Allow location") {
+            if (Build.VERSION.SDK_INT >= 23) requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), 3001)
+        }
+        AlertDialog.Builder(this)
+            .setTitle("Permissions & access")
+            .setView(ScrollView(this).apply { addView(box) })
+            .setPositiveButton("Done", null)
+            .show()
+    }
+
+    private fun showAboutDialog() {
+        val dark = p.getBoolean(OverlayService.KEY_DARK_THEME, true)
+        val fg = if (dark) Color.rgb(242, 242, 242) else Color.rgb(32, 32, 32)
+        val muted = if (dark) Color.rgb(190, 190, 196) else Color.rgb(86, 86, 92)
+        val accent = if (dark) Color.rgb(164, 194, 245) else Color.rgb(42, 83, 145)
+        val box = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(20), dp(12), dp(20), dp(12))
+        }
+        fun heading(title: String) {
+            box.addView(TextView(this).apply {
+                text = title.uppercase()
+                textSize = 12f
+                letterSpacing = .08f
+                typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+                setTextColor(muted)
+                setPadding(0, dp(18), 0, dp(6))
+            })
+        }
+        fun paragraph(text: String) {
+            box.addView(TextView(this).apply {
+                this.text = text
+                textSize = 14f
+                setTextColor(fg)
+                setLineSpacing(dp(3).toFloat(), 1f)
+            })
+        }
+        fun link(title: String, url: String) {
+            box.addView(TextView(this).apply {
+                text = title + "  ↗"
+                textSize = 15f
+                setTextColor(accent)
+                isFocusable = true
+                minHeight = dp(44)
+                gravity = Gravity.CENTER_VERTICAL
+                setOnClickListener {
+                    try {
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                    } catch (_: Exception) {
+                        Toast.makeText(this@SettingsActivity, "No app available to open this link.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }, matchWrap())
+        }
+        val hero = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(18), dp(18), dp(18), dp(18))
+            background = rounded(if (dark) Color.rgb(43, 43, 47) else Color.WHITE, 18)
+        }
+        hero.addView(TextView(this).apply {
+            text = "Parallax Distortion"
+            textSize = 24f
+            typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+            setTextColor(fg)
         })
-        link("Cash App · \$icoss", "https://cash.app/\$icoss")
-        link("Android design: Material 3", "https://m3.material.io/")
+        hero.addView(TextView(this).apply {
+            text = "Neural Entrainment Engine  ·  Version 1.7.0"
+            textSize = 13f
+            setTextColor(muted)
+            setPadding(0, dp(5), 0, 0)
+        })
+        hero.addView(TextView(this).apply {
+            text = "A customizable ambient visual overlay with session timing, appearance controls, and optional rhythmic pulsing."
+            textSize = 14f
+            setTextColor(fg)
+            setPadding(0, dp(14), 0, 0)
+        })
+        box.addView(hero, matchWrap())
+        heading("Designed with care")
+        paragraph("Built by Ian Cossette with assistance from ChatGPT and Gemini. The app is designed around adjustable visual styles, clear controls, and explicit consent for rhythmic flashing.")
+        heading("Safety & control")
+        paragraph("Rhythmic flashing is off by default and requires confirmation before it can be enabled. Stop using the effect immediately if it causes discomfort. This app is not a medical device and does not provide medical treatment.")
+        heading("Permissions & privacy")
+        paragraph("Overlay access enables the visual layer. Notifications support visible session status. Location is optional and is only requested for sunset-to-sunrise scheduling. Permissions can be reviewed at any time from the navigation menu.")
+        heading("Support development")
+        paragraph("If you find the app useful, you can support continued development.")
+        link("Cash App · $icoss", "https://cash.app/$icoss")
+        heading("Resources")
+        link("Project source · GitHub", "https://github.com/onnxscibroccoli/broccoli-core")
+        link("Android design system · Material 3", "https://m3.material.io/")
         link("Android UI design guidance", "https://developer.android.com/design/ui")
         link("Android accessibility guidance", "https://developer.android.com/guide/topics/ui/accessibility")
-        link("Project source · GitHub", "https://github.com/onnxscibroccoli/broccoli-core")
-        AlertDialog.Builder(this).setTitle("About Parallax Distortion")
-            .setView(ScrollView(this).apply { addView(box) }).setPositiveButton("Done", null).show()
+        AlertDialog.Builder(this)
+            .setTitle("About")
+            .setView(ScrollView(this).apply { addView(box) })
+            .setPositiveButton("Done", null)
+            .show()
     }
 
     private fun label(text: String) = TextView(this).apply {
