@@ -42,7 +42,8 @@ class EntrainmentSurfaceView(
     private var startNanos = 0L
     private var seedText = seedStr
     private val density = resources.displayMetrics.density
-    private val darkMode get() = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+    private val darkMode get() = context.getSharedPreferences(OverlayService.PREFS, Context.MODE_PRIVATE)
+        .getBoolean(OverlayService.KEY_DARK_THEME, false)
 
     init {
         setLayerType(View.LAYER_TYPE_HARDWARE, null)
