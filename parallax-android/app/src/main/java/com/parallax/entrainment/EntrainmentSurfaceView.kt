@@ -5,8 +5,11 @@ import android.content.res.Configuration
 import android.graphics.*
 import android.view.Choreographer
 import android.view.View
+import kotlin.math.abs
 import kotlin.math.cos
+import kotlin.math.min
 import kotlin.math.sin
+import kotlin.math.sqrt
 
 class EntrainmentSurfaceView(
     context: Context,
@@ -38,13 +41,19 @@ class EntrainmentSurfaceView(
 
     private val choreographer = Choreographer.getInstance()
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val borderMaskPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_IN)
+    }
+    private var borderMask: Bitmap? = null
+    private var borderMaskWidth = 0
+    private var borderMaskHeight = 0
     private val entities = ArrayList<WaveEntity>(8)
     private var running = false
     private var startNanos = 0L
     private var seedText = seedStr
     private val density = resources.displayMetrics.density
     private val darkMode get() = context.getSharedPreferences(OverlayService.PREFS, Context.MODE_PRIVATE)
-        .getBoolean(OverlayService.KEY_DARK_THEME, false)
+        .getBoolean(OverlayService.KEY_DARK_THEME, true)
 
     init {
         setLayerType(View.LAYER_TYPE_HARDWARE, null)
@@ -135,33 +144,54 @@ class EntrainmentSurfaceView(
     }
 
     /*
-     * Border mode is intentionally a soft edge field, not a rectangular mask.
-     * The old renderer had a hard cutoff at border + entity radius. That made
-     * the overlay read as a sharp frame. We now use smoothstep-style falloff
-     * over a feather zone derived from the configured border width.
+     * Cache an alpha mask for border mode. The rounded rectangle is a fully
+     * clear center; opacity feathers outward into the perimeter band. Masking
+     * after drawing prevents radial gradients from bleeding into the center.
      */
-    private fun edgeAlpha(x: Float, y: Float): Float {
-        if (isFullOverlay) return 1f
-        val border = (borderWidthDp * density).coerceAtLeast(1f)
-        val feather = (border * 0.85f).coerceAtLeast(18f)
-        val edgeDistance = minOf(x, y, width - x, height - y).coerceAtLeast(0f)
+    private fun createBorderMask(w: Int, h: Int): Bitmap {
+        val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+        val pixels = IntArray(w * h)
+        val inset = (borderWidthDp * density)
+            .coerceIn(8f * density, min(w, h) * 0.35f)
+        val halfW = (w - 2f * inset) * 0.5f
+        val halfH = (h - 2f * inset) * 0.5f
+        val radius = min(inset * 0.9f, min(halfW, halfH))
+        val cx = w * 0.5f
+        val cy = h * 0.5f
+        val feather = maxOf(inset * 0.9f, 16f * density)
+        val maxAlpha = borderOpacity.coerceIn(0f, 1f)
 
-        // Border mode is an edge glow, not a screen-sized wash:
-        // zero at the center, rising smoothly toward each edge.
-        // borderWidth controls the inward reach of the fade; borderOpacity
-        // controls the maximum alpha at the physical screen edge.
-        val reach = (border * 2.5f + feather).coerceAtLeast(48f)
-        val t = (1f - edgeDistance / reach).coerceIn(0f, 1f)
-        val smooth = t * t * (3f - 2f * t)
-        return smooth * borderOpacity.coerceIn(0f, 1f)
+        for (y in 0 until h) {
+            val qy = abs((y + 0.5f) - cy) - (halfH - radius)
+            for (x in 0 until w) {
+                val qx = abs((x + 0.5f) - cx) - (halfW - radius)
+                val outsideX = maxOf(qx, 0f)
+                val outsideY = maxOf(qy, 0f)
+                val outsideDistance = sqrt(outsideX * outsideX + outsideY * outsideY)
+                val insideDistance = min(maxOf(qx, qy), 0f)
+                val signedDistance = outsideDistance + insideDistance - radius
+                val t = (signedDistance / feather).coerceIn(0f, 1f)
+                val smooth = t * t * (3f - 2f * t)
+                val alpha = (255f * maxAlpha * smooth).toInt().coerceIn(0, 255)
+                pixels[y * w + x] = Color.argb(alpha, 255, 255, 255)
+            }
+        }
+        bitmap.setPixels(pixels, 0, w, 0, 0, w, h)
+        return bitmap
+    }
+
+    private fun ensureBorderMask() {
+        if (borderMask == null || borderMaskWidth != width || borderMaskHeight != height) {
+            borderMask?.recycle()
+            borderMask = createBorderMask(width, height)
+            borderMaskWidth = width
+            borderMaskHeight = height
+        }
     }
 
     private fun drawEntity(c: Canvas, e: WaveEntity, pulse: Float) {
-        val edge = edgeAlpha(e.x, e.y)
-        if (edge <= 0.001f) return
-
         val base = if (e.isShadow) .35f + pulse * .15f else .42f + pulse * .20f
-        val a = (base * edge * 255f).toInt().coerceIn(0, 255)
+        val a = (base * 255f).toInt().coerceIn(0, 255)
 
         val center: Int
         val gradientEdge: Int
@@ -204,6 +234,10 @@ class EntrainmentSurfaceView(
             c.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
         }
 
+        val borderLayer = if (!isFullOverlay) {
+            c.saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null)
+        } else -1
+
         entities.forEach { e ->
             e.angleX += e.speedX
             e.angleY += e.speedY
@@ -217,6 +251,12 @@ class EntrainmentSurfaceView(
             if (e.y > height + e.radius) e.y = -e.radius
 
             drawEntity(c, e, pulse)
+        }
+
+        if (!isFullOverlay) {
+            ensureBorderMask()
+            c.drawBitmap(borderMask!!, 0f, 0f, borderMaskPaint)
+            c.restoreToCount(borderLayer)
         }
         paint.alpha = 255
     }
