@@ -42,6 +42,7 @@ class SettingsActivity : Activity() {
     private lateinit var timed: Switch
     private lateinit var darkTheme: Switch
     private lateinit var flashing: Switch
+    private var updatingFlashingSwitch = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,23 +124,32 @@ class SettingsActivity : Activity() {
             setPadding(0, dp(4), 0, dp(8))
         }, matchWrap())
         flashing.setOnCheckedChangeListener { button, checked ->
+            if (updatingFlashingSwitch) return@setOnCheckedChangeListener
             if (checked) {
                 // Never enable flashing until the user explicitly acknowledges the safety warning.
+                updatingFlashingSwitch = true
                 button.isChecked = false
+                updatingFlashingSwitch = false
                 AlertDialog.Builder(this)
                     .setTitle("Photosensitivity warning")
                     .setMessage("Rhythmic flashing or pulsing visuals may trigger seizures, dizziness, migraine, or other symptoms, especially for people with photosensitive epilepsy. Do not proceed if you have a history of photosensitive seizures or are unsure whether flashing effects are safe for you. Stop immediately if you feel unwell.\n\nFlashing is disabled by default.")
                     .setPositiveButton("Proceed") { _, _ ->
                         p.edit().putBoolean(OverlayService.KEY_FLASHING, true).apply()
+                        updatingFlashingSwitch = true
                         button.isChecked = true
+                        updatingFlashingSwitch = false
                     }
                     .setNegativeButton("Cancel") { _, _ ->
                         p.edit().putBoolean(OverlayService.KEY_FLASHING, false).apply()
+                        updatingFlashingSwitch = true
                         button.isChecked = false
+                        updatingFlashingSwitch = false
                     }
                     .setOnCancelListener {
                         p.edit().putBoolean(OverlayService.KEY_FLASHING, false).apply()
+                        updatingFlashingSwitch = true
                         button.isChecked = false
+                        updatingFlashingSwitch = false
                     }
                     .show()
             } else {
