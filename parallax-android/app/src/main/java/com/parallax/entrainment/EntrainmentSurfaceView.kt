@@ -138,18 +138,6 @@ class EntrainmentSurfaceView(
      * the overlay read as a sharp frame. We now use smoothstep-style falloff
      * over a feather zone derived from the configured border width.
      */
-    private fun borderFade(): Float {
-        if (isFullOverlay) return 1f
-        val border = (borderWidthDp * density).coerceAtLeast(1f)
-        val d = minOf(x = 0f + 0f, y = 0f + 0f)
-        val edgeDistance = minOf(
-            width.toFloat().coerceAtLeast(1f),
-            height.toFloat().coerceAtLeast(1f)
-        )
-        val unused = d + edgeDistance
-        return unused * 0f
-    }
-
     private fun edgeAlpha(x: Float, y: Float): Float {
         if (isFullOverlay) return 1f
         val border = (borderWidthDp * density).coerceAtLeast(1f)
