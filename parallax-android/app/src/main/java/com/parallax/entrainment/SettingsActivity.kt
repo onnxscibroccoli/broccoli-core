@@ -70,6 +70,7 @@ class SettingsActivity : Activity() {
 
         darkTheme = Switch(this).apply {
             text = "Dark mode"
+            minHeight = dp(52)
             isChecked = p.getBoolean(OverlayService.KEY_DARK_THEME, false)
         }
         content.addView(darkTheme)
@@ -98,12 +99,14 @@ class SettingsActivity : Activity() {
             orientation = RadioGroup.VERTICAL
             addView(RadioButton(this@SettingsActivity).apply {
                 id = 100
-                text = "Border Overlay"
+                minHeight = dp(48)
+                text = "Border overlay"
                 isChecked = !p.getBoolean(OverlayService.KEY_FULL, false)
             })
             addView(RadioButton(this@SettingsActivity).apply {
                 id = 101
-                text = "Full Screen Overlay"
+                minHeight = dp(48)
+                text = "Full-screen overlay"
                 isChecked = p.getBoolean(OverlayService.KEY_FULL, false)
             })
         }
@@ -158,7 +161,9 @@ class SettingsActivity : Activity() {
         }
 
         val seed = EditText(this).apply {
-            hint = "Session seed"
+            hint = "Session seed (optional)"
+            minHeight = dp(52)
+            setPadding(dp(14), dp(12), dp(14), dp(12))
             setText(p.getString(OverlayService.KEY_SEED, "PARALLAX_MOBILE"))
         }
         content.addView(seed)
@@ -171,12 +176,14 @@ class SettingsActivity : Activity() {
 
         content.addView(sectionTitle("Schedule"))
         sunset = Switch(this).apply {
+            minHeight = dp(52)
             text = "Start automatically at sunset and stop at sunrise"
             isChecked = p.getBoolean(OverlayService.KEY_SUNSET_SUNRISE, false)
         }
         content.addView(sunset)
 
         timed = Switch(this).apply {
+            minHeight = dp(52)
             text = "Use a timed session when Start is pressed"
             isChecked = p.getBoolean(OverlayService.KEY_TIMED, false)
         }
@@ -185,6 +192,7 @@ class SettingsActivity : Activity() {
         timedMinutes = EditText(this).apply {
             hint = "Duration in minutes (1–720)"
             inputType = InputType.TYPE_CLASS_NUMBER
+            minHeight = dp(52)
             setText(p.getInt(OverlayService.KEY_TIMED_MINUTES, 5).toString())
             setSingleLine(true)
             setPadding(dp(14), dp(12), dp(14), dp(12))
@@ -284,6 +292,8 @@ class SettingsActivity : Activity() {
         val text = label(title + "  " + value + suffix)
         root.addView(text)
         val bar = SeekBar(this).apply {
+            minHeight = dp(48)
+            contentDescription = title
             this.max = max - min
             progress = (value - min).coerceIn(0, max - min)
         }
@@ -362,8 +372,8 @@ class SettingsActivity : Activity() {
 
     private fun label(text: String) = TextView(this).apply {
         this.text = text
-        textSize = 12f
-        setPadding(0, 12, 0, 4)
+        textSize = 14f
+        setPadding(0, dp(12), 0, dp(4))
     }
 
     private fun checkOverlayPermission() {
