@@ -40,8 +40,9 @@ class OverlayService : Service() {
         val fullOpacity = intent?.getFloatExtra(EXTRA_FULL_OPACITY, p.getFloat(KEY_FULL_OPACITY, .75f)) ?: .75f
         val borderWidth = intent?.getFloatExtra(EXTRA_BORDER_WIDTH, p.getFloat(KEY_BORDER_WIDTH, 72f)) ?: 72f
         val borderOpacity = intent?.getFloatExtra(EXTRA_BORDER_OPACITY, p.getFloat(KEY_BORDER_OPACITY, .75f)) ?: .75f
+        val flashing = p.getBoolean(KEY_FLASHING, false)
 
-        setupOverlay(full, hz, seed, fullOpacity, borderWidth, borderOpacity)
+        setupOverlay(full, hz, seed, fullOpacity, borderWidth, borderOpacity, flashing)
 
         audio?.stop()
         audio = AndroidAudioEngine(hz, seed, volume).also { it.start() }
@@ -64,7 +65,8 @@ class OverlayService : Service() {
         seed: String,
         fullOpacity: Float,
         borderWidth: Float,
-        borderOpacity: Float
+        borderOpacity: Float,
+        flashing: Boolean
     ) {
         view?.let { runCatching { wm.removeViewImmediate(it) } }
 
@@ -99,7 +101,8 @@ class OverlayService : Service() {
             this, full, hz, seed,
             fullOpacity.coerceIn(.05f, 1f),
             borderWidth.coerceIn(8f, 240f),
-            borderOpacity.coerceIn(0f, 1f)
+            borderOpacity.coerceIn(0f, 1f),
+            flashing
         )
 
         try {
@@ -169,6 +172,7 @@ class OverlayService : Service() {
         const val KEY_TIMED = "timed"
         const val KEY_TIMED_MINUTES = "timed_minutes"
         const val KEY_DARK_THEME = "dark_theme"
+        const val KEY_FLASHING = "flashing_enabled"
 
         const val CHANNEL_ID = "parallax_overlay_channel"
         const val NOTIFICATION_ID = 1001
