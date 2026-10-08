@@ -15,7 +15,8 @@ class EntrainmentSurfaceView(
     seedStr: String,
     private val fullOpacity: Float = 1f,
     private val borderWidthDp: Float = 72f,
-    private val borderOpacity: Float = 0.75f
+    private val borderOpacity: Float = 0.75f,
+    private val flashingEnabled: Boolean = false
 ) : View(context), Choreographer.FrameCallback {
     private data class WaveEntity(
         val isShadow: Boolean,
@@ -191,7 +192,10 @@ class EntrainmentSurfaceView(
 
         val elapsed = if (startNanos == 0L) 0.0 else
             (System.nanoTime() - startNanos) / 1_000_000_000.0
-        val pulse = ((sin(2 * Math.PI * targetHz * elapsed) + 1) * .5).toFloat()
+        // Keep the visual field steady by default. Rhythmic pulsing is explicitly opt-in.
+        val pulse = if (flashingEnabled) {
+            ((sin(2 * Math.PI * targetHz * elapsed) + 1) * .5).toFloat()
+        } else 0.5f
 
         if (isFullOverlay) {
             paint.color = if (darkMode) Color.rgb(27, 27, 28) else Color.rgb(228, 228, 227)
