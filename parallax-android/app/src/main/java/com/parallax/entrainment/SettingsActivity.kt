@@ -627,7 +627,7 @@ class SettingsActivity : Activity() {
         paragraph("Overlay access enables the visual layer. Notifications support visible session status. Location is optional and is only requested for sunset-to-sunrise scheduling. Permissions can be reviewed at any time from the navigation menu.")
         heading("Support development")
         paragraph("If you find the app useful, you can support continued development.")
-        link("Cash App · $icoss", "https://cash.app/$icoss")
+        link("Cash App · \$icoss", "https://cash.app/\$icoss")
         heading("Resources")
         link("Project source · GitHub", "https://github.com/onnxscibroccoli/broccoli-core")
         link("Android design system · Material 3", "https://m3.material.io/")
