@@ -4,6 +4,10 @@ on:
   push:
     branches: [ "feat/parallax-distortion-apk", "main" ]
   workflow_dispatch:
+  pull_request:
+    paths:
+      - "parallax-android/**"
+      - ".github/workflows/parallax-android-build.yml"
 
 permissions:
   contents: read
