@@ -36,6 +36,7 @@ class SettingsActivity : Activity() {
     private lateinit var hz: Spinner
     private lateinit var mode: RadioGroup
     private lateinit var volume: SeekBar
+    private lateinit var audioMode: Spinner
     private lateinit var fullOpacity: SeekBar
     private lateinit var borderWidth: SeekBar
     private lateinit var borderOpacity: SeekBar
@@ -115,11 +116,13 @@ class SettingsActivity : Activity() {
         menuButton.setOnClickListener { anchor ->
             PopupMenu(this, anchor).apply {
                 menu.add(0, 1, 0, "Permissions & access")
-                menu.add(0, 2, 1, "About Parallax Distortion")
+                menu.add(0, 2, 1, "Audio controls")
+                menu.add(0, 3, 2, "About Parallax Distortion")
                 setOnMenuItemClickListener { item ->
                     when (item.itemId) {
                         1 -> showPermissionManagement()
-                        2 -> showAboutDialog()
+                        2 -> showAudioHelp()
+                        3 -> showAboutDialog()
                     }
                     true
                 }
@@ -250,7 +253,33 @@ class SettingsActivity : Activity() {
             override fun afterTextChanged(s: android.text.Editable?) {}
         })
 
-        content.addView(sectionTitle("Appearance & sound"))
+        content.addView(sectionTitle("Audio"))
+        content.addView(label("Audio behavior"))
+        audioMode = Spinner(this).apply {
+            adapter = ArrayAdapter(
+                this@SettingsActivity,
+                android.R.layout.simple_spinner_item,
+                arrayOf("Audio off", "Play alongside other apps", "Duck other apps")
+            ).also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+            setSelection(p.getInt(OverlayService.KEY_AUDIO_MODE, OverlayService.AUDIO_MODE_MIX).coerceIn(0, 2))
+            contentDescription = "Audio behavior"
+        }
+        content.addView(audioMode, matchWrap())
+        content.addView(TextView(this).apply {
+            text = "Off is silent. Alongside keeps other apps at their current volume. Duck asks compatible apps to lower their audio while Parallax plays."
+            textSize = 13f
+            alpha = .78f
+            setPadding(0, dp(4), 0, dp(8))
+        }, matchWrap())
+        audioMode.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: View?, position: Int, id: Long) {
+                p.edit().putInt(OverlayService.KEY_AUDIO_MODE, position).apply()
+                requestLiveUpdate()
+            }
+            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
+        }
+
+        content.addView(sectionTitle("Appearance"))
         volume = slider(content, "Volume", 0, 100, (p.getFloat(OverlayService.KEY_VOLUME, .12f) * 100).roundToInt(), "%") {
             p.edit().putFloat(OverlayService.KEY_VOLUME, it / 100f).apply()
             requestLiveUpdate()
@@ -673,6 +702,40 @@ class SettingsActivity : Activity() {
             .show()
     }
 
+    private fun showAudioHelp() {
+        val dark = p.getBoolean(OverlayService.KEY_DARK_THEME, true)
+        val fg = if (dark) Color.rgb(242, 242, 242) else Color.rgb(32, 32, 32)
+        val box = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(20), dp(8), dp(20), dp(8))
+        }
+        val rows = listOf(
+            "Audio off" to "Stops Parallax audio output. Visual effects continue normally.",
+            "Play alongside other apps" to "Default. Parallax audio continues without requesting audio focus, so other apps can keep playing at their existing volume.",
+            "Duck other apps" to "Requests transient audio focus with ducking. Apps that honor Android audio focus lower their volume while Parallax plays; some apps may pause or ignore ducking."
+        )
+        rows.forEach { (title, detail) ->
+            box.addView(TextView(this).apply {
+                text = title
+                textSize = 16f
+                typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+                setTextColor(fg)
+                setPadding(0, dp(12), 0, dp(4))
+            })
+            box.addView(TextView(this).apply {
+                text = detail
+                textSize = 14f
+                setTextColor(fg)
+                setLineSpacing(dp(2).toFloat(), 1f)
+            })
+        }
+        AlertDialog.Builder(this)
+            .setTitle("Audio controls")
+            .setView(ScrollView(this).apply { addView(box) })
+            .setPositiveButton("Done", null)
+            .show()
+    }
+
     private fun showAboutDialog() {
         val dark = p.getBoolean(OverlayService.KEY_DARK_THEME, true)
         val fg = if (dark) Color.rgb(242, 242, 242) else Color.rgb(32, 32, 32)
@@ -729,13 +792,13 @@ class SettingsActivity : Activity() {
             setTextColor(fg)
         })
         hero.addView(TextView(this).apply {
-            text = "Neural Entrainment Engine  ·  Version 1.8.0"
+            text = "Ambient visuals and audio  ·  Version 1.9.0"
             textSize = 13f
             setTextColor(muted)
             setPadding(0, dp(5), 0, 0)
         })
         hero.addView(TextView(this).apply {
-            text = "A customizable ambient visual overlay with session timing, appearance controls, and optional rhythmic pulsing."
+            text = "A customizable ambient visual overlay with session timing, refined appearance controls, and optional audio behavior settings."
             textSize = 14f
             setTextColor(fg)
             setPadding(0, dp(14), 0, 0)
