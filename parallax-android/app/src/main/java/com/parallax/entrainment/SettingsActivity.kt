@@ -308,13 +308,13 @@ class SettingsActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
-        if (showingPermissionGate) {
-            if (hasRequiredPermissions()) {
+        if (hasRequiredPermissions()) {
+            if (showingPermissionGate) {
                 showingPermissionGate = false
                 recreate()
-            } else {
-                showPermissionsScreen()
             }
+        } else {
+            showPermissionsScreen()
         }
     }
 
