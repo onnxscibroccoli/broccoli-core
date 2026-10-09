@@ -42,9 +42,9 @@ class AndroidAudioEngine(
         override fun onPlaybackConfigChanged(configs: MutableList<AudioPlaybackConfiguration>?) {
             // This engine's AudioTrack is one active player. Duck only when another
             // playback client is active, rather than asking Android to duck the other app.
-            otherAudioPlaying = (configs?.count {
-                it.playerState == AudioPlaybackConfiguration.PLAYER_STATE_STARTED
-            } ?: 0) > 1
+            // Android exposes the currently active playback configurations here;
+            // more than one means this app and at least one other player are active.
+            otherAudioPlaying = (configs?.size ?: 0) > 1
         }
     }
     private var playbackCallbackRegistered = false
