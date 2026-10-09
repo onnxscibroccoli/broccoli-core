@@ -579,8 +579,11 @@ class SettingsActivity : Activity() {
                             "• Display over other apps, to show the visual overlay\n" +
                             "• Notifications, to show session status\n\n" +
                             "No data ever leaves your device.\n\n" +
-                            "Source: https://github.com/onnxscibroccoli/broccoli-core"
+                            "The source code is available on GitHub."
                         )
+                        .setNeutralButton("View source") { _, _ ->
+                            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/onnxscibroccoli/broccoli-core")))
+                        }
                         .setPositiveButton("Grant permissions") { _, _ ->
                             if (!Settings.canDrawOverlays(this)) {
                                 startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")))
