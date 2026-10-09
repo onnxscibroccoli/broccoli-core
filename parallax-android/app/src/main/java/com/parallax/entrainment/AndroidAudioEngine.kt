@@ -2,9 +2,11 @@ package com.parallax.entrainment
 
 import android.content.Context
 import android.media.AudioAttributes
-import android.media.AudioFocusRequest
 import android.media.AudioFormat
 import android.media.AudioManager
+import android.media.AudioPlaybackConfiguration
+import android.os.Handler
+import android.os.Looper
 import android.media.AudioTrack
 import android.os.Build
 import kotlin.concurrent.thread
@@ -35,12 +37,27 @@ class AndroidAudioEngine(
     private val carrierHz = 210.0
     private var track: AudioTrack? = null
     private var worker: Thread? = null
-    private var focusRequest: AudioFocusRequest? = null
-    private val focusListener = AudioManager.OnAudioFocusChangeListener { /* Other apps handle our duck request. */ }
+    @Volatile private var otherAudioPlaying = false
+    private val playbackCallback = object : AudioManager.AudioPlaybackCallback() {
+        override fun onPlaybackConfigChanged(configs: MutableList<AudioPlaybackConfiguration>?) {
+            // This engine's AudioTrack is one active player. Duck only when another
+            // playback client is active, rather than asking Android to duck the other app.
+            otherAudioPlaying = (configs?.count {
+                it.playerState == AudioPlaybackConfiguration.PLAYER_STATE_STARTED
+            } ?: 0) > 1
+        }
+    }
+    private var playbackCallbackRegistered = false
 
     fun start() {
         if (audioMode == OverlayService.AUDIO_MODE_OFF || volume <= 0f || playing) return
-        if (audioMode == OverlayService.AUDIO_MODE_DUCK && !requestDuckingFocus()) return
+        if (audioMode == OverlayService.AUDIO_MODE_DUCK) {
+            runCatching {
+                audioManager.registerAudioPlaybackCallback(playbackCallback, Handler(Looper.getMainLooper()))
+                playbackCallbackRegistered = true
+                playbackCallback.onPlaybackConfigChanged(audioManager.activePlaybackConfigurations)
+            }
+        }
 
         val minimumBytes = AudioTrack.getMinBufferSize(
             sampleRate,
@@ -48,7 +65,7 @@ class AndroidAudioEngine(
             AudioFormat.ENCODING_PCM_FLOAT
         )
         if (minimumBytes <= 0) {
-            abandonAudioFocus()
+            unregisterPlaybackCallback()
             return
         }
 
@@ -75,7 +92,7 @@ class AndroidAudioEngine(
 
         if (created == null || created.state != AudioTrack.STATE_INITIALIZED) {
             runCatching { created?.release() }
-            abandonAudioFocus()
+            unregisterPlaybackCallback()
             return
         }
 
@@ -104,7 +121,8 @@ class AndroidAudioEngine(
                     val seedOffset = ((seedStr.hashCode() and 0x7fffffff) % 3000) / 100.0 - 15.0
                     val leftHz = (carrierHz + seedOffset).coerceIn(180.0, 240.0)
                     val rightHz = (leftHz + hz).coerceIn(180.5, 280.0)
-                    val baseGain = (volume * 0.82f).coerceIn(0f, 0.82f)
+                    val duckGain = if (audioMode == OverlayService.AUDIO_MODE_DUCK && otherAudioPlaying) 0.20f else 1f
+                    val baseGain = (volume * 0.82f * duckGain).coerceIn(0f, 0.82f)
 
                     for (frame in 0 until frames) {
                         val envelope = when {
@@ -142,7 +160,7 @@ class AndroidAudioEngine(
                 track = null
                 runCatching { finishedTrack?.stop() }
                 runCatching { finishedTrack?.release() }
-                abandonAudioFocus()
+                unregisterPlaybackCallback()
             }
         }
     }
@@ -176,37 +194,12 @@ class AndroidAudioEngine(
         abandonAudioFocus()
     }
 
-    private fun requestDuckingFocus(): Boolean {
-        return if (Build.VERSION.SDK_INT >= 26) {
-            val request = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
-                .setAudioAttributes(
-                    AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_MEDIA)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        .build()
-                )
-                .setOnAudioFocusChangeListener(focusListener)
-                .setWillPauseWhenDucked(false)
-                .build()
-            focusRequest = request
-            audioManager.requestAudioFocus(request) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
-        } else {
-            @Suppress("DEPRECATION")
-            audioManager.requestAudioFocus(
-                focusListener,
-                AudioManager.STREAM_MUSIC,
-                AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK
-            ) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+    private fun unregisterPlaybackCallback() {
+        if (playbackCallbackRegistered) {
+            runCatching { audioManager.unregisterAudioPlaybackCallback(playbackCallback) }
+            playbackCallbackRegistered = false
         }
+        otherAudioPlaying = false
     }
 
-    private fun abandonAudioFocus() {
-        if (Build.VERSION.SDK_INT >= 26) {
-            focusRequest?.let { runCatching { audioManager.abandonAudioFocusRequest(it) } }
-            focusRequest = null
-        } else {
-            @Suppress("DEPRECATION")
-            runCatching { audioManager.abandonAudioFocus(focusListener) }
-        }
-    }
 }
