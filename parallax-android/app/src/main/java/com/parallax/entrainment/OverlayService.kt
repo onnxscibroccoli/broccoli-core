@@ -32,7 +32,20 @@ class OverlayService : Service() {
             stopSelf()
             return START_NOT_STICKY
         }
-        val isLiveUpdate = intent?.action == ACTION_UPDATE
+        if (intent?.action == ACTION_PAUSE) {
+            getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean(KEY_SESSION_PAUSED, true).apply()
+            view?.let { runCatching { wm.removeViewImmediate(it) } }
+            view = null
+            audio?.stop()
+            audio = null
+            activeAudioMode = AUDIO_MODE_OFF
+            startForeground(NOTIFICATION_ID, notification())
+            return START_STICKY
+        }
+        if (intent?.action == ACTION_RESUME) {
+            getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean(KEY_SESSION_PAUSED, false).apply()
+        }
+        val isLiveUpdate = intent?.action == ACTION_UPDATE || intent?.action == ACTION_RESUME
 
         startForeground(NOTIFICATION_ID, notification())
 
@@ -47,9 +60,11 @@ class OverlayService : Service() {
         val flashing = p.getBoolean(KEY_FLASHING, false)
         val audioMode = p.getInt(KEY_AUDIO_MODE, AUDIO_MODE_MIX).coerceIn(AUDIO_MODE_OFF, AUDIO_MODE_DUCK)
 
-        setupOverlay(full, hz, seed, fullOpacity, borderWidth, borderOpacity, flashing)
+        if (!p.getBoolean(KEY_SESSION_PAUSED, false)) {
+            setupOverlay(full, hz, seed, fullOpacity, borderWidth, borderOpacity, flashing)
+        }
 
-        if (audioMode == AUDIO_MODE_OFF || volume <= 0f) {
+        if (p.getBoolean(KEY_SESSION_PAUSED, false) || audioMode == AUDIO_MODE_OFF || volume <= 0f) {
             audio?.stop()
             audio = null
             activeAudioMode = AUDIO_MODE_OFF
@@ -155,7 +170,7 @@ class OverlayService : Service() {
     private fun stopOverlay() {
         handler.removeCallbacksAndMessages(null)
         sessionEndAtElapsedRealtime = 0L
-        getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean(KEY_SESSION_ACTIVE, false).apply()
+        getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean(KEY_SESSION_ACTIVE, false).putBoolean(KEY_SESSION_PAUSED, false).apply()
         view?.let { runCatching { wm.removeViewImmediate(it) } }
         view = null
         audio?.stop()
@@ -179,16 +194,23 @@ class OverlayService : Service() {
             this, 0, Intent(this, SettingsActivity::class.java),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
+        val paused = getSharedPreferences(PREFS, MODE_PRIVATE).getBoolean(KEY_SESSION_PAUSED, false)
+        val pauseResume = PendingIntent.getService(
+            this, 2,
+            Intent(this, OverlayService::class.java).apply { action = if (paused) ACTION_RESUME else ACTION_PAUSE },
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
         val stop = PendingIntent.getService(
             this, 1, Intent(this, OverlayService::class.java).apply { action = ACTION_STOP },
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Parallax Entrainment Active")
-            .setContentText("Tap to open settings.")
+            .setContentTitle(if (paused) "Parallax Distortion Paused" else "Parallax Distortion Active")
+            .setContentText(if (paused) "Session paused. Tap Resume to continue." else "Tap to open settings.")
             .setSmallIcon(android.R.drawable.ic_media_play)
             .setContentIntent(settings)
-            .addAction(android.R.drawable.ic_media_pause, "Stop", stop)
+            .addAction(if (paused) android.R.drawable.ic_media_play else android.R.drawable.ic_media_pause, if (paused) "Resume" else "Pause", pauseResume)
+            .addAction(android.R.drawable.ic_menu_close_clear_cancel, "Stop", stop)
             .setOngoing(true)
             .build()
     }
@@ -219,6 +241,7 @@ class OverlayService : Service() {
         const val KEY_DARK_THEME = "dark_theme"
         const val KEY_FLASHING = "flashing_enabled"
         const val KEY_SESSION_ACTIVE = "session_active"
+        const val KEY_SESSION_PAUSED = "session_paused"
         const val KEY_PERMISSION_PROMPT_SHOWN = "permission_prompt_shown_v18"
         private const val KEY_VISUAL_DEFAULTS_MIGRATED = "visual_defaults_migrated_v16"
 
@@ -245,6 +268,8 @@ class OverlayService : Service() {
         const val NOTIFICATION_ID = 1001
         const val ACTION_STOP = "com.parallax.entrainment.STOP"
         const val ACTION_UPDATE = "com.parallax.entrainment.UPDATE"
+        const val ACTION_PAUSE = "com.parallax.entrainment.PAUSE"
+        const val ACTION_RESUME = "com.parallax.entrainment.RESUME"
 
         const val EXTRA_IS_FULL_OVERLAY = "EXTRA_IS_FULL_OVERLAY"
         const val EXTRA_TARGET_HZ = "EXTRA_TARGET_HZ"
