@@ -33,7 +33,13 @@ class OverlayService : Service() {
             return START_NOT_STICKY
         }
         if (intent?.action == ACTION_PAUSE) {
-            getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean(KEY_SESSION_PAUSED, true).apply()
+            val prefs = getSharedPreferences(PREFS, MODE_PRIVATE)
+            val remainingMs = if (sessionEndAtElapsedRealtime > 0L) {
+                (sessionEndAtElapsedRealtime - android.os.SystemClock.elapsedRealtime()).coerceAtLeast(0L)
+            } else 0L
+            handler.removeCallbacksAndMessages(null)
+            sessionEndAtElapsedRealtime = 0L
+            prefs.edit().putBoolean(KEY_SESSION_PAUSED, true).putLong(KEY_SESSION_REMAINING_MS, remainingMs).apply()
             view?.let { runCatching { wm.removeViewImmediate(it) } }
             view = null
             audio?.stop()
@@ -43,7 +49,12 @@ class OverlayService : Service() {
             return START_STICKY
         }
         if (intent?.action == ACTION_RESUME) {
-            getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean(KEY_SESSION_PAUSED, false).apply()
+            val prefs = getSharedPreferences(PREFS, MODE_PRIVATE)
+            val remainingMs = prefs.getLong(KEY_SESSION_REMAINING_MS, 0L)
+            if (remainingMs > 0L) {
+                sessionEndAtElapsedRealtime = android.os.SystemClock.elapsedRealtime() + remainingMs
+            }
+            prefs.edit().putBoolean(KEY_SESSION_PAUSED, false).putLong(KEY_SESSION_REMAINING_MS, 0L).apply()
         }
         val isLiveUpdate = intent?.action == ACTION_UPDATE || intent?.action == ACTION_RESUME
 
@@ -81,7 +92,7 @@ class OverlayService : Service() {
             handler.removeCallbacksAndMessages(null)
             val duration = intent?.getLongExtra(EXTRA_DURATION_MS, 0L) ?: 0L
             sessionEndAtElapsedRealtime = if (duration > 0L) android.os.SystemClock.elapsedRealtime() + duration else 0L
-            p.edit().putBoolean(KEY_SESSION_ACTIVE, true).apply()
+            p.edit().putLong(KEY_SESSION_REMAINING_MS, 0L).putBoolean(KEY_SESSION_ACTIVE, true).apply()
             if (duration > 0L) scheduleSessionStop(duration)
         } else if (sessionEndAtElapsedRealtime > 0L) {
             handler.removeCallbacksAndMessages(null)
@@ -170,7 +181,7 @@ class OverlayService : Service() {
     private fun stopOverlay() {
         handler.removeCallbacksAndMessages(null)
         sessionEndAtElapsedRealtime = 0L
-        getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean(KEY_SESSION_ACTIVE, false).putBoolean(KEY_SESSION_PAUSED, false).apply()
+        getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean(KEY_SESSION_ACTIVE, false).putBoolean(KEY_SESSION_PAUSED, false).putLong(KEY_SESSION_REMAINING_MS, 0L).apply()
         view?.let { runCatching { wm.removeViewImmediate(it) } }
         view = null
         audio?.stop()
@@ -242,6 +253,7 @@ class OverlayService : Service() {
         const val KEY_FLASHING = "flashing_enabled"
         const val KEY_SESSION_ACTIVE = "session_active"
         const val KEY_SESSION_PAUSED = "session_paused"
+        const val KEY_SESSION_REMAINING_MS = "session_remaining_ms"
         const val KEY_PERMISSION_PROMPT_SHOWN = "permission_prompt_shown_v18"
         private const val KEY_VISUAL_DEFAULTS_MIGRATED = "visual_defaults_migrated_v16"
 
