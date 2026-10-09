@@ -15,6 +15,7 @@ class OverlayService : Service() {
     private lateinit var wm: WindowManager
     private var view: EntrainmentSurfaceView? = null
     private var audio: AndroidAudioEngine? = null
+    private var activeAudioMode = -1
     private val handler = Handler(Looper.getMainLooper())
     private var sessionEndAtElapsedRealtime = 0L
 
@@ -44,11 +45,22 @@ class OverlayService : Service() {
         val borderWidth = intent?.getFloatExtra(EXTRA_BORDER_WIDTH, p.getFloat(KEY_BORDER_WIDTH, 72f)) ?: 72f
         val borderOpacity = intent?.getFloatExtra(EXTRA_BORDER_OPACITY, p.getFloat(KEY_BORDER_OPACITY, .33f)) ?: .33f
         val flashing = p.getBoolean(KEY_FLASHING, false)
+        val audioMode = p.getInt(KEY_AUDIO_MODE, AUDIO_MODE_MIX).coerceIn(AUDIO_MODE_OFF, AUDIO_MODE_DUCK)
 
         setupOverlay(full, hz, seed, fullOpacity, borderWidth, borderOpacity, flashing)
 
-        audio?.stop()
-        audio = AndroidAudioEngine(hz, seed, volume).also { it.start() }
+        if (audioMode == AUDIO_MODE_OFF || volume <= 0f) {
+            audio?.stop()
+            audio = null
+            activeAudioMode = AUDIO_MODE_OFF
+        } else if (audio == null || activeAudioMode != audioMode) {
+            audio?.stop()
+            audio = AndroidAudioEngine(this, hz, seed, volume, audioMode).also { it.start() }
+            activeAudioMode = audioMode
+        } else {
+            // Update tone parameters in place to avoid abrupt restarts and audible clicks.
+            audio?.update(hz, seed, volume)
+        }
 
         if (!isLiveUpdate) {
             handler.removeCallbacksAndMessages(null)
@@ -187,6 +199,10 @@ class OverlayService : Service() {
         const val KEY_HZ = "hz"
         const val KEY_SEED = "seed"
         const val KEY_VOLUME = "volume"
+        const val KEY_AUDIO_MODE = "audio_mode"
+        const val AUDIO_MODE_OFF = 0
+        const val AUDIO_MODE_MIX = 1
+        const val AUDIO_MODE_DUCK = 2
         const val KEY_FULL_OPACITY = "full_opacity"
         const val KEY_BORDER_WIDTH = "border_width"
         const val KEY_BORDER_OPACITY = "border_opacity"
