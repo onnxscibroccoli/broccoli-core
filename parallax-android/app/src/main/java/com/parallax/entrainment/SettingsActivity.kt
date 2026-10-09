@@ -526,7 +526,7 @@ class SettingsActivity : Activity() {
                 isAllCaps = false
                 minHeight = dp(48)
                 isEnabled = !granted
-                setOnClickListener(action)
+                setOnClickListener { action() }
             }, matchWrap())
         }
         val overlay = Settings.canDrawOverlays(this)
