@@ -50,6 +50,8 @@ class EntrainmentSurfaceView(
     private val entities = ArrayList<WaveEntity>(8)
     private var running = false
     private var startNanos = 0L
+    private var lastRenderedFrameNanos = 0L
+    private val minimumFrameIntervalNanos = 33_333_333L // 30 fps caps redraw cost while keeping motion fluid.
     private var seedText = seedStr
     private val density = resources.displayMetrics.density
     private val darkMode get() = context.getSharedPreferences(OverlayService.PREFS, Context.MODE_PRIVATE)
@@ -109,7 +111,12 @@ class EntrainmentSurfaceView(
 
     override fun doFrame(frameTimeNanos: Long) {
         if (running) {
-            invalidate()
+            if (lastRenderedFrameNanos == 0L ||
+                frameTimeNanos - lastRenderedFrameNanos >= minimumFrameIntervalNanos
+            ) {
+                lastRenderedFrameNanos = frameTimeNanos
+                invalidate()
+            }
             choreographer.postFrameCallback(this)
         }
     }
