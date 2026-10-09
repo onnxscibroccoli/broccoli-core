@@ -1,0 +1,56 @@
+name: Android Debug APK
+on:
+  push:
+    branches:
+      - feat/omnikali-android-workstation
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build-debug-apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Locate Gradle Android project
+        id: project
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -x ./gradlew ]]; then
+            echo "root=." >> "$GITHUB_OUTPUT"
+          else
+            wrapper="$(find . -type f -name gradlew -not -path './.git/*' -print -quit)"
+            if [[ -z "$wrapper" ]]; then
+              echo "::error::No Gradle wrapper found. An Android Gradle project must be committed before APK generation."
+              exit 1
+            fi
+            echo "root=$(dirname "$wrapper")" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Build debug APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "${{ steps.project.outputs.root }}"
+          chmod +x ./gradlew
+          ./gradlew --no-daemon assembleDebug
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: omnikali-android-debug-apk
+          path: |
+            **/build/outputs/apk/**/debug/*.apk
+          if-no-files-found: error
+          retention-days: 14
