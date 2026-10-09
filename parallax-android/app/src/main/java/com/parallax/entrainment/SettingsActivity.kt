@@ -493,8 +493,13 @@ class SettingsActivity : Activity() {
     }
 
     private fun sectionTitle(title: String) = TextView(this).apply {
-        text = title; textSize = 18f; typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
-        setPadding(0, dp(22), 0, dp(8))
+        text = title.uppercase()
+        textSize = 12f
+        letterSpacing = .12f
+        alpha = .82f
+        typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+        setPadding(0, dp(26), 0, dp(8))
+        accessibilityHeading = true
     }
     private fun dp(value: Int) = (value * resources.displayMetrics.density).roundToInt()
     private fun matchWrap() = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
