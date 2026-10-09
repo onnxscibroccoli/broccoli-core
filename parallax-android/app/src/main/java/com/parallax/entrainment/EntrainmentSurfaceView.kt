@@ -19,7 +19,8 @@ class EntrainmentSurfaceView(
     private val fullOpacity: Float = 1f,
     private val borderWidthDp: Float = 72f,
     private val borderOpacity: Float = 0.75f,
-    private val flashingEnabled: Boolean = false
+    private val flashingEnabled: Boolean = false,
+    private val inverseBorderMask: Boolean = false
 ) : View(context), Choreographer.FrameCallback {
     private data class WaveEntity(
         val isShadow: Boolean,
@@ -180,7 +181,8 @@ class EntrainmentSurfaceView(
                 val t = (signedDistance / feather).coerceIn(0f, 1f)
                 val smooth = t * t * (3f - 2f * t)
                 val alpha = (255f * maxAlpha * smooth).toInt().coerceIn(0, 255)
-                pixels[y * w + x] = Color.argb(alpha, 255, 255, 255)
+                val finalAlpha = if (inverseBorderMask) 255 - alpha else alpha
+                pixels[y * w + x] = Color.argb(finalAlpha, 255, 255, 255)
             }
         }
         bitmap.setPixels(pixels, 0, w, 0, 0, w, h)
