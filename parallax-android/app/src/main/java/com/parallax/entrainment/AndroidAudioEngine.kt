@@ -173,7 +173,7 @@ class AndroidAudioEngine(
 
     fun stop() {
         if (!playing && worker == null) {
-            abandonAudioFocus()
+            unregisterPlaybackCallback()
             return
         }
         stopRequested = true
@@ -191,7 +191,7 @@ class AndroidAudioEngine(
             runCatching { unfinished?.release() }
             worker = null
         }
-        abandonAudioFocus()
+        unregisterPlaybackCallback()
     }
 
     private fun unregisterPlaybackCallback() {
