@@ -103,7 +103,7 @@ class AndroidAudioEngine(
             playing = false
             runCatching { created.release() }
             track = null
-            abandonAudioFocus()
+            unregisterPlaybackCallback()
             return
         }
 
