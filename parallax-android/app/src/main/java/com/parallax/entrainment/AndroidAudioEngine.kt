@@ -121,8 +121,8 @@ class AndroidAudioEngine(
                         }
                         val gain = baseGain * envelope
                         // Leave headroom and clamp floating-point samples before AudioTrack conversion.
-                        buffer[frame * 2] = (sin(leftPhase) * gain).coerceIn(-0.92f, 0.92f)
-                        buffer[frame * 2 + 1] = (sin(rightPhase) * gain).coerceIn(-0.92f, 0.92f)
+                        buffer[frame * 2] = (sin(leftPhase).toFloat() * gain).coerceIn(-0.92f, 0.92f)
+                        buffer[frame * 2 + 1] = (sin(rightPhase).toFloat() * gain).coerceIn(-0.92f, 0.92f)
                         leftPhase += 2.0 * PI * leftHz / sampleRate
                         rightPhase += 2.0 * PI * rightHz / sampleRate
                         if (leftPhase >= 2.0 * PI) leftPhase -= 2.0 * PI
