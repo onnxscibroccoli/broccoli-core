@@ -114,6 +114,13 @@ class OverlayService : Service() {
                 layoutInDisplayCutoutMode =
                     WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
             }
+            // Draw edge-to-edge: explicitly opt out of system-bar inset fitting.
+            // The flags above permit screen-area layout; these inset settings keep
+            // WindowManager from shrinking MATCH_PARENT to the area above navigation.
+            if (Build.VERSION.SDK_INT >= 30) {
+                setFitInsetsTypes(0)
+                setFitInsetsSides(0)
+            }
         }
 
         view = EntrainmentSurfaceView(
