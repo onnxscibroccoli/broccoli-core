@@ -9,6 +9,7 @@ import android.os.Looper
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout.LayoutParams
@@ -54,6 +55,10 @@ class SettingsActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         OverlayService.migrateVisualDefaults(this)
+        if (savedInstanceState == null && !intent.getBooleanExtra(EXTRA_SPLASH_SHOWN, false)) {
+            showLaunchSplash()
+            return
+        }
         if (!hasRequiredPermissions()) {
             showPermissionsScreen()
             return
@@ -69,20 +74,6 @@ class SettingsActivity : Activity() {
             ))
         }
         setContentView(appFrame)
-        val splash = EntrainmentSurfaceView(
-            this, true, 4f, "PARALLAX_SETTINGS_SPLASH",
-            1f, 72f, 1f, false
-        ).apply {
-            contentDescription = "Parallax Distortion animated splash"
-            alpha = 1f
-        }
-        appFrame.addView(splash, FrameLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
-        ))
-        splash.animate().alpha(0f).setStartDelay(0L).setDuration(1500L).withEndAction {
-            appFrame.removeView(splash)
-        }.start()
-
         val header = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
@@ -259,14 +250,14 @@ class SettingsActivity : Activity() {
             adapter = ArrayAdapter(
                 this@SettingsActivity,
                 android.R.layout.simple_spinner_item,
-                arrayOf("Audio off", "Play alongside other apps", "Duck other apps")
+                arrayOf("Audio off", "Play alongside other apps", "Lower Parallax when other apps play")
             ).also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
             setSelection(p.getInt(OverlayService.KEY_AUDIO_MODE, OverlayService.AUDIO_MODE_MIX).coerceIn(0, 2))
             contentDescription = "Audio behavior"
         }
         content.addView(audioMode, matchWrap())
         content.addView(TextView(this).apply {
-            text = "Off is silent. Alongside keeps other apps at their current volume. Duck asks compatible apps to lower their audio while Parallax plays."
+            text = "Off is silent. Alongside keeps other apps at their current volume. Lower Parallax automatically reduces Parallax audio when another app is playing audio."
             textSize = 13f
             alpha = .78f
             setPadding(0, dp(4), 0, dp(8))
@@ -401,6 +392,57 @@ class SettingsActivity : Activity() {
             })
         }
 
+    }
+
+    private fun showLaunchSplash() {
+        val root = FrameLayout(this).apply { setBackgroundColor(Color.TRANSPARENT) }
+        val visuals = EntrainmentSurfaceView(
+            this, false, 4f, "PARALLAX_LAUNCH_SPLASH",
+            1f, 86f, 1f, false, true
+        ).apply {
+            contentDescription = "Parallax Distortion soft-centered animated splash"
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        }
+        root.addView(visuals, FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+        ))
+        val titleStack = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER
+            setPadding(dp(24), dp(24), dp(24), dp(24))
+            setBackgroundColor(Color.TRANSPARENT)
+        }
+        titleStack.addView(TextView(this).apply {
+            text = "Parallax Distortion"
+            textSize = 30f
+            typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+            gravity = Gravity.CENTER
+            setTextColor(Color.WHITE)
+            letterSpacing = -.015f
+            setShadowLayer(dp(12).toFloat(), 0f, 0f, Color.BLACK)
+        })
+        titleStack.addView(TextView(this).apply {
+            text = "Ambient visuals · immersive sound"
+            textSize = 14f
+            gravity = Gravity.CENTER
+            setTextColor(Color.WHITE)
+            alpha = .9f
+            setPadding(0, dp(8), 0, 0)
+            setShadowLayer(dp(8).toFloat(), 0f, 0f, Color.BLACK)
+        })
+        root.addView(titleStack, FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+        ))
+        setContentView(root)
+        window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        root.animate().alpha(0f).setStartDelay(450L).setDuration(950L).withEndAction {
+            intent.putExtra(EXTRA_SPLASH_SHOWN, true)
+            recreate()
+        }.start()
+    }
+
+    private companion object {
+        const val EXTRA_SPLASH_SHOWN = "com.parallax.entrainment.SPLASH_SHOWN"
     }
 
     override fun onResume() {
@@ -716,7 +758,7 @@ class SettingsActivity : Activity() {
         val rows = listOf(
             "Audio off" to "Stops Parallax audio output. Visual effects continue normally.",
             "Play alongside other apps" to "Default. Parallax audio continues without requesting audio focus, so other apps can keep playing at their existing volume.",
-            "Duck other apps" to "Requests transient audio focus with ducking. Apps that honor Android audio focus lower their volume while Parallax plays; some apps may pause or ignore ducking."
+            "Lower Parallax when other apps play" to "Parallax reduces its own volume while another app is playing audio, then restores the selected volume when the other playback stops."
         )
         rows.forEach { (title, detail) ->
             box.addView(TextView(this).apply {
@@ -796,7 +838,7 @@ class SettingsActivity : Activity() {
             setTextColor(fg)
         })
         hero.addView(TextView(this).apply {
-            text = "Ambient visuals and audio  ·  Version 1.9.0"
+            text = "Ambient visuals and audio  ·  Version 1.10.0"
             textSize = 13f
             setTextColor(muted)
             setPadding(0, dp(5), 0, 0)
