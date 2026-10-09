@@ -499,7 +499,7 @@ class SettingsActivity : Activity() {
         alpha = .82f
         typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
         setPadding(0, dp(26), 0, dp(8))
-        accessibilityHeading = true
+        if (Build.VERSION.SDK_INT >= 28) accessibilityHeading = true
     }
     private fun dp(value: Int) = (value * resources.displayMetrics.density).roundToInt()
     private fun matchWrap() = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
