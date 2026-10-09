@@ -4,6 +4,8 @@ import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
@@ -44,6 +46,9 @@ class SettingsActivity : Activity() {
     private lateinit var flashing: Switch
     private var updatingFlashingSwitch = false
     private var showingPermissionGate = false
+    private val permissionPromptHandler = Handler(Looper.getMainLooper())
+    private val liveUpdateHandler = Handler(Looper.getMainLooper())
+    private var pendingLiveUpdate: Runnable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +62,25 @@ class SettingsActivity : Activity() {
             setPadding(dp(20), dp(24), dp(20), dp(32))
         }
         val root = ScrollView(this).apply { isFillViewport = true; addView(content) }
-        setContentView(root)
+        val appFrame = FrameLayout(this).apply {
+            addView(root, FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+            ))
+        }
+        setContentView(appFrame)
+        val splash = EntrainmentSurfaceView(
+            this, true, 4f, "PARALLAX_SETTINGS_SPLASH",
+            1f, 72f, 1f, false
+        ).apply {
+            contentDescription = "Parallax Distortion animated splash"
+            alpha = 1f
+        }
+        appFrame.addView(splash, FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+        ))
+        splash.animate().alpha(0f).setStartDelay(0L).setDuration(1500L).withEndAction {
+            appFrame.removeView(splash)
+        }.start()
 
         val header = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
@@ -112,6 +135,7 @@ class SettingsActivity : Activity() {
         darkTheme.setOnCheckedChangeListener { _, checked ->
             p.edit().putBoolean(OverlayService.KEY_DARK_THEME, checked).apply()
             applySettingsTheme(content, checked)
+            requestLiveUpdate()
         }
         applySettingsTheme(content, darkTheme.isChecked)
 
@@ -128,6 +152,13 @@ class SettingsActivity : Activity() {
             })
         }
         content.addView(hz)
+        hz.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: View?, position: Int, id: Long) {
+                p.edit().putFloat(OverlayService.KEY_HZ, bands[position].substringBefore(" ").toFloat()).apply()
+                requestLiveUpdate()
+            }
+            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
+        }
 
         content.addView(label("Visual style"))
         mode = RadioGroup(this).apply {
@@ -146,6 +177,10 @@ class SettingsActivity : Activity() {
             })
         }
         content.addView(mode)
+        mode.setOnCheckedChangeListener { _, checkedId ->
+            p.edit().putBoolean(OverlayService.KEY_FULL, checkedId == 101).apply()
+            requestLiveUpdate()
+        }
 
         content.addView(sectionTitle("Visual safety"))
         flashing = Switch(this).apply {
@@ -173,18 +208,21 @@ class SettingsActivity : Activity() {
                     .setMessage("Rhythmic flashing or pulsing visuals may trigger seizures, dizziness, migraine, or other symptoms, especially for people with photosensitive epilepsy. Do not proceed if you have a history of photosensitive seizures or are unsure whether flashing effects are safe for you. Stop immediately if you feel unwell.\n\nFlashing is disabled by default.")
                     .setPositiveButton("Proceed") { _, _ ->
                         p.edit().putBoolean(OverlayService.KEY_FLASHING, true).apply()
+                        requestLiveUpdate()
                         updatingFlashingSwitch = true
                         button.isChecked = true
                         updatingFlashingSwitch = false
                     }
                     .setNegativeButton("Cancel") { _, _ ->
                         p.edit().putBoolean(OverlayService.KEY_FLASHING, false).apply()
+                        requestLiveUpdate()
                         updatingFlashingSwitch = true
                         button.isChecked = false
                         updatingFlashingSwitch = false
                     }
                     .setOnCancelListener {
                         p.edit().putBoolean(OverlayService.KEY_FLASHING, false).apply()
+                        requestLiveUpdate()
                         updatingFlashingSwitch = true
                         button.isChecked = false
                         updatingFlashingSwitch = false
@@ -192,6 +230,7 @@ class SettingsActivity : Activity() {
                     .show()
             } else {
                 p.edit().putBoolean(OverlayService.KEY_FLASHING, false).apply()
+                requestLiveUpdate()
             }
         }
 
@@ -202,12 +241,32 @@ class SettingsActivity : Activity() {
             setText(p.getString(OverlayService.KEY_SEED, "PARALLAX_MOBILE"))
         }
         content.addView(seed)
+        seed.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                p.edit().putString(OverlayService.KEY_SEED, s?.toString().orEmpty().ifBlank { "PARALLAX_MOBILE" }).apply()
+                requestLiveUpdate()
+            }
+            override fun afterTextChanged(s: android.text.Editable?) {}
+        })
 
         content.addView(sectionTitle("Appearance & sound"))
-        volume = slider(content, "Volume", 0, 100, (p.getFloat(OverlayService.KEY_VOLUME, .12f) * 100).roundToInt(), "%")
-        fullOpacity = slider(content, "Full-screen opacity", 5, 100, (p.getFloat(OverlayService.KEY_FULL_OPACITY, .33f) * 100).roundToInt().coerceIn(5, 100), "%")
-        borderWidth = slider(content, "Border width", 8, 240, p.getFloat(OverlayService.KEY_BORDER_WIDTH, 72f).roundToInt().coerceIn(8, 240), " dp")
-        borderOpacity = slider(content, "Border opacity", 0, 100, (p.getFloat(OverlayService.KEY_BORDER_OPACITY, .33f) * 100).roundToInt(), "%")
+        volume = slider(content, "Volume", 0, 100, (p.getFloat(OverlayService.KEY_VOLUME, .12f) * 100).roundToInt(), "%") {
+            p.edit().putFloat(OverlayService.KEY_VOLUME, it / 100f).apply()
+            requestLiveUpdate()
+        }
+        fullOpacity = slider(content, "Full-screen opacity", 5, 100, (p.getFloat(OverlayService.KEY_FULL_OPACITY, .33f) * 100).roundToInt().coerceIn(5, 100), "%") {
+            p.edit().putFloat(OverlayService.KEY_FULL_OPACITY, it / 100f).apply()
+            requestLiveUpdate()
+        }
+        borderWidth = slider(content, "Border width", 8, 240, p.getFloat(OverlayService.KEY_BORDER_WIDTH, 72f).roundToInt().coerceIn(8, 240), " dp") {
+            p.edit().putFloat(OverlayService.KEY_BORDER_WIDTH, it.toFloat()).apply()
+            requestLiveUpdate()
+        }
+        borderOpacity = slider(content, "Border opacity", 0, 100, (p.getFloat(OverlayService.KEY_BORDER_OPACITY, .33f) * 100).roundToInt(), "%") {
+            p.edit().putFloat(OverlayService.KEY_BORDER_OPACITY, it / 100f).apply()
+            requestLiveUpdate()
+        }
 
         content.addView(sectionTitle("Schedule"))
         sunset = Switch(this).apply {
@@ -249,6 +308,15 @@ class SettingsActivity : Activity() {
         timed.setOnCheckedChangeListener { _, checked ->
             p.edit().putBoolean(OverlayService.KEY_TIMED, checked).apply()
         }
+        timedMinutes.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                s?.toString()?.toIntOrNull()?.takeIf { it in 1..720 }?.let {
+                    p.edit().putInt(OverlayService.KEY_TIMED_MINUTES, it).apply()
+                }
+            }
+            override fun afterTextChanged(s: android.text.Editable?) {}
+        })
 
         start.setOnClickListener {
             if (!Settings.canDrawOverlays(this)) {
@@ -318,7 +386,28 @@ class SettingsActivity : Activity() {
         }
     }
 
-    private fun slider(root: LinearLayout, title: String, min: Int, max: Int, value: Int, suffix: String = ""): SeekBar {
+    private fun requestLiveUpdate() {
+        pendingLiveUpdate?.let { liveUpdateHandler.removeCallbacks(it) }
+        val updateTask = Runnable {
+            if (p.getBoolean(OverlayService.KEY_SESSION_ACTIVE, false)) {
+                val update = Intent(this, OverlayService::class.java).apply { action = OverlayService.ACTION_UPDATE }
+                if (Build.VERSION.SDK_INT >= 26) startForegroundService(update) else startService(update)
+            }
+        }
+        pendingLiveUpdate = updateTask
+        liveUpdateHandler.postDelayed(updateTask, 90L)
+    }
+
+    override fun onDestroy() {
+        permissionPromptHandler.removeCallbacksAndMessages(null)
+        liveUpdateHandler.removeCallbacksAndMessages(null)
+        super.onDestroy()
+    }
+
+    private fun slider(
+        root: LinearLayout, title: String, min: Int, max: Int, value: Int,
+        suffix: String = "", onChanged: ((Int) -> Unit)? = null
+    ): SeekBar {
         val text = label(title + "  " + value + suffix)
         root.addView(text)
         val bar = SeekBar(this).apply {
@@ -330,6 +419,7 @@ class SettingsActivity : Activity() {
         bar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(s: SeekBar?, v: Int, fromUser: Boolean) {
                 text.text = title + "  " + (v + min) + suffix
+                if (fromUser) onChanged?.invoke(v + min)
             }
             override fun onStartTrackingTouch(s: SeekBar?) {}
             override fun onStopTrackingTouch(s: SeekBar?) {}
@@ -474,6 +564,35 @@ class SettingsActivity : Activity() {
                 }
             }
         }, matchWrap())
+
+        if (!p.getBoolean(OverlayService.KEY_PERMISSION_PROMPT_SHOWN, false)) {
+            permissionPromptHandler.removeCallbacksAndMessages(null)
+            permissionPromptHandler.postDelayed({
+                if (!isFinishing && showingPermissionGate && !hasRequiredPermissions() &&
+                    !p.getBoolean(OverlayService.KEY_PERMISSION_PROMPT_SHOWN, false)
+                ) {
+                    p.edit().putBoolean(OverlayService.KEY_PERMISSION_PROMPT_SHOWN, true).apply()
+                    AlertDialog.Builder(this)
+                        .setTitle("Permissions needed")
+                        .setMessage(
+                            "Parallax Distortion needs these permissions to function:\n" +
+                            "• Display over other apps, to show the visual overlay\n" +
+                            "• Notifications, to show session status\n\n" +
+                            "No data ever leaves your device.\n\n" +
+                            "Source: https://github.com/onnxscibroccoli/broccoli-core"
+                        )
+                        .setPositiveButton("Grant permissions") { _, _ ->
+                            if (!Settings.canDrawOverlays(this)) {
+                                startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")))
+                            } else if (!isNotificationPermissionGranted() && Build.VERSION.SDK_INT >= 33) {
+                                requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 2001)
+                            }
+                        }
+                        .setNegativeButton("Cancel", null)
+                        .show()
+                }
+            }, 4000L)
+        }
     }
 
     private fun permissionRow(root: LinearLayout, title: String, detail: String, granted: Boolean, fg: Int) {
@@ -607,7 +726,7 @@ class SettingsActivity : Activity() {
             setTextColor(fg)
         })
         hero.addView(TextView(this).apply {
-            text = "Neural Entrainment Engine  ·  Version 1.7.0"
+            text = "Neural Entrainment Engine  ·  Version 1.8.0"
             textSize = 13f
             setTextColor(muted)
             setPadding(0, dp(5), 0, 0)

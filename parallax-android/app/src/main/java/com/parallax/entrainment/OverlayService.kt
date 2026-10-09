@@ -16,6 +16,7 @@ class OverlayService : Service() {
     private var view: EntrainmentSurfaceView? = null
     private var audio: AndroidAudioEngine? = null
     private val handler = Handler(Looper.getMainLooper())
+    private var sessionEndAtElapsedRealtime = 0L
 
     override fun onCreate() {
         super.onCreate()
@@ -30,6 +31,7 @@ class OverlayService : Service() {
             stopSelf()
             return START_NOT_STICKY
         }
+        val isLiveUpdate = intent?.action == ACTION_UPDATE
 
         startForeground(NOTIFICATION_ID, notification())
 
@@ -48,13 +50,17 @@ class OverlayService : Service() {
         audio?.stop()
         audio = AndroidAudioEngine(hz, seed, volume).also { it.start() }
 
-        handler.removeCallbacksAndMessages(null)
-        val duration = intent?.getLongExtra(EXTRA_DURATION_MS, 0L) ?: 0L
-        if (duration > 0L) {
-            handler.postDelayed({
-                stopOverlay()
-                stopSelf()
-            }, duration)
+        if (!isLiveUpdate) {
+            handler.removeCallbacksAndMessages(null)
+            val duration = intent?.getLongExtra(EXTRA_DURATION_MS, 0L) ?: 0L
+            sessionEndAtElapsedRealtime = if (duration > 0L) android.os.SystemClock.elapsedRealtime() + duration else 0L
+            p.edit().putBoolean(KEY_SESSION_ACTIVE, true).apply()
+            if (duration > 0L) scheduleSessionStop(duration)
+        } else if (sessionEndAtElapsedRealtime > 0L) {
+            handler.removeCallbacksAndMessages(null)
+            scheduleSessionStop((sessionEndAtElapsedRealtime - android.os.SystemClock.elapsedRealtime()).coerceAtLeast(0L))
+        } else {
+            p.edit().putBoolean(KEY_SESSION_ACTIVE, true).apply()
         }
 
         return START_STICKY
@@ -114,8 +120,23 @@ class OverlayService : Service() {
         }
     }
 
+    private fun scheduleSessionStop(delayMs: Long) {
+        handler.removeCallbacksAndMessages(null)
+        if (delayMs <= 0L) {
+            stopOverlay()
+            stopSelf()
+            return
+        }
+        handler.postDelayed({
+            stopOverlay()
+            stopSelf()
+        }, delayMs)
+    }
+
     private fun stopOverlay() {
         handler.removeCallbacksAndMessages(null)
+        sessionEndAtElapsedRealtime = 0L
+        getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean(KEY_SESSION_ACTIVE, false).apply()
         view?.let { runCatching { wm.removeViewImmediate(it) } }
         view = null
         audio?.stop()
@@ -174,6 +195,8 @@ class OverlayService : Service() {
         const val KEY_TIMED_MINUTES = "timed_minutes"
         const val KEY_DARK_THEME = "dark_theme"
         const val KEY_FLASHING = "flashing_enabled"
+        const val KEY_SESSION_ACTIVE = "session_active"
+        const val KEY_PERMISSION_PROMPT_SHOWN = "permission_prompt_shown_v18"
         private const val KEY_VISUAL_DEFAULTS_MIGRATED = "visual_defaults_migrated_v16"
 
         /**
@@ -198,6 +221,7 @@ class OverlayService : Service() {
         const val CHANNEL_ID = "parallax_overlay_channel"
         const val NOTIFICATION_ID = 1001
         const val ACTION_STOP = "com.parallax.entrainment.STOP"
+        const val ACTION_UPDATE = "com.parallax.entrainment.UPDATE"
 
         const val EXTRA_IS_FULL_OVERLAY = "EXTRA_IS_FULL_OVERLAY"
         const val EXTRA_TARGET_HZ = "EXTRA_TARGET_HZ"
