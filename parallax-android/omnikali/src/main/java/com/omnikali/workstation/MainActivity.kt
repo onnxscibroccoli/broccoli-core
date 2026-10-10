@@ -97,7 +97,7 @@ class MainActivity : Activity() {
    }
    override fun onPageFinished(view:WebView?,url:String?) { super.onPageFinished(view,url); if(url?.startsWith("http://$ociHost/")==true) status.text="OCI DESKTOP CONNECTED TO WEB VIEW • VNC AUTH/HEALTH NOT VERIFIED" }
   }
-  val availableHeight=(resources.displayMetrics.heightPixels/resources.displayMetrics.density).toInt()-dp(175)
+  val availableHeight=(resources.displayMetrics.heightPixels/resources.displayMetrics.density).toInt()-175
   content.addView(v,LinearLayout.LayoutParams(-1,dp(availableHeight.coerceAtLeast(360))))
   v.loadUrl(u)
  }
