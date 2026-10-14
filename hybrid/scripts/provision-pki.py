@@ -26,14 +26,14 @@ os.umask(0o077);root=Path(a.out).resolve();root.mkdir(parents=True,exist_ok=Fals
 now=datetime.datetime.now(datetime.timezone.utc)
 ca_key=rsa.generate_private_key(public_exponent=65537,key_size=3072)
 name=x509.Name([x509.NameAttribute(NameOID.COMMON_NAME,'Broccoli Deployment CA')])
-ca=x509.CertificateBuilder().subject_name(name).issuer_name(name).public_key(ca_key.public_key()).serial_number(x509.random_serial_number()).not_valid_before(now-datetime.timedelta(minutes=5)).not_valid_after(now+datetime.timedelta(days=3650)).add_extension(x509.BasicConstraints(ca=True,path_length=0),True).add_extension(x509.KeyUsage(False,False,False,False,False,True,True,False,False),True).sign(ca_key,hashes.SHA256())
+ca=x509.CertificateBuilder().subject_name(name).issuer_name(name).public_key(ca_key.public_key()).serial_number(x509.random_serial_number()).not_valid_before(now-datetime.timedelta(minutes=5)).not_valid_after(now+datetime.timedelta(days=3650)).add_extension(x509.BasicConstraints(ca=True,path_length=0),True).add_extension(x509.SubjectKeyIdentifier.from_public_key(ca_key.public_key()),False).add_extension(x509.KeyUsage(False,False,False,False,False,True,True,False,False),True).sign(ca_key,hashes.SHA256())
 def save_key(name,key):
     (root/name).write_bytes(key.private_bytes(serialization.Encoding.PEM,serialization.PrivateFormat.PKCS8,serialization.NoEncryption()))
 save_key('ca.key',ca_key);(root/'ca.pem').write_bytes(ca.public_bytes(serialization.Encoding.PEM))
 identities={}
 for role,cn in [('server',a.host),('device',a.device),('client',a.client)]:
     key=rsa.generate_private_key(public_exponent=65537,key_size=3072)
-    builder=x509.CertificateBuilder().subject_name(x509.Name([x509.NameAttribute(NameOID.COMMON_NAME,cn)])).issuer_name(name).public_key(key.public_key()).serial_number(x509.random_serial_number()).not_valid_before(now-datetime.timedelta(minutes=5)).not_valid_after(now+datetime.timedelta(days=90)).add_extension(x509.BasicConstraints(ca=False,path_length=None),True).add_extension(x509.ExtendedKeyUsage([ExtendedKeyUsageOID.SERVER_AUTH if role=='server' else ExtendedKeyUsageOID.CLIENT_AUTH]),False)
+    builder=x509.CertificateBuilder().subject_name(x509.Name([x509.NameAttribute(NameOID.COMMON_NAME,cn)])).issuer_name(name).public_key(key.public_key()).serial_number(x509.random_serial_number()).not_valid_before(now-datetime.timedelta(minutes=5)).not_valid_after(now+datetime.timedelta(days=90)).add_extension(x509.BasicConstraints(ca=False,path_length=None),True).add_extension(x509.ExtendedKeyUsage([ExtendedKeyUsageOID.SERVER_AUTH if role=='server' else ExtendedKeyUsageOID.CLIENT_AUTH]),False).add_extension(x509.AuthorityKeyIdentifier.from_issuer_public_key(ca_key.public_key()),False).add_extension(x509.SubjectKeyIdentifier.from_public_key(key.public_key()),False)
     if role=='server': builder=builder.add_extension(x509.SubjectAlternativeName([x509.DNSName(a.host)]),False)
     cert=builder.sign(ca_key,hashes.SHA256());save_key(role+'.key',key);(root/(role+'.pem')).write_bytes(cert.public_bytes(serialization.Encoding.PEM));identities[role]=(key,cert)
 jwt_key=rsa.generate_private_key(public_exponent=65537,key_size=3072);save_key('jwt.key',jwt_key);(root/'jwt.pub').write_bytes(jwt_key.public_key().public_bytes(serialization.Encoding.PEM,serialization.PublicFormat.SubjectPublicKeyInfo))
