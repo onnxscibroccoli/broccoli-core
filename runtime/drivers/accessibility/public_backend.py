@@ -25,8 +25,8 @@ class PublicBackend(AccessibilityBackend):
     def subscribe(self, callback):
         pass  # Event loop handled by manager
 
-    def health(self) -> Dict:
+    def health(self) -> dict:
         return {"status": "healthy", "latency_ms": 120, "backend": "public"}
 
-    def capabilities(self) -> Dict:
+    def capabilities(self) -> dict:
         return {"supports_incremental": True, "supports_notifications": True, "supports_windows": True, "supports_hidden_api": False}
