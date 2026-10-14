@@ -37,7 +37,8 @@ class Store:
                     raise ValueError('idempotency key reused with different request')
                 self.db.execute('COMMIT')
                 return dict(old)
-            count = self.db.execute("SELECT count(*) FROM jobs WHERE state IN ('QUEUED','RUNNING')").fetchone()[0]
+            self.db.execute("UPDATE jobs SET state='EXPIRED' WHERE state='QUEUED' AND deadline<=?",(now,))
+            count = self.db.execute("SELECT count(*) FROM jobs WHERE state IN ('QUEUED','RUNNING','DISPATCHED')").fetchone()[0]
             if count >= 10000:
                 raise ValueError('queue capacity exceeded')
             jid = str(uuid.uuid4())
@@ -56,7 +57,10 @@ class Store:
 
     def pending(self, target):
         self.db.execute("UPDATE jobs SET state='EXPIRED' WHERE state='QUEUED' AND deadline<=?",(time.time(),))
-        return [dict(r) for r in self.db.execute("SELECT * FROM jobs WHERE target=? AND state='QUEUED' ORDER BY created LIMIT 16",(target,))]
+        return [dict(r) for r in self.db.execute("SELECT * FROM jobs WHERE target=? AND state IN ('QUEUED','DISPATCHED') ORDER BY created LIMIT 16",(target,))]
+
+    def dispatched(self, jid):
+        return self.db.execute("UPDATE jobs SET state='DISPATCHED' WHERE id=? AND state='QUEUED'",(jid,)).rowcount == 1
 
     def claim(self, jid):
         return self.db.execute("UPDATE jobs SET state='RUNNING' WHERE id=? AND state='QUEUED' AND deadline>?",(jid,time.time())).rowcount == 1

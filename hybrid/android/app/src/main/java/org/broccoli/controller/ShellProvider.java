@@ -18,7 +18,7 @@ public class ShellProvider extends ContentProvider {
             switch(method) {
                 case "init": out.putString("result",service.initialize());break;
                 case "status": out.putString("result",service.status());break;
-                case "result": out.putString("result",service.jobStatus(arg));break;
+                case "result": out.putString("result",service.jobStatus("local:"+arg));break;
                 case "submit":
                     if(arg==null || arg.length()>16384) throw new IllegalArgumentException("Invalid request size");
                     JSONObject job=new JSONObject(arg);
@@ -28,7 +28,7 @@ public class ShellProvider extends ContentProvider {
                     String op=job.getString("operation"),args=job.getJSONObject("arguments").toString();
                     Commands.argv(op,args);
                     if(!service.ready()) throw new IllegalStateException("Run init first");
-                    service.dispatch(Command.newBuilder().setJobId(id).setOperation(op).setArgumentsJson(args).setDeadlineMs(deadline).build());
+                    service.dispatch(Command.newBuilder().setJobId("local:"+id).setOperation(op).setArgumentsJson(args).setDeadlineMs(deadline).build());
                     out.putString("result","ACCEPTED "+id);break;
                 default: throw new IllegalArgumentException("Unknown method");
             }

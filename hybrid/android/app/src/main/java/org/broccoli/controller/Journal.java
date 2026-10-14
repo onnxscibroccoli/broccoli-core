@@ -23,7 +23,7 @@ public class Journal extends SQLiteOpenHelper {
     }
     public synchronized List<Result> pending() {
         List<Result> results=new ArrayList<>();
-        try(Cursor c=getReadableDatabase().rawQuery("SELECT id,state,output FROM jobs WHERE state!='RUNNING' AND acked=0 LIMIT 16",null)) {
+        try(Cursor c=getReadableDatabase().rawQuery("SELECT id,state,output FROM jobs WHERE state!='RUNNING' AND acked=0 AND id NOT LIKE 'local:%' LIMIT 16",null)) {
             while(c.moveToNext()) results.add(Result.newBuilder().setJobId(c.getString(0)).setState(c.getString(1)).setOutput(c.getString(2)).build());
         } return results;
     }

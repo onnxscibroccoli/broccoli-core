@@ -16,6 +16,7 @@ from . import control_pb2 as pb, control_pb2_grpc as rpc
 from .auth import Auth, fingerprint
 from .policy import validate
 from .store import Store
+from .registry import Registry
 
 log=logging.getLogger('hybrid')
 
@@ -53,12 +54,15 @@ class Control(rpc.ControlServicer):
             await queue.put(None)
         async def dispatch():
             while True:
+                if self.registry.get('devices',{}).get(fp)!=device:
+                    await context.abort(grpc.StatusCode.PERMISSION_DENIED,'device revoked')
                 if time.monotonic()-seen>45:
                     await queue.put(None)
                     return
                 if ready.is_set():
                     for job in self.store.pending(device):
                         if time.monotonic()-sent.get(job['id'],-100)>15:
+                            self.store.dispatched(job['id'])
                             await queue.put(pb.CloudEvent(command=pb.Command(job_id=job['id'],operation=job['operation'],arguments_json=job['arguments'],deadline_ms=int(job['deadline']*1000))))
                             sent[job['id']]=time.monotonic()
                     if len(sent)>1000:
@@ -139,12 +143,12 @@ def app(store, auth):
 
 async def serve(config):
     store=Store(config['database'])
-    registry=json.loads(Path(config['registry']).read_text())
+    registry=Registry(config['registry'])
     key=Path(config['jwt_key']).read_bytes()
     public=Path(config['jwt_public']).read_bytes()
     auth=Auth(registry,key,public,config['issuer'])
     cert,key_tls,ca=(Path(config[k]).read_bytes() for k in ('cert','key','ca'))
-    server=grpc.aio.server(options=[('grpc.max_receive_message_length',131072),('grpc.max_send_message_length',131072)])
+    server=grpc.aio.server(options=[('grpc.max_receive_message_length',131072),('grpc.max_send_message_length',131072),('grpc.max_connection_age_ms',300000)])
     rpc.add_ControlServicer_to_server(Control(store,registry),server)
     if not server.add_secure_port(config['grpc_listen'],grpc.ssl_server_credentials([(key_tls,cert)],root_certificates=ca,require_client_auth=True)):
         raise RuntimeError('gRPC bind failed')
