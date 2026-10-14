@@ -19,6 +19,7 @@ from .store import Store
 from .registry import Registry
 
 log=logging.getLogger('hybrid')
+CERT_FP=web.RequestKey('certificate_fingerprint',str)
 
 class Control(rpc.ControlServicer):
     def __init__(self, store, registry):
@@ -96,13 +97,13 @@ def app(store, auth):
             tls=request.transport.get_extra_info('ssl_object')
             der=tls.getpeercert(binary_form=True) if tls else None
             if not der: raise PermissionError('mTLS required')
-            request['fp']=fingerprint(der)
-            auth.client(request['fp'])
+            request[CERT_FP]=fingerprint(der)
+            auth.client(request[CERT_FP])
             now=time.monotonic()
-            start,count=buckets.get(request['fp'],(now,0))
+            start,count=buckets.get(request[CERT_FP],(now,0))
             if now-start>=60: start,count=now,0
             if count>=120: raise web.HTTPTooManyRequests()
-            buckets[request['fp']]=(start,count+1)
+            buckets[request[CERT_FP]]=(start,count+1)
             return await handler(request)
         except PermissionError:
             return web.json_response({'error':'unauthorized'},status=401,headers={'WWW-Authenticate':'Bearer'})
@@ -112,12 +113,12 @@ def app(store, auth):
     def authorize(request,scope):
         header=request.headers.get('Authorization','')
         if not header.startswith('Bearer '): raise PermissionError('bearer required')
-        return auth.verify(header[7:],request['fp'],scope)
+        return auth.verify(header[7:],request[CERT_FP],scope)
     async def token(request):
         data=await request.post()
         if data.get('grant_type')!='client_credentials':
             return web.json_response({'error':'unsupported_grant_type'},status=400)
-        access=auth.issue(request['fp'],data['client_id'],data['scope'])
+        access=auth.issue(request[CERT_FP],data['client_id'],data['scope'])
         return web.json_response({'access_token':access,'token_type':'Bearer','expires_in':300,'scope':data['scope']},headers={'Cache-Control':'no-store','Pragma':'no-cache'})
     async def submit(request):
         client=authorize(request,'jobs:write')

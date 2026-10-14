@@ -45,6 +45,9 @@ jobs:
           unzip -q "$RUNNER_TEMP/gradle.zip" -d "$RUNNER_TEMP"
           echo "$RUNNER_TEMP/gradle-8.11.1/bin" >> "$GITHUB_PATH"
       - uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
       - run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
       - name: Compile, unit test and lint
         run: gradle -p hybrid/android --no-daemon :app:testReleaseUnitTest :app:lintRelease :app:assembleRelease
