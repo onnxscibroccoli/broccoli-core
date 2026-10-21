@@ -11,9 +11,7 @@ def run(command, timeout=5):
 
     try:
         result = subprocess.run(
-            [
-                "rish",
-                "-c",
+            ["bash", "/data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh",
                 command
             ],
             capture_output=True,

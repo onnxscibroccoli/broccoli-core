@@ -7,7 +7,7 @@ am force-stop com.android.chrome 2>/dev/null || true
 monkey -p "$GROK_PKG" -c android.intent.category.LAUNCHER 1 >/dev/null 2>&1 || true
 sleep 4
 for round in 1 2 3; do
-  printf 'uiautomator dump --compressed /data/local/tmp/broccoli_ui.xml\n' | rish 2>/dev/null || true
+  printf 'uiautomator dump --compressed /data/local/tmp/broccoli_ui.xml\n' | bash /data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh 2>/dev/null || true
   python3 <<'PY'
 import re, subprocess, sys
 from pathlib import Path
@@ -33,7 +33,7 @@ for pat in patterns:
         if tos.search(label) or re.search(r'terms|privacy|tos', label, re.I):
             x1,y1,x2,y2 = map(int, m.groups()[1:5])
             x,y = (x1+x2)//2, (y1+y2)//2
-            subprocess.run(["bash","-c", f'printf "input tap {x} {y}\\n" | rish'], check=False, timeout=15)
+            subprocess.run(["bash","-c", f'printf "input tap {x} {y}\\n" | bash /data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh'], check=False, timeout=15)
             print("TOS_TAP", label[:50], x, y)
             tapped = True
             break
@@ -44,7 +44,7 @@ if not tapped:
         if tos.search(m.group(5)):
             x1,y1,x2,y2 = map(int, m.groups()[:4])
             x,y = (x1+x2)//2, (y1+y2)//2
-            subprocess.run(["bash","-c", f'printf "input tap {x} {y}\\n" | rish'], check=False)
+            subprocess.run(["bash","-c", f'printf "input tap {x} {y}\\n" | bash /data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh'], check=False)
             print("TOS_TAP2", m.group(5)[:50])
             break
 PY

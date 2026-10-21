@@ -9,7 +9,7 @@ def android_state_collector(issue):
 
     try:
         pkg = subprocess.run(
-            ["rish", "-c", "dumpsys window | grep mCurrentFocus"],
+            ["bash", "/data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh", "dumpsys window | grep mCurrentFocus"],
             capture_output=True,
             text=True,
             timeout=5

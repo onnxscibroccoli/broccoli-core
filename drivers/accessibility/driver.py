@@ -22,8 +22,7 @@ class AccessibilityDriver:
         try:
             # Execute uiautomator via rish. 
             # We dump to /data/local/tmp as it has predictable permissions.
-            dump_cmd = [
-                "rish", "-c", 
+            dump_cmd = ["bash", "/data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh",
                 "uiautomator dump /data/local/tmp/ui_dump.xml > /dev/null && cat /data/local/tmp/ui_dump.xml"
             ]
             

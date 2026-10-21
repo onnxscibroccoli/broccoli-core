@@ -1,3 +1,4 @@
+raise RuntimeError("RETIRED_PHYSICAL_RISH: archived launcher; use broccoli-core/lib/rish_run.sh")
 #!/usr/bin/env python3
 
 import subprocess

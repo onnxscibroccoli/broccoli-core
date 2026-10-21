@@ -1,18 +1,14 @@
 #!/usr/bin/env python3
-"""Run adb shell via rish (Shizuku). Falls back to adb if rish missing."""
+"""Run adb shell via rish (Shizuku). Only the canonical core wrapper may launch physical Rish."""
 import shutil, subprocess, sys
+from pathlib import Path
 
 def have(cmd):
     return shutil.which(cmd) is not None
 
 def rish_shell(cmd, t=30):
     """cmd = raw shell string for device (am start, dumpsys, ...)"""
-    if have("rish"):
-        full = ["rish", "-c", cmd]
-    elif have("adb"):
-        full = ["adb", "shell", cmd]
-    else:
-        return type("R", (), {"stdout": "", "stderr": "no rish/adb", "returncode": 127})()
+    full = ["bash", str(Path(__file__).resolve().parents[1] / "lib/rish_run.sh"), cmd]
     try:
         return subprocess.run(full, capture_output=True, text=True, timeout=t)
     except Exception as e:

@@ -61,19 +61,10 @@ def run(argv: Sequence[str], timeout: float = 12) -> Dict[str, Any]:
 
 
 def privileged(shell: str, timeout: float = 12) -> Dict[str, Any]:
-    """Run a shell string with the highest privilege we actually have."""
-    rish = _which("rish")
-    if rish:
-        out = run([rish, "-c", shell], timeout=timeout)
-        out["via"] = "rish"
-        return out
-    wrapper = _which("rish.sh") or str(Path.home() / "broccoli-core" / "rish.sh")
-    if os.path.isfile(wrapper):
-        out = run(["bash", wrapper, "-c", shell], timeout=timeout)
-        out["via"] = "rish.sh"
-        return out
-    out = run(["sh", "-c", shell], timeout=timeout)
-    out["via"] = "sh"
+    """Physical Android uses the sole repository wrapper, with no host fallback."""
+    wrapper = Path(__file__).resolve().parents[1] / "lib" / "rish_run.sh"
+    out = run(["bash", str(wrapper), shell], timeout=timeout)
+    out["via"] = "broccoli-core/lib/rish_run.sh"
     return out
 
 

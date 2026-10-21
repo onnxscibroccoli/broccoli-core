@@ -47,24 +47,8 @@ def shell(cmd, timeout=45):
         result = transport(timeout=timeout).run(cmd, timeout=timeout)
         return result.returncode, result.combined_output
 
-    # Historical fallback for copied/standalone versions of this module that do
-    # not contain the current tools.android_transport implementation.
-    env = os.environ.copy()
-    env.setdefault("RISH_APPLICATION_ID", "com.termux")
-    rish = rish_path()
-    if rish:
-        proc = subprocess.run(
-            [rish, "-c", cmd],
-            capture_output=True,
-            text=True,
-            timeout=timeout,
-            env=env,
-        )
-        return proc.returncode, (proc.stdout or "") + (proc.stderr or "")
-    proc = subprocess.run(
-        ["sh", "-c", cmd], capture_output=True, text=True, timeout=timeout
-    )
-    return proc.returncode, (proc.stdout or "") + (proc.stderr or "")
+    # Missing canonical transport is an error, never permission to run locally.
+    return 78, "RISH_TRANSPORT_MISSING: restore broccoli-core/tools/android_transport.py"
 
 
 def wm_size():

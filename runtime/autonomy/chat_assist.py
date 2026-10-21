@@ -27,13 +27,7 @@ def _run(cmd: List[str], timeout: int = 12) -> Tuple[int, str]:
 
 
 def _rish(cmd: str, timeout: int = 12) -> Tuple[int, str]:
-    for wrapper in (["rish", "-c", cmd], ["sh", "-c", cmd]):
-        code, out = _run(wrapper, timeout=timeout)
-        if code == 0 and out.strip():
-            return code, out
-        if code == 0:
-            return code, out
-    return 1, ""
+    return _run(["bash", str(Path.home() / "broccoli-core/lib/rish_run.sh"), cmd], timeout=timeout)
 
 
 def detect_foreground() -> Tuple[Optional[str], str]:

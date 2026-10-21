@@ -31,7 +31,7 @@ def cfg():
     return o
 
 def rish(c, t=45):
-    return subprocess.run(["rish", "-c", c], capture_output=True, text=True, timeout=t)
+    return subprocess.run(["bash", "/data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh", c], capture_output=True, text=True, timeout=t)
 
 def sync_dump():
     if shutil.which("brocc"):

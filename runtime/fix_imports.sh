@@ -54,7 +54,7 @@ class AccessibilityDriver:
 
     def capture(self, _):
         try:
-            result = subprocess.run(["rish", "-c", "uiautomator dump /sdcard/broccoli_ui.xml && cat /sdcard/broccoli_ui.xml"], 
+            result = subprocess.run(["bash", "/data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh", "uiautomator dump /sdcard/broccoli_ui.xml && cat /sdcard/broccoli_ui.xml"],
                                   capture_output=True, text=True, timeout=8)
             if result.stdout and self.semantic.update_from_xml(result.stdout):
                 self.bus.publish("AccessibilityCaptureReady", {
@@ -65,7 +65,7 @@ class AccessibilityDriver:
             pass
 
     def tap(self, x=540, y=1274):
-        subprocess.run(["rish", "-c", f"input tap {x} {y}"], timeout=5)
+        subprocess.run(["bash", "/data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh", f"input tap {x} {y}"], timeout=5)
 ACC
 
 echo "✅ Imports fixed"

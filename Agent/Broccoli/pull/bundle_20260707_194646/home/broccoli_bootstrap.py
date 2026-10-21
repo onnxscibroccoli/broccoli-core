@@ -4,6 +4,7 @@ Broccoli / Grok Android automation (Termux + Shizuku rish).
 Complete paths: launch, compose, send, deliver reply, smoke, queue.
 """
 from __future__ import annotations
+raise RuntimeError("RETIRED_PHYSICAL_RISH: archived launcher; use broccoli-core/lib/rish_run.sh")
 
 import json
 import os

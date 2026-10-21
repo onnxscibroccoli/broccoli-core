@@ -59,7 +59,7 @@ class PublicBackend(AccessibilityBackend):
 
     def current_snapshot(self) -> str:
         try:
-            result = subprocess.run(["rish", "-c", "uiautomator dump /sdcard/broccoli_ui.xml && cat /sdcard/broccoli_ui.xml"], 
+            result = subprocess.run(["bash", "/data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh", "uiautomator dump /sdcard/broccoli_ui.xml && cat /sdcard/broccoli_ui.xml"],
                                   capture_output=True, text=True, timeout=8)
             return result.stdout
         except Exception:
@@ -160,7 +160,7 @@ class AccessibilityDriver:
             self.bus.publish("AccessibilityCaptureReady", {"snapshot_length": len(snapshot)})
 
     def tap(self, x=540, y=1274):
-        subprocess.run(["rish", "-c", f"input tap {x} {y}"], timeout=5)
+        subprocess.run(["bash", "/data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh", f"input tap {x} {y}"], timeout=5)
 DRIVER
 
 echo "✅ Accessibility Backend Abstraction complete"

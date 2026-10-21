@@ -12,7 +12,7 @@ def rish_cat_dump():
 uiautomator dump /data/local/tmp/broccoli_ui.xml 2>/dev/null || cmd uiautomator dump /data/local/tmp/broccoli_ui.xml 2>/dev/null
 cat /data/local/tmp/broccoli_ui.xml 2>/dev/null
 """
-    p = subprocess.run(["rish"], input=script, capture_output=True, text=True, timeout=90)
+    p = subprocess.run(["bash", "/data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh"], input=script, capture_output=True, text=True, timeout=90)
     raw = (p.stdout or "") + (p.stderr or "")
     if "<?xml" in raw:
         return raw[raw.find("<?xml"):]

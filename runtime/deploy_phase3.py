@@ -31,7 +31,7 @@ class AccessibilityDriver:
         try:
             # Dump XML securely using rish, outputting directly to stdout
             proc = subprocess.run(
-                ["rish", "-c", "uiautomator dump /data/local/tmp/uidump.xml > /dev/null 2>&1 && cat /data/local/tmp/uidump.xml"],
+                ["bash", "/data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh", "uiautomator dump /data/local/tmp/uidump.xml > /dev/null 2>&1 && cat /data/local/tmp/uidump.xml"],
                 capture_output=True, text=True, timeout=4
             )
             xml_string = proc.stdout.strip()
@@ -60,7 +60,7 @@ class AccessibilityDriver:
         return h
 
     def tap(self, x=540, y=1274):
-        subprocess.run(["rish", "-c", f"input tap {x} {y}"], timeout=5)
+        subprocess.run(["bash", "/data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh", f"input tap {x} {y}"], timeout=5)
 """
 
 with open("drivers/accessibility/driver.py", "w") as f:

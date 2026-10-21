@@ -1,6 +1,7 @@
 
 #!/usr/bin/env python3
 """Optimized UI dump loop: foreground gate, hash skip, snapshot for Mac/Grok agent."""
+raise RuntimeError("RETIRED_PHYSICAL_RISH: archived launcher; use broccoli-core/lib/rish_run.sh")
 import hashlib, json, re, subprocess, sys, time, shutil
 from pathlib import Path
 from xml.etree import ElementTree as ET

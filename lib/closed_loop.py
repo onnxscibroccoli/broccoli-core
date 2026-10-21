@@ -60,7 +60,7 @@ def sh(script: str, *args: str, timeout: int = 180) -> tuple[int, str]:
 
 def ensure_rish() -> bool:
     run(["bash", str(HOME / "aim_rish_ensure.sh")], timeout=30)
-    c, o = run(["rish", "-c", "echo RISH_OK"], timeout=15)
+    c, o = run(["bash", "/data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh", "echo RISH_OK"], timeout=15)
     return c == 0 and "RISH_OK" in o
 
 

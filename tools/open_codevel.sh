@@ -14,7 +14,7 @@ bash "$HOME/broccoli/tools/dismiss_tos_grok.sh"
 sleep 2
 bash "$HOME/broccoli/lib/launch_grok_native.sh" 2>/dev/null || monkey -p ai.x.grok 1
 sleep 4
-printf 'uiautomator dump --compressed /data/local/tmp/broccoli_ui.xml\n' | rish 2>/dev/null || true
+printf 'uiautomator dump --compressed /data/local/tmp/broccoli_ui.xml\n' | bash /data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh 2>/dev/null || true
 cp -f /data/local/tmp/broccoli_ui.xml "$HOME/broccoli/ui/last_ui.xml" 2>/dev/null || true
 grep -o 'package="[^"]*"' /data/local/tmp/broccoli_ui.xml 2>/dev/null | sort -u | head -5
 printf '%s\n' 'ASK|Reply with one word: PONG' > "$HOME/broccoli/queue/pending.txt"

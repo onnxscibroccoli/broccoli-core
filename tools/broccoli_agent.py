@@ -27,7 +27,7 @@ def load_env() -> dict:
     return o
 
 def rish(cmd: str, timeout: int = 60):
-    return subprocess.run(["rish", "-c", cmd], capture_output=True, text=True, timeout=timeout)
+    return subprocess.run(["bash", "/data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh", cmd], capture_output=True, text=True, timeout=timeout)
 
 def has_brocc() -> bool:
     return shutil.which("brocc") is not None

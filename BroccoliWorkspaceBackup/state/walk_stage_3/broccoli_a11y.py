@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """UI dump via uiautomator (system path) + optional node tap by text."""
+raise RuntimeError("RETIRED_PHYSICAL_RISH: archived launcher; use broccoli-core/lib/rish_run.sh")
 import subprocess, sys, re, json
 from pathlib import Path
 

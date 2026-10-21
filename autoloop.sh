@@ -10,8 +10,8 @@ echo "=== Broccoli PRODUCTION + Dynamic Send $(date -Iseconds) ===" >> "$LOG"
 while true; do
     echo "[$(date '+%H:%M:%S')] tick" >> "$LOG"
 
-    rish -c "uiautomator dump /sdcard/broccoli_ui.xml" 2>/dev/null || true
-    rish -c "cat /sdcard/broccoli_ui.xml" > "$BROCCOLI_ROOT/ui/last_ui.xml" 2>/dev/null || true
+    bash /data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh "uiautomator dump /sdcard/broccoli_ui.xml" 2>/dev/null || true
+    bash /data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh "cat /sdcard/broccoli_ui.xml" > "$BROCCOLI_ROOT/ui/last_ui.xml" 2>/dev/null || true
     cp -f "$BROCCOLI_ROOT/ui/last_ui.xml" "$BROCCOLI_ROOT/ui/latest.xml" 2>/dev/null || true
 
     python3 - <<'PY' >> "$LOG" 2>&1 || echo "harvest err" >> "$LOG"
@@ -39,12 +39,12 @@ PY
             echo "Sending: ${INBOX:0:60}..." >> "$LOG"
             python3 - <<'SEND' >> "$LOG" 2>&1 || echo "send err" >> "$LOG"
 import subprocess, time, os
-subprocess.run(["rish", "-c", "input tap 540 1274"], timeout=8)  # composer
+subprocess.run(["bash", "/data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh", "input tap 540 1274"], timeout=8)  # composer
 time.sleep(0.7)
 subprocess.run(["termux-clipboard-set", os.environ.get("INBOX", "")], timeout=5)
-subprocess.run(["rish", "-c", "input keyevent 279"], timeout=5)  # paste
+subprocess.run(["bash", "/data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh", "input keyevent 279"], timeout=5)  # paste
 time.sleep(1.0)  # longer wait for keyboard
-subprocess.run(["rish", "-c", "input tap 984 1381"], timeout=8)  # send
+subprocess.run(["bash", "/data/data/com.termux/files/home/broccoli-core/lib/rish_run.sh", "input tap 984 1381"], timeout=8)  # send
 print("Sent OK")
 SEND
             > "$BROCCOLI_ROOT/ui/loop_inbox.txt"

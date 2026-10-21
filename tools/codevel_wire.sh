@@ -12,12 +12,12 @@ log() { echo "$(date -Iseconds) $*" | tee -a "$LOG"; }
 
 rish_dump() {
   bash "$HOME/aim_rish_ensure.sh" 2>/dev/null || true
-  printf 'uiautomator dump --compressed /data/local/tmp/broccoli_ui.xml\n' | rish 2>/dev/null || true
+  printf 'uiautomator dump --compressed /data/local/tmp/broccoli_ui.xml\n' | bash /data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh 2>/dev/null || true
   sleep 0.5
   if [ -r /data/local/tmp/broccoli_ui.xml ]; then
     cp -f /data/local/tmp/broccoli_ui.xml "$DUMP_LOCAL"
   else
-    printf 'cat /data/local/tmp/broccoli_ui.xml\n' | rish 2>/dev/null > "$DUMP_LOCAL" || true
+    printf 'cat /data/local/tmp/broccoli_ui.xml\n' | bash /data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh 2>/dev/null > "$DUMP_LOCAL" || true
   fi
   wc -c "$DUMP_LOCAL" 2>/dev/null | awk '{print $1}'
 }
@@ -86,7 +86,7 @@ xml = Path.home().joinpath("broccoli/ui/last_ui.xml").read_text(errors="replace"
 for m in re.finditer(r'text="([^"]*)"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml):
     if re.search(r'^Ask$', m.group(1), re.I):
         x,y=(int(m.group(2))+int(m.group(4)))//2,(int(m.group(3))+int(m.group(5)))//2
-        subprocess.run(["bash","-c",f'printf "input tap {x} {y}\\n" | rish'], check=False)
+        subprocess.run(["bash","-c",f'printf "input tap {x} {y}\\n" | bash /data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh'], check=False)
         print("tapped Ask", x, y)
         break
 PY
@@ -96,7 +96,7 @@ PY
   termux-clipboard-set <<< "$MSG"
   GROK_PKG=ai.x.grok python3 "$HOME/broccoli/lib/grok_send_tap.py" "$MSG" 2>&1 | tee -a "$LOG" || {
     log "WIRE-OUT adapt: grok_send_tap failed — rish paste+enter"
-    printf 'input keyevent 279\ninput keyevent 66\n' | rish 2>/dev/null || true
+    printf 'input keyevent 279\ninput keyevent 66\n' | bash /data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh 2>/dev/null || true
   }
   sleep 8
   rish_dump >/dev/null

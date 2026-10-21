@@ -1,6 +1,7 @@
 
 #!/usr/bin/env python3
 """Foreground Grok → brocc send (no clipboard). Clipboard helper for tests/fallback only."""
+raise RuntimeError("RETIRED_PHYSICAL_RISH: archived launcher; use broccoli-core/lib/rish_run.sh")
 import json, re, subprocess, sys, time, shutil, tempfile
 from pathlib import Path
 from xml.etree import ElementTree as ET

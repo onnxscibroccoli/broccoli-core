@@ -14,7 +14,7 @@ run_grok_block() {
   "$PY" "$META/brocc_state.py" set_phase running 2>/dev/null || \
     "$PY" -c "import brocc_state" 2>/dev/null || true
   # Only lines that look like brocc commands (safety)
-  grep -E '^(\s*#|python3 |~/|bash |termux-|pkg |rish )' "$f" | grep -v '^#' > "$META/.grok_exec.sh" || true
+  grep -E '^(\s*#|python3 |~/|bash |termux-|pkg | bash /data/data/com.termux/files/home/broccoli-core/lib/rish_shell.sh )' "$f" | grep -v '^#' > "$META/.grok_exec.sh" || true
   if [[ -s "$META/.grok_exec.sh" ]]; then
     bash "$META/.grok_exec.sh" >>"$LOG" 2>&1 || log "exec had errors (continuing)"
   fi
