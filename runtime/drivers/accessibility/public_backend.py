@@ -16,7 +16,7 @@ class PublicBackend(AccessibilityBackend):
 
     def current_snapshot(self) -> str:
         try:
-            result = subprocess.run(["rish", "-c", "uiautomator dump /sdcard/broccoli_ui.xml && cat /sdcard/broccoli_ui.xml"], 
+            result = subprocess.run(["rish", "-c", "uiautomator dump /sdcard/broccoli_ui.xml && cat /sdcard/broccoli_ui.xml"],
                                   capture_output=True, text=True, timeout=8)
             return result.stdout
         except Exception:
