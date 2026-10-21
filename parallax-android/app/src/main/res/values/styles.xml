@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.ParallaxDistortion" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:colorAccent">#4A5568</item>
+        <item name="android:navigationBarColor">#E4E4E3</item>
+        <item name="android:statusBarColor">#E4E4E3</item>
+    </style>
+</resources>
