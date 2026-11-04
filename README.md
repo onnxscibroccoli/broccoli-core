@@ -117,6 +117,12 @@ Graph file: [`.omnikali/project-knowledge-graph.md`](.omnikali/project-knowledge
 
 **Agent rule:** do not treat this README or repository name as proof of runtime capability. Verify against tests, acceptance evidence, production contracts, and live behavior. Preserve restore points before risky changes, make the smallest atomic change, record evidence and timestamps, and update the graph whenever architecture, ownership, dependencies, proof, or failure knowledge changes.
 
+## Android authorization hardening (source review, 2026-11-04)
+
+The standard Android action dispatcher now validates strict action schemas and requires a trusted, identity-bound governor ALLOW decision before any device-changing action. Shared-storage UI dumps and APK exports count as mutations. The unprivileged JSON action CLI has no trusted governor adapter and intentionally blocks all mutations until an authorized controller integration is complete. Read-only inspections remain available.
+
+This increment is **offline verification only** and does not establish an end-to-end governor across legacy Rish callers or live Shizuku readiness. See [Android zero-trust execution boundary](docs/architecture/zero-trust-execution.md) and [governor regression tests](tests/test_android_governor_boundary.py). No production Android access is claimed.
+
 ## Android / Termux transport status (2026-10-02)
 
 On the Samsung Android 15 device, privileged Android automation from Remote Desktop Commander must use `tools.android_transport.RishTransport`. RDC/background children can lack Android runtime variables such as `BOOTCLASSPATH`; direct `rish` calls from that reduced environment can return misleading results. `RishTransport` re-enters the full Termux context through `RunCommandService` and then invokes the canonical `lib/rish_run.sh` wrapper.
