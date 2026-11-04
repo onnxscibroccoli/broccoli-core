@@ -73,7 +73,7 @@ def main() -> int:
     except Exception as exc:
         print(json.dumps({
             "ok": False,
-            "error": type(exc).__name__,
+            "error": "ValueError" if isinstance(exc, ValueError) else type(exc).__name__,
             "message": str(exc),
         }, sort_keys=True))
         return 2
