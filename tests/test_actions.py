@@ -1,6 +1,6 @@
 import unittest
 
-from tools.actions import ActionDispatcher
+from tests.android_policy_fixture import AuthorizedDispatcher as ActionDispatcher
 
 
 class FakeBackend:
