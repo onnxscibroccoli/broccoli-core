@@ -8,6 +8,7 @@ import shlex
 from typing import Any
 
 from tools.android_transport import RishTransport, TransportResult
+from tools.android_action_policy import MUTATING_ACTIONS, validate_action, require_authorization
 
 
 Actions = dict[str, Any]
@@ -17,6 +18,7 @@ PACKAGE_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_]*(?:\.[A-Za-z0-9_]+)+$")
 @dataclass
 class ActionDispatcher:
     backend: Any
+    authorizer: Any = None
 
     ALLOWED = frozenset({
         "device.identity",
@@ -39,9 +41,12 @@ class ActionDispatcher:
         return package
 
     def execute(self, action: Actions) -> Any:
-        name = action.get("action")
-        if name not in self.ALLOWED:
-            raise ValueError(f"Unknown or disallowed action: {name!r}")
+        # Validate every field before the transport is reachable.
+        # Mutating actions (including shared-storage UI dumps and package
+        # exports) need a bound decision from a trusted governor.
+        name = validate_action(action)
+        if name in MUTATING_ACTIONS:
+            require_authorization(action, self.authorizer)
 
         if name == "device.identity":
             return self.backend.run(
