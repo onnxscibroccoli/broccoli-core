@@ -139,3 +139,20 @@ python3 scripts/autojs_run.py smoke
 ```
 
 The legacy `read` and `fsm` modes require `/sdcard/broccoli/autojs/grok_read_chat.js` and `/sdcard/broccoli/autojs/grok_button_fsm.js`. If those payloads are absent, the adapter now fails immediately instead of waiting for an output file that cannot be produced. The side-effect-free `smoke` check uses a bounded two-attempt retry for cold-start or transient Rish launch failures because AutoJS/Shizuku can be reclaimed under memory pressure; `read` and `fsm` remain single-shot to avoid duplicate UI actions. The primary production-capable Android path remains Rish + UIAutomator / accessibility surfaces; AutoJS should not be made a hard dependency.
+
+## Transport timeout outcomes
+
+Canonical transport timeouts return `OUTCOME_UNKNOWN`, `ok=false`, and a
+local diagnostic return code of 124. This is not a remote exit receipt.
+The transport does not retry and suppresses exception command text and partial
+output. Callers must reconcile the device state before proposing another mutation.
+Successful process completion uses `COMPLETED`; this alone does not prove the
+intended Android effect.
+
+See [timeout contract and limitations](docs/architecture/android-transport-timeouts.md).
+Offline regression command:
+
+```bash
+python3 -m unittest tests.test_transport_timeouts -v
+python3 -m unittest discover -s tests -t . -v
+```

@@ -20,10 +20,17 @@ class TransportResult:
     returncode: int
     stdout: str
     stderr: str
+    timed_out: bool = False
 
     @property
     def ok(self) -> bool:
-        return self.returncode == 0
+        return not self.timed_out and self.returncode == 0
+
+    @property
+    def status(self) -> str:
+        if self.timed_out:
+            return "OUTCOME_UNKNOWN"
+        return "COMPLETED" if self.ok else "FAILED"
 
     @property
     def combined_output(self) -> str:
@@ -39,6 +46,18 @@ class RishTransport:
         self.timeout = float(timeout)
 
     def run(self, command: str, *, timeout: float | None = None) -> TransportResult:
+        try:
+            return self._run_once(command, timeout=timeout)
+        except (subprocess.TimeoutExpired, TimeoutError):
+            # The side effect may already have happened. Never replay here or
+            # disclose the command/partial output carried by the exception.
+            # 124 is a local diagnostic code, not a remote exit-code receipt.
+            return TransportResult(
+                124, "", "Transport timed out; remote outcome is unknown.",
+                timed_out=True,
+            )
+
+    def _run_once(self, command: str, *, timeout: float | None = None) -> TransportResult:
         if not isinstance(command, str) or not command.strip():
             raise ValueError("command must be a non-empty string")
         # An interactive Termux process has Android runtime variables such as
