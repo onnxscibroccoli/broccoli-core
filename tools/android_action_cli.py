@@ -54,6 +54,7 @@ def main() -> int:
             payload = {
                 "ok": result.ok,
                 "returncode": result.returncode,
+                "status": result.status,
                 "stdout": result.stdout,
                 "stderr": result.stderr,
                 "combined_output": result.combined_output,
