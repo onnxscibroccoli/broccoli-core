@@ -59,3 +59,13 @@ java -cp build/csv-test com.accubook.crm.CsvCodecSmoke
 
 **Not implemented:** Tauri desktop/iOS renderer, PDF conversion, multi-device sync,
 runtime AI, payment processing, durable cross-file transaction journal.
+
+## CI build evidence (2026-11-05, Eastern)
+
+The first successful source build is GitHub Actions
+[run 42157304551](https://github.com/onnxscibroccoli/broccoli-core/actions/runs/42157304551),
+source commit `e6de86bbf2d1390158590d55e5c16711d75da679`.
+The standalone CSV codec test passed and Gradle `:app:assembleDebug` succeeded.
+SHA-256 of its debug APK:
+`0cf88d42108a4dfc8bb6230e4b4f92044084dbd880f8af067d1a97cbd9b5c451`.
+This evidence does **not** establish device installation or production quality.
