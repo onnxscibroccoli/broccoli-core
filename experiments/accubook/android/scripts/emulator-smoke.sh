@@ -8,8 +8,11 @@ adb wait-for-device
 adb shell settings put system font_scale 1.2 || true
 adb install -r "$APK_PATH"
 adb shell am force-stop com.accubook.crm || true
-adb shell am start -n com.accubook.crm/.MainActivity
-sleep 4
+adb shell input keyevent KEYCODE_WAKEUP || true
+adb shell wm dismiss-keyguard || true
+adb shell input keyevent 82 || true
+adb shell am start -W -n com.accubook.crm/.MainActivity
+sleep 5
 
 # Look up a semantic accessibility node rather than hard-coding display pixels.
 tap_node() {
@@ -24,7 +27,7 @@ for attempt in range(8):
     root = ET.fromstring(xml)
     target = None
     for element in root.iter('node'):
-        if label in (element.attrib.get('text','') + ' ' + element.attrib.get('content-desc','')):
+        if label.lower() in (element.attrib.get('text','') + ' ' + element.attrib.get('content-desc','')).lower():
             target = element
             break
     if target is not None:
@@ -55,12 +58,15 @@ for attempt in range(8):
     subprocess.run(['adb','shell','uiautomator','dump','/sdcard/accubook-window.xml'],
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
     raw = subprocess.check_output(['adb','exec-out','cat','/sdcard/accubook-window.xml']).decode()
-    if label in raw:
+    if label.lower() in raw.lower():
         print('VISIBLE',label)
         exit(0)
     if attempt==3:
         subprocess.run(['adb','shell','input','swipe','500','1600','500','500','400'],check=True)
     time.sleep(1)
+print('VISIBLE_NODES:', [(el.attrib.get('text'),el.attrib.get('content-desc')) for el in __import__('xml.etree.ElementTree',fromlist=['ElementTree']).fromstring(raw).iter('node') if el.attrib.get('text') or el.attrib.get('content-desc')][:100])
+logs=subprocess.run(['adb','logcat','-d','-t','150','-s','AndroidRuntime:E','ActivityTaskManager:I'], capture_output=True,text=True)
+print('ANDROID_LOGS:',logs.stdout[-6000:])
 raise SystemExit('Expected UI text missing: '+label)
 PY
 }
