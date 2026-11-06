@@ -59,6 +59,11 @@ jobs:
       - name: Compile debug APK (no signing secrets)
         shell: bash
         run: gradle :app:assembleDebug --no-daemon --stacktrace
+      - name: Verify Android debug certificate and APK signatures
+        shell: bash
+        run: |
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs \
+            app/build/outputs/apk/debug/app-debug.apk
       - name: Record APK checksum
         shell: bash
         run: |
