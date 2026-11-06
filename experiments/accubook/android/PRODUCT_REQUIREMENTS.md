@@ -47,8 +47,8 @@ All records must be reachable in at most a few obvious taps without memorizing I
 | Properties | Multiple service sites per customer, property/equipment history, site photos | Not implemented; job site fields exist |
 | Leads / requests | Lead intake, stage, notes, follow-ups and quote conversion | Not implemented |
 | Estimates | Templates, grouped labor/material, alternatives, taxes, approval, revision log | Not implemented |
-| Jobs | Prospect→Quoted→Approved→Scheduled→In Progress→Completed→Invoiced→Paid (payment-backed), field notes/gate codes/material requests, assignable and recurring work, change orders, attachments | **Partial:** add job, status/date change, photo import and basic line items |
-| Scheduler | Day/week/month calendar, date and time slots, timezone, crews, capacity/conflicts, drag or accessible reschedule | **Partial:** date-only agenda and native date picker |
+| Jobs | Prospect→Quoted→Approved→Scheduled→In Progress→Completed→Invoiced→Paid (payment-backed), field notes/gate codes/material requests, assignable and recurring work, change orders, attachments | **Partial:** add job, status/date change, field notes, materials requests, photo import and basic line items |
+| Scheduler | Day/week/month calendar, date and time slots, timezone, crews, capacity/conflicts, drag or accessible reschedule | **Partial:** day/week/month date agenda, native date picker; no time slots, crew or conflicts |
 | Crew operations | Personnel, assignments, check-in/out, on-site tracking, work orders | Not implemented |
 | Photo evidence | Camera, gallery, metadata, annotation, before/after, album, export, deletion | **Partial:** private JPEG/PNG/WebP attachment, preview, remove; no camera/annotation |
 | Pricebook | Searchable service/material catalog, units, rates, templates | Initial CSV container only |
@@ -57,7 +57,7 @@ All records must be reachable in at most a few obvious taps without memorizing I
 | Payments | Offline cash/check ledger, deposits, partial payments, refunds, reconciliation, audit | Not implemented; **no card processing** |
 | Communications | Explicit dial/SMS/email via installed apps, notes and logged activity | **Partial:** explicit dial/text/email handoff, no history |
 | Reporting | A/R aging, pipeline, jobs by status, revenue/cost/profit, CSV exports | Not implemented |
-| Backup/restore | Verified, safe, versioned backup AND restore; migration and corruption tests | **Blocked:** ZIP export only |
+| Backup/restore | Verified, safe, versioned backup AND restore; migration and corruption tests | **Partial / not accepted:** staged ZIP restore, structural validation, retained rollback, JVM fault/abuse smoke. Real-device and power-loss testing pending |
 | Desktop/iOS | Portable domain, parity and user-controlled interoperability | Not implemented |
 | Accessibility | Automated and manual testing with TalkBack, Switch Access and font scaling | **Unverified** |
 | Installation | Android 8+ device install, upgrade, rollback/data-preservation testing | **Unverified** |
@@ -69,7 +69,7 @@ All records must be reachable in at most a few obvious taps without memorizing I
    complete job history are visible. Add another job from the profile and return here.
 2. From Schedule: tap a dated job, see the linked customer and site, change status/date;
    return to the agenda and verify the move. Later: times/crew collision detection.
-3. From a job: attach a photo from an explicit system chooser, see its thumbnail,
+3. From a job: create/edit field instructions and material requests; attach a photo from an explicit system chooser, see its thumbnail,
    remove it only after confirmation; backup retains the image.
 4. From a job: add/edit/delete a billing row; invoice totals reflect canonical rows.
 5. Phone import: pick one contact; see the selected name and phone in an editable
