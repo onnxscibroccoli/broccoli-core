@@ -50,9 +50,11 @@ Helix task lifecycle, PostgreSQL persistence, worker lease recovery, replacement
 - **Location:** `experiments/accubook/android`; local-first field-service
   client; **independent** of OmniKali's control plane and of Broccoli
   Core's privileged automation/governor.
-- **Current lifecycle:** Experimental, offline Java CSV codec test proven
-  by the first Android Actions run. APK compilation and live device
-  acceptance require distinct evidence; never infer them from this note.
+- **Current lifecycle:** Experimental with CI-verified APK compilation and CSV
+  codec smoke test, [run 42157304551](https://github.com/onnxscibroccoli/broccoli-core/actions/runs/42157304551)
+  at source SHA `e6de86bbf2d1390158590d55e5c16711d75da679`.
+  Real Android device installation, UX, accessibility, backup restoration and
+  operational acceptance remain **NOT VERIFIED**.
 - **Decision:** Retain as isolated sandbox; do not move into runtime,
   Agent/Broccoli mirrors, or Helix/Grasshopper production execution routes.
 - **Provenance:** GitHub Actions `accubook-debug-apk.yml` builds a debug-only
