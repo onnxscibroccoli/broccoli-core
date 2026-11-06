@@ -1,0 +1,12 @@
+{
+  "schema": "broccoli.rish_controllers/v1",
+  "required_rish_uid": 2000,
+  "controllers": [
+    {"package_id": "com.termux", "name": "Termux", "rish_uid": 2000, "transport": "rish_cli",
+     "source": "Termux rish wrapper (Agent/Broccoli/mirror/tools/agent_wire_rish.sh)"},
+    {"package_id": "labs.magi.mobilemcp", "name": "mobilemcp", "rish_uid": 2000, "transport": "shizuku_userservice",
+     "source": "onnxscibroccoli/mobilemcp app/app/build.gradle.kts applicationId"},
+    {"package_id": "org.broccoli.controller", "name": "hybrid controller", "rish_uid": 2000, "transport": "shizuku_userservice",
+     "source": "hybrid/android/app/build.gradle applicationId (PR #77)"}
+  ]
+}
