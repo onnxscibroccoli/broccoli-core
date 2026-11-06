@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+# Non-destructive CI UI smoke against a NEW, empty Android emulator instance.
+set -euo pipefail
+
+export APK_PATH="${APK_PATH:-app/build/outputs/apk/debug/app-debug.apk}"
+test -f "$APK_PATH"
+adb wait-for-device
+adb shell settings put system font_scale 1.2 || true
+adb install -r "$APK_PATH"
+adb shell am force-stop com.accubook.crm || true
+adb shell am start -n com.accubook.crm/.MainActivity
+sleep 4
+
+# Look up a semantic accessibility node rather than hard-coding display pixels.
+tap_node() {
+  local label="$1"
+  LABEL="$label" python3 - <<'PY'
+import os, re, subprocess, time, xml.etree.ElementTree as ET
+label = os.environ['LABEL']
+for attempt in range(8):
+    subprocess.run(['adb','shell','uiautomator','dump','/sdcard/accubook-window.xml'],
+                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+    xml = subprocess.check_output(['adb','exec-out','cat','/sdcard/accubook-window.xml'])
+    root = ET.fromstring(xml)
+    target = None
+    for element in root.iter('node'):
+        if label in (element.attrib.get('text','') + ' ' + element.attrib.get('content-desc','')):
+            target = element
+            break
+    if target is not None:
+        bounds = re.findall(r'\[(\d+),(\d+)\]', target.attrib.get('bounds',''))
+        if len(bounds) == 2:
+            x = (int(bounds[0][0]) + int(bounds[1][0])) // 2
+            y = (int(bounds[0][1]) + int(bounds[1][1])) // 2
+            print('TAP',label,x,y)
+            subprocess.run(['adb','shell','input','tap',str(x),str(y)],check=True)
+            exit(0)
+    if attempt == 3:
+        subprocess.run(['adb','shell','input','swipe','500','1600','500','550','400'],check=True)
+    time.sleep(1)
+raise SystemExit('UI element not found: '+label)
+PY
+}
+assert_visible() {
+  local label="$1"
+  LABEL="$label" python3 - <<'PY'
+import os, subprocess, time
+label=os.environ['LABEL']
+for attempt in range(8):
+    subprocess.run(['adb','shell','uiautomator','dump','/sdcard/accubook-window.xml'],
+                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+    raw = subprocess.check_output(['adb','exec-out','cat','/sdcard/accubook-window.xml']).decode()
+    if label in raw:
+        print('VISIBLE',label)
+        exit(0)
+    if attempt==3:
+        subprocess.run(['adb','shell','input','swipe','500','1600','500','500','400'],check=True)
+    time.sleep(1)
+raise SystemExit('Expected UI text missing: '+label)
+PY
+}
+
+assert_visible 'Accubook'
+tap_node 'Try with a sample customer'
+tap_node 'Create sample'
+assert_visible 'Sample Customer'
+assert_visible 'Job history'
+tap_node 'DEMO - Gutter'
+assert_visible 'Reschedule date'
+assert_visible 'Change job status'
+assert_visible 'Add photo from device'
+assert_visible 'Invoice draft'
+tap_node 'Change job status'
+tap_node 'In Progress'
+assert_visible 'In Progress'
+adb shell am force-stop com.accubook.crm
+adb shell am start -n com.accubook.crm/.MainActivity
+sleep 2
+assert_visible 'In Progress'
+echo "ACCUBOOK_EMULATOR_SMOKE_PASS: launch/demo/customer/job/status/restart"
