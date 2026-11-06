@@ -139,3 +139,18 @@ python3 scripts/autojs_run.py smoke
 ```
 
 The legacy `read` and `fsm` modes require `/sdcard/broccoli/autojs/grok_read_chat.js` and `/sdcard/broccoli/autojs/grok_button_fsm.js`. If those payloads are absent, the adapter now fails immediately instead of waiting for an output file that cannot be produced. The side-effect-free `smoke` check uses a bounded two-attempt retry for cold-start or transient Rish launch failures because AutoJS/Shizuku can be reclaimed under memory pressure; `read` and `fsm` remain single-shot to avoid duplicate UI actions. The primary production-capable Android path remains Rish + UIAutomator / accessibility surfaces; AutoJS should not be made a hard dependency.
+
+
+## Accubook offline field-service Android experiment (2026-11-05)
+
+**Experimental / not production verified.** An isolated debug-only Android client
+lives at [`experiments/accubook/android/`](experiments/accubook/android/).
+It prototypes local CSV customer/job indexes, per-job line items, in-app
+scheduling, a portable draft HTML invoice, and an explicit ZIP export through
+Android's Storage Access Framework. Its debug-APK GitHub Actions workflow
+contains no production signing secrets.
+
+This is independent of Broccoli's governor/automation transport. It uses no
+Shizuku, rish, RDC, network permission, or provider calls. It is **not** a
+declaration of desktop/iOS parity, enterprise release readiness, or live-device
+acceptance. See [the Accubook implementation status and recovery limitations](experiments/accubook/README.md).
