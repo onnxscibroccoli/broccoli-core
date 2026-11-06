@@ -148,7 +148,9 @@ lives at [`experiments/accubook/android/`](experiments/accubook/android/).
 It prototypes local CSV customer/job indexes, per-job line items, in-app
 scheduling, a portable draft HTML invoice, and an explicit ZIP export through
 Android's Storage Access Framework. Its debug-APK GitHub Actions workflow
-contains no production signing secrets.
+contains no production signing secrets. Initial API-35 debug compilation and CSV smoke tests
+passed in [run 42157304551](https://github.com/onnxscibroccoli/broccoli-core/actions/runs/42157304551), code SHA `e6de86b`.
+This is **CI verification only**, not on-device acceptance.
 
 This is independent of Broccoli's governor/automation transport. It uses no
 Shizuku, rish, RDC, network permission, or provider calls. It is **not** a
