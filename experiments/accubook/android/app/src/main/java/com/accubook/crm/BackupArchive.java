@@ -80,7 +80,7 @@ public final class BackupArchive {
     private static String checked(String name) throws IOException {
         if (name == null || name.length() < 1 || name.length() > 512 ||
             name.startsWith("/") || name.indexOf('\\') >= 0 || name.indexOf(':') >= 0 ||
-            name.indexOf('\u0000') >= 0) throw new IOException("Invalid ZIP entry name");
+            name.indexOf((char) 0) >= 0) throw new IOException("Invalid ZIP entry name");
         for (String component : name.split("/", -1)) {
             if (component.isEmpty() || component.equals(".") || component.equals(".."))
                 throw new IOException("Unsafe ZIP entry path");
@@ -262,6 +262,22 @@ public final class BackupArchive {
                 // If swap/rollback failed, preserve files rather than deleting evidence.
                 if (!previous.exists() || live.exists()) deleteTree(temp);
             }
+        }
+    }
+
+    /** Revert to the previously retained workspace; preserve failed live data for inspection. */
+    public static void revertPreviousSnapshot(File live) throws IOException {
+        File old = rollback(live);
+        validate(old);
+        File failed = new File(live.getParentFile(), live.getName() + ".failed-live");
+        if (failed.exists()) throw new IOException("A failed-live snapshot already exists; "
+            + "preserve and inspect it before attempting another rollback");
+        if (live.exists() && !live.renameTo(failed))
+            throw new IOException("Cannot preserve current workspace before rollback");
+        if (!old.renameTo(live)) {
+            if (failed.exists() && !failed.renameTo(live))
+                throw new IOException("Could not activate rollback; both copies preserved");
+            throw new IOException("Unable to reopen previous workspace");
         }
     }
 
