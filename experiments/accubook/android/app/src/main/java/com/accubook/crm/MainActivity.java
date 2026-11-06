@@ -725,6 +725,34 @@ public final class MainActivity extends Activity {
     }
 
 
+    /** Explicit demo seeding: no real contacts, no network, no silent first-run writes. */
+    private void createDemoWorkspace() {
+        new AlertDialog.Builder(this)
+            .setTitle("Create a sample customer and job?")
+            .setMessage("Adds a clearly labeled fictional customer, example gutter-cleaning "
+                + "job, sample invoice line, and field note. Existing records stay unchanged. "
+                + "Use only for testing; the example is not a real invoice.")
+            .setNegativeButton("Cancel", (dialog, which) -> {})
+            .setPositiveButton("Create sample", (dialog, which) -> {
+                try {
+                    WorkspaceStore.Customer example = store.addCustomer(
+                        "Accubook Demo Property", "Sample Customer",
+                        "555-0100", "sample@example.invalid", "10 Example Road",
+                        "Boston", "MA", "02108");
+                    WorkspaceStore.Job exampleJob = store.addJob(example,
+                        "DEMO - Gutter inspection and cleaning", "10 Example Road",
+                        "Boston", "MA", "02108", LocalDate.now().plusDays(1).toString());
+                    store.addLine(exampleJob, "Demo labor - gutter cleaning", "2", "85.00");
+                    store.addLine(exampleJob, "Demo material - gutter sealant", "1", "18.50");
+                    store.saveFieldNotes(exampleJob, "DEMO ONLY: inspect gutters, document "
+                        + "before and after photos, and review materials.");
+                    customer(example.id);
+                    notice("Sample ready", "Tap the sample job under Job history. "
+                        + "Reschedule it, attach a test photo, and inspect the draft invoice.");
+                } catch (Exception failure) { error(failure); }
+            }).show();
+    }
+
     private void home() {
         currentScreen = "home";
         currentJobId = null;
@@ -737,6 +765,7 @@ public final class MainActivity extends Activity {
             section("Overview");
             label(content, customers.size() + " customers · " + jobs.size() + " jobs", 18, LIGHT);
             button(content, "New customer", this::customerDialog);
+            button(content, "Try with a sample customer and job", this::createDemoWorkspace);
             button(content, "Schedule job", this::chooseCustomer);
             button(content, "Import phone contact", this::pickContact);
             button(content, "Export workspace ZIP backup", () -> {
