@@ -50,6 +50,11 @@ public final class BackupArchiveSmoke {
             String jdir = directory + "/jobs/" + jid + "_Gutter";
             table(root, jdir + "/job_items.csv", ITEM,
                 row("CUSTOM-1", "Labor","2","10.00","20.00"));
+            table(root, jdir + "/material_requests.csv",
+                new String[]{"RequestID","Description","Quantity","Unit","Status"},
+                row("REQ-" + "d".repeat(32),"Shingle bundles","3","bundle","Requested"));
+            Files.writeString(new File(root, jdir + "/field_notes.md").toPath(),
+                "Gate: ask owner before entering", StandardCharsets.UTF_8);
             File photo = new File(root, jdir + "/photos/PHOTO-" + "c".repeat(32) + ".jpg");
             Files.createDirectories(photo.getParentFile().toPath());
             Files.write(photo.toPath(), new byte[]{(byte)255,(byte)216,(byte)255,0,1,2});
@@ -124,6 +129,12 @@ public final class BackupArchiveSmoke {
         check(BackupArchive.rollback(live).isDirectory(), "Previous snapshot missing");
         check(Files.readString(new File(live,"master_data/customers.csv").toPath())
             .contains("Example"), "Imported customer absent");
+        String jdir = "customers/CUST-" + "a".repeat(32) + "_Example/jobs/JOB-"
+            + "b".repeat(32) + "_Gutter";
+        check(Files.readString(new File(live, jdir + "/material_requests.csv").toPath())
+            .contains("Shingle bundles"), "Materials not restored");
+        check(Files.readString(new File(live, jdir + "/field_notes.md").toPath())
+            .contains("Gate:"), "Field notes not restored");
         boolean refused = false;
         try { BackupArchive.restore(live, new ByteArrayInputStream(good)); }
         catch (IOException expected) { refused = true; }
