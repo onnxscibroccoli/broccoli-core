@@ -41,6 +41,7 @@ public final class MainActivity extends Activity {
     private static final int EXPORT_REQUEST = 702;
     private static final int CONTACT_REQUEST = 703;
     private static final int PHOTO_REQUEST = 704;
+    private static final int RESTORE_REQUEST = 705;
     private static final int BACKGROUND = Color.rgb(10, 15, 29);
     private static final int CARD = Color.rgb(25, 36, 56);
     private static final int LIGHT = Color.rgb(233, 240, 252);
@@ -60,6 +61,11 @@ public final class MainActivity extends Activity {
         super.onCreate(state);
         getWindow().setStatusBarColor(BACKGROUND);
         getWindow().setNavigationBarColor(BACKGROUND);
+        if (state != null) {
+            pendingInvoice = state.getString("invoice");
+            pendingBackup = state.getBoolean("backup");
+            pendingPhotoJobId = state.getString("photoJob");
+        }
         try {
             store = new WorkspaceStore(this);
             home();
@@ -67,7 +73,17 @@ public final class MainActivity extends Activity {
             screen("Workspace unavailable", "Existing records were not reset.");
             label(content, "Cannot open local storage: " + error.getMessage(), 16, LIGHT);
             label(content, "Do not uninstall until a valid backup is secured.", 14, MUTED);
+            button(content, "Restore from workspace ZIP backup", this::selectRestore);
+            button(content, "Revert to previous validated workspace", this::revertSnapshot);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle state) {
+        state.putString("invoice", pendingInvoice);
+        state.putBoolean("backup", pendingBackup);
+        state.putString("photoJob", pendingPhotoJobId);
+        super.onSaveInstanceState(state);
     }
 
     private int dp(int value) {
@@ -369,6 +385,59 @@ public final class MainActivity extends Activity {
         }
     }
 
+
+    private File workspacePath() {
+        return new File(getFilesDir(), "Accubook Workspace");
+    }
+
+    private void selectRestore() {
+        new AlertDialog.Builder(this).setTitle("Restore workspace backup?")
+            .setMessage("This replaces the current customers, jobs, and photos with the "
+                + "contents of your selected ZIP. The previous workspace will be kept "
+                + "locally for one rollback. Export and verify a backup first.")
+            .setNegativeButton("Cancel", (d, w) -> {})
+            .setPositiveButton("Select ZIP", (d, w) -> {
+                Intent choose = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                choose.addCategory(Intent.CATEGORY_OPENABLE);
+                choose.setType("application/zip");
+                try {
+                    startActivityForResult(choose, RESTORE_REQUEST);
+                } catch (Exception exception) { error(exception); }
+            }).show();
+    }
+
+    private void revertSnapshot() {
+        if (!BackupArchive.rollback(workspacePath()).isDirectory()) {
+            notice("No previous restore", "No rollback snapshot exists on this device.");
+            return;
+        }
+        new AlertDialog.Builder(this).setTitle("Revert to previous workspace?")
+            .setMessage("The current workspace will be preserved separately for recovery. "
+                + "Your previous validated customer and job records will become active.")
+            .setNegativeButton("Cancel", (d, w) -> {})
+            .setPositiveButton("Revert", (d, w) -> {
+                try {
+                    BackupArchive.revertPreviousSnapshot(workspacePath());
+                    store = new WorkspaceStore(this);
+                    home();
+                    notice("Previous workspace reopened", "Review records before continuing.");
+                } catch (Exception failure) { error(failure); }
+            }).show();
+    }
+
+    private void discardPreviousSnapshot() {
+        new AlertDialog.Builder(this).setTitle("Discard previous restore snapshot?")
+            .setMessage("Only do this after verifying the restored customers, jobs, photos "
+                + "and exporting a new independent backup. This cannot be undone.")
+            .setNegativeButton("Keep rollback", (d, w) -> {})
+            .setPositiveButton("Discard", (d, w) -> {
+                try {
+                    store.discardRollbackSnapshot();
+                    home();
+                } catch (Exception failure) { error(failure); }
+            }).show();
+    }
+
     private void pickContact() {
         try {
             // User selects one phone entry. No blanket READ_CONTACTS permission.
@@ -510,6 +579,12 @@ public final class MainActivity extends Activity {
                 pendingInvoice = null;
                 document("accubook-workspace.zip", "application/zip");
             });
+            button(content, "Restore workspace from ZIP", this::selectRestore);
+            if (store.hasRollbackSnapshot()) {
+                button(content, "Revert to previous workspace", this::revertSnapshot);
+                button(content, "Discard verified rollback snapshot",
+                    this::discardPreviousSnapshot);
+            }
             section("Upcoming and recent work");
             int count = 0;
             for (WorkspaceStore.Job j : jobs) {
@@ -703,6 +778,20 @@ public final class MainActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RESTORE_REQUEST) {
+            if (resultCode != RESULT_OK || data == null || data.getData() == null) return;
+            try (InputStream zip = getContentResolver().openInputStream(data.getData())) {
+                if (store == null) BackupArchive.restore(workspacePath(), zip);
+                else store.restoreBackup(zip);
+                store = new WorkspaceStore(this);
+                home();
+                notice("Restore completed", "Review all records and photo evidence. "
+                    + "The previous workspace is retained until you discard it.");
+            } catch (Exception failure) {
+                error(failure);
+            }
+            return;
+        }
         if (requestCode == CONTACT_REQUEST) {
             if (resultCode != RESULT_OK || data == null || data.getData() == null) return;
             try (Cursor cursor = getContentResolver().query(data.getData(),
