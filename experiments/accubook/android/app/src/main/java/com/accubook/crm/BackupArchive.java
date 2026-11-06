@@ -44,6 +44,7 @@ public final class BackupArchive {
     private static final String[] JOB = {"JobID", "CustomerID", "JobTitle", "JobStreet",
         "JobCity", "JobState", "JobZip", "Status", "ScheduledDate", "TotalAmount"};
     private static final String[] ITEM = {"ItemID", "Description", "Quantity", "UnitRate", "LineTotal"};
+    private static final String[] REQUEST = {"RequestID", "Description", "Quantity", "Unit", "Status"};
     private static final String[] CATALOG = {"ItemID", "Category", "ItemName", "DefaultUnit", "DefaultRate"};
     private static final String[] EXPENSE = {"ExpenseID", "Date", "Category", "Description", "Amount"};
 
@@ -95,7 +96,7 @@ public final class BackupArchive {
         String client = "customers/CUST-[a-f0-9]{32}_[A-Za-z0-9_-]{1,40}";
         if (name.matches(client + "/profile\\.md")) return true;
         String job = client + "/jobs/JOB-[a-f0-9]{32}_[A-Za-z0-9_-]{1,40}";
-        return name.matches(job + "/(job_items\\.csv|job_details\\.json|photos/PHOTO-[a-f0-9]{32}\\.(jpg|png|webp))");
+        return name.matches(job + "/(job_items\\.csv|material_requests\\.csv|field_notes\\.md|job_details\\.json|photos/PHOTO-[a-f0-9]{32}\\.(jpg|png|webp))");
     }
 
     private static void unpack(File destination, InputStream input) throws IOException {
@@ -210,6 +211,40 @@ public final class BackupArchive {
             }
             String jobFolder = folders.get(customer) + "/jobs/" + id + "_" + slug(r.get(2));
             List<List<String>> details = rows(root, jobFolder + "/job_items.csv", ITEM);
+            File requests = new File(root, jobFolder + "/material_requests.csv");
+            if (requests.isFile()) {
+                List<List<String>> materials = rows(root,
+                    jobFolder + "/material_requests.csv", REQUEST);
+                Set<String> requestIds = new HashSet<>();
+                for (int n = 1; n < materials.size(); n++) {
+                    List<String> material = materials.get(n);
+                    if (!material.get(0).matches("REQ-[a-f0-9]{32}") ||
+                        !requestIds.add(material.get(0)) ||
+                        !Arrays.asList("Requested", "Ordered", "Delivered", "Used", "Cancelled")
+                            .contains(material.get(4)))
+                        throw new IOException("Invalid material request");
+                    try {
+                        BigDecimal quantity = new BigDecimal(material.get(2));
+                        if (quantity.signum() <= 0 || quantity.scale() > 4 ||
+                            quantity.compareTo(new BigDecimal("1000000")) > 0)
+                            throw new IOException("Invalid requested quantity");
+                    } catch (NumberFormatException error) {
+                        throw new IOException("Invalid material quantity", error);
+                    }
+                }
+            }
+            File notes = new File(root, jobFolder + "/field_notes.md");
+            if (notes.isFile()) {
+                if (notes.length() > 64 * 1024)
+                    throw new IOException("Oversized job notes");
+                try {
+                    StandardCharsets.UTF_8.newDecoder()
+                        .onMalformedInput(CodingErrorAction.REPORT)
+                        .decode(java.nio.ByteBuffer.wrap(Files.readAllBytes(notes.toPath())));
+                } catch (java.nio.charset.CharacterCodingException error) {
+                    throw new IOException("Job notes are invalid UTF-8", error);
+                }
+            }
             BigDecimal sum = BigDecimal.ZERO;
             for (int n = 1; n < details.size(); n++) {
                 List<String> line = details.get(n);
