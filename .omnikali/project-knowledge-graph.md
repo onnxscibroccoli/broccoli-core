@@ -40,3 +40,21 @@ Helix task lifecycle, PostgreSQL persistence, worker lease recovery, replacement
 - Transient AutoJS health failures were observed both as cold-start marker timeouts and a one-off Rish launch `Server is not running` result; the side-effect-free smoke probe now retries either case at most once, while read/fsm remain single-shot.
 - Legacy AutoJS read/fsm payloads are currently absent and now fail fast; AutoJS remains optional behind the Rish/UIAutomator/accessibility path.
 - Rooted full-suite validation (`python3 -m unittest discover -s tests -t . -v`) passed 136/136 tests on-device. The earlier discovery failure was import-path shadowing from `tests/runtime`, not missing production modules. CI is aligned to this rooted command.
+
+
+## Experimental Accubook branch ownership — 2026-11-05
+
+- **Owner:** `onnxscibroccoli/broccoli-core`, branch
+  `feat/accubook-offline-android-debug-20261105` until a standalone project
+  ownership decision is made.
+- **Location:** `experiments/accubook/android`; local-first field-service
+  client; **independent** of OmniKali's control plane and of Broccoli
+  Core's privileged automation/governor.
+- **Current lifecycle:** Experimental, offline Java CSV codec test proven
+  by the first Android Actions run. APK compilation and live device
+  acceptance require distinct evidence; never infer them from this note.
+- **Decision:** Retain as isolated sandbox; do not move into runtime,
+  Agent/Broccoli mirrors, or Helix/Grasshopper production execution routes.
+- **Provenance:** GitHub Actions `accubook-debug-apk.yml` builds a debug-only
+  app with no API credentials. A successfully uploaded artifact and actual
+  device validation must be recorded before improving its maturity label.
