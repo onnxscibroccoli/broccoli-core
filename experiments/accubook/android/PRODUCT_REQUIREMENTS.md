@@ -31,7 +31,7 @@ All records must be reachable in at most a few obvious taps without memorizing I
 
 - Customer -> full contact card -> call/text/email -> service properties -> all jobs,
   estimates, invoices, notes, photos, communications and payment history.
-- Job -> parent customer, site, appointment(s), assigned crews, checklists, evidence,
+- Job -> parent customer, site, appointment(s), assigned crews, field notes / gate codes / material requests, checklists, evidence,
   costs, estimates, change orders, invoice(s) and activity history.
 - Date/time calendar -> job -> customer. Changes propagate everywhere without duplication.
 - Global search -> customers, jobs, addresses, invoices and searchable notes.
@@ -47,13 +47,13 @@ All records must be reachable in at most a few obvious taps without memorizing I
 | Properties | Multiple service sites per customer, property/equipment history, site photos | Not implemented; job site fields exist |
 | Leads / requests | Lead intake, stage, notes, follow-ups and quote conversion | Not implemented |
 | Estimates | Templates, grouped labor/material, alternatives, taxes, approval, revision log | Not implemented |
-| Jobs | Assignable and recurring work, notes/checklists, statuses, change orders, attachments | **Partial:** add job, status/date change, photo import and basic line items |
-| Scheduler | Month/week/day/calendar, times, timezone, crews, capacity/conflicts, drag or accessible reschedule | **Partial:** date-only agenda and native date picker |
+| Jobs | Prospect→Quoted→Approved→Scheduled→In Progress→Completed→Invoiced→Paid (payment-backed), field notes/gate codes/material requests, assignable and recurring work, change orders, attachments | **Partial:** add job, status/date change, photo import and basic line items |
+| Scheduler | Day/week/month calendar, date and time slots, timezone, crews, capacity/conflicts, drag or accessible reschedule | **Partial:** date-only agenda and native date picker |
 | Crew operations | Personnel, assignments, check-in/out, on-site tracking, work orders | Not implemented |
 | Photo evidence | Camera, gallery, metadata, annotation, before/after, album, export, deletion | **Partial:** private JPEG/PNG/WebP attachment, preview, remove; no camera/annotation |
 | Pricebook | Searchable service/material catalog, units, rates, templates | Initial CSV container only |
 | Costs | Expenses, purchase orders, receipts, labor cost and profitability | Initial CSV container only |
-| Invoices | Numbering, estimates->invoices, adjustments, tax, PDF, email, balance, due dates | **Partial:** editable lines and HTML *draft* |
+| Invoices | Numbering, estimates->invoices, adjustments, tax, print-ready HTML and PDF with optional evidence photos, email, balance, due dates | **Partial:** editable lines and HTML *draft* |
 | Payments | Offline cash/check ledger, deposits, partial payments, refunds, reconciliation, audit | Not implemented; **no card processing** |
 | Communications | Explicit dial/SMS/email via installed apps, notes and logged activity | **Partial:** explicit dial/text/email handoff, no history |
 | Reporting | A/R aging, pipeline, jobs by status, revenue/cost/profit, CSV exports | Not implemented |
@@ -83,10 +83,13 @@ All records must be reachable in at most a few obvious taps without memorizing I
 
 ## Domain architecture direction
 
-- Separate domain model from Android widgets. Move beyond CSV registries with a
-  versioned transactional repository (SQLite/Room or equivalent supported database);
-  use CSV/JSON/PDF/media as **export/import interchange**. If portable files remain
-  canonical, implement transaction journaling and replay before new multi-record flows.
+- Separate domain model from Android widgets. Keep portable human-inspectable
+  UTF-8 CSV/JSON/Markdown/HTML, master indexes and per-customer/job folders as the
+  **canonical workspace**, as specified in the original architecture. Add a
+  versioned write-ahead journal for multi-file transactions and crash replay;
+  in-memory or SQLite indexes may accelerate search only as rebuildable caches.
+  Never move authoritative records into an opaque database without an explicit
+  product architecture decision.
 - Entity relationships: Customer -> Contact, Property -> Job -> Visit -> Crew Assignment;
   Job -> Checklist/Attachment/TimeEntry/Expense; Estimate -> ChangeOrder -> Invoice
   -> PaymentLedgerEntry. Use IDs and referential constraints; preserve audit events.
