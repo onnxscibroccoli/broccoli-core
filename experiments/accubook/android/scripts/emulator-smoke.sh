@@ -38,6 +38,11 @@ for attempt in range(8):
     if attempt == 3:
         subprocess.run(['adb','shell','input','swipe','500','1600','500','550','400'],check=True)
     time.sleep(1)
+print('VISIBLE_NODES:', [(el.attrib.get('text'), el.attrib.get('content-desc'), el.attrib.get('bounds')) for el in root.iter('node') if el.attrib.get('text') or el.attrib.get('content-desc')][:100])
+subprocess.run(['adb','shell','dumpsys','activity','activities'])
+log = subprocess.run(['adb','logcat','-d','-t','200','-s','AndroidRuntime:E','ActivityTaskManager:I'],
+                     capture_output=True,text=True)
+print('ANDROID_LOGS:', log.stdout[-6000:])
 raise SystemExit('UI element not found: '+label)
 PY
 }
