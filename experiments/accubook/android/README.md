@@ -35,6 +35,34 @@ completeness, accessibility or data-recovery readiness.
 - No `INTERNET`, root, broad storage, `READ_CONTACTS`, or Shizuku privileges.
   No runtime AI calls, cloud database, service worker or telemetry.
 
+## Prototype smoke walkthrough (fictional data only)
+
+1. Install the `app-debug.apk` from the **exact successful branch-head** GitHub
+   Actions artifact, or use the extracted APK supplied alongside this branch.
+2. Open Accubook. Choose **Try with a sample customer and job**, then
+   **Create sample**; this inserts an explicitly fictional customer, tomorrow's
+   gutter job, two draft billing lines and a field note. It does not call a
+   remote service or import phone contacts.
+3. The app opens that customer's profile. Confirm phone/email/address,
+   locate **Job history** and tap the linked demo gutter job.
+4. In job details, test **Reschedule date**, **Change job status**,
+   **Edit field notes**, **Request materials**, and **Add photo from device**.
+   Use only sample images (no real customer/site evidence).
+5. Open **Schedule**, switch Day/Week/Month and navigate between dates.
+   Reopen the rescheduled job to confirm the date.
+6. Export a ZIP backup to a user-chosen location and verify the file exists.
+   Backup restore is available but remains under Android-device acceptance.
+7. Relaunch the app and confirm the demo customer, job and edits persist.
+
+The Android 15 emulator flow is documented in `scripts/emulator-smoke.sh`,
+executed by `accubook-emulator-smoke.yml`. A passing emulator UI smoke
+still does not replace the physical-device/TalkBack acceptance gate.
+
+**Debug signing warning:** different CI runners may generate different
+debug signing certificates. If Android refuses an upgrade, first export a
+workspace ZIP from the installed build. Uninstalling removes app-private
+records. Do not enter real customer data into engineering previews.
+
 ## Safety limits
 
 - **Do not enter real customer information until restore and upgrades are device
