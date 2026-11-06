@@ -88,6 +88,7 @@ public final class WorkspaceStore {
 
     public WorkspaceStore(Context context) throws IOException {
         root = new File(context.getFilesDir(), "Accubook Workspace");
+        BackupArchive.recover(root);
         master = new File(root, "master_data");
         customersFile = new File(master, "customers.csv");
         jobsFile = new File(master, "jobs.csv");
@@ -528,6 +529,21 @@ public final class WorkspaceStore {
     public synchronized void deletePhoto(Job job, String name) throws IOException {
         File file = photoFile(job, name);
         if (!file.delete()) throw new IOException("Cannot delete photo");
+    }
+
+    /** Explicit restore, never called without owner choosing a ZIP via system picker. */
+    public synchronized void restoreBackup(InputStream selectedZip) throws IOException {
+        BackupArchive.restore(root, selectedZip);
+        // Don't claim success until the activated workspace can be fully reopened.
+        BackupArchive.validate(root);
+    }
+
+    public synchronized boolean hasRollbackSnapshot() {
+        return BackupArchive.rollback(root).isDirectory();
+    }
+
+    public synchronized void discardRollbackSnapshot() throws IOException {
+        BackupArchive.clearPreviousSnapshot(root);
     }
 
     public synchronized void exportBackup(OutputStream destination) throws IOException {
