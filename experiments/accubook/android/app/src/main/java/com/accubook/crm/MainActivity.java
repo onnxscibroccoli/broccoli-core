@@ -34,6 +34,8 @@ import java.io.InputStream;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.DayOfWeek;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
 /** Offline debug UI. No remote permissions, services or privileged APIs. */
@@ -55,6 +57,8 @@ public final class MainActivity extends Activity {
     private String pendingPhotoJobId;
     private String pendingInvoice;
     private boolean pendingBackup;
+    private LocalDate selectedDate = LocalDate.now();
+    private String scheduleMode = "Week";
 
     @Override
     protected void onCreate(Bundle state) {
@@ -65,6 +69,10 @@ public final class MainActivity extends Activity {
             pendingInvoice = state.getString("invoice");
             pendingBackup = state.getBoolean("backup");
             pendingPhotoJobId = state.getString("photoJob");
+            scheduleMode = state.getString("scheduleMode", "Week");
+            try { selectedDate = LocalDate.parse(
+                state.getString("scheduleDate", LocalDate.now().toString())); }
+            catch (Exception ignored) { selectedDate = LocalDate.now(); }
         }
         try {
             store = new WorkspaceStore(this);
@@ -83,6 +91,8 @@ public final class MainActivity extends Activity {
         state.putString("invoice", pendingInvoice);
         state.putBoolean("backup", pendingBackup);
         state.putString("photoJob", pendingPhotoJobId);
+        state.putString("scheduleMode", scheduleMode);
+        state.putString("scheduleDate", selectedDate.toString());
         super.onSaveInstanceState(state);
     }
 
@@ -305,29 +315,84 @@ public final class MainActivity extends Activity {
         } catch (Exception error) { error(error); }
     }
 
+    /** Accessible day/week/month agenda controls. Time windows/crews remain release blockers. */
     private void scheduleScreen() {
         currentJobId = null;
         currentCustomerId = null;
         try {
             List<WorkspaceStore.Job> jobs = store.jobs();
-            screen("Schedule", "Agenda · tap work to open, reschedule, or update status");
-            navigation();
-            button(content, "Schedule a job", this::chooseCustomer);
-            if (jobs.isEmpty()) {
-                label(content, "No jobs scheduled yet.", 17, MUTED);
-                return;
+            LocalDate first;
+            LocalDate last;
+            switch (scheduleMode) {
+                case "Day":
+                    first = selectedDate;
+                    last = selectedDate;
+                    break;
+                case "Month":
+                    first = selectedDate.withDayOfMonth(1);
+                    last = first.plusMonths(1).minusDays(1);
+                    break;
+                default:
+                    first = selectedDate.with(
+                        TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+                    last = first.plusDays(6);
             }
+            screen("Schedule", scheduleMode + " · " + first + " through " + last);
+            navigation();
+            button(content, "Change view (currently " + scheduleMode + ")", () -> {
+                String[] options = {"Day", "Week", "Month"};
+                new AlertDialog.Builder(this).setTitle("Show schedule by")
+                    .setSingleChoiceItems(options, java.util.Arrays.asList(options)
+                        .indexOf(scheduleMode), (dialog, which) -> {
+                        scheduleMode = options[which];
+                        dialog.dismiss();
+                        scheduleScreen();
+                    }).setNegativeButton("Cancel", (d, w) -> {}).show();
+            });
+            button(content, "Choose a date", () -> {
+                new DatePickerDialog(this, (picker, y, m, d) -> {
+                    selectedDate = LocalDate.of(y, m + 1, d);
+                    scheduleScreen();
+                }, selectedDate.getYear(), selectedDate.getMonthValue() - 1,
+                    selectedDate.getDayOfMonth()).show();
+            });
+            button(content, "Previous " + scheduleMode.toLowerCase(java.util.Locale.ROOT),
+                () -> moveSchedule(-1));
+            button(content, "Today", () -> {
+                selectedDate = LocalDate.now();
+                scheduleScreen();
+            });
+            button(content, "Next " + scheduleMode.toLowerCase(java.util.Locale.ROOT),
+                () -> moveSchedule(1));
+            button(content, "Schedule new job", this::chooseCustomer);
+            int matches = 0;
             String day = "";
             for (WorkspaceStore.Job j : jobs) {
+                LocalDate scheduled = LocalDate.parse(j.date);
+                if (scheduled.isBefore(first) || scheduled.isAfter(last)) continue;
                 if (!j.date.equals(day)) {
                     day = j.date;
                     section(day.equals(LocalDate.now().toString()) ? "Today · " + day : day);
                 }
                 jobRow(j);
+                matches++;
             }
-            label(content, "Appointment time windows and crew assignments are not yet available.",
+            if (matches == 0) {
+                label(content, "No jobs in this " + scheduleMode.toLowerCase(
+                    java.util.Locale.ROOT) + ". Use Schedule new job.", 17, MUTED);
+            }
+            label(content, "Day/week/month dates are available. Appointment times, "
+                + "crew assignment, recurrence and conflict detection remain to be built.",
                 13, MUTED);
         } catch (Exception error) { error(error); }
+    }
+
+    private void moveSchedule(int direction) {
+        if (scheduleMode.equals("Day")) selectedDate = selectedDate.plusDays(direction);
+        else if (scheduleMode.equals("Month"))
+            selectedDate = selectedDate.plusMonths(direction);
+        else selectedDate = selectedDate.plusWeeks(direction);
+        scheduleScreen();
     }
 
     private void customer(String id) {
