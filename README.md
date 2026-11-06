@@ -155,4 +155,4 @@ This is **CI verification only**, not on-device acceptance.
 This is independent of Broccoli's governor/automation transport. It uses no
 Shizuku, rish, RDC, network permission, or provider calls. It is **not** a
 declaration of desktop/iOS parity, enterprise release readiness, or live-device
-acceptance. See [the Accubook implementation status and recovery limitations](experiments/accubook/README.md).
+acceptance. See [the Accubook implementation status and recovery limitations](experiments/accubook/android/README.md).
