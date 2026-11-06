@@ -59,6 +59,7 @@ public final class MainActivity extends Activity {
     private boolean pendingBackup;
     private LocalDate selectedDate = LocalDate.now();
     private String scheduleMode = "Week";
+    private String currentScreen = "home";
 
     @Override
     protected void onCreate(Bundle state) {
@@ -76,7 +77,17 @@ public final class MainActivity extends Activity {
         }
         try {
             store = new WorkspaceStore(this);
-            home();
+            if (state != null) {
+                String page = state.getString("screen", "home");
+                currentCustomerId = state.getString("customerId");
+                currentJobId = state.getString("jobId");
+                if ("job".equals(page) && currentJobId != null) job(currentJobId);
+                else if ("customer".equals(page) && currentCustomerId != null)
+                    customer(currentCustomerId);
+                else if ("customers".equals(page)) customersScreen();
+                else if ("schedule".equals(page)) scheduleScreen();
+                else home();
+            } else home();
         } catch (Exception error) {
             screen("Workspace unavailable", "Existing records were not reset.");
             label(content, "Cannot open local storage: " + error.getMessage(), 16, LIGHT);
@@ -93,6 +104,9 @@ public final class MainActivity extends Activity {
         state.putString("photoJob", pendingPhotoJobId);
         state.putString("scheduleMode", scheduleMode);
         state.putString("scheduleDate", selectedDate.toString());
+        state.putString("screen", currentScreen);
+        state.putString("customerId", currentCustomerId);
+        state.putString("jobId", currentJobId);
         super.onSaveInstanceState(state);
     }
 
@@ -244,7 +258,8 @@ public final class MainActivity extends Activity {
             tab.setMinHeight(dp(52));
             tab.setContentDescription("Go to " + labels[i]);
             tab.setBackgroundTintList(ColorStateList.valueOf(CARD));
-            nav.addView(tab, new LinearLayout.LayoutParams(0, dp(56), 1));
+            nav.addView(tab, new LinearLayout.LayoutParams(0,
+                LinearLayout.LayoutParams.WRAP_CONTENT, 1));
             tab.setOnClickListener(v -> action.run());
         }
         content.addView(nav);
@@ -267,6 +282,7 @@ public final class MainActivity extends Activity {
     }
 
     private void customersScreen() {
+        currentScreen = "customers";
         currentJobId = null;
         currentCustomerId = null;
         try {
@@ -317,6 +333,7 @@ public final class MainActivity extends Activity {
 
     /** Accessible day/week/month agenda controls. Time windows/crews remain release blockers. */
     private void scheduleScreen() {
+        currentScreen = "schedule";
         currentJobId = null;
         currentCustomerId = null;
         try {
@@ -396,6 +413,7 @@ public final class MainActivity extends Activity {
     }
 
     private void customer(String id) {
+        currentScreen = "customer";
         currentJobId = null;
         currentCustomerId = id;
         try {
@@ -708,6 +726,7 @@ public final class MainActivity extends Activity {
 
 
     private void home() {
+        currentScreen = "home";
         currentJobId = null;
         currentCustomerId = null;
         try {
@@ -839,6 +858,7 @@ public final class MainActivity extends Activity {
 
 
     private void job(String id) {
+        currentScreen = "job";
         currentJobId = id;
         try {
             WorkspaceStore.Job selected = jobById(id);
