@@ -51,6 +51,6 @@ jobs:
           profile: pixel_6
           disable-animations: true
           emulator-boot-timeout: 600
-          script: |
-            cd experiments/accubook/android
-            bash scripts/emulator-smoke.sh
+          # The emulator action executes multiline scripts as separate shell invocations.
+          # Keep the directory change and launch in the same shell command.
+          script: cd experiments/accubook/android && bash scripts/emulator-smoke.sh
