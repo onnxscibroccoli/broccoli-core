@@ -534,6 +534,87 @@ public final class MainActivity extends Activity {
             }).setNegativeButton("Cancel", (dialog, index) -> {}).show();
     }
 
+
+    private void fieldNotesDialog(WorkspaceStore.Job job) {
+        try {
+            LinearLayout fields = form();
+            label(fields, "Field notes, crew instructions, gate/entry details", 16, LIGHT);
+            EditText notes = new EditText(this);
+            notes.setId(View.generateViewId());
+            notes.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+            notes.setSingleLine(false);
+            notes.setMinLines(6);
+            notes.setTextColor(LIGHT);
+            notes.setHintTextColor(MUTED);
+            notes.setHint("Arrival instructions, site hazards, customer preferences...");
+            notes.setText(store.fieldNotes(job));
+            fields.addView(notes, new LinearLayout.LayoutParams(-1, dp(185)));
+            label(fields, "These notes become part of the unencrypted workspace ZIP. "
+                + "Avoid sensitive gate codes unless backups are protected.", 13, MUTED);
+            dialog("Edit field notes", fields, () -> {
+                try {
+                    store.saveFieldNotes(job, notes.getText().toString());
+                    job(job.id);
+                } catch (IOException failure) {
+                    throw new IllegalStateException(failure.getMessage(), failure);
+                }
+            });
+        } catch (Exception failure) { error(failure); }
+    }
+
+    private void materialDialog(WorkspaceStore.Job job, WorkspaceStore.MaterialRequest existing) {
+        LinearLayout fields = form();
+        EditText description = field(fields, "Material or supply", "3-tab shingles");
+        EditText quantity = field(fields, "Quantity", "2");
+        quantity.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        EditText unit = field(fields, "Unit", "bundle, roll, square...");
+        if (existing != null) {
+            description.setText(existing.description);
+            quantity.setText(existing.quantity);
+            unit.setText(existing.unit);
+        }
+        dialog(existing == null ? "Request material" : "Edit material", fields, () -> {
+            try {
+                if (existing == null) {
+                    store.addMaterialRequest(job, description.getText().toString(),
+                        quantity.getText().toString(), unit.getText().toString());
+                } else {
+                    store.updateMaterialRequest(job, existing.id,
+                        description.getText().toString(), quantity.getText().toString(),
+                        unit.getText().toString(), existing.status);
+                }
+                job(job.id);
+            } catch (IOException failure) {
+                throw new IllegalStateException(failure.getMessage(), failure);
+            }
+        });
+    }
+
+    private void materialStatusPicker(WorkspaceStore.Job job,
+                                      WorkspaceStore.MaterialRequest request) {
+        String[] states = {"Requested", "Ordered", "Delivered", "Used", "Cancelled"};
+        new AlertDialog.Builder(this).setTitle("Material request status")
+            .setItems(states, (d, which) -> {
+                try {
+                    store.updateMaterialRequest(job, request.id, request.description,
+                        request.quantity, request.unit, states[which]);
+                    job(job.id);
+                } catch (Exception failure) { error(failure); }
+            }).setNegativeButton("Cancel", (d, w) -> {}).show();
+    }
+
+    private void removeMaterial(WorkspaceStore.Job job, WorkspaceStore.MaterialRequest request) {
+        new AlertDialog.Builder(this).setTitle("Remove material request?")
+            .setMessage(request.description + " · This cannot be undone.")
+            .setNegativeButton("Keep", (d, w) -> {})
+            .setPositiveButton("Remove", (d, w) -> {
+                try {
+                    store.deleteMaterialRequest(job, request.id);
+                    job(job.id);
+                } catch (Exception failure) { error(failure); }
+            }).show();
+    }
+
     private void editLineDialog(WorkspaceStore.Job job, WorkspaceStore.LineItem line) {
         LinearLayout fields = form();
         EditText description = field(fields, "Description", "Work performed");
@@ -778,6 +859,23 @@ public final class MainActivity extends Activity {
                 + " " + work.zip, 16, LIGHT);
             button(content, "Reschedule date", () -> datePicker(work));
             button(content, "Change job status", () -> statusPicker(work));
+            section("Field notes and site instructions");
+            String notes = store.fieldNotes(work);
+            label(content, notes.isEmpty() ? "No field notes yet."
+                : (notes.length() > 800 ? notes.substring(0, 800) + "…" : notes),
+                15, MUTED);
+            button(content, "Edit field notes", () -> fieldNotesDialog(work));
+            section("Material requests");
+            button(content, "Request materials", () -> materialDialog(work, null));
+            for (WorkspaceStore.MaterialRequest request : store.materialRequests(work)) {
+                LinearLayout entry = card();
+                label(entry, request.description + " · " + request.quantity + " "
+                    + request.unit + " · " + request.status, 16, LIGHT);
+                button(entry, "Edit " + request.description,
+                    () -> materialDialog(work, request));
+                button(entry, "Update material status", () -> materialStatusPicker(work, request));
+                button(entry, "Remove request", () -> removeMaterial(work, request));
+            }
             section("Invoice draft");
             label(content, "Total: $" + work.total, 22, LIGHT);
             button(content, "Add labor, material or discount", () -> lineDialog(work));
