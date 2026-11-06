@@ -42,10 +42,15 @@ jobs:
             app/src/main/java/com/accubook/crm/CsvCodec.java \
             app/src/test/java/com/accubook/crm/CsvCodecSmoke.java
           java -cp build/csv-test com.accubook.crm.CsvCodecSmoke
-      - uses: android-actions/setup-android@v3
+      # GitHub-hosted Ubuntu runners already include command-line Android SDK
+      # tools. The setup-android@v3 action attempts a removed legacy 'tools'
+      # package on newer runners; use the preinstalled SDK directly.
       - name: Install Android API 35 build components
         shell: bash
-        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+        run: |
+          echo "ANDROID_HOME=${ANDROID_HOME:-unset}"
+          sdkmanager --version
+          sdkmanager "platforms;android-35" "build-tools;35.0.0"
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.11.1'
