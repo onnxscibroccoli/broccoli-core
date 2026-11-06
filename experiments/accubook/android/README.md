@@ -15,14 +15,14 @@ completeness, accessibility or data-recovery readiness.
 
 ## Currently implemented in this child development branch
 
-- Home, Customers and date-only Schedule with explicit navigation.
+- Home, Customers and accessible Day/Week/Month date agenda with explicit navigation.
 - Tap a customer to view name, phone, email, billing address and linked job history.
   Search customers by name, phone, email or city; edit customer details.
 - Permissionless system contact picker for **one phone entry** at a time; prefill
   name and phone in the normal editable registration form. Other phone numbers,
   email addresses and bulk deduplication are not imported.
 - Explicit phone dialer, text and email handoff to the device's installed apps.
-- Job to customer navigation; scheduling date and job status editing.
+- Job to customer navigation; scheduling date and job status editing, field notes and site instructions, and separately tracked material requests (Requested/Ordered/Delivered/Used/Cancelled).
 - Add/edit/remove draft line items and rederive totals from canonical item CSV.
 - Choose a JPEG/PNG/WebP from a system picker; copy at most 25 MB into the
   private job folder, show a bounded preview and confirm photo removal.
