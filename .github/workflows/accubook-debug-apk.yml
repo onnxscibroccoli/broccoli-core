@@ -1,0 +1,67 @@
+name: Accubook Android Debug APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'feat/accubook-*'
+    paths:
+      - 'experiments/accubook/**'
+      - '.github/workflows/accubook-debug-apk.yml'
+  pull_request:
+    paths:
+      - 'experiments/accubook/**'
+      - '.github/workflows/accubook-debug-apk.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: accubook-debug-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  compile-and-test:
+    name: Offline tests and debug APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: experiments/accubook/android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Validate standalone CSV codec
+        shell: bash
+        run: |
+          mkdir -p build/csv-test
+          javac -d build/csv-test \
+            app/src/main/java/com/accubook/crm/CsvCodec.java \
+            app/src/test/java/com/accubook/crm/CsvCodecSmoke.java
+          java -cp build/csv-test com.accubook.crm.CsvCodecSmoke
+      - uses: android-actions/setup-android@v3
+      - name: Install Android API 35 build components
+        shell: bash
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+      - name: Compile debug APK (no signing secrets)
+        shell: bash
+        run: gradle :app:assembleDebug --no-daemon --stacktrace
+      - name: Record APK checksum
+        shell: bash
+        run: |
+          ls -lh app/build/outputs/apk/debug/app-debug.apk
+          sha256sum app/build/outputs/apk/debug/app-debug.apk | tee app/build/outputs/apk/debug/SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: accubook-debug-universal
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            experiments/accubook/android/app/build/outputs/apk/debug/app-debug.apk
+            experiments/accubook/android/app/build/outputs/apk/debug/SHA256SUMS.txt
