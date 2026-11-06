@@ -1,71 +1,131 @@
-# Accubook: experimental offline Android field-service MVP
+# Accubook — offline-first field-service CRM (engineering preview)
 
-**Maturity:** Experimental / not production verified. **Owner:** Broccoli Core development branch.
-This is an isolated Android client under `experiments/`; it is not a privileged Broccoli
-Core agent, does not use Shizuku/rish, and does not change the governor or event bus.
+**Maturity: In development; not a completed field-service CRM.**
+**Owner:** `onnxscibroccoli/broccoli-core`, isolated `experiments/accubook/android`.
+**Product acceptance contract:** [PRODUCT_REQUIREMENTS.md](PRODUCT_REQUIREMENTS.md).
+**Base experimental APK:** draft PR #81. **Integrated development:** draft PR #82.
 
-## Why Android native first?
+## Purpose
 
-The immediate acceptance target is an **installable debug APK** on Android 15. A small,
-documented-API-only Java app avoids requiring a Tauri/Rust mobile cross-toolchain
-before the core file schema is proven. This is a delivery adapter, **not** a claim that
-the final desktop/iOS implementation has been completed. Broccoli Core remains
-separate from the Accubook customer-data domain.
+Accubook is a sovereign, accessible, usable CRM for small contractors and service
+businesses. It must connect people, properties, schedules, work, evidence,
+estimates, invoices, payments and operations without imposing a hosted backend or
+runtime AI dependency. A passing APK compilation does not establish feature
+completeness, accessibility or data-recovery readiness.
 
-## Data and security boundary
+## Currently implemented in this child development branch
 
-- Local app-private files in `getFilesDir()/Accubook Workspace/`.
-- Portable UTF-8 CSVs and per-client/per-job directories.
-- Writes use the Android framework `AtomicFile` API with serialized mutations.
-- No INTERNET permission, runtime AI, remote database, broad shared-storage permission,
-  privileged shell, background synchronization, or telemetry.
-- Android's Storage Access Framework (SAF) is used only when the user explicitly exports
-  an HTML invoice or ZIP backup; the export destination is user-selected.
-- App-private files are **deleted on uninstall**. Export a ZIP before uninstalling.
-- Multi-file writes are **not a transaction**. The job index total is a denormalized
-  cache recalculated from canonical item files on reads; future work must implement
-  journaled recovery for other dependent fields.
+- Home, Customers and accessible Day/Week/Month date agenda with explicit navigation.
+- Tap a customer to view name, phone, email, billing address and linked job history.
+  Search customers by name, phone, email or city; edit customer details.
+- Permissionless system contact picker for **one phone entry** at a time; prefill
+  name and phone in the normal editable registration form. Other phone numbers,
+  email addresses and bulk deduplication are not imported.
+- Explicit phone dialer, text and email handoff to the device's installed apps.
+- Job to customer navigation; scheduling date and job status editing, field notes and site instructions, and separately tracked material requests (Requested/Ordered/Delivered/Used/Cancelled).
+- Add/edit/remove draft line items and rederive totals from canonical item CSV.
+- Choose a JPEG/PNG/WebP from a system picker; copy at most 25 MB into the
+  private job folder, show a bounded preview and confirm photo removal.
+- Offline ZIP workspace export through Android Storage Access Framework.
+- **New:** bounded ZIP import, structural integrity/foreign-key/billing checks,
+  ZIP traversal and oversized-entry defense, staged directory swap, preservation
+  of prior workspace as a rollback snapshot and crash recovery between swaps.
+  Explicit revert and cleanup controls. These paths require device testing
+  before they are approved for real customer data.
+- No `INTERNET`, root, broad storage, `READ_CONTACTS`, or Shizuku privileges.
+  No runtime AI calls, cloud database, service worker or telemetry.
 
-## Build
+## Prototype smoke walkthrough (fictional data only)
 
-Use the GitHub Actions **Accubook Android Debug APK** workflow, then download the
-`accubook-debug-universal` build artifact. No Play Store signing secrets or WIF needed.
-A debug APK is automatically **debug signed**, not production signed.
+1. Install the `app-debug.apk` from the **exact successful branch-head** GitHub
+   Actions artifact, or use the extracted APK supplied alongside this branch.
+2. Open Accubook. Choose **Try with a sample customer and job**, then
+   **Create sample**; this inserts an explicitly fictional customer, tomorrow's
+   gutter job, two draft billing lines and a field note. It does not call a
+   remote service or import phone contacts.
+3. The app opens that customer's profile. Confirm phone/email/address,
+   locate **Job history** and tap the linked demo gutter job.
+4. In job details, test **Reschedule date**, **Change job status**,
+   **Edit field notes**, **Request materials**, and **Add photo from device**.
+   Use only sample images (no real customer/site evidence).
+5. Open **Schedule**, switch Day/Week/Month and navigate between dates.
+   Reopen the rescheduled job to confirm the date.
+6. Export a ZIP backup to a user-chosen location and verify the file exists.
+   Backup restore is available but remains under Android-device acceptance.
+7. Relaunch the app and confirm the demo customer, job and edits persist.
 
-Local (Android SDK + Gradle 8.11.1 + JDK 17):
+The Android 15 emulator flow is documented in `scripts/emulator-smoke.sh`,
+executed by `accubook-emulator-smoke.yml`. A passing emulator UI smoke
+still does not replace the physical-device/TalkBack acceptance gate.
+
+**Debug signing warning:** different CI runners may generate different
+debug signing certificates. If Android refuses an upgrade, first export a
+workspace ZIP from the installed build. Uninstalling removes app-private
+records. Do not enter real customer data into engineering previews.
+
+## Safety limits
+
+- **Do not enter real customer information until restore and upgrades are device
+  validated.** App-private records are lost on uninstall.
+- Restoring replaces the current workspace **after** ZIP validation. The previous
+  workspace remains in a sibling app-private rollback directory until the user
+  explicitly discards it. Do not discard it before verifying the import and
+  exporting another independent backup.
+- CRC checks, filename validation, referential integrity and staged swapping
+  reduce risk but do not yet prove database-grade transactions or full crash safety
+  across all possible storage failures. Backups can contain sensitive customer
+  information; keep them private and encrypt user-selected copies where needed.
+- Canonical schedule date and status reside in `master_data/jobs.csv`; the
+  historical `job_details.json` is **not authoritative** and may still contain
+  the date at job creation. This duplicated field needs migration cleanup.
+- Multi-file customer/job creation, receipt handling, status history, time
+  windows, teams, recurring jobs, estimates, taxes, payments and production
+  accounting remain unfinished.
+- The job photo implementation uses the system image chooser, not camera capture
+  or before/after classification; no geotag/metadata editing or album sorting.
+- Contact import intentionally uses per-selection access, not whole-address-book
+  permission; field-by-field import enhancements remain a release requirement.
+
+## Build and inspect
+
+Current development branch: `feat/accubook-integrated-crm-20261106`.
+Android SDK 35, JDK 17 and Gradle 8.11.1:
+
 ```sh
 cd experiments/accubook/android
 gradle :app:assembleDebug --no-daemon
-# app/build/outputs/apk/debug/app-debug.apk
 ```
 
-Standalone CSV test:
+Standalone JVM validations (no Android dependencies):
+
 ```sh
 cd experiments/accubook/android
 mkdir -p build/csv-test
-javac -d build/csv-test app/src/main/java/com/accubook/crm/CsvCodec.java app/src/test/java/com/accubook/crm/CsvCodecSmoke.java
+javac -d build/csv-test \
+  app/src/main/java/com/accubook/crm/CsvCodec.java \
+  app/src/main/java/com/accubook/crm/BackupArchive.java \
+  app/src/test/java/com/accubook/crm/CsvCodecSmoke.java \
+  app/src/test/java/com/accubook/crm/BackupArchiveSmoke.java
 java -cp build/csv-test com.accubook.crm.CsvCodecSmoke
+java -cp build/csv-test com.accubook.crm.BackupArchiveSmoke
 ```
 
-## Release blockers (do not relabel as ready)
+The `Accubook Android Debug APK` workflow compiles the APK, checks debug signing,
+records SHA-256 and executes the standalone regression tests. **A successful run
+does not confer Android device acceptance**. Manual testing must include
+TalkBack and large fonts, contact-picker cancellation, scheduled-date changes,
+photos, and repeated backup/restore/revert with destructive corruption fixtures.
 
-1. Verified GitHub Actions APK compilation + SHA-256 and manual Android installation.
-2. Device smoke test: create customer, schedule job, add item, export invoice and backup.
-3. Crash/power-loss and schema migration/fail-safe restoration tests.
-4. Backup **restore**, attachment import/photographic evidence, payment accounting,
-   mobile/desktop parity, localization, operational testing, and accessibility audit.
-5. Before any Play submission: reproducible release checks, independent review, signing
-   key custody, and correct store listing/privacy disclosures.
+## Product scope and release gate
 
-**Not implemented:** Tauri desktop/iOS renderer, PDF conversion, multi-device sync,
-runtime AI, payment processing, durable cross-file transaction journal.
+See [PRODUCT_REQUIREMENTS.md](PRODUCT_REQUIREMENTS.md) for complete acceptance matrix,
+end-to-end interaction contracts, entity graph and G1–G8 release requirements.
+The next APK should not be handed over as a **complete** application until all
+critical workflows, independent validation and acceptance gates pass.
 
-## CI build evidence (2026-11-05, Eastern)
+## Upstream boundaries
 
-The first successful source build is GitHub Actions
-[run 42157304551](https://github.com/onnxscibroccoli/broccoli-core/actions/runs/42157304551),
-source commit `e6de86bbf2d1390158590d55e5c16711d75da679`.
-The standalone CSV codec test passed and Gradle `:app:assembleDebug` succeeded.
-SHA-256 of its debug APK:
-`0cf88d42108a4dfc8bb6230e4b4f92044084dbd880f8af067d1a97cbd9b5c451`.
-This evidence does **not** establish device installation or production quality.
+Accubook's customer data stays separate from the Broccoli Core governor/event-bus,
+Grasshopper/Helix and privileged rish transports. Future adapters must be
+provider-agnostic, opt-in and explicitly permissioned. Synchronization to an
+unconfirmed Google Drive folder is not performed.
