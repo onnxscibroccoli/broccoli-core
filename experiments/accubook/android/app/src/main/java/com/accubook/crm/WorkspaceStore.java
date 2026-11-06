@@ -43,6 +43,9 @@ public final class WorkspaceStore {
     private static final String[] ITEM_HEADER = {
         "ItemID", "Description", "Quantity", "UnitRate", "LineTotal"
     };
+    private static final String[] REQUEST_HEADER = {
+        "RequestID", "Description", "Quantity", "Unit", "Status"
+    };
     private static final String[] CATALOG_HEADER = {
         "ItemID", "Category", "ItemName", "DefaultUnit", "DefaultRate"
     };
@@ -76,6 +79,14 @@ public final class WorkspaceStore {
         LineItem(List<String> r) {
             id=r.get(0); description=r.get(1); quantity=r.get(2);
             unitRate=r.get(3); amount=r.get(4);
+        }
+    }
+
+    public static final class MaterialRequest {
+        public final String id, description, quantity, unit, status;
+        MaterialRequest(List<String> row) {
+            id = row.get(0); description = row.get(1); quantity = row.get(2);
+            unit = row.get(3); status = row.get(4);
         }
     }
 
@@ -277,6 +288,8 @@ public final class WorkspaceStore {
         File path = jobFolder(job);
         directory(path);
         writeRows(new File(path, "job_items.csv"), emptyTable(ITEM_HEADER));
+        writeRows(new File(path, "material_requests.csv"), emptyTable(REQUEST_HEADER));
+        writeText(new File(path, "field_notes.md"), "");
         writeText(new File(path, "job_details.json"),
             "{\n  \"schema_version\": 1,\n  \"job_id\": \"" + job.id +
             "\",\n  \"scheduled_date\": \"" + job.date + "\"\n}\n");
@@ -544,6 +557,96 @@ public final class WorkspaceStore {
 
     public synchronized void discardRollbackSnapshot() throws IOException {
         BackupArchive.clearPreviousSnapshot(root);
+    }
+
+
+    /** Free-form field notes stay local, bounded and portable Markdown/plain text. */
+    public synchronized String fieldNotes(Job job) throws IOException {
+        File file = new File(jobFolder(job), "field_notes.md");
+        if (!file.isFile()) return ""; // older workspaces have no notes file
+        if (file.length() > 64 * 1024) throw new IOException("Job notes exceed 64 KB");
+        return new String(readBytes(new AtomicFile(file)), StandardCharsets.UTF_8);
+    }
+
+    public synchronized void saveFieldNotes(Job job, String notes) throws IOException {
+        if (notes == null) notes = "";
+        byte[] bytes = notes.getBytes(StandardCharsets.UTF_8);
+        if (bytes.length > 64 * 1024)
+            throw new IllegalArgumentException("Job notes exceed 64 KB");
+        if (notes.indexOf((char) 0) >= 0)
+            throw new IllegalArgumentException("Job notes cannot contain NUL bytes");
+        writeBytes(new File(jobFolder(job), "field_notes.md"), bytes);
+    }
+
+    private File requestFile(Job job) throws IOException {
+        File path = new File(jobFolder(job), "material_requests.csv");
+        if (!path.exists() && !new File(path.getPath() + ".bak").exists())
+            writeRows(path, emptyTable(REQUEST_HEADER)); // safe additive v1 migration
+        return path;
+    }
+
+    public synchronized List<MaterialRequest> materialRequests(Job job) throws IOException {
+        List<List<String>> rows = table(requestFile(job), REQUEST_HEADER);
+        List<MaterialRequest> result = new ArrayList<>();
+        for (int i = 1; i < rows.size(); i++) result.add(new MaterialRequest(rows.get(i)));
+        return result;
+    }
+
+    public synchronized MaterialRequest addMaterialRequest(Job job, String description,
+                                                           String quantity, String unit)
+        throws IOException {
+        String name = text(description, true), amount = text(quantity, true);
+        String measure = text(unit, true);
+        try {
+            BigDecimal value = new BigDecimal(amount);
+            if (value.signum() <= 0 || value.scale() > 4 ||
+                value.compareTo(new BigDecimal("1000000")) > 0)
+                throw new IllegalArgumentException("Quantity must be positive and <= 1,000,000");
+        } catch (NumberFormatException error) {
+            throw new IllegalArgumentException("Enter a numeric quantity");
+        }
+        List<String> added = row(id("REQ-"), name, amount, measure, "Requested");
+        File file = requestFile(job);
+        List<List<String>> rows = table(file, REQUEST_HEADER);
+        rows.add(added);
+        writeRows(file, rows);
+        return new MaterialRequest(added);
+    }
+
+    public synchronized void updateMaterialRequest(Job job, String requestId,
+                                                   String description, String quantity,
+                                                   String unit, String status)
+        throws IOException {
+        if (!Arrays.asList("Requested", "Ordered", "Delivered", "Used", "Cancelled")
+            .contains(status)) throw new IllegalArgumentException("Invalid material status");
+        String name = text(description, true), amount = text(quantity, true),
+            measure = text(unit, true);
+        try {
+            BigDecimal value = new BigDecimal(amount);
+            if (value.signum() <= 0 || value.scale() > 4 ||
+                value.compareTo(new BigDecimal("1000000")) > 0)
+                throw new IllegalArgumentException("Invalid material quantity");
+        } catch (NumberFormatException error) {
+            throw new IllegalArgumentException("Enter a numeric quantity");
+        }
+        File file = requestFile(job);
+        List<List<String>> rows = table(file, REQUEST_HEADER);
+        for (int i = 1; i < rows.size(); i++) {
+            if (rows.get(i).get(0).equals(requestId)) {
+                rows.set(i, row(requestId, name, amount, measure, status));
+                writeRows(file, rows);
+                return;
+            }
+        }
+        throw new IOException("Material request not found");
+    }
+
+    public synchronized void deleteMaterialRequest(Job job, String requestId) throws IOException {
+        File file = requestFile(job);
+        List<List<String>> rows = table(file, REQUEST_HEADER);
+        boolean removed = rows.removeIf(r -> r.size() > 0 && r.get(0).equals(requestId));
+        if (!removed) throw new IOException("Material request not found");
+        writeRows(file, rows);
     }
 
     public synchronized void exportBackup(OutputStream destination) throws IOException {
