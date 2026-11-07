@@ -555,6 +555,8 @@ public final class MainActivity extends Activity {
                                 case "CONTACT": contactDetails(item.id); break;
                                 case "JOB": job(item.id); break;
                                 case "CATALOG": catalogScreen(); break;
+                                case "INVENTORY":
+                                case "TOOL": inventoryScreen(); break;
                                 default: notice("Search result","This record cannot be opened.");
                             }
                         });
