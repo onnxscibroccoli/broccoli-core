@@ -168,6 +168,7 @@ public final class MainActivity extends Activity {
                 else if("calendar".equals(page))calendarScreen();
                 else if("catalog".equals(page))catalogScreen();
                 else if("settings".equals(page))settingsScreen();
+                else if("help".equals(page))helpScreen();
                 else if("contacts".equals(page))contactsScreen();
                 else if("contact".equals(page))contactsScreen();
                 else if("jobs".equals(page))jobsScreen();
@@ -1899,6 +1900,7 @@ public final class MainActivity extends Activity {
                 }
             });
         }
+        button(content,"? Help · simple steps and searchable answers",this::helpScreen);
         section("Accessibility");
         label(content,"Accubook uses labeled actions and optional gesture shortcuts. "
             +"The three-dot field menu supports touch and screen readers without "
@@ -1912,6 +1914,57 @@ public final class MainActivity extends Activity {
         label(content,"Multi-property history, recurring job scheduling, route-density "
             +"optimization and full accounts payable/general ledger controls are "
             +"not implemented yet, so they do not have misleading switches.",14,MUTED);
+    }
+
+
+    /** Searchable, permission-free help. Show the basics first, not a wall of text. */
+    private void helpScreen(){
+        currentScreen="help";
+        currentJobId=null;currentCustomerId=null;
+        screen("Help · get it done","Point, tap and work. Search only if you need an answer.");
+        navigation();
+        section("Three things to do first");
+        label(content,"1. Add a customer.  2. Create a job.  3. Work → Invoice.",17,LIGHT);
+        button(content,"＋ Add a customer",this::customerDialog);
+        button(content,"＋ Create a job",this::chooseCustomer);
+        EditText query=field(content,"Find help","photos, cash, invoice, reorder...");
+        LinearLayout results=new LinearLayout(this);
+        results.setOrientation(LinearLayout.VERTICAL);
+        content.addView(results);
+        final boolean[] expanded={false};
+        Runnable refresh=()->{
+            results.removeAllViews();
+            List<HelpTopics.Topic> found=HelpTopics.search(query.getText().toString());
+            int limit=query.length()==0 && !expanded[0]?5:found.size();
+            int count=0;
+            for(HelpTopics.Topic article:found){
+                if(count++>=limit)break;
+                Button item=button(results,article.title+"  ›",()->
+                    new AlertDialog.Builder(this).setTitle(article.title)
+                        .setMessage(article.full())
+                        .setPositiveButton("Got it",(whichDialog,which)->{})
+                        .show());
+                item.setBackgroundTintList(ColorStateList.valueOf(CARD));
+            }
+            if(found.isEmpty())label(results,"No help found. Try a shorter word.",15,MUTED);
+            if(found.size()>limit){
+                button(results,"Show all "+found.size()+" help topics",()->{
+                    expanded[0]=true;
+                    results.removeAllViews();
+                    for(HelpTopics.Topic article:found)
+                        button(results,article.title+"  ›",()->
+                            notice(article.title,article.full()));
+                });
+            }
+        };
+        query.addTextChangedListener(new TextWatcher(){
+            public void beforeTextChanged(CharSequence s,int start,int count,int after){}
+            public void onTextChanged(CharSequence s,int start,int before,int count){
+                refresh.run();
+            }
+            public void afterTextChanged(Editable value){}
+        });
+        refresh.run();
     }
 
     /** All business settings are local. Company identity merges into every document. */
@@ -2739,6 +2792,7 @@ public final class MainActivity extends Activity {
                 final String nextJob=next.id;
                 button(upcoming,"Open next job →",()->job(nextJob));
             }
+            button(content,"? How to use Accubook",this::helpScreen);
             section("Quick actions");
             button(content,"＋ New scheduled job",this::chooseCustomer);
             button(content,"Calendar · look ahead",this::calendarScreen);
