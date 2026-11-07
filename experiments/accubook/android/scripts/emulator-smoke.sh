@@ -107,13 +107,23 @@ for attempt in range(4):
     time.sleep(2)
 PY
 
+capture_screen() {
+  local name="$1"
+  mkdir -p build/ui-evidence
+  adb exec-out screencap -p > "build/ui-evidence/${name}.png"
+  adb shell uiautomator dump /sdcard/accubook-window.xml >/dev/null
+  adb exec-out cat /sdcard/accubook-window.xml > "build/ui-evidence/${name}.xml"
+  test -s "build/ui-evidence/${name}.png"
+}
 assert_visible 'Accubook'
+capture_screen '01-home'
 tap_node 'Try fictional sample job'
 tap_node 'Create sample'
 assert_visible 'Sample Customer'
 assert_visible 'Job history'
 tap_node 'DEMO - Gutter'
 assert_visible 'Reschedule / change time'
+capture_screen '02-job-overview'
 assert_visible 'Change job status'
 tap_node 'Change job status'
 tap_node 'In Progress'
@@ -122,10 +132,13 @@ assert_visible 'In Progress'
 # without opening the former long, overloaded job detail page.
 tap_node 'Notes'
 assert_visible 'Your customizable job checklist'
+capture_screen '03-job-notes'
 tap_node 'Billing'
 assert_visible 'Estimate and invoice'
+capture_screen '04-job-billing'
 tap_node 'Photos'
 assert_visible 'Add photo from device'
+capture_screen '05-job-photos'
 tap_node 'Overview'
 assert_visible 'Change job status'
 adb shell am force-stop com.accubook.crm
