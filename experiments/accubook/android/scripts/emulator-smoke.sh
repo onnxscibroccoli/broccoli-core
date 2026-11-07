@@ -166,7 +166,11 @@ adb shell am force-stop com.accubook.crm
 adb shell am start -n com.accubook.crm/.MainActivity
 sleep 2
 assert_visible 'In Progress'
-tap_node 'Open Home workspace'
+# Restart lands on Home; the previous long job UI may have kept its scroll
+# position. Seek top before looking for the global search button.
+for n in 1 2 3 4 5 6 7 8; do
+  adb shell input swipe 500 440 500 1520 160
+done
 tap_node 'Find anything'
 assert_visible 'Search this device'
 echo "ACCUBOOK_EMULATOR_SMOKE_PASS: launch/demo/job/changes/notes/restart/local-lookup"
