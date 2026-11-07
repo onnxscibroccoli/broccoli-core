@@ -67,11 +67,11 @@ public final class MainActivity extends Activity {
     private static final int BULK_CONTACT_PERMISSION = 709;
     private static final int BULK_PHOTO_REQUEST = 710;
     private boolean pendingImportAllContacts=false;
-    private static final int BACKGROUND = Color.rgb(10, 15, 29);
-    private static final int CARD = Color.rgb(25, 36, 56);
-    private static final int LIGHT = Color.rgb(233, 240, 252);
-    private static final int MUTED = Color.rgb(175, 193, 218);
-    private static final int ACCENT = Color.rgb(26, 104, 184);
+    private static final int BACKGROUND = Color.rgb(13, 22, 38);
+    private static final int CARD = Color.rgb(30, 50, 73);
+    private static final int LIGHT = Color.rgb(246, 250, 255);
+    private static final int MUTED = Color.rgb(201, 216, 232);
+    private static final int ACCENT = Color.rgb(23, 126, 198);
 
     private WorkspaceStore store;
     private CrmWorkspace crm;
@@ -238,7 +238,7 @@ public final class MainActivity extends Activity {
     private GradientDrawable box(int color) {
         GradientDrawable background = new GradientDrawable();
         background.setColor(color);
-        background.setCornerRadius(dp(22));
+        background.setCornerRadius(dp(26));
         return background;
     }
 
@@ -282,7 +282,9 @@ public final class MainActivity extends Activity {
         control.setAllCaps(false);
         control.setTextColor(Color.WHITE);
         control.setMinHeight(dp(52));
-        control.setBackgroundTintList(ColorStateList.valueOf(ACCENT));
+        control.setBackground(new android.graphics.drawable.RippleDrawable(
+            ColorStateList.valueOf(0x44ffffff),box(ACCENT),null));
+        control.setElevation(dp(2));
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.setMargins(0, dp(7), 0, dp(7));
@@ -296,7 +298,7 @@ public final class MainActivity extends Activity {
         result.setOrientation(LinearLayout.VERTICAL);
         result.setPadding(dp(17), dp(15), dp(17), dp(15));
         result.setBackground(box(CARD));
-        result.setElevation(dp(3));
+        result.setElevation(dp(5));
         LinearLayout.LayoutParams margins = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         margins.setMargins(0, dp(10), 0, dp(10));
@@ -2016,70 +2018,76 @@ public final class MainActivity extends Activity {
         });
     }
 
-    private void chooseAnyColor(String initial,java.util.function.Consumer<String> accept) {
-        int color;
-        try{color=Color.parseColor(initial);}catch(Exception ignored){color=ACCENT;}
-        LinearLayout root=new LinearLayout(this);
-        root.setOrientation(LinearLayout.VERTICAL);
-        int pad=dp(16);
-        root.setPadding(pad,dp(12),pad,dp(12));
-        TextView preview=new TextView(this);
-        preview.setText("Custom color preview");
-        preview.setTextSize(17);
-        preview.setGravity(android.view.Gravity.CENTER);
-        preview.setMinHeight(dp(70));
-        root.addView(preview);
-        EditText hex=new EditText(this);
-        hex.setSingleLine(true);
-        hex.setTextColor(Color.BLACK);
-        hex.setHint("#RRGGBB");
-        hex.setText(String.format(Locale.ROOT,"#%06X",color&0xffffff));
-        root.addView(hex,new LinearLayout.LayoutParams(-1,dp(52)));
-        String[] channel={"Red","Green","Blue"};
-        int[] progress={Color.red(color),Color.green(color),Color.blue(color)};
-        android.widget.SeekBar[] sliders=new android.widget.SeekBar[3];
-        Runnable render=()->{
-            int value=Color.rgb(progress[0],progress[1],progress[2]);
-            preview.setBackground(box(value));
-            preview.setTextColor(Color.luminance(value)>0.45?Color.BLACK:Color.WHITE);
-            hex.setText(String.format(Locale.ROOT,"#%06X",value&0xffffff));
+    /** Actual draggable rainbow/gradient GUI, no RGB channel sliders. */
+    private void chooseAnyColor(String initial,java.util.function.Consumer<String> accept){
+        int chosen;
+        try{chosen=Color.parseColor(initial);}catch(Exception ignored){chosen=ACCENT;}
+        LinearLayout wrapper=new LinearLayout(this);
+        wrapper.setOrientation(LinearLayout.VERTICAL);
+        wrapper.setPadding(dp(15),dp(8),dp(15),dp(14));
+        TextView instructions=new TextView(this);
+        instructions.setText("Drag across the rainbow to choose a color. "
+            +"Touch the large colored square to adjust the shade.");
+        instructions.setTextColor(Color.DKGRAY);
+        instructions.setTextSize(16);
+        wrapper.addView(instructions);
+        ColorSpectrumPicker spectrum=new ColorSpectrumPicker(this,chosen);
+        wrapper.addView(spectrum,new LinearLayout.LayoutParams(-1,dp(300)));
+        TextView sample=new TextView(this);
+        sample.setText("Preview · "+spectrum.hex());
+        sample.setGravity(android.view.Gravity.CENTER);
+        sample.setTextSize(17);
+        sample.setMinHeight(dp(55));
+        wrapper.addView(sample);
+        Runnable refresh=()->{
+            int color=spectrum.chosenColor();
+            sample.setBackground(box(color));
+            sample.setTextColor(Color.luminance(color)>0.45?Color.BLACK:Color.WHITE);
+            sample.setText("Preview · "+spectrum.hex());
         };
-        for(int i=0;i<3;i++){
-            final int index=i;
-            TextView label=new TextView(this);
-            label.setText(channel[i]+" channel");
-            label.setTextColor(Color.DKGRAY);
-            label.setTextSize(15);
-            root.addView(label);
-            android.widget.SeekBar slider=new android.widget.SeekBar(this);
-            slider.setMax(255);
-            slider.setProgress(progress[i]);
-            slider.setMinHeight(dp(44));
-            sliders[i]=slider;
-            root.addView(slider,new LinearLayout.LayoutParams(-1,dp(52)));
-            slider.setOnSeekBarChangeListener(new android.widget.SeekBar.OnSeekBarChangeListener(){
-                public void onProgressChanged(android.widget.SeekBar bar,int value,boolean user){
-                    if(user){progress[index]=value;render.run();}
-                }
-                public void onStartTrackingTouch(android.widget.SeekBar bar){}
-                public void onStopTrackingTouch(android.widget.SeekBar bar){}
-            });
+        spectrum.onChanged(refresh);refresh.run();
+        // Optional exact entry for expert users; no need for sliders or codes.
+        EditText expert=new EditText(this);
+        expert.setSingleLine(true);
+        expert.setTextColor(Color.DKGRAY);
+        expert.setHint("Optional exact #HEX code");
+        expert.setContentDescription("Optional exact six digit hex color");
+        expert.setInputType(InputType.TYPE_CLASS_TEXT|
+            InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
+        wrapper.addView(expert,new LinearLayout.LayoutParams(-1,dp(50)));
+        LinearLayout swatches=new LinearLayout(this);
+        swatches.setOrientation(LinearLayout.HORIZONTAL);
+        wrapper.addView(swatches);
+        String[] names={"Blue","Green","Orange","Purple","Red"};
+        int[] swatchColors={0xff287bd0,0xff178a64,0xffe78b38,0xff8955ca,0xffc84857};
+        for(int i=0;i<names.length;i++){
+            final int tint=swatchColors[i];
+            Button swatch=new Button(this);
+            swatch.setText("");
+            swatch.setContentDescription("Select "+names[i]+" color");
+            swatch.setMinHeight(dp(44));
+            swatch.setBackgroundTintList(ColorStateList.valueOf(tint));
+            LinearLayout.LayoutParams size=new LinearLayout.LayoutParams(0,dp(44),1);
+            size.setMargins(dp(3),dp(2),dp(3),dp(2));
+            swatches.addView(swatch,size);
+            swatch.setOnClickListener(v->spectrum.setChosenColor(tint));
         }
-        render.run();
-        AlertDialog dlg=new AlertDialog.Builder(this).setTitle("Choose any color")
-            .setView(root).setNegativeButton("Cancel",(d,w)->{})
-            .setPositiveButton("Apply color",null).create();
-        dlg.setOnShowListener(d->dlg.getButton(AlertDialog.BUTTON_POSITIVE)
+        AlertDialog dialog=new AlertDialog.Builder(this).setTitle("Pick a color")
+            .setView(wrapper)
+            .setNegativeButton("Cancel",(d,w)->{})
+            .setPositiveButton("Use this color",null).create();
+        dialog.setOnShowListener(d->dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             .setOnClickListener(v->{
-                String value=hex.getText().toString().trim().toUpperCase(Locale.ROOT);
-                if(!value.matches("#[0-9A-F]{6}")){
-                    hex.setError("Enter a six-digit hex color, e.g. #165DAB");
+                String typed=expert.getText().toString().trim().toUpperCase(Locale.ROOT);
+                String hex=typed.isEmpty()?spectrum.hex():typed;
+                if(!hex.matches("#[A-F0-9]{6}")){
+                    expert.setError("Use six-digit #HEX or choose visually");
                     return;
                 }
-                accept.accept(value);
-                dlg.dismiss();
+                accept.accept(hex);
+                dialog.dismiss();
             }));
-        dlg.show();
+        dialog.show();
     }
 
     private void scheduleEditor(WorkspaceStore.Job job) {
