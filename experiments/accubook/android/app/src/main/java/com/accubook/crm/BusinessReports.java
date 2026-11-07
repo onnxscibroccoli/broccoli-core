@@ -45,7 +45,8 @@ public final class BusinessReports {
         // A legacy expense request with no expenses still creates a headers-only CSV.
         // The new selector requires one category only when there are records to filter.
         if(allCategories.isEmpty())allCategories.add("(no expenses)");
-        export(store,crm,ExportSelection.legacy(sections,allCategories),destination);
+        export(store,crm,new ExportSelection(sections,new LinkedHashSet<>(
+            Arrays.asList(CrmWorkspace.PAYMENT_METHODS)),allCategories),destination);
     }
 
     public static void export(WorkspaceStore store,CrmWorkspace crm,
