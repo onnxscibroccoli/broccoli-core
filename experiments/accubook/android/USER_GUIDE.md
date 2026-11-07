@@ -49,7 +49,9 @@ Reports do **not** constitute a reconciled general ledger, AP/AR subsystem, tax 
 
 ## Calendar and due dates
 
-Job → Materials includes local dumpster pickup reminders. Job → Schedule can hand an event to Android Calendar. Automatic account calendar sync is optional and experimental, not a requirement to schedule jobs. Full recurring service maintenance intervals remain planned.
+Job → Materials includes local dumpster pickup reminders. Job → Schedule hands events to Android Calendar; automatic account calendar sync is optional and experimental.
+
+**Optional repeat services:** Turn on Business → Settings → Repeat-service due dates. Open a job → Overview → Set next service due. Enter when work actually finished and how many months/miles until another service. Home shows date-due counts, plus a list to pause/resume or manually update rules. Save or print due-service slips (PDF) exports date-due reminders only. Mileage-only rules show an odometer target, not a guessed due alert. No customers are contacted and no new appointment is created automatically.
 
 ## Quick troubleshooting
 
@@ -68,7 +70,7 @@ Job → Materials includes local dumpster pickup reminders. Job → Schedule can
 
 Start from the simple pattern: customer → site/job → notes/photos → lines → document. Add only the fields a worker actually uses. In Home, edit the **master checklist**; in an individual job, add only unusual requirements. Mark fields required sparingly. Use a catalog item for repeatable work and free text for exceptions. Hide irrelevant modules. Test offline, with large text, and time the workflow.
 
-Future examples include vehicle VIN/mileage and due-date logic for oil changes, measurements for gutters/roofing, zones for landscaping, HVAC equipment histories, and periodic servicing. Do not mistake examples for existing functionality.
+Custom VIN fields and basic month/mileage due rules are available. Structured vehicle histories, automatic repeat jobs, landscaping zones, inventory reconciliations and equipment integrations remain planned.
 
 ## Developer and maintainer map
 
@@ -104,6 +106,15 @@ Future examples include vehicle VIN/mileage and due-date logic for oil changes, 
 6. Update this guide, README and the acceptance matrix, distinguishing implementation, CI validation and physical-device verification.
 7. Test the same task as a solo contractor, field tech, scheduler, bookkeeper, and customer. Remove needless taps.
 
-**Not yet production verified:** Android 15 physical signoff, signature rotation/recovery, full accessibility acceptance, separate signed change-order PDF, consented camera evidence, universal all-fields search, recurring services, inventory, supplier ordering, GL reconciliation, QuickBooks import formats and launcher logo packaging.
+**Not yet production verified:** Android 15 physical signoff, signature rotation/recovery, full accessibility acceptance, separate signed change-order PDF, consented camera evidence, a persistent enterprise search index, automatic recurring job generation, inventory, supplier ordering, GL reconciliation, QuickBooks import formats and launcher logo packaging.
 
 **Design rule:** One obvious action; free text first; optional structure; editable owner settings; recoverable data; no background service dependency.
+
+
+## One local search box
+
+From **Home → Find anything**, type part of a name, phone number, address, job, invoice reference, material, PO, VIN in a custom field or note, then press Search. Results point to existing customer, contact, job or pricebook records. No search data is sent to a server. Searching requires at least two letters/digits and shows at most 80 best matches. For broad searches, add more terms.
+
+## Printable service reminders
+
+Check the actual date work was completed before setting a due rule. Mileage-only services need a current reading; Accubook cannot read vehicle odometers. The optional due-service PDF does not contact anyone automatically. Choosing a cloud document provider for the save destination may upload the PDF through that provider, despite Accubook itself having no INTERNET permission.
