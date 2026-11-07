@@ -77,6 +77,7 @@ public final class SecureArchive {
         byte[] salt=Arrays.copyOfRange(header,MAGIC.length,MAGIC.length+SALT);
         byte[] nonce=Arrays.copyOfRange(header,MAGIC.length+SALT,header.length);
         File temporary=null;
+        boolean authenticated=false;
         try {
             Cipher cipher=Cipher.getInstance("AES/GCM/NoPadding");
             cipher.init(Cipher.DECRYPT_MODE,key(passphrase,salt),
@@ -96,6 +97,7 @@ public final class SecureArchive {
                 }
                 output.getFD().sync();
             }
+            authenticated=true;
             return temporary;
         }catch(GeneralSecurityException error){
             throw new IOException("Encrypted backup could not be unlocked",error);
@@ -103,8 +105,7 @@ public final class SecureArchive {
             throw new IOException("Wrong passphrase, corrupted backup, or failed write: "
                 +error.getMessage(),error);
         }finally{
-            if(temporary!=null && !temporary.isFile())
-                temporary.delete();
+            if(!authenticated&&temporary!=null)temporary.delete();
         }
     }
     /**
