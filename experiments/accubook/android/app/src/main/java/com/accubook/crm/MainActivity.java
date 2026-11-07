@@ -1,3 +1,128 @@
+package com.accubook.crm;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.provider.OpenableColumns;
+import android.content.ClipData;
+import android.widget.CheckBox;
+import android.widget.Toast;
+import android.graphics.Typeface;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Map;
+import java.math.BigDecimal;
+import java.time.LocalTime;
+import java.io.FileInputStream;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.provider.ContactsContract;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.ImageView;
+import android.content.ContentResolver;
+import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.Insets;
+import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.text.InputType;
+import android.view.View;
+import android.view.WindowInsets;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.InputStream;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.DayOfWeek;
+import java.time.temporal.TemporalAdjusters;
+import java.util.List;
+
+/** Offline debug UI. No remote permissions, services or privileged APIs. */
+public final class MainActivity extends Activity {
+    private static final int EXPORT_REQUEST = 702;
+    private static final int CONTACT_REQUEST = 703;
+    private static final int PHOTO_REQUEST = 704;
+    private static final int RESTORE_REQUEST = 705;
+    private static final int ATTACHMENT_REQUEST = 706;
+    private static final int LOGO_REQUEST = 707;
+    private static final int ATTACHMENT_EXPORT_REQUEST = 708;
+    private static final int BULK_CONTACT_PERMISSION = 709;
+    private static final int BULK_PHOTO_REQUEST = 710;
+    private static final int BACKGROUND = Color.rgb(10, 15, 29);
+    private static final int CARD = Color.rgb(25, 36, 56);
+    private static final int LIGHT = Color.rgb(233, 240, 252);
+    private static final int MUTED = Color.rgb(175, 193, 218);
+    private static final int ACCENT = Color.rgb(26, 104, 184);
+
+    private WorkspaceStore store;
+    private CrmWorkspace crm;
+    private String pendingAttachmentJobId;
+    private CrmWorkspace.Attachment pendingAttachmentExport;
+    private String pendingAttachmentExportId;
+    private String pendingAttachmentExportJob;
+    private boolean bulkPhotoSelection;
+    private LinearLayout content;
+    private String currentJobId;
+    private String currentCustomerId;
+    private String pendingPhotoJobId;
+    private String pendingInvoice;
+    private boolean pendingBackup;
+    private LocalDate selectedDate = LocalDate.now();
+    private String scheduleMode = "Week";
+    private String currentScreen = "home";
+    private static final int UNLOCK_REQUEST=853;
+    private static final int ROUTE_LOCATION_PERMISSION=855;
+    private static final int ROUTE_EXPORT_REQUEST=856;
+    private static final int REPORT_EXPORT_REQUEST=857;
+    private static final int ENCRYPTED_BACKUP_EXPORT=858;
+    private static final int ENCRYPTED_BACKUP_IMPORT=859;
+    private boolean lockRequestInProgress=false;
+    private boolean unlocked=false;
+    private long lastHiddenAt=0;
+    private Bundle restoreAfterUnlock;
+    private String routeJobId;
+    private String pendingRouteExportId;
+    private boolean[] pendingReportSections;
+    private android.location.LocationManager locationManager;
+    private android.location.LocationListener routeListener;
+    private char[] pendingBackupPassword;
+
+
+    @Override
+    protected void onCreate(Bundle state) {
+        super.onCreate(state);
+        getWindow().setStatusBarColor(BACKGROUND);
+        getWindow().setNavigationBarColor(BACKGROUND);
+        if (state != null) {
+            pendingInvoice = state.getString("invoice");
+            pendingBackup = state.getBoolean("backup");
+            pendingPhotoJobId = state.getString("photoJob");
+            pendingAttachmentJobId = state.getString("attachmentJob");
+            pendingAttachmentExportJob = state.getString("attachmentExportJob");
+            pendingAttachmentExportId = state.getString("attachmentExportId");
+            scheduleMode = state.getString("scheduleMode", "Week");
+            try { selectedDate = LocalDate.parse(
+                state.getString("scheduleDate", LocalDate.now().toString())); }
+            catch (Exception ignored) { selectedDate = LocalDate.now(); }
+        }
         if(UnlockActivity.isEnabled(this)){
             getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE);
             restoreAfterUnlock=state;
