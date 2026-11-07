@@ -26,7 +26,7 @@ public final class InventoryRulesSmoke {
         reject(()->InventoryRules.quantity("0.00001",false),"Excess quantity precision");
         reject(()->InventoryRules.cost("0.001"),"Excess currency precision");
         reject(()->InventoryRules.cost("-0.01"),"Negative unit cost");
-        reject(()->InventoryRules.text("Name\\nInjected",160,true),"Control chars");
+        reject(()->InventoryRules.text("Name\nInjected",160,true),"Control chars");
         InventoryRules.company(row(mid,"Shingle","bundle","3.5","28.00",catalog));
         InventoryRules.site(row(sid,"Shingle","bundle","2","Delivered"));
         InventoryRules.tool(row(tid,"Ladder","TAG-001","Checked Out",jid));
