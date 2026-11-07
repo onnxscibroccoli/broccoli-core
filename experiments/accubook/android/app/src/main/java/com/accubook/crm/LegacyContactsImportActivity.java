@@ -49,7 +49,10 @@ public final class LegacyContactsImportActivity extends Activity {
         button.setOnClickListener(v->onClick.run());return button;
     }
     @Override protected void onCreate(Bundle state){
-        super.onCreate(state);getWindow().setStatusBarColor(BG);
+        super.onCreate(state);
+        if((getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE)!=0)
+            AnnotationUi.install(this,()->"legacy_contacts_import");
+        getWindow().setStatusBarColor(BG);
         getWindow().setNavigationBarColor(BG);
         startScreen();
     }
