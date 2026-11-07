@@ -18,6 +18,84 @@
 > Portable AES-GCM password-encrypted backups are an **additional** safeguard.
 
 
+## November 7, 2026 — owner-led usability iteration (development)
+
+### Verified user feedback
+
+The owner reported that **local dumpster-reminder notifications, multi-photo import,
+and native biometric/device PIN unlock work** on their Android device. Google
+Calendar auto-sync did **not** work reliably. Other new changes are code/CI verified
+only until physically tested.
+
+### Updated workspaces and workflows
+
+- **Contacts and Customers are separate.** Open **Contacts** > **Import ALL phone
+  contacts**. Android asks for contact permission once; Accubook imports the
+  permitted phone address book (including contacts without telephone numbers)
+  into an independent private `master_data/contacts.csv`. One explicit action
+  copies the full set with de-duplication in a single atomic local CSV write.
+  Search, browse, add, edit and delete contacts without creating customers.
+  From an individual contact choose **Make this contact a customer** to opt
+  in to the customer/job relationship. The old user-selected multi-import also
+  populates Contacts only; it never silently creates customers.
+- **Editable master job template:** Business > **Customize master job fields**.
+  Edit, rename, add or remove fields. Supported inputs: checkboxes, free text,
+  dates and numeric values, each optionally required. Initial examples include
+  site estimate visit, materials delivered, dumpster delivered/picked up and
+  site-specific instructions. On any Job, fields may be renamed/removed or
+  added with independent overrides; master edits do not overwrite existing job
+  values. A required field must be completed before status can change to
+  Completed. Older milestone records are preserved in a separate legacy view.
+- **Real visual rainbow picker:** Drag across a visible hue gradient and a
+  2-D light/dark saturation palette. Named one-tap color presets and optional
+  exact hexadecimal entry remain; **no RGB channel sliders**.
+- **Estimates and invoices:** Headings and exported HTML no longer display
+  “Draft”. Internal financial limitations remain: no legally issued immutable
+  invoice numbering, automated taxes or payment settlement verification.
+- **Modernized UI:** Six two-column workspace tabs (Home, Jobs, Calendar,
+  Contacts, Customers, Business), rounder controls, stronger text contrast and a
+  Home overview showing today/upcoming jobs, customers, independent contacts,
+  sent estimates, job value, payments, open balance and next appointment.
+- **Calendar recovery path:** Job > **Add this job to Calendar app** opens the
+  Android calendar's normal event editor prefilled with title, site, start/end
+  and short notes. The user picks a Google/device calendar and explicitly
+  presses Save. This uses the same user-confirmed handoff pattern as the
+  working dumpster calendar reminder. Automatic one-way account sync remains
+  under **Advanced calendar settings (experimental)** and is **no longer
+  triggered automatically by opening Schedule**. Manual handoff is **not
+  two-way automatic synchronization** and may create duplicates if repeated.
+
+### Manual test path (synthetic customers only)
+
+1. Open Contacts, select **Import ALL phone contacts** and grant permission.
+   Confirm the Contacts count increases but **Customers count does not**.
+2. Open a contact and explicitly promote it to a customer. Confirm it appears
+   in Customers and remains in Contacts.
+3. Business > Customize master job fields: rename Dumpster delivered to
+   Site inspection, add a required field, and create a new job. Change a
+   checkbox and reopen the job to verify persistence.
+4. Add or rename a field only on that job. Confirm the master template and a
+   second job remain unchanged. Try to mark the first job Complete with an
+   unsatisfied required field; expect a clear validation message.
+5. Pick a brand color by dragging the rainbow/2-D shade controls, without
+   typing a code. Confirm the selected color persists after reopening Business.
+6. Open Estimate and Invoice previews. Neither heading should say Draft.
+7. Tap Add this job to Calendar app, inspect the prefilled event, choose the
+   intended Google/device account and save there. Review the event in the
+   calendar app. Do not use experimental bulk sync for real jobs.
+8. Confirm the previously working fingerprint/PIN lock, photo import, and
+   local dumpster pickup notification were not regressed.
+
+### Open acceptance gates
+
+- Physical Android 15 tests: permissions, import thousands of contacts, manual
+  calendar event selection, all job field kinds, screen reader/touch target
+  navigation, document preview/PDF quality and backup recovery.
+- Unit/CI checks are not substitutes for a complete business acceptance.
+- App lock protects UI access but **active on-disk CSV data is not encrypted**;
+  password-protected backups are an optional separate feature.
+
+
 **Maturity: In development; not a completed field-service CRM.**
 **Owner:** `onnxscibroccoli/broccoli-core`, isolated `experiments/accubook/android`.
 **Product acceptance contract:** [PRODUCT_REQUIREMENTS.md](PRODUCT_REQUIREMENTS.md).
