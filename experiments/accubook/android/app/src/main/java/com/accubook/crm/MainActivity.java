@@ -2949,10 +2949,10 @@ public final class MainActivity extends Activity {
             final WorkspaceStore.Job work = selected;
             final WorkspaceStore.Customer client = customer;
             screen(work.title, client.displayName() + " · " + work.date + " · " + work.status);
-            navigation();
+            jobQuickNav();
             jobSectionTabs(id);
-            button(content, "Customer: " + client.displayName(), () -> customer(client.id));
             if("Overview".equals(selectedJobSection)){
+            button(content, "Customer: " + client.displayName(), () -> customer(client.id));
             jobQuickActions(work,client);
             section("Job details");
             CrmWorkspace.Appointment appt=crm.appointment(work);
@@ -3114,6 +3114,28 @@ public final class MainActivity extends Activity {
     /** Adopt only high-value ServiceTitan-like field actions, without any SDK,
      * contacts permission, location tracking, or hidden information sharing.
      */
+    /** Evidence-led field navigation: a single row instead of six global
+     * workspaces above every job action. Every other workspace stays accessible
+     * from More, and Android Back still preserves the current job context.
+     */
+    private void jobQuickNav(){
+        LinearLayout row=new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        content.addView(row,new LinearLayout.LayoutParams(-1,-2));
+        jobActionButton(row,"← Jobs","Back to all jobs",this::jobsScreen);
+        jobActionButton(row,"Home","Open dashboard",this::home);
+        jobActionButton(row,"⋯ More","Other workspaces",()->{
+            String[] destinations={"Calendar","Contacts","Customers","Business"};
+            new AlertDialog.Builder(this).setTitle("Go to workspace")
+                .setItems(destinations,(d,selection)->{
+                    if(selection==0)calendarScreen();
+                    else if(selection==1)contactsScreen();
+                    else if(selection==2)customersScreen();
+                    else businessScreen();
+                }).setNegativeButton("Stay in job",(d,w)->{}).show();
+        });
+    }
+
     private void jobQuickActions(WorkspaceStore.Job work,WorkspaceStore.Customer client){
         String location=(work.street+" "+work.city+" "+work.state+" "+work.zip).trim();
         boolean canCall=client.phone!=null&&!client.phone.trim().isEmpty();
