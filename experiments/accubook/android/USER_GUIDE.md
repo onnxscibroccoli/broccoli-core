@@ -1,5 +1,23 @@
 # Accubook — Point, tap, and get the job done
 
+## Test a screen and send feedback (debug APK)
+
+1. Long-press a label or button. Tap **Add annotation** if its action menu opens.
+2. Describe what happened and what you expected; tap **Save**.
+3. Long-press it again to **Edit** or **Delete** that note.
+4. Open **Home** or **Business** → **Development notes · Copy / export JSON**.
+5. Choose **Copy JSON** and paste it into your development chat. Or save a JSON file.
+
+Your notes never leave the device automatically. JSON may include names or
+screen text; inspect it before sending. Notes are not part of workspace backups.
+
+For photo order: Job → **Photos** → photo **⋮** → **Drag to reorder**.
+The photos jiggle. Touch and drag any photo directly to where you want it;
+let go to save. No additional long-press is required. Tap **Done rearranging
+photos** to leave reorder mode. The photo menu still offers **Move up** and
+**Move down** for users who do not drag.
+
+
 ## Materials and tools in stock (development preview)
 
 If you want inventory, open **Business → Settings → Modules** and enable

@@ -69,6 +69,8 @@ public final class BusinessSetupActivity extends Activity {
     }
     @Override protected void onCreate(Bundle state){
         super.onCreate(state);
+        if((getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE)!=0)
+            AnnotationUi.install(this,()->"business_setup");
         getWindow().setStatusBarColor(BG);
         getWindow().setNavigationBarColor(BG);
         try{render();}

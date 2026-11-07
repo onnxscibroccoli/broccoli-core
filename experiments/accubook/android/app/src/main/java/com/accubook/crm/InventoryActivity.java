@@ -26,6 +26,8 @@ public final class InventoryActivity extends Activity {
     private int dp(int px){return (int)(px*getResources().getDisplayMetrics().density+0.5f);}
     @Override public void onCreate(Bundle saved){
         super.onCreate(saved);
+        if((getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE)!=0)
+            AnnotationUi.install(this,()->"inventory"+(preferredJob==null?"":"/job/"+preferredJob));
         getWindow().setStatusBarColor(BG);getWindow().setNavigationBarColor(BG);
         preferredJob=getIntent().getStringExtra("jobId");
         try{

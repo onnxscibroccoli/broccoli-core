@@ -168,3 +168,37 @@ release without independent device acceptance. When collaborating with the
 Broccoli/Grok Governor or other AI developers, exchange module boundaries,
 file schema versions, test results and exact commit SHAs; never treat a tool
 notification as device verification.
+
+
+## Private development feedback module (2026-11-07; experimental)
+
+- `AnnotationRecords` is an Android-independent, versioned record schema with
+  strict size validation, upsert by logical screen+element key, CSV round-trip,
+  and JSON serialization. `AnnotationRecordsSmoke` runs with bare `javac`.
+- `AnnotationStore` uses Android `AtomicFile` and strict UTF-8 to keep notes
+  only in internal app-private storage outside the customer workspace.
+- `AnnotationUi` decorates native leaf controls in debug builds without
+  replacing existing `OnLongClickListener` actions or EditText selection.
+  Existing photo, invoice-line and field menus opt into **Add annotation**.
+- Context: full Activity/screen, optional job/customer identifiers, stable
+  record key where available, view type, descriptive label, structural
+  hierarchy path, creation/update timestamps and tester-written note.
+- The owner explicitly copies JSON or invokes Android SAF to save it. No
+  network permission, telemetry SDK, bug reporter, automatic sync, screenshot
+  capture or hidden uploads. Copying to the clipboard or selecting an external
+  document provider is an intentional disclosure, not an automatic transfer.
+- This experimental test module is debug-only. App uninstall deletes private
+  notes; they are intentionally excluded from ordinary customer ZIP backups.
+- Constraints: WebView HTML nodes are not native leaf Android controls;
+  dynamic-path bindings can change after a UI restructure. Validate on real
+  Android devices (TalkBack/large-font/rotation/gesture conflicts).
+
+## Touch-first photo reorder (2026-11-07; experimental)
+
+Selecting the existing photo **Drag to reorder** menu item switches the job
+Photos section into persistent jiggle mode; a single ACTION_DOWN immediately
+starts the standard Android drag/drop transaction. An accepted drop commits
+using the existing validated `movePhoto` storage operation and exits mode.
+The on-screen **Done rearranging photos** button exits without a drop. All
+repeat animations are canceled on navigation/re-render to prevent leaks.
+Existing move-up/down and long-press overflow actions remain supported.

@@ -119,11 +119,51 @@ public final class MainActivity extends Activity {
     private android.location.LocationManager locationManager;
     private android.location.LocationListener routeListener;
     private char[] pendingBackupPassword;
+    // Development-only photo reorder mode; never requires a second long-press.
+    private boolean photoReorderMode=false;
+    private String photoReorderJobId=null;
+    private final List<android.animation.ObjectAnimator> photoJiggles=new ArrayList<>();
+
+    private boolean developmentFeedbackEnabled(){
+        return (getApplicationInfo().flags &
+            android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE)!=0;
+    }
+    private void stopPhotoJiggles(){
+        for(android.animation.ObjectAnimator animation:photoJiggles)animation.cancel();
+        photoJiggles.clear();
+    }
+    private void jigglePhoto(View tile){
+        android.animation.ObjectAnimator animation=android.animation.ObjectAnimator.ofFloat(
+            tile,View.ROTATION,-2.0f,2.0f);
+        animation.setDuration(150);
+        animation.setRepeatCount(android.animation.ValueAnimator.INFINITE);
+        animation.setRepeatMode(android.animation.ValueAnimator.REVERSE);
+        if(android.animation.ValueAnimator.areAnimatorsEnabled()){
+            photoJiggles.add(animation);
+            animation.start();
+        }else tile.setAlpha(0.85f); // Android reduced-motion setting.
+    }
+    private boolean startPhotoDrag(View touched,View panel,String photo){
+        if(!photoReorderMode)return false;
+        ClipData data=ClipData.newPlainText("AccubookPhoto",photo);
+        return touched.startDragAndDrop(data,new View.DragShadowBuilder(panel),null,0);
+    }
+    private void beginPhotoReorder(WorkspaceStore.Job job){
+        photoReorderJobId=job.id;
+        photoReorderMode=true;
+        currentJobSection="photos";
+        job(job.id);
+    }
+
 
 
     @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
+        if(developmentFeedbackEnabled())
+            AnnotationUi.install(this,()->unlocked?
+                "main/"+currentScreen+(currentJobId==null?"":"/job/"+currentJobId)
+                +(currentCustomerId==null?"":"/customer/"+currentCustomerId):"locked");
         getWindow().setStatusBarColor(BACKGROUND);
         getWindow().setNavigationBarColor(BACKGROUND);
         if (state != null) {
@@ -282,6 +322,9 @@ public final class MainActivity extends Activity {
     }
 
     private void screen(String title, String subtitle) {
+        stopPhotoJiggles();
+        if(!"job".equals(currentScreen)||!"photos".equals(currentJobSection))
+            photoReorderMode=false;
         ScrollView scroll = new ScrollView(this);
         scroll.setFillViewport(true);
         scroll.setBackgroundColor(BACKGROUND);
@@ -2016,12 +2059,15 @@ public final class MainActivity extends Activity {
         if(index<count-1)actions.add("Move down");
         if(count>1)actions.add("Drag to reorder");
         actions.add("Delete photo");
+        if(developmentFeedbackEnabled()) actions.add("Add annotation");
         new AlertDialog.Builder(this).setTitle("Photo "+(index+1))
             .setItems(actions.toArray(new String[0]),(d,which)->{
                 String choice=actions.get(which);
                 if(choice.equals("Drag to reorder")){
-                    ClipData dragData=ClipData.newPlainText("AccubookPhoto",name);
-                    source.startDragAndDrop(dragData,new View.DragShadowBuilder(source),null,0);
+                    beginPhotoReorder(job);
+                }else if(choice.equals("Add annotation")){
+                    AnnotationUi.edit(this,"job/"+job.id+"/photos","photo/"+name,
+                        "job/photos/"+name,"ImageView","Photo "+(index+1));
                 }else if(choice.equals("Delete photo")){
                     new AlertDialog.Builder(this).setTitle("Delete this photo?")
                         .setMessage("This cannot be undone. Export a backup first.")
@@ -2086,6 +2132,8 @@ public final class MainActivity extends Activity {
         LinearLayout.LayoutParams margins=new LinearLayout.LayoutParams(0,-2,1);
         margins.setMargins(dp(3),dp(5),dp(3),dp(5));
         row.addView(panel,margins);
+        AnnotationUi.bind(panel,"job/"+job.id+"/photo/"+name);
+        if(photoReorderMode&&job.id.equals(photoReorderJobId))jigglePhoto(panel);
         LinearLayout heading=new LinearLayout(this);
         heading.setOrientation(LinearLayout.HORIZONTAL);
         panel.addView(heading);
@@ -2093,8 +2141,20 @@ public final class MainActivity extends Activity {
         label.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));
         Runnable actions=()->photoActionMenu(job,name,number-1,count,panel);
         fieldMoreButton(heading,"photo "+number,actions);
-        panel.setOnLongClickListener(v->{actions.run();return true;});
-        label.setOnLongClickListener(v->{actions.run();return true;});
+        panel.setOnLongClickListener(v->{
+            if(photoReorderMode)return true;
+            actions.run();return true;
+        });
+        label.setOnLongClickListener(v->{
+            if(photoReorderMode)return true;
+            actions.run();return true;
+        });
+        panel.setOnTouchListener((v,event)->{
+            if(!photoReorderMode)return false;
+            if(event.getActionMasked()==android.view.MotionEvent.ACTION_DOWN)
+                startPhotoDrag(v,panel,name);
+            return true;
+        });
         panel.setOnDragListener((target,event)->{
             switch(event.getAction()){
                 case android.view.DragEvent.ACTION_DRAG_STARTED:
@@ -2110,6 +2170,8 @@ public final class MainActivity extends Activity {
                     try{
                         String dragged=event.getClipData().getItemAt(0).coerceToText(this).toString();
                         store.movePhoto(job,dragged,number-1);
+                        photoReorderMode=false;
+                        photoReorderJobId=null;
                         job(job.id);
                     }catch(Exception e){error(e);}
                     return true;
@@ -2123,8 +2185,22 @@ public final class MainActivity extends Activity {
             thumbnail.setScaleType(ImageView.ScaleType.CENTER_CROP);
             thumbnail.setContentDescription("Open photo "+number+" of "+count);
             panel.addView(thumbnail,new LinearLayout.LayoutParams(-1,dp(150)));
-            thumbnail.setOnClickListener(v->showPhotoPreview(job,name));
-            thumbnail.setOnLongClickListener(v->{actions.run();return true;});
+            thumbnail.setOnClickListener(v->{
+                if(!photoReorderMode)showPhotoPreview(job,name);
+            });
+            AnnotationUi.bind(thumbnail,"job/"+job.id+"/photo/"+name);
+            thumbnail.setOnLongClickListener(v->{
+                if(photoReorderMode)return true;
+                actions.run();return true;
+            });
+            // When jiggle mode is active, a single touch starts a drag immediately.
+            // No extra long-press and no interference with ordinary preview taps.
+            thumbnail.setOnTouchListener((v,event)->{
+                if(!photoReorderMode)return false;
+                if(event.getActionMasked()==android.view.MotionEvent.ACTION_DOWN)
+                    startPhotoDrag(v,panel,name);
+                return true;
+            });
         }catch(Exception exception){
             label(panel,"Preview unavailable. Use ⋮ to reorder or delete.",13,MUTED);
         }
@@ -2262,6 +2338,9 @@ public final class MainActivity extends Activity {
                 }).show());
             button(content,"Choose business logo",this::pickLogo);
             button(content,"Settings · features and accessibility",this::settingsScreen);
+            if(developmentFeedbackEnabled())
+                button(content,"Development notes · Copy / export JSON",
+                    ()->AnnotationUi.exportDialog(this));
             button(content,"Import legacy CRM contacts from CSV",this::openContactCsvImport);
             button(content,"Quick setup · tailor Accubook to your business",
                 ()->openBusinessSetup());
@@ -3026,6 +3105,9 @@ public final class MainActivity extends Activity {
             screen("Accubook · Dashboard",greeting+
                 "  |  PRIVATE • OFFLINE • YOUR DATA");
             navigation();
+            if(developmentFeedbackEnabled())
+                button(content,"Development notes · Copy / export JSON",
+                    ()->AnnotationUi.exportDialog(this));
             button(content,"Find anything · name, phone, address, job, invoice",this::universalSearchScreen);
             section("Today · live overview");
             int todayJobs=0,upcomingJobs=0,sentQuotes=0,active=0;
@@ -3453,6 +3535,16 @@ public final class MainActivity extends Activity {
             }
             if("photos".equals(currentJobSection)){
             section("Job photos");
+            if(photoReorderMode&&work.id.equals(photoReorderJobId)){
+                label(content,"Reorder mode: photos jiggle. Touch a photo and drag it " +
+                    "directly to its new position; release to save. No long-press needed.",
+                    16,LIGHT);
+                button(content,"Done rearranging photos",()->{
+                    photoReorderMode=false;
+                    photoReorderJobId=null;
+                    job(work.id);
+                });
+            }
             button(content, "Add photo from device", () -> pickPhoto(work));
             button(content, "Import multiple photos",()->pickAttachments(work,true));
             List<String> photoNames=store.photos(work);
@@ -3558,11 +3650,16 @@ public final class MainActivity extends Activity {
             actions.add("Edit line");
             actions.add("Remove line");
         }else actions.add("Approved change-order lines are locked");
+        if(developmentFeedbackEnabled())actions.add("Add annotation");
         new AlertDialog.Builder(this).setTitle(line.description)
             .setItems(actions.toArray(new String[0]),(d,which)->{
                 String selected=actions.get(which);
                 try{
                     switch(selected){
+                        case "Add annotation":
+                            AnnotationUi.edit(this,"job/"+job.id+"/invoice","line/"+line.id,
+                                "job/invoice/line/"+line.id,"InvoiceLine",line.description);
+                            break;
                         case "Move up":
                             store.moveLine(job,line.id,index-1);job(job.id);break;
                         case "Move down":
@@ -3736,10 +3833,17 @@ public final class MainActivity extends Activity {
         if(index<length-1)options.add("Move down");
         options.add(selected.required?"Make optional":"Set required");
         options.add("Remove");
+        if(developmentFeedbackEnabled())options.add("Add annotation");
         new AlertDialog.Builder(this).setTitle(selected.label)
             .setItems(options.toArray(new String[0]),(dialog,which)->{
                 String choice=options.get(which);
                 try{
+                    if(choice.equals("Add annotation")){
+                        AnnotationUi.edit(this,master?"master_template":"job/"+job.id+"/fields",
+                            "field/"+selected.id,"fields/"+selected.id,
+                            "JobTemplateField",selected.label);
+                        return;
+                    }
                     JobTemplates forms=new JobTemplates(store);
                     if(choice.equals("Edit field")){
                         if(master)editMasterField(selected);else editJobField(job,selected);
@@ -4173,6 +4277,7 @@ public final class MainActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(AnnotationUi.handleExportResult(this,requestCode,resultCode,data))return;
         if(requestCode==CONTACT_CSV_IMPORT_REQUEST){
             if(resultCode==RESULT_OK && store!=null)contactsScreen();
             return;

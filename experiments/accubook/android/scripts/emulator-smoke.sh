@@ -139,10 +139,64 @@ for attempt in range(11):
 raise SystemExit('Missing job tab: '+label)
 PY
 }
+# Debug feedback must coexist with ordinary taps and with existing menus.
+# Use the current accessibility hierarchy, not screen coordinates or resource IDs.
+long_press_node() {
+  LABEL="$1" python3 - <<'PY'
+import os,re,subprocess,xml.etree.ElementTree as ET
+subprocess.run(['adb','shell','uiautomator','dump','/sdcard/accubook-window.xml'],
+               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+root=ET.fromstring(subprocess.check_output(
+    ['adb','exec-out','cat','/sdcard/accubook-window.xml']))
+label=os.environ['LABEL'].lower()
+for node in root.iter('node'):
+    if label not in (node.attrib.get('text','')+' '+node.attrib.get('content-desc','')).lower():
+        continue
+    bounds=re.findall(r'\[(-?\d+),(-?\d+)\]',node.attrib.get('bounds',''))
+    if len(bounds)!=2:continue
+    (l,t),(r,b)=[tuple(map(int,p)) for p in bounds]
+    x,y=(l+r)//2,(t+b)//2
+    print('LONG_PRESS',label,x,y)
+    subprocess.run(['adb','shell','input','swipe',str(x),str(y),str(x),str(y),'1200'],check=True)
+    exit(0)
+raise SystemExit('Cannot find node to long-press: '+label)
+PY
+}
+write_annotation_note() {
+  python3 - <<'PY'
+import re, subprocess, xml.etree.ElementTree as ET
+subprocess.run(['adb','shell','uiautomator','dump','/sdcard/accubook-window.xml'],
+               stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,check=True)
+root=ET.fromstring(subprocess.check_output(
+    ['adb','exec-out','cat','/sdcard/accubook-window.xml']))
+for node in root.iter('node'):
+    if node.attrib.get('class') != 'android.widget.EditText':continue
+    boxes=re.findall(r'\[(-?\d+),(-?\d+)\]',node.attrib.get('bounds',''))
+    if len(boxes)!=2:continue
+    (a,b),(c,d)=[tuple(map(int,p)) for p in boxes]
+    subprocess.run(['adb','shell','input','tap',str((a+c)//2),str((b+d)//2)],check=True)
+    subprocess.run(['adb','shell','input','text','Jiggle%safter%stap%snot%shold'],check=True)
+    exit(0)
+raise SystemExit('Annotation notepad EditText missing')
+PY
+}
+
 # Fresh empty workspaces now display the offline setup before the home screen.
 # Exercise Save, then continue the existing end-to-end job workflow.
 tap_node 'Save setup'
 assert_visible 'Accubook'
+# Long-press is additive and doesn't change the button's normal tap action.
+long_press_node 'Find anything'
+assert_visible 'Add annotation'
+write_annotation_note
+adb shell input keyevent KEYCODE_BACK || true
+tap_node 'Save'
+long_press_node 'Find anything'
+assert_visible 'Edit annotation'
+tap_node 'Cancel'
+tap_node 'Development notes'
+assert_visible 'Jiggle after tap not hold'
+tap_node 'Close'
 tap_node 'Try fictional sample job'
 tap_node 'Create sample'
 assert_visible 'Sample Customer'

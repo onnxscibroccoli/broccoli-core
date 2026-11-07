@@ -21,6 +21,24 @@ public final class HelpTopics {
     }
     public static List<Topic> all(){
         return Arrays.asList(
+            new Topic("Annotate a screen and copy feedback JSON",
+                "Development APK only: long-press an element and write a private note.",
+                "Long-press a button or label and type a note. If the existing menu opens, " +
+                "select Add annotation. Long-press the same element again to edit or delete. " +
+                "Open Home or Business → Development notes → Copy / export JSON. " +
+                "Copy to paste into your development chat or save a local JSON file. " +
+                "No telemetry or automatic upload. Clipboard/selected document providers " +
+                "may disclose the notes; review names and screen labels before sharing. " +
+                "Unexported testing notes are deleted when the app is uninstalled.",
+                "feedback annotation notepad report bug reproduce issue element json paste"),
+            new Topic("Drag to reorder photos without holding",
+                "Select Drag to reorder; tiles jiggle until you drop one or tap Done.",
+                "Open a job → Photos → three dots on a photo → Drag to reorder. " +
+                "All photos jiggle. Touch and drag a photo in one motion to its " +
+                "destination, then release to save. No second long-press is needed. " +
+                "Tap Done rearranging photos to leave reorder mode. The photo menu " +
+                "still has Move up and Move down for accessible alternatives.",
+                "jiggle images photos sort reposition move drag no long press"),
             new Topic("Track materials and tools on a job",
                 "Enable Inventory when you need it. Receive stock, move to a job and return it.",
                 "Open Business → Settings → Modules → Company materials, job-site stock "+
