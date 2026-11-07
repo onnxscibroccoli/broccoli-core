@@ -15,15 +15,17 @@ public final class FeatureSettings {
     public static final String WORKER_TIME="worker_time";
     public static final String GPS="gps";
     public static final String ADVANCED_CALENDAR="advanced_calendar";
+    public static final String RECURRING="recurring_services";
     public static final String[] KEYS={
-        CREW,CATALOG,WORKER_TIME,GPS,ADVANCED_CALENDAR
+        CREW,CATALOG,WORKER_TIME,GPS,ADVANCED_CALENDAR,RECURRING
     };
     public static final String[] LABELS={
         "Crew assignment fields",
         "Services and materials pricebook",
         "Worker time tracking",
         "Private GPS route capture",
-        "Experimental calendar account sync"
+        "Experimental calendar account sync",
+        "Repeat-service due dates (monthly or mileage)"
     };
     private FeatureSettings(){}
     private static void validate(String key){
