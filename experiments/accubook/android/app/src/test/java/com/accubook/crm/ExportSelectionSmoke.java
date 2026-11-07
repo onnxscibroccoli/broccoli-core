@@ -35,7 +35,7 @@ public final class ExportSelectionSmoke {
         check(filter.includesExpense("Fuel"),"Fuel excluded accidentally");
         check(!filter.includesExpense("Meals"),
             "New category leaked through mutable caller reference");
-        check(!filter.sections[1],"Selected sections mutated by caller");
+        check(!filter.included(1),"Selected sections mutated by caller");
         try{filter.paymentMethods.add("Other");throw new AssertionError("Mutable export scope");}
         catch(UnsupportedOperationException expected){}
         System.out.println("ExportSelectionSmoke: PASS (fail-closed, selected ledgers, isolation)");
