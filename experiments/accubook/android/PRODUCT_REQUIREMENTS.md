@@ -161,8 +161,15 @@ The minimal profitable path is **Customer → Job → free-text work → optiona
 | Two-column photo gallery | Implemented; physical interaction pending | 16/page, preview, gallery drag target, visible move up/down, TalkBack alternatives, memory stability and restore. |
 | Company leaf and mascot logo | Bundled in Android drawable resources | Verify launcher, print preview, Save PDF, custom-logo override and high/low density. |
 | Plain-language help | Implemented; review pending | Can finish a new job without reading help; offline questions can answer editing, export, pricing, change-order and template extension. |
-| Recurring service due / mileage | Planned | Service interval per vehicle/site, computed due, manual override, printable due slips, no silent alerts. |
+| Recurring service due / mileage | **Partial:** opt-in monthly/mileage rules, local due list, pause/resume, explicit reset and PDF due slips | Physical-device dates, mileage-only scenarios, restore, retention and printed slips. No auto-created jobs or customer messages. |
 | Inventory layers | Planned | Company/job-site/tools separate ledgers, reconciliation, no supplier lock-in. |
-| Universal search | Planned | Name/phone/address/job/PO/VIN/notes/material/vehicle module index; fast offline, user-readable result paths. |
+| Universal search | **Partial:** single explicit offline scan over contacts/customers/jobs/invoice references/notes/custom fields/materials/payment refs/catalog | Verify scale, Unicode, keyboard search, failure recovery and navigation. No persistent full-text index; 80-result cap. |
 
 **Release rule:** CI validation is not manual device acceptance. No general-ledger, reconciled receivables, payables, tax compliance, supplier account integration or QuickBooks connector is implied by the implemented quick PDF and selective CSV exports.
+
+
+## Next field-to-office acceptance: search and repeat service
+
+- **Lookup:** test at least 250 fictional contacts and 100 jobs; search by partial phone, street, multiword name, invoice reference, work description, custom VIN, purchase-order text and pricebook unit. Confirm no payment or note data leaves the device and that search never creates customers.
+- **Recurring:** test real month-end/leap-year service dates, zero-month mileage-only rules, incorrect odometer input, opt-in and pause/resume persistence, due PDF pagination, external-provider cancellation and ZIP restore rejection for a forged due date or orphan customer/job reference.
+- **Visual friction:** the primary sequence must remain Create customer → Job → notes/photos/line → print invoice. Advanced modules must not add mandatory fields or administrators to this path.
