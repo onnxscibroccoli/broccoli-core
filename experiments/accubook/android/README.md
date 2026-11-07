@@ -1,5 +1,47 @@
 # Accubook — offline-first field-service CRM (engineering preview)
 
+## November 7, 2026 — modular onboarding foundation (stacked draft branch)
+
+**Branch:** `feat/accubook-onboarding-foundation-20261107`, based on the v0.5 draft PR #91.
+**Status:** engineering implementation; physical-device acceptance and exact-head CI
+required. This is **not** a production release.
+
+**First launch of an empty workspace** opens a one-screen, no-account setup:
+solo or crew, primary trade, pricebook, recurring due dates, optional worker
+time/private GPS, delivery/dumpster practices and optional vendor names.
+No runtime LLM, server, permission prompt or sign-in. The owner can **skip**
+setup and can rerun it from **Business → Quick setup** or **Settings → Quick
+setup**. Existing customers/jobs are not modified or migrated. No action
+orders supplies, contacts customers, enables the camera, or starts GPS.
+
+**Portable configuration:** `templates/business_setup.csv` stores the
+versioned questionnaire and module switches using atomic writes. It is included
+in workspace ZIP/encrypted backup and strictly validated before restore.
+Legacy module choices in Android preferences remain intact until the owner
+saves or skips setup. Afterward, Settings module switches update the portable
+profile without discarding trade/vendor answers. Deleting/hiding modules does
+not delete historical records.
+
+**Test on a disposable workspace** (without real contacts):
+1. Install the debug APK and open an empty workspace; choose **Just me**.
+2. Enter a trade, select pricebook, enable repeat-service dates, check material
+   deliveries and dumpsters, then save. Confirm Crew is hidden in Settings
+   and Repeat-service dates are enabled.
+3. Return to Business → Quick setup; verify the answers persist. Switch to
+   Crew, save, reopen Settings and verify the crew module appears.
+4. Create and restore an encrypted/ZIP backup to a disposable workspace;
+   verify `templates/business_setup.csv` survives. Confirm job and customer
+   counts did not change. A malformed profile in a ZIP must fail validation.
+5. Confirm Android 15 landscape/rotation, large text, screen reader labels,
+   keyboard navigation, skipped setup and backup restore on a physical device.
+
+**Not yet implemented:** actual inventory and job-site stock movement,
+customer-facing migration from third-party CRMs, fully isolated UI modules,
+cryptographic worker pairing/peer-to-peer synchronization, ads, donations or
+supplier APIs. UI feature switches are visibility controls, not executable
+plug-ins. See [MODULAR_ARCHITECTURE.md](MODULAR_ARCHITECTURE.md).
+
+
 > **Security and operations increment:** Read
 > [SECURITY_ACCOUNTING_INTEGRATION.md](SECURITY_ACCOUNTING_INTEGRATION.md)
 > for verified versus unverified features, supported calendar sharing, supplier
