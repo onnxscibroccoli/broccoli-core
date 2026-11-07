@@ -58,6 +58,9 @@ public final class BackupArchiveSmoke {
             File photo = new File(root, jdir + "/photos/PHOTO-" + "c".repeat(32) + ".jpg");
             Files.createDirectories(photo.getParentFile().toPath());
             Files.write(photo.toPath(), new byte[]{(byte)255,(byte)216,(byte)255,0,1,2});
+            table(root,jdir+"/photo_order.csv",
+                new String[]{"PhotoFile","Position"},
+                row("PHOTO-"+"c".repeat(32)+".jpg","0"));
             table(root,directory+"/contact_preferences.csv",
                 new String[]{"Call","SMS","Email","Color"},
                 row("true","false","true","#165DAB"));
@@ -217,6 +220,8 @@ public final class BackupArchiveSmoke {
             .contains("On-site estimate visit"),"Master job template not restored");
         check(Files.readString(new File(live,jdir+"/custom_fields.csv").toPath())
             .contains("Use rear gate"),"Per-job custom field not restored");
+        check(Files.readString(new File(live,jdir+"/photo_order.csv").toPath())
+            .contains("PHOTO-"),"Photo display order not restored");
         check(Files.readString(new File(live,jdir+"/job_logistics.csv").toPath())
             .contains("Sample Dumpster"),"Vendor logistics not restored");
         check(Files.readString(new File(live,jdir+"/pickup_reminder.csv").toPath())
@@ -245,6 +250,15 @@ public final class BackupArchiveSmoke {
         try{BackupArchive.validate(invalid);}
         catch(IOException expected){rejectedFields=true;}
         check(rejectedFields,"Malformed required job field was accepted");
+        File badPhotos=new File(tmp,"bad-photo-order");
+        workspace(badPhotos,true);
+        table(badPhotos,jdir+"/photo_order.csv",
+            new String[]{"PhotoFile","Position"},
+            row("PHOTO-"+"c".repeat(32)+".jpg","4"));
+        boolean rejectedPhotoIndex=false;
+        try{BackupArchive.validate(badPhotos);}
+        catch(IOException expected){rejectedPhotoIndex=true;}
+        check(rejectedPhotoIndex,"Malformed photo sort index accepted");
         boolean refused = false;
         try { BackupArchive.restore(live, new ByteArrayInputStream(good)); }
         catch (IOException expected) { refused = true; }
