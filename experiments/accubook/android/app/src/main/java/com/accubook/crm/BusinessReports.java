@@ -68,11 +68,10 @@ public final class BusinessReports {
             if(sections[1]){
                 List<List<String>> rows=new ArrayList<>();
                 rows.add(r("DocumentReference","CustomerID","ServiceDate","JobTitle",
-                    "JobStatus","DraftAmount","RecordedPayments","DraftBalance"));
+                    "JobStatus","JobValue"));
                 for(WorkspaceStore.Job j:jobs)
                     rows.add(r(DocumentNumbers.reference(j.id,j.date,false),j.customerId,
-                        j.date,j.title,j.status,j.total,crm.received(j).toPlainString(),
-                        crm.balance(j).toPlainString()));
+                        j.date,j.title,j.status,j.total));
                 put(zip,"jobs_and_invoices.csv",rows);
             }
             if(sections[2]){
@@ -128,7 +127,8 @@ public final class BusinessReports {
                 +"QuickBooks Online import schemas differ by region, account and import screen.\n"
                 +"Expense CSV uses Date, Description, Amount, Category; verify transaction signs\n"
                 +"and category/tax mappings before any real financial import.\n"
-                +"Draft invoices are not legally issued numbered invoices or proof of payment.\n"
+                +"Invoice totals do not reveal payment ledgers unless selected.\n"
+                +"Amounts are not proof of payment or tax filing.\n"
                 +"Customer and worker details may be sensitive. Secure the exported ZIP.\n"
                 +"Route/precise location records are intentionally excluded.\n";
             zip.write(doc.getBytes(StandardCharsets.UTF_8));
