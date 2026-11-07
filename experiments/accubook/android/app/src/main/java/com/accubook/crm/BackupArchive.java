@@ -98,7 +98,8 @@ public final class BackupArchive {
 
     private static boolean allowedFile(String name) {
         if (name.matches("master_data/(customers|jobs|catalog|expenses)\\.csv")) return true;
-        if(name.equals("templates/branding.csv")||name.equals("templates/logo.bin"))return true;
+        if(name.equals("templates/branding.csv")||name.equals("templates/default_memo.csv")
+            ||name.equals("templates/logo.bin"))return true;
         if (name.matches("templates/[A-Za-z0-9_./-]{1,220}\\.(html|txt|md|json)"))
             return !name.contains("..");
         String client = "customers/CUST-[a-f0-9]{32}_[A-Za-z0-9_-]{1,40}";
@@ -209,6 +210,10 @@ public final class BackupArchive {
             File path = new File(root, folder);
             if (!path.isDirectory() || Files.isSymbolicLink(path.toPath()))
                 throw new IOException("Customer folder missing: " + id);
+        }
+        if(new File(root,"templates/default_memo.csv").isFile()){
+            List<List<String>> templates=rows(root,"templates/default_memo.csv",MEMO);
+            if(templates.size()>2)throw new IOException("Invalid default document template");
         }
         File branding=new File(root,"templates/branding.csv");
         if(branding.isFile()){
