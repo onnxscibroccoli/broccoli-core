@@ -92,7 +92,13 @@ for attempt in range(11):
         stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,check=True)
     root=ET.fromstring(subprocess.check_output(['adb','exec-out','cat','/sdcard/accubook-window.xml']))
     rows=[x for x in root.iter('node') if 'HorizontalScrollView' in x.attrib.get('class','')]
-    if not rows: raise SystemExit('Missing job section rail')
+    if not rows:
+        # Long content sections can scroll the fixed top rail out of the
+        # accessibility tree. Return toward the top before deciding it is missing.
+        subprocess.run(['adb','shell','input','swipe','500','540','500','1510','350'],
+            check=True)
+        time.sleep(.7)
+        continue
     rail=rows[0]
     points=re.findall(r'\[(-?\d+),(-?\d+)\]',rail.attrib.get('bounds',''))
     if len(points)!=2: raise SystemExit('No rail bounds')
