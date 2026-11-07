@@ -298,6 +298,17 @@ public final class BackupArchiveSmoke {
         try{BackupArchive.validate(badTool);}catch(IOException expected){refusedTool=true;}
         check(refusedTool,"Orphaned checked-out equipment accepted in backup");
 
+        File orphanSite=new File(tmp,"orphan-site-inventory");
+        workspace(orphanSite,true);
+        String extra="customers/CUST-"+"a".repeat(32)+"_Example/jobs/JOB-"+
+            "f".repeat(32)+"_Unexpected/job_site_materials.csv";
+        table(orphanSite,extra,InventoryRules.SITE,
+            row("SITE-"+"c".repeat(32),"Orphan shingle","bundle","2","Used"));
+        boolean refusedOrphanSite=false;
+        try{BackupArchive.validate(orphanSite);}
+        catch(IOException expected){refusedOrphanSite=true;}
+        check(refusedOrphanSite,"Unregistered job-site inventory accepted");
+
         File invalidSite=new File(tmp,"invalid-site-inventory");
         workspace(invalidSite,true);
         table(invalidSite,jdir+"/job_site_materials.csv",InventoryRules.SITE,
