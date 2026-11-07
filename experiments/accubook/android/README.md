@@ -5,11 +5,17 @@
 **Implementation:** `feat/accubook-modular-reporting-20261107`. **Acceptance:** not
 production-verified; follow the CI and on-device checks below. See
 [UX_COMPETITIVE_REVIEW.md](UX_COMPETITIVE_REVIEW.md) for the source-grounded
-Jobber / Housecall Pro / JobNimbus comparison and decision record.
+Jobber / Housecall Pro / JobNimbus comparison and decision record, and
+[UX_VISUAL_AUDIT.md](UX_VISUAL_AUDIT.md) for screenshots of the **compiled**
+emulator UI and the subsequent reduction in job-level navigation clutter.
 
 - **Six focused sections on every job:** Overview, Notes, Materials, Billing,
   Photos, and optional Time & route. The current job is preserved during tab
   switches and field edits. Optional time and GPS modules are hidden by default.
+  Actual emulator screenshots exposed redundant workspace navigation; job detail
+  now uses one compact contextual row (Jobs / Home / More), and the oversized
+  customer link appears only in Overview. Dashboard quick actions include
+  immediate entry into the explicitly scoped PDF/CSV report chooser.
 - **Settings > Features:** local presentation switches for crews, advanced
   scheduling, pricebook, material requests, properties (preview), recurrence
   (preview), worker time, GPS tracking, and extra reorder controls. A disabled
