@@ -29,7 +29,7 @@ public final class InvoiceHtml {
             .append("@media print{body{margin:0}}")
             .append("</style></head><body>")
             .append("<h1>Accubook — Invoice</h1>")
-            .append("<p><strong>Draft — review before sending. Not proof of payment.</strong></p>")
+            .append("<p><strong>Review before sending. Not proof of payment.</strong></p>")
             .append("<p><strong>Customer:</strong> ").append(esc(customer.displayName()))
             .append("<br><strong>Billing:</strong> ").append(esc(customer.street))
             .append(", ").append(esc(customer.city)).append(", ").append(esc(customer.state))
