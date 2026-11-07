@@ -745,6 +745,91 @@ public final class MainActivity extends Activity {
         return new File(getFilesDir(), "Accubook Workspace");
     }
 
+    private void backupPasswordDialog(String title,boolean confirm,
+                                      java.util.function.Consumer<char[]> result){
+        LinearLayout fields=form();
+        label(fields,"Use a unique 12+ character passphrase. It is not saved or uploaded. "
+            +"Losing it makes the backup unrecoverable.",15,LIGHT);
+        EditText password=field(fields,"Passphrase","12 characters or more");
+        password.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        EditText second=null;
+        if(confirm){
+            second=field(fields,"Confirm passphrase","Repeat passphrase");
+            second.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        }
+        final EditText confirmation=second;
+        dialog(title,fields,()->{
+            char[] pass=password.getText().toString().toCharArray();
+            if(pass.length<12||pass.length>512){
+                java.util.Arrays.fill(pass,'\0');
+                throw new IllegalArgumentException("Passphrase must be 12–512 characters");
+            }
+            if(confirmation!=null&&!java.util.Arrays.equals(pass,
+                confirmation.getText().toString().toCharArray())){
+                java.util.Arrays.fill(pass,'\0');
+                throw new IllegalArgumentException("Passphrases do not match");
+            }
+            result.accept(pass);
+        });
+    }
+    private void chooseEncryptedBackup(){
+        backupPasswordDialog("Encrypt a backup",true,pass->{
+            pendingBackupPassword=pass;
+            Intent destination=new Intent(Intent.ACTION_CREATE_DOCUMENT);
+            destination.addCategory(Intent.CATEGORY_OPENABLE);
+            destination.setType("application/octet-stream");
+            destination.putExtra(Intent.EXTRA_TITLE,"accubook-backup.acbk");
+            try{startActivityForResult(destination,ENCRYPTED_BACKUP_EXPORT);}
+            catch(Exception e){
+                java.util.Arrays.fill(pass,'\0');
+                pendingBackupPassword=null;
+                error(e);
+            }
+        });
+    }
+    private void chooseEncryptedRestore(){
+        new AlertDialog.Builder(this).setTitle("Restore password-encrypted backup?")
+            .setMessage("Accubook verifies the password and full AES-GCM authentication "
+                +"before replacing the live workspace. The previous workspace stays in "
+                +"the rollback snapshot. Verify it before discarding.")
+            .setNegativeButton("Cancel",(d,w)->{})
+            .setPositiveButton("Choose file",(d,w)->{
+                Intent pick=new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                pick.addCategory(Intent.CATEGORY_OPENABLE);
+                pick.setType("*/*");
+                try{startActivityForResult(pick,ENCRYPTED_BACKUP_IMPORT);}
+                catch(Exception e){error(e);}
+            }).show();
+    }
+    private void encryptWorkspace(Uri destination,char[] pass){
+        new Thread(()->{
+            try(OutputStream out=getContentResolver().openOutputStream(destination,"wt")){
+                if(out==null)throw new IOException("Cannot write encrypted backup");
+                store.exportBackup(SecureArchive.encryptStream(out,pass));
+                runOnUiThread(()->notice("Encrypted backup complete",
+                    "File saved. Keep the password private and test a restore."));
+            }catch(Exception e){runOnUiThread(()->error(e));}
+            finally{java.util.Arrays.fill(pass,'\0');}
+        },"accubook-private-export").start();
+    }
+    private void decryptWorkspace(Uri selected,char[] pass){
+        new Thread(()->{
+            try(InputStream input=getContentResolver().openInputStream(selected)){
+                SecureArchive.restore(store,input,getCacheDir(),pass);
+                runOnUiThread(()->{
+                    try{
+                        store=new WorkspaceStore(this);
+                        crm=new CrmWorkspace(store);
+                        home();
+                        notice("Encrypted restore successful","Inspect records and verify "
+                            +"the retained rollback snapshot before proceeding.");
+                    }catch(Exception e){error(e);}
+                });
+            }catch(Exception e){runOnUiThread(()->error(e));}
+            finally{java.util.Arrays.fill(pass,'\0');}
+        },"accubook-private-restore").start();
+    }
+
     private void selectRestore() {
         new AlertDialog.Builder(this).setTitle("Restore workspace backup?")
             .setMessage("This replaces the current customers, jobs, and photos with the "
@@ -1315,6 +1400,8 @@ public final class MainActivity extends Activity {
                 +"QuickBooks may require manual field mapping; this is not a live integration.",
                 14,MUTED);
             section("Workspace safety");
+            button(content,"Create encrypted backup (.acbk)",this::chooseEncryptedBackup);
+            button(content,"Restore encrypted backup (.acbk)",this::chooseEncryptedRestore);
             button(content,"Restore workspace from ZIP",this::selectRestore);
             if(store.hasRollbackSnapshot()){
                 button(content,"Revert last restored workspace",this::revertSnapshot);
@@ -1958,6 +2045,7 @@ public final class MainActivity extends Activity {
                 pendingInvoice = null;
                 document("accubook-workspace.zip", "application/zip");
             });
+            button(content,"Create encrypted workspace backup",this::chooseEncryptedBackup);
             button(content, "Restore workspace from ZIP", this::selectRestore);
             if (store.hasRollbackSnapshot()) {
                 button(content, "Revert to previous workspace", this::revertSnapshot);
@@ -2337,6 +2425,22 @@ public final class MainActivity extends Activity {
             } catch (Exception failure) {
                 error(failure);
             }
+            return;
+        }
+        if(requestCode==ENCRYPTED_BACKUP_EXPORT){
+            char[] pass=pendingBackupPassword;
+            pendingBackupPassword=null;
+            if(pass==null)return;
+            if(resultCode==RESULT_OK&&data!=null&&data.getData()!=null)
+                encryptWorkspace(data.getData(),pass);
+            else java.util.Arrays.fill(pass,'\0');
+            return;
+        }
+        if(requestCode==ENCRYPTED_BACKUP_IMPORT){
+            if(resultCode!=RESULT_OK||data==null||data.getData()==null)return;
+            Uri selected=data.getData();
+            backupPasswordDialog("Unlock encrypted backup",false,
+                pass->decryptWorkspace(selected,pass));
             return;
         }
         if(requestCode==REPORT_EXPORT_REQUEST){
