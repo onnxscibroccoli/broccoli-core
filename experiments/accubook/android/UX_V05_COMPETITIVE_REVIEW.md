@@ -18,7 +18,7 @@
 | Pattern | Evidence from competing UI | Accubook response | What was NOT copied |
 | --- | --- | --- | --- |
 | Focused job details | Jobber's Visit / Details / Notes top rail separates workflows (Jobber Help Center, updated Oct 2026). | Horizontal job focus rail: Overview, Photos, Notes, Materials, Money, Checklist, Schedule, and opt-in Time/Route. | Mandatory hosted sync, fixed vendor workflow or sales-admin restrictions. |
-| Quick photo access | AccuLynx Field App advertises a standalone job album with thumbnail grid (vendor UI, 2023). | Separate photo-only job section; existing bulk import and preview preserved. | Proprietary photo/supplement pipelines. **A compact reorderable photo grid remains pending.** |
+| Quick photo access | AccuLynx Field App advertises a standalone job album with thumbnail grid (vendor UI, 2023). | Separate photo-only job section; existing bulk import and preview preserved. | Proprietary photo/supplement pipelines. **Atomic photo order and move up/down are now implemented; the compact grid and drag gesture remain pending.** |
 | Field documents | Jobber surfaces visit forms/checklists alongside detail and notes. | Per-job editable fields; long-press plus visible compact overflow with edit, up/down, required and removal; existing job values preserved. | Large edit/remove button blocks that dominate the job page. |
 | Optional crew/timers | Housecall Pro showcases job status, checklists, time tracking and team workflows. | Crew and worker time are independent local switches, default off for solo use; original records persist if disabled. | Forced team setup or paid feature gating. |
 | Calendar handoff | Competitors consolidate appointment and work status in job context. | Dedicated Schedule tab; explicit Android calendar-editor handoff. | Unreliable automatic Google Calendar synchronization. |
@@ -43,7 +43,8 @@ Vendor primary references:
 | Selective accounting CSV ZIP | Implemented, explicit method/category allow-lists | ZIP content filter on real data, import mapping |
 | Contacts separate from customers | Preexisting PR #87 | Physical contact permission/import |
 | Bulk photos, local dumpster reminder, biometric/PIN | Existing owner-tested | No-regression on new APK |
-| Per-photo and per-checklist order with drag handles | **Not yet implemented** | Model, backup validation, UI tests |
+| Photo order through accessible action menus | Implemented: atomic photo_order.csv and ZIP restore validation | Emulator and real-device reorder/restore; grid drag remains pending |
+| Checklist drag gesture | Not implemented; field-level up/down works | Drag interaction and TalkBack non-gesture alternative |
 | Customer/job color across all views | Partially present | Color audit of all list/calendar surfaces |
 | Built-in brand/app logo resources | Pending asset packaging | Launcher/splash/invoice rendering |
 | Recurring jobs, multi-property and route density | **Planned only** | Do not claim finished |
@@ -76,7 +77,7 @@ on extra accessibility UI.
 ## Next verified increments
 
 1. Resolve Android emulator smoke and run fresh physical-device navigation.
-2. Add explicit photo ordering metadata with backup/restore schema acceptance.
+2. Verify newly implemented photo ordering metadata and the backup/restore schema on device.
 3. Introduce role-friendly photo grids and field-level reorder drag gesture
    without removing overflow actions.
 4. Implement context-aware color in every job/customer/calendar surface.
