@@ -62,6 +62,9 @@ public final class BackupArchive {
     private static final String[] LOGISTICS={
         "Vendor","MaterialDeliveryContact","AssignedCrew","OperationsNotes"};
     private static final String[] PICKUP={"DueAtUTC","ConfiguredAtUTC","State"};
+    private static final String[] CONTACTS={"ContactID","Name","Phone","Email","SourceID","CustomerID"};
+    private static final String[] JOB_MASTER={"FieldID","Label","Kind","Required","DefaultValue","Active"};
+    private static final String[] JOB_FIELD={"FieldID","Label","Kind","Required","Value","Active","Origin"};
 
 
     public static File rollback(File live) {
@@ -106,8 +109,9 @@ public final class BackupArchive {
     }
 
     private static boolean allowedFile(String name) {
-        if (name.matches("master_data/(customers|jobs|catalog|expenses|pricebook|calendar_links)\\.csv")) return true;
-        if(name.equals("templates/branding.csv")||name.equals("templates/default_memo.csv")
+        if (name.matches("master_data/(customers|jobs|catalog|expenses|pricebook|calendar_links|contacts)\\.csv")) return true;
+        if(name.equals("templates/branding.csv")||name.equals("templates/job_fields.csv")
+            ||name.equals("templates/default_memo.csv")
             ||name.equals("templates/logo.bin"))return true;
         if (name.matches("templates/[A-Za-z0-9_./-]{1,220}\\.(html|txt|md|json)"))
             return !name.contains("..");
@@ -118,7 +122,7 @@ public final class BackupArchive {
         return name.matches(job + "/(job_items\\.csv|material_requests\\.csv|field_notes\\.md|job_details\\.json|"
             + "appointment\\.csv|quote\\.csv|payments\\.csv|invoice_memo\\.csv|"
             + "time_entries\\.csv|route_points\\.csv|job_milestones\\.csv|"
-            + "job_logistics\\.csv|pickup_reminder\\.csv|"
+            + "job_logistics\\.csv|pickup_reminder\\.csv|custom_fields\\.csv|"
             + "attachments\\.csv|attachments/ATT-[a-f0-9]{32}\\.bin|"
             + "photos/PHOTO-[a-f0-9]{32}\\.(jpg|png|webp|heic|heif|avif|gif|bmp|tiff|dng|img))");
     }
@@ -202,6 +206,30 @@ public final class BackupArchive {
         return safe.length() > 40 ? safe.substring(0, 40) : safe;
     }
 
+    private static void verifyFlexibleFields(List<List<String>> rows,boolean job)
+        throws IOException {
+        Set<String> ids=new HashSet<>();
+        for(int i=1;i<rows.size();i++){
+            List<String> r=rows.get(i);
+            if(!r.get(0).matches("FIELD-[a-f0-9]{32}")||!ids.add(r.get(0))||
+               r.get(1).trim().isEmpty()||r.get(1).length()>120||
+               !Arrays.asList("Checkbox","Text","Date","Number").contains(r.get(2))||
+               !Arrays.asList("true","false").contains(r.get(3))||
+               !Arrays.asList("true","false").contains(r.get(5))||
+               r.get(4).length()>2000||
+               (job&&!Arrays.asList("Master","Job").contains(r.get(6))))
+                throw new IOException("Invalid custom field");
+            if(r.get(2).equals("Checkbox")&&!Arrays.asList("true","false").contains(r.get(4)))
+                throw new IOException("Invalid custom checkbox value");
+            if(r.get(2).equals("Date")&&!r.get(4).isEmpty())
+                try{LocalDate.parse(r.get(4));}
+                catch(DateTimeParseException e){throw new IOException("Invalid custom date",e);}
+            if(r.get(2).equals("Number")&&!r.get(4).isEmpty())
+                try{new BigDecimal(r.get(4));}
+                catch(NumberFormatException e){throw new IOException("Invalid custom number",e);}
+        }
+    }
+
     /** Validate IDs, foreign keys, canonical billing rows and required files. */
     public static void validate(File root) throws IOException {
         if (!root.isDirectory() || Files.isSymbolicLink(root.toPath()))
@@ -255,6 +283,22 @@ public final class BackupArchive {
                         throw new IOException("Invalid base price/markup");
                 }catch(NumberFormatException e){throw new IOException("Invalid pricing number",e);}
             }
+        }
+        if(new File(root,"master_data/contacts.csv").isFile()){
+            List<List<String>> contacts=rows(root,"master_data/contacts.csv",CONTACTS);
+            Set<String> keys=new HashSet<>();
+            for(int i=1;i<contacts.size();i++){
+                List<String> item=contacts.get(i);
+                if(!item.get(0).matches("CONT-[a-f0-9]{32}")||
+                    !keys.add(item.get(0))||item.get(1).trim().isEmpty()||
+                    item.get(1).length()>180||
+                    (!item.get(5).isEmpty()&&!folders.containsKey(item.get(5))))
+                    throw new IOException("Invalid contact directory entry");
+            }
+        }
+        if(new File(root,"templates/job_fields.csv").isFile()){
+            List<List<String>> templates=rows(root,"templates/job_fields.csv",JOB_MASTER);
+            verifyFlexibleFields(templates,false);
         }
         File branding=new File(root,"templates/branding.csv");
         if(branding.isFile()){
@@ -332,6 +376,11 @@ public final class BackupArchive {
                 } catch (java.nio.charset.CharacterCodingException error) {
                     throw new IOException("Job notes are invalid UTF-8", error);
                 }
+            }
+            String custom=jobFolder+"/custom_fields.csv";
+            if(new File(root,custom).isFile()){
+                List<List<String>> jobFields=rows(root,custom,JOB_FIELD);
+                verifyFlexibleFields(jobFields,true);
             }
             String appointmentPath=jobFolder+"/appointment.csv";
             if(new File(root,appointmentPath).isFile()){
