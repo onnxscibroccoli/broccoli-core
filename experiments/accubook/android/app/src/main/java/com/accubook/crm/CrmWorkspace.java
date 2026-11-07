@@ -363,9 +363,17 @@ public final class CrmWorkspace {
         File file=global("templates/logo.bin");
         return brand.logoMime.isEmpty()||!file.isFile()?new byte[0]:read(file,2L*1024*1024);
     }
+    public synchronized Memo defaultMemo() throws IOException {
+        List<List<String>> r=table(global("templates/default_memo.csv"),MEMO);
+        return r.size()==1?new Memo(row("Thank you for choosing us.","")):new Memo(r.get(1));
+    }
+    public synchronized void saveDefaultMemo(String greeting,String closing) throws IOException {
+        writeTable(global("templates/default_memo.csv"),
+            one(MEMO,text(greeting,1800,false),text(closing,1800,false)));
+    }
     public synchronized Memo memo(WorkspaceStore.Job job) throws IOException {
         List<List<String>> r=table(new File(jobDir(job),"invoice_memo.csv"),MEMO);
-        return r.size()==1?new Memo(row("Thank you for choosing us.","")):new Memo(r.get(1));
+        return r.size()==1?defaultMemo():new Memo(r.get(1));
     }
     public synchronized void saveMemo(WorkspaceStore.Job job,String greeting,String closing) throws IOException {
         writeTable(new File(jobDir(job),"invoice_memo.csv"),
