@@ -55,6 +55,8 @@
         startActivityForResult(intent,UNLOCK_REQUEST);
     }
     @Override protected void onStop(){
+        if(routeListener!=null)stopRoute(); // Foreground-only: never track in background.
+
         if(UnlockActivity.isEnabled(this))lastHiddenAt=android.os.SystemClock.elapsedRealtime();
         super.onStop();
     }
@@ -594,6 +596,12 @@
     @Override public void onRequestPermissionsResult(int code,String[] permissions,
                                                      int[] grants) {
         super.onRequestPermissionsResult(code,permissions,grants);
+        if(code==ROUTE_LOCATION_PERMISSION){
+            if(grants.length>0&&grants[0]==PackageManager.PERMISSION_GRANTED &&
+                routeJobId!=null)startRoute(routeJobId);
+            else notice("GPS not enabled","Route recording is optional and stays off.");
+            return;
+        }
         if(code==BULK_CONTACT_PERMISSION) {
             if(grants.length>0&&grants[0]==PackageManager.PERMISSION_GRANTED)
                 showBulkContactPicker();
@@ -1325,6 +1333,166 @@
         }
     }
 
+    private void clockInDialog(WorkspaceStore.Job job) {
+        LinearLayout fields=form();
+        EditText worker=field(fields,"Worker name (required)","Worker or team member");
+        EditText notes=multiline(fields,"Work session notes","");
+        dialog("Clock in for this job",fields,()->{
+            try{
+                crm.clockIn(job,worker.getText().toString(),notes.getText().toString());
+                job(job.id);
+                Toast.makeText(this,"Clock in saved",Toast.LENGTH_SHORT).show();
+            }catch(IOException e){throw new IllegalStateException(e);}
+        });
+    }
+    private void clockOutConfirm(WorkspaceStore.Job job,CrmWorkspace.TimeEntry record){
+        new AlertDialog.Builder(this).setTitle("Clock out "+record.worker+"?")
+            .setMessage("Confirm departure and record elapsed time at this job. "
+                +"The original time entry will be retained.")
+            .setNegativeButton("Cancel",(d,w)->{})
+            .setPositiveButton("Clock out",(d,w)->{
+                try{
+                    crm.clockOut(job,record.id);
+                    job(job.id);
+                }catch(Exception e){error(e);}
+            }).show();
+    }
+
+    private void expenseDialog(){
+        LinearLayout fields=form();
+        EditText date=field(fields,"Expense date · YYYY-MM-DD","YYYY-MM-DD");
+        date.setText(LocalDate.now().toString());
+        button(fields,"Choose expense date",()->openDate(date));
+        EditText category=field(fields,"Category (required)","Fuel, tools, materials...");
+        EditText description=field(fields,"Description (required)","Supplies for project");
+        EditText amount=field(fields,"Expense amount (USD)","0.00");
+        amount.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        dialog("New manual expense",fields,()->{
+            // Validate before dismissing the form.
+            LocalDate.parse(date.getText().toString().trim());
+            CrmWorkspace.money(amount.getText().toString(),true);
+            String when=date.getText().toString(),cat=category.getText().toString(),
+                desc=description.getText().toString(),sum=amount.getText().toString();
+            if(cat.trim().isEmpty()||desc.trim().isEmpty())
+                throw new IllegalArgumentException("Expense category and description required");
+            new AlertDialog.Builder(this).setTitle("Confirm expense")
+                .setMessage("Record $"+sum+" in category "+cat+"? "
+                    +"This is a manual accounting entry, not a bank transaction.")
+                .setNegativeButton("Cancel",(d,w)->{})
+                .setPositiveButton("Record",(d,w)->{
+                    try{crm.addExpense(when,cat,desc,sum);businessScreen();}
+                    catch(Exception e){error(e);}
+                }).show();
+        });
+    }
+
+    private void toggleRoute(WorkspaceStore.Job job){
+        if(routeListener!=null){
+            stopRoute();
+            job(job.id);
+            return;
+        }
+        new AlertDialog.Builder(this).setTitle("Record route locally?")
+            .setMessage("Accubook will collect GPS coordinates only while this screen "
+                +"is in the foreground. Coordinates are stored in your local workspace "
+                +"and included in ordinary ZIP exports; no location is uploaded. "
+                +"Opening a map externally later will require another confirmation.")
+            .setNegativeButton("Cancel",(d,w)->{})
+            .setPositiveButton("Enable GPS",(d,w)->{
+                if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)!=
+                    PackageManager.PERMISSION_GRANTED){
+                    routeJobId=job.id;
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        ROUTE_LOCATION_PERMISSION);
+                }else startRoute(job.id);
+            }).show();
+    }
+    private void startRoute(String jobId){
+        try{
+            if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)!=
+                PackageManager.PERMISSION_GRANTED)
+                throw new SecurityException("Precise location permission is required");
+            stopRoute();
+            routeJobId=jobId;
+            locationManager=(android.location.LocationManager)
+                getSystemService(android.content.Context.LOCATION_SERVICE);
+            if(locationManager==null||
+                !locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER))
+                throw new IOException("Enable GPS in Android location settings");
+            routeListener=new android.location.LocationListener(){
+                @Override public void onLocationChanged(android.location.Location location){
+                    try{
+                        if(routeJobId!=null&&location!=null&&location.hasAccuracy()&&
+                            location.getAccuracy()<=150){
+                            crm.recordLocation(jobById(routeJobId),
+                                location.getLatitude(),location.getLongitude(),
+                                location.getAccuracy());
+                        }
+                    }catch(Exception failure){
+                        android.util.Log.e("Accubook","Cannot save route point",failure);
+                        runOnUiThread(()->{stopRoute();error(failure);});
+                    }
+                }
+                @Override public void onStatusChanged(String provider,int status,Bundle extras){}
+                @Override public void onProviderEnabled(String provider){}
+                @Override public void onProviderDisabled(String provider){
+                    runOnUiThread(()->{
+                        stopRoute();
+                        notice("Route paused","GPS was disabled. No background tracking continues.");
+                    });
+                }
+            };
+            locationManager.requestLocationUpdates(
+                android.location.LocationManager.GPS_PROVIDER,15000,20f,routeListener);
+            notice("Local route started","Accubook will record GPS while app is visible. "
+                +"Leaving the app stops recording.");
+        }catch(Exception e){stopRoute();error(e);}
+    }
+    private void stopRoute(){
+        if(locationManager!=null&&routeListener!=null)
+            try{locationManager.removeUpdates(routeListener);}catch(Exception ignored){}
+        routeListener=null;routeJobId=null;
+    }
+    private void openRouteInOSM(WorkspaceStore.Job job) {
+        try{
+            List<CrmWorkspace.RoutePoint> route=crm.routePoints(job);
+            if(route.isEmpty()){notice("No route points","Start local route tracking first.");return;}
+            CrmWorkspace.RoutePoint point=route.get(route.size()-1);
+            new AlertDialog.Builder(this).setTitle("Share a location with OpenStreetMap?")
+                .setMessage("Opening an external OpenStreetMap map will disclose these "
+                    +"coordinates to the chosen browser or map provider. Accubook itself "
+                    +"does not connect to OpenStreetMap. Continue?")
+                .setNegativeButton("Keep private",(d,w)->{})
+                .setPositiveButton("Open externally",(d,w)->{
+                    String lat=point.latitude,lon=point.longitude;
+                    Uri url=Uri.parse("https://www.openstreetmap.org/?mlat="+lat+
+                        "&mlon="+lon+"#map=16/"+lat+"/"+lon);
+                    try{startActivity(new Intent(Intent.ACTION_VIEW,url));}
+                    catch(Exception e){error(e);}
+                }).show();
+        }catch(Exception e){error(e);}
+    }
+    private void exportRoute(WorkspaceStore.Job job){
+        pendingRouteExportId=job.id;
+        Intent save=new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        save.setType("application/gpx+xml");
+        save.addCategory(Intent.CATEGORY_OPENABLE);
+        save.putExtra(Intent.EXTRA_TITLE,"accubook-"+job.date+".gpx");
+        try{startActivityForResult(save,ROUTE_EXPORT_REQUEST);}
+        catch(Exception e){error(e);}
+    }
+    private String asGpx(WorkspaceStore.Job job) throws IOException{
+        StringBuilder result=new StringBuilder(
+            "<?xml version='1.0' encoding='UTF-8'?>\\n"+
+            "<gpx version='1.1' creator='Accubook' xmlns='http://www.topografix.com/GPX/1/1'><trk><name>Private job route</name><trkseg>");
+        for(CrmWorkspace.RoutePoint point:crm.routePoints(job)){
+            result.append("<trkpt lat='").append(point.latitude).append("' lon='")
+                .append(point.longitude).append("'><time>").append(point.at)
+                .append("</time></trkpt>");
+        }
+        return result.append("</trkseg></trk></gpx>").toString();
+    }
+
     private void createTestBusiness() {
         new AlertDialog.Builder(this).setTitle("Load fictional test company?")
             .setMessage("Creates a fictional example contracting business, three demo customers, "
@@ -1754,6 +1922,18 @@
             } catch (Exception failure) {
                 error(failure);
             }
+            return;
+        }
+        if(requestCode==ROUTE_EXPORT_REQUEST){
+            String jobId=pendingRouteExportId;
+            pendingRouteExportId=null;
+            if(resultCode!=RESULT_OK||data==null||data.getData()==null||jobId==null)return;
+            try(OutputStream out=getContentResolver().openOutputStream(data.getData(),"wt")){
+                if(out==null)throw new IOException("Cannot write GPX");
+                out.write(asGpx(jobById(jobId)).getBytes(StandardCharsets.UTF_8));
+                out.flush();
+                notice("GPX exported","A locally recorded route was exported to your chosen file.");
+            }catch(Exception e){error(e);}
             return;
         }
         if (requestCode == LOGO_REQUEST) {
