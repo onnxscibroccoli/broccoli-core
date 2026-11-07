@@ -88,11 +88,11 @@ assert_visible 'Job history'
 tap_node 'DEMO - Gutter'
 assert_visible 'Reschedule / change time'
 assert_visible 'Change job status'
-assert_visible 'Add photo from device'
-assert_visible 'Quote and invoice'
 tap_node 'Change job status'
 tap_node 'In Progress'
 assert_visible 'In Progress'
+assert_visible 'Estimate and invoice'
+assert_visible 'Add photo from device'
 adb shell am force-stop com.accubook.crm
 adb shell am start -n com.accubook.crm/.MainActivity
 sleep 2

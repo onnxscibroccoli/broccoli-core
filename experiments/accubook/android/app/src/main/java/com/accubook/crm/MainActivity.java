@@ -88,6 +88,28 @@ public final class MainActivity extends Activity {
     private LocalDate selectedDate = LocalDate.now();
     private String scheduleMode = "Week";
     private String currentScreen = "home";
+    private static final int UNLOCK_REQUEST=853;
+    private static final int ROUTE_LOCATION_PERMISSION=855;
+    private static final int ROUTE_EXPORT_REQUEST=856;
+    private static final int REPORT_EXPORT_REQUEST=857;
+    private static final int ENCRYPTED_BACKUP_EXPORT=858;
+    private static final int ENCRYPTED_BACKUP_IMPORT=859;
+    private static final int CALENDAR_PERMISSIONS=860;
+    private static final int SUPPLIER_CSV_REQUEST=861;
+    private static final int PICKUP_NOTIFY_PERMISSION=862;
+    private String pendingPickupJobId;
+    private long pendingPickupWhen;
+    private boolean lockRequestInProgress=false;
+    private boolean unlocked=false;
+    private long lastHiddenAt=0;
+    private Bundle restoreAfterUnlock;
+    private String routeJobId;
+    private String pendingRouteExportId;
+    private boolean[] pendingReportSections;
+    private android.location.LocationManager locationManager;
+    private android.location.LocationListener routeListener;
+    private char[] pendingBackupPassword;
+
 
     @Override
     protected void onCreate(Bundle state) {
@@ -101,31 +123,86 @@ public final class MainActivity extends Activity {
             pendingAttachmentJobId = state.getString("attachmentJob");
             pendingAttachmentExportJob = state.getString("attachmentExportJob");
             pendingAttachmentExportId = state.getString("attachmentExportId");
+            pendingReportSections=state.getBooleanArray("reportSections");
+            pendingRouteExportId=state.getString("routeExportId");
+            pendingPickupJobId=state.getString("pickupJobId");
+            pendingPickupWhen=state.getLong("pickupWhen",0);
             scheduleMode = state.getString("scheduleMode", "Week");
             try { selectedDate = LocalDate.parse(
                 state.getString("scheduleDate", LocalDate.now().toString())); }
             catch (Exception ignored) { selectedDate = LocalDate.now(); }
         }
-        try {
-            store = new WorkspaceStore(this);
-            crm = new CrmWorkspace(store);
-            if (state != null) {
-                String page = state.getString("screen", "home");
-                currentCustomerId = state.getString("customerId");
-                currentJobId = state.getString("jobId");
-                if ("job".equals(page) && currentJobId != null) job(currentJobId);
-                else if ("customer".equals(page) && currentCustomerId != null)
-                    customer(currentCustomerId);
-                else if ("customers".equals(page)) customersScreen();
-                else if ("schedule".equals(page)) scheduleScreen();
-                else home();
-            } else home();
-        } catch (Exception error) {
-            screen("Workspace unavailable", "Existing records were not reset.");
-            label(content, "Cannot open local storage: " + error.getMessage(), 16, LIGHT);
-            label(content, "Do not uninstall until a valid backup is secured.", 14, MUTED);
-            button(content, "Restore from workspace ZIP backup", this::selectRestore);
-            button(content, "Revert to previous validated workspace", this::revertSnapshot);
+        if(UnlockActivity.isEnabled(this)){
+            getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE);
+            restoreAfterUnlock=state;
+            lockedScreen();
+            requestUnlock();
+        }else{
+            unlocked=true;
+            initializeWorkspace(state);
+        }
+    }
+
+    private void initializeWorkspace(Bundle state) {
+            try {
+                store = new WorkspaceStore(this);
+                crm = new CrmWorkspace(store);
+                if (state != null) {
+                    String page = state.getString("screen", "home");
+                    currentCustomerId = state.getString("customerId");
+                    currentJobId = state.getString("jobId");
+                    if ("job".equals(page) && currentJobId != null) job(currentJobId);
+                    else if ("customer".equals(page) && currentCustomerId != null)
+                        customer(currentCustomerId);
+                    else if ("customers".equals(page)) customersScreen();
+                    else if ("schedule".equals(page)) scheduleScreen();
+                else if("calendar".equals(page))calendarScreen();
+                else if("catalog".equals(page))catalogScreen();
+                    else home();
+                } else home();
+            } catch (Exception error) {
+                screen("Workspace unavailable", "Existing records were not reset.");
+                label(content, "Cannot open local storage: " + error.getMessage(), 16, LIGHT);
+                label(content, "Do not uninstall until a valid backup is secured.", 14, MUTED);
+                button(content, "Restore from workspace ZIP backup", this::selectRestore);
+                button(content, "Revert to previous validated workspace", this::revertSnapshot);
+            }
+    }
+    private void lockedScreen(){
+        // Ensure sensitive customer widgets are not drawn while OS authentication runs.
+        LinearLayout cover=new LinearLayout(this);
+        cover.setOrientation(LinearLayout.VERTICAL);
+        cover.setPadding(dp(24),dp(35),dp(24),dp(24));
+        cover.setBackgroundColor(BACKGROUND);
+        TextView heading=label(cover,"Accubook locked",27,LIGHT);
+        label(cover,"Unlock with your fingerprint or device PIN.",17,MUTED);
+        button(cover,"Unlock now",this::requestUnlock);
+        setContentView(cover);
+    }
+    private void requestUnlock(){
+        if(lockRequestInProgress)return;
+        if(!UnlockActivity.isEnabled(this)){
+            unlocked=true;
+            initializeWorkspace(restoreAfterUnlock);
+            return;
+        }
+        lockRequestInProgress=true;
+        Intent intent=new Intent(this,UnlockActivity.class);
+        startActivityForResult(intent,UNLOCK_REQUEST);
+    }
+    @Override protected void onStop(){
+        if(routeListener!=null)stopRoute(); // Foreground-only: never track in background.
+
+        if(UnlockActivity.isEnabled(this))lastHiddenAt=android.os.SystemClock.elapsedRealtime();
+        super.onStop();
+    }
+    @Override protected void onStart(){
+        super.onStart();
+        if(store!=null&&UnlockActivity.isEnabled(this)&&!lockRequestInProgress&&
+            lastHiddenAt>0&&android.os.SystemClock.elapsedRealtime()-lastHiddenAt>30000) {
+            unlocked=false;
+            lockedScreen();
+            requestUnlock();
         }
     }
 
@@ -137,6 +214,10 @@ public final class MainActivity extends Activity {
         state.putString("attachmentJob", pendingAttachmentJobId);
         state.putString("attachmentExportJob", pendingAttachmentExportJob);
         state.putString("attachmentExportId", pendingAttachmentExportId);
+        state.putBooleanArray("reportSections",pendingReportSections);
+        state.putString("routeExportId",pendingRouteExportId);
+        state.putString("pickupJobId",pendingPickupJobId);
+        state.putLong("pickupWhen",pendingPickupWhen);
         state.putString("scheduleMode", scheduleMode);
         state.putString("scheduleDate", selectedDate.toString());
         state.putString("screen", currentScreen);
@@ -152,7 +233,7 @@ public final class MainActivity extends Activity {
     private GradientDrawable box(int color) {
         GradientDrawable background = new GradientDrawable();
         background.setColor(color);
-        background.setCornerRadius(dp(16));
+        background.setCornerRadius(dp(22));
         return background;
     }
 
@@ -210,6 +291,7 @@ public final class MainActivity extends Activity {
         result.setOrientation(LinearLayout.VERTICAL);
         result.setPadding(dp(17), dp(15), dp(17), dp(15));
         result.setBackground(box(CARD));
+        result.setElevation(dp(3));
         LinearLayout.LayoutParams margins = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         margins.setMargins(0, dp(10), 0, dp(10));
@@ -420,6 +502,8 @@ public final class MainActivity extends Activity {
             }
             screen("Schedule", scheduleMode + " · " + first + " through " + last);
             navigation();
+            button(content,"Open full month calendar grid",this::calendarScreen);
+            if(CalendarBridge.enabled(this))syncCalendarNow();
             button(content, "Change view (currently " + scheduleMode + ")", () -> {
                 String[] options = {"Day", "Week", "Month"};
                 new AlertDialog.Builder(this).setTitle("Show schedule by")
@@ -508,6 +592,99 @@ public final class MainActivity extends Activity {
         } catch (Exception error) { error(error); }
     }
 
+    /** True month grid with accessible date actions, not a disguised job list. */
+    private void calendarScreen(){
+        currentScreen="calendar";
+        currentJobId=null;currentCustomerId=null;
+        try{
+            LocalDate first=selectedDate.withDayOfMonth(1);
+            LocalDate last=first.plusMonths(1).minusDays(1);
+            screen("Calendar",first.getMonth()+" "+first.getYear()+
+                " · choose a day to view its time-ordered daybook");
+            navigation();
+            LinearLayout controls=card();
+            button(controls,"Previous month",()->{
+                selectedDate=selectedDate.minusMonths(1);calendarScreen();
+            });
+            button(controls,"Go to current month",()->{
+                selectedDate=LocalDate.now();calendarScreen();
+            });
+            button(controls,"Next month",()->{
+                selectedDate=selectedDate.plusMonths(1);calendarScreen();
+            });
+            button(controls,"Jump to any date",()->{
+                EditText date=field(controls,"Jump date · YYYY-MM-DD",selectedDate.toString());
+                date.setText(selectedDate.toString());
+                openDate(date);
+                // The date picker writes the field; tapping a day applies selection.
+                button(controls,"Show selected calendar date",()->{
+                    try{selectedDate=LocalDate.parse(date.getText().toString());calendarScreen();}
+                    catch(Exception e){error(e);}
+                });
+            });
+            int offset=first.getDayOfWeek().getValue()-1; // Monday=1
+            int cells=((offset+last.getDayOfMonth()+6)/7)*7;
+            String[] weekdays={"Mon","Tue","Wed","Thu","Fri","Sat","Sun"};
+            LinearLayout names=new LinearLayout(this);
+            names.setOrientation(LinearLayout.HORIZONTAL);
+            content.addView(names);
+            for(String name:weekdays){
+                TextView cell=new TextView(this);
+                cell.setText(name);
+                cell.setGravity(android.view.Gravity.CENTER);
+                cell.setTextSize(13);
+                cell.setTextColor(MUTED);
+                names.addView(cell,new LinearLayout.LayoutParams(0,dp(38),1));
+            }
+            List<WorkspaceStore.Job> jobs=store.jobs();
+            for(int row=0;row<cells/7;row++){
+                LinearLayout week=new LinearLayout(this);
+                week.setOrientation(LinearLayout.HORIZONTAL);
+                content.addView(week,new LinearLayout.LayoutParams(-1,-2));
+                for(int day=0;day<7;day++){
+                    int dayOfMonth=row*7+day-offset+1;
+                    Button tile=new Button(this);
+                    tile.setAllCaps(false);
+                    tile.setTextSize(14);
+                    tile.setMinHeight(dp(68));
+                    LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(0,dp(70),1);
+                    params.setMargins(dp(2),dp(2),dp(2),dp(2));
+                    week.addView(tile,params);
+                    if(dayOfMonth<1||dayOfMonth>last.getDayOfMonth()){
+                        tile.setEnabled(false);
+                        tile.setText("");
+                        tile.setBackgroundTintList(ColorStateList.valueOf(BACKGROUND));
+                        continue;
+                    }
+                    LocalDate date=first.withDayOfMonth(dayOfMonth);
+                    int count=0;
+                    String color=CrmWorkspace.JOB_COLORS[0];
+                    for(WorkspaceStore.Job job:jobs)
+                        if(job.date.equals(date.toString())){
+                            count++;
+                            if(count==1)color=crm.appointment(job).color;
+                        }
+                    tile.setText(dayOfMonth+(count>0?"\n"+count+" job"+(count>1?"s":""):""));
+                    tile.setTextColor(Color.WHITE);
+                    if(count>0){
+                        int chosen=Color.parseColor(color);
+                        tile.setBackgroundTintList(ColorStateList.valueOf(chosen));
+                        tile.setTextColor(Color.luminance(chosen)>0.45?Color.BLACK:Color.WHITE);
+                    }else tile.setBackgroundTintList(ColorStateList.valueOf(CARD));
+                    if(date.equals(LocalDate.now()))tile.setElevation(dp(6));
+                    final int jobCount=count;
+                    tile.setContentDescription(date+" · "+jobCount+" scheduled jobs. Open day.");
+                    tile.setOnClickListener(v->{
+                        selectedDate=date;scheduleMode="Day";scheduleScreen();
+                    });
+                }
+            }
+            label(content,"Job colors indicate scheduled work; open a day to see the "
+                +"customer, start/end time and notes. Route and worker data stay local.",
+                14,MUTED);
+        }catch(Exception e){error(e);}
+    }
+
     private void moveSchedule(int direction) {
         if (scheduleMode.equals("Day")) selectedDate = selectedDate.plusDays(direction);
         else if (scheduleMode.equals("Month"))
@@ -579,6 +756,236 @@ public final class MainActivity extends Activity {
 
     private File workspacePath() {
         return new File(getFilesDir(), "Accubook Workspace");
+    }
+
+    private void backupPasswordDialog(String title,boolean confirm,
+                                      java.util.function.Consumer<char[]> result){
+        LinearLayout fields=form();
+        label(fields,"Use a unique 12+ character passphrase. It is not saved or uploaded. "
+            +"Losing it makes the backup unrecoverable.",15,LIGHT);
+        EditText password=field(fields,"Passphrase","12 characters or more");
+        password.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        EditText second=null;
+        if(confirm){
+            second=field(fields,"Confirm passphrase","Repeat passphrase");
+            second.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        }
+        final EditText confirmation=second;
+        dialog(title,fields,()->{
+            char[] pass=password.getText().toString().toCharArray();
+            if(pass.length<12||pass.length>512){
+                java.util.Arrays.fill(pass,'\0');
+                throw new IllegalArgumentException("Passphrase must be 12–512 characters");
+            }
+            if(confirmation!=null&&!java.util.Arrays.equals(pass,
+                confirmation.getText().toString().toCharArray())){
+                java.util.Arrays.fill(pass,'\0');
+                throw new IllegalArgumentException("Passphrases do not match");
+            }
+            result.accept(pass);
+        });
+    }
+    private void calendarSettings(){
+        if(CalendarBridge.enabled(this)){
+            new AlertDialog.Builder(this).setTitle("Calendar synchronization")
+                .setMessage("Jobs are shared one way with your selected device calendar. "
+                    +"If it belongs to Google, that account may upload the events. "
+                    +"Turning sync off stops future updates but does not delete past events.")
+                .setNegativeButton("Keep enabled",(d,w)->{})
+                .setNeutralButton("Sync now",(d,w)->syncCalendarNow())
+                .setPositiveButton("Disable sync",(d,w)->{
+                    CalendarBridge.setEnabled(this,-1,false);
+                    businessScreen();
+                }).show();
+        }else new AlertDialog.Builder(this)
+            .setTitle("Share schedules with an Android / Google calendar?")
+            .setMessage("OFF by default. Selecting a calendar grants permission to copy "
+                +"job titles, site addresses, dates, status and daybook notes to that "
+                +"calendar. Google-account calendars can synchronize this information "
+                +"off-device. Nothing is transmitted by Accubook itself. "
+                +"Sync is one-way; only jobs are published and no customer phone/email "
+                +"or route points are included. No background sync is guaranteed.")
+            .setNegativeButton("Keep private",(d,w)->{})
+            .setPositiveButton("Choose calendar",(d,w)->{
+                if(checkSelfPermission(Manifest.permission.READ_CALENDAR)!=
+                    PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(Manifest.permission.WRITE_CALENDAR)!=
+                    PackageManager.PERMISSION_GRANTED){
+                    requestPermissions(new String[]{Manifest.permission.READ_CALENDAR,
+                        Manifest.permission.WRITE_CALENDAR},CALENDAR_PERMISSIONS);
+                }else chooseSyncCalendar();
+            }).show();
+    }
+    private void chooseSyncCalendar(){
+        try{
+            List<CalendarBridge.CalendarChoice> choices=
+                new CalendarBridge(this,store).choices();
+            if(choices.isEmpty()){
+                notice("No writable calendar","Add a calendar account or use the "
+                    +"device calendar application. Local scheduling remains available.");
+                return;
+            }
+            String[] names=new String[choices.size()];
+            for(int i=0;i<choices.size();i++)names[i]=choices.get(i).toString();
+            new AlertDialog.Builder(this).setTitle("Select destination calendar")
+                .setItems(names,(d,index)->{
+                    CalendarBridge.CalendarChoice choice=choices.get(index);
+                    new AlertDialog.Builder(this).setTitle("Confirm calendar sharing")
+                        .setMessage("Copy scheduled jobs and notes to "+choice+
+                            "? Calendar events will be visible to anyone with access "
+                            +"to that account or shared calendar. This is OFF by default.")
+                        .setNegativeButton("Cancel",(dd,w)->{})
+                        .setPositiveButton("Enable",(dd,w)->{
+                            CalendarBridge.setEnabled(this,choice.id,true);
+                            businessScreen();
+                            syncCalendarNow();
+                        }).show();
+                }).setNegativeButton("Cancel",(d,w)->{}).show();
+        }catch(Exception e){error(e);}
+    }
+    private void syncCalendarNow(){
+        if(!CalendarBridge.enabled(this))return;
+        new Thread(()->{
+            try {
+                int count=new CalendarBridge(this,store).syncAll();
+                runOnUiThread(()->Toast.makeText(this,
+                    count+" Accubook jobs reconciled with selected calendar",
+                    Toast.LENGTH_LONG).show());
+            }catch(Exception e){runOnUiThread(()->error(e));}
+        },"accubook-optin-calendar-sync").start();
+    }
+    private void localPickupReminder(WorkspaceStore.Job job){
+        LinearLayout fields=form();
+        EditText date=field(fields,"Dumpster pickup date · YYYY-MM-DD","Date");
+        date.setText(job.date);
+        button(fields,"Choose pickup date",()->openDate(date));
+        EditText time=field(fields,"Pickup notification time · HH:mm","09:00");
+        time.setText("09:00");
+        button(fields,"Choose notification time",()->openClock(time));
+        dialog("Local dumpster pickup notification",fields,()->{
+            java.time.LocalDateTime when=java.time.LocalDateTime.parse(
+                date.getText().toString()+"T"+time.getText().toString());
+            long epoch=when.atZone(java.time.ZoneId.systemDefault())
+                .toInstant().toEpochMilli();
+            if(epoch<System.currentTimeMillis()+30_000)
+                throw new IllegalArgumentException("Choose a future pickup time");
+            new AlertDialog.Builder(this).setTitle("Confirm local pickup reminder")
+                .setMessage("Notify this device around "+date.getText()+" at "+time.getText()+
+                    " for dumpster pickup? Android may delay the notification. "
+                    +"No data is sent to a remote server.")
+                .setNegativeButton("Cancel",(d,w)->{})
+                .setPositiveButton("Schedule",(d,w)->{
+                    try{
+                        if(Build.VERSION.SDK_INT>=33&&
+                            checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)!=
+                                PackageManager.PERMISSION_GRANTED){
+                            pendingPickupJobId=job.id;pendingPickupWhen=epoch;
+                            requestPermissions(new String[]{
+                                Manifest.permission.POST_NOTIFICATIONS},PICKUP_NOTIFY_PERMISSION);
+                            return;
+                        }
+                        PickupReminders.schedule(this,store,job,epoch);
+                        job(job.id);
+                        notice("Pickup reminder scheduled",
+                            "A local reminder was saved. Timing may be delayed by Android.");
+                    }catch(Exception e){error(e);}
+                }).show();
+        });
+    }
+
+    private void createPickupReminder(WorkspaceStore.Job job){
+        LinearLayout fields=form();
+        EditText date=field(fields,"Pickup date · YYYY-MM-DD","Choose calendar date");
+        date.setText(job.date);
+        button(fields,"Pick dumpster pickup date",()->openDate(date));
+        EditText time=field(fields,"Pickup time · HH:mm","09:00");
+        time.setText("09:00");
+        button(fields,"Pick pickup time",()->openClock(time));
+        dialog("Set a calendar pickup reminder",fields,()->{
+            try {
+                java.time.LocalDateTime timestamp=java.time.LocalDateTime.parse(
+                    date.getText().toString()+"T"+time.getText().toString());
+                long start=timestamp.atZone(java.time.ZoneId.systemDefault())
+                    .toInstant().toEpochMilli();
+                Intent insert=new Intent(Intent.ACTION_INSERT,
+                    android.provider.CalendarContract.Events.CONTENT_URI);
+                insert.putExtra(android.provider.CalendarContract.Events.TITLE,
+                    "Dumpster pickup · "+job.title);
+                insert.putExtra(android.provider.CalendarContract.EXTRA_EVENT_BEGIN_TIME,start);
+                insert.putExtra(android.provider.CalendarContract.EXTRA_EVENT_END_TIME,
+                    start+30*60*1000);
+                insert.putExtra(android.provider.CalendarContract.Events.DESCRIPTION,
+                    "Accubook contractor pickup reminder. Please configure an event "
+                    +"notification in the calendar.");
+                insert.putExtra(android.provider.CalendarContract.Events.EVENT_LOCATION,
+                    job.street+", "+job.city+", "+job.state+" "+job.zip);
+                startActivity(insert); // explicit handoff, calendar app controls save.
+            }catch(Exception e){error(e);}
+        });
+    }
+
+    private void chooseEncryptedBackup(){
+        backupPasswordDialog("Encrypt a backup",true,pass->{
+            pendingBackupPassword=pass;
+            Intent destination=new Intent(Intent.ACTION_CREATE_DOCUMENT);
+            destination.addCategory(Intent.CATEGORY_OPENABLE);
+            destination.setType("application/octet-stream");
+            destination.putExtra(Intent.EXTRA_TITLE,"accubook-backup.acbk");
+            try{startActivityForResult(destination,ENCRYPTED_BACKUP_EXPORT);}
+            catch(Exception e){
+                java.util.Arrays.fill(pass,'\0');
+                pendingBackupPassword=null;
+                error(e);
+            }
+        });
+    }
+    private void chooseEncryptedRestore(){
+        new AlertDialog.Builder(this).setTitle("Restore password-encrypted backup?")
+            .setMessage("Accubook verifies the password and full AES-GCM authentication "
+                +"before replacing the live workspace. The previous workspace stays in "
+                +"the rollback snapshot. Verify it before discarding.")
+            .setNegativeButton("Cancel",(d,w)->{})
+            .setPositiveButton("Choose file",(d,w)->{
+                Intent pick=new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                pick.addCategory(Intent.CATEGORY_OPENABLE);
+                pick.setType("*/*");
+                try{startActivityForResult(pick,ENCRYPTED_BACKUP_IMPORT);}
+                catch(Exception e){error(e);}
+            }).show();
+    }
+    private void encryptWorkspace(Uri destination,char[] pass){
+        new Thread(()->{
+            try(OutputStream out=getContentResolver().openOutputStream(destination,"wt")){
+                if(out==null)throw new IOException("Cannot write encrypted backup");
+                store.exportBackup(SecureArchive.encryptStream(out,pass));
+                runOnUiThread(()->notice("Encrypted backup complete",
+                    "File saved. Keep the password private and test a restore."));
+            }catch(Exception e){runOnUiThread(()->error(e));}
+            finally{java.util.Arrays.fill(pass,'\0');}
+        },"accubook-private-export").start();
+    }
+    private void decryptWorkspace(Uri selected,char[] pass){
+        new Thread(()->{
+            try(InputStream input=getContentResolver().openInputStream(selected)){
+                File plaintext=SecureArchive.decryptToTemp(input,getCacheDir(),pass);
+                try(InputStream zip=new FileInputStream(plaintext)){
+                    store.restoreBackup(zip);
+                }finally{
+                    if(plaintext.exists()&&!plaintext.delete())
+                        android.util.Log.e("Accubook","Cannot delete sensitive decrypted temp file");
+                }
+                runOnUiThread(()->{
+                    try{
+                        store=new WorkspaceStore(this);
+                        crm=new CrmWorkspace(store);
+                        home();
+                        notice("Encrypted restore successful","Inspect records and verify "
+                            +"the retained rollback snapshot before proceeding.");
+                    }catch(Exception e){error(e);}
+                });
+            }catch(Exception e){runOnUiThread(()->error(e));}
+            finally{java.util.Arrays.fill(pass,'\0');}
+        },"accubook-private-restore").start();
     }
 
     private void selectRestore() {
@@ -655,6 +1062,36 @@ public final class MainActivity extends Activity {
     @Override public void onRequestPermissionsResult(int code,String[] permissions,
                                                      int[] grants) {
         super.onRequestPermissionsResult(code,permissions,grants);
+        if(code==PICKUP_NOTIFY_PERMISSION){
+            String target=pendingPickupJobId;
+            long due=pendingPickupWhen;
+            pendingPickupJobId=null;
+            pendingPickupWhen=0;
+            if(grants.length>0&&grants[0]==PackageManager.PERMISSION_GRANTED&&target!=null){
+                try{
+                    PickupReminders.schedule(this,store,jobById(target),due);
+                    notice("Pickup reminder scheduled","An Android local notification is "
+                        +"scheduled. Battery optimization may delay delivery.");
+                }catch(Exception e){error(e);}
+            }else notice("Reminder not scheduled","Notifications were not permitted. "
+                +"Enable Accubook notifications and set the pickup time again.");
+            return;
+        }
+        if(code==CALENDAR_PERMISSIONS){
+            if(grants.length>=2 &&
+                grants[0]==PackageManager.PERMISSION_GRANTED &&
+                grants[1]==PackageManager.PERMISSION_GRANTED)
+                chooseSyncCalendar();
+            else notice("Calendar sync disabled","Calendar read/write permission was not "
+                +"granted. The local Accubook schedule is unchanged.");
+            return;
+        }
+        if(code==ROUTE_LOCATION_PERMISSION){
+            if(grants.length>0&&grants[0]==PackageManager.PERMISSION_GRANTED &&
+                routeJobId!=null)startRoute(routeJobId);
+            else notice("GPS not enabled","Route recording is optional and stays off.");
+            return;
+        }
         if(code==BULK_CONTACT_PERMISSION) {
             if(grants.length>0&&grants[0]==PackageManager.PERMISSION_GRANTED)
                 showBulkContactPicker();
@@ -663,46 +1100,135 @@ public final class MainActivity extends Activity {
         }
     }
 
+    /** Loads the user's complete permitted contacts, without a fixed result cap. */
     private void showBulkContactPicker() {
-        try {
-            LinkedHashMap<String,PhoneContact> contacts=new LinkedHashMap<>();
-            String[] projection={
-                ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
-                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-                ContactsContract.CommonDataKinds.Phone.NUMBER
-            };
-            try(Cursor cursor=getContentResolver().query(
-                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                projection,null,null,ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME+" ASC")){
-                if(cursor==null)throw new IOException("Cannot browse phone contacts");
-                while(cursor.moveToNext()&&contacts.size()<250){
-                    String id=cursor.getString(0), name=cursor.getString(1), phone=cursor.getString(2);
-                    if(id!=null&&name!=null&&!name.trim().isEmpty()&&!contacts.containsKey(id))
-                        contacts.put(id,new PhoneContact(id,name,phone==null?"":phone));
-                }
-            }
-            List<PhoneContact> values=new ArrayList<>(contacts.values());
-            if(values.isEmpty()){notice("No contacts found","No phone contacts are available.");return;}
-            String[] labels=new String[values.size()];
-            boolean[] selected=new boolean[values.size()];
-            for(int i=0;i<values.size();i++)
-                labels[i]=values.get(i).name+" · "+values.get(i).phone;
-            AlertDialog dlg=new AlertDialog.Builder(this)
-                .setTitle("Select customers ("+values.size()+" shown)")
-                .setMultiChoiceItems(labels,selected,(dialog,index,checked)->selected[index]=checked)
-                .setNegativeButton("Cancel",(dialog,index)->{})
-                .setNeutralButton("Select all shown",null)
-                .setPositiveButton("Import selected",(dialog,index)->importSelectedContacts(values,selected))
-                .create();
-            dlg.setOnShowListener(d->dlg.getButton(AlertDialog.BUTTON_NEUTRAL)
-                .setOnClickListener(v->{
-                    for(int i=0;i<selected.length;i++){
-                        selected[i]=true;dlg.getListView().setItemChecked(i,true);
+        Toast.makeText(this,"Loading contacts…",Toast.LENGTH_SHORT).show();
+        new Thread(()->{
+            try {
+                LinkedHashMap<String,PhoneContact> contacts=new LinkedHashMap<>();
+                String[] projection={
+                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
+                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                    ContactsContract.CommonDataKinds.Phone.NUMBER
+                };
+                try(Cursor cursor=getContentResolver().query(
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                    projection,null,null,ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME+" ASC")){
+                    if(cursor==null)throw new IOException("Cannot browse phone contacts");
+                    while(cursor.moveToNext()){
+                        String id=cursor.getString(0), name=cursor.getString(1),phone=cursor.getString(2);
+                        if(id!=null&&name!=null&&!name.trim().isEmpty()&&!contacts.containsKey(id))
+                            contacts.put(id,new PhoneContact(id,name,phone==null?"":phone));
                     }
-                }));
-            dlg.show();
-        }catch(Exception e){error(e);}
+                }
+                runOnUiThread(()->bulkContactDialog(new ArrayList<>(contacts.values())));
+            }catch(Exception failure){runOnUiThread(()->error(failure));}
+        },"accubook-contact-discovery").start();
     }
+
+    /**
+     * Search applies to the entire contact collection. Checked IDs persist across
+     * queries/pages; the visible page is just a small, recyclable selection surface.
+     */
+    private void bulkContactDialog(List<PhoneContact> all) {
+        if(all.isEmpty()){notice("No contacts","Your address book has no phone contacts.");return;}
+        final Set<String> chosen=new HashSet<>();
+        final int[] page={0};
+        final int pageSize=60;
+        final LinearLayout root=new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.setPadding(dp(15),dp(10),dp(15),dp(12));
+        final EditText search=new EditText(this);
+        search.setSingleLine(true);
+        search.setHint("Search any contact by name or phone");
+        search.setTextSize(17);
+        root.addView(search,new LinearLayout.LayoutParams(-1,dp(52)));
+        final TextView status=new TextView(this);
+        status.setTextSize(15);
+        status.setTextColor(Color.DKGRAY);
+        root.addView(status);
+        final ScrollView scroll=new ScrollView(this);
+        final LinearLayout results=new LinearLayout(this);
+        results.setOrientation(LinearLayout.VERTICAL);
+        scroll.addView(results);
+        root.addView(scroll,new LinearLayout.LayoutParams(-1,dp(360)));
+        final LinearLayout pager=new LinearLayout(this);
+        pager.setOrientation(LinearLayout.HORIZONTAL);
+        root.addView(pager);
+        final Button previous=new Button(this),next=new Button(this);
+        previous.setText("Previous");
+        next.setText("Next");
+        pager.addView(previous,new LinearLayout.LayoutParams(0,dp(50),1));
+        pager.addView(next,new LinearLayout.LayoutParams(0,dp(50),1));
+        Runnable render=()->{
+            String needle=search.getText().toString().trim().toLowerCase(Locale.ROOT);
+            List<PhoneContact> filtered=new ArrayList<>();
+            for(PhoneContact c:all)if(c.name.toLowerCase(Locale.ROOT).contains(needle)||
+                c.phone.toLowerCase(Locale.ROOT).contains(needle))filtered.add(c);
+            int pages=Math.max(1,(filtered.size()+pageSize-1)/pageSize);
+            page[0]=Math.max(0,Math.min(page[0],pages-1));
+            results.removeAllViews();
+            int start=page[0]*pageSize;
+            int end=Math.min(filtered.size(),start+pageSize);
+            for(int i=start;i<end;i++){
+                final PhoneContact contact=filtered.get(i);
+                CheckBox box=new CheckBox(this);
+                box.setText(contact.name+" · "+contact.phone);
+                box.setTextColor(Color.BLACK);
+                box.setTextSize(15);
+                box.setMinHeight(dp(50));
+                box.setChecked(chosen.contains(contact.id));
+                box.setOnCheckedChangeListener((widget,checked)->{
+                    if(checked)chosen.add(contact.id);else chosen.remove(contact.id);
+                    status.setText(filtered.size()+" matching · "+chosen.size()+" selected · Page "
+                        +(page[0]+1)+" of "+pages);
+                });
+                results.addView(box,new LinearLayout.LayoutParams(-1,-2));
+            }
+            status.setText(filtered.size()+" matching · "+chosen.size()+" selected · Page "
+                +(page[0]+1)+" of "+pages);
+            previous.setEnabled(page[0]>0);
+            next.setEnabled(page[0]+1<pages);
+            scroll.scrollTo(0,0);
+        };
+        search.addTextChangedListener(new TextWatcher(){
+            @Override public void beforeTextChanged(CharSequence text,int start,int count,int after){}
+            @Override public void onTextChanged(CharSequence text,int start,int before,int count){
+                page[0]=0;render.run();
+            }
+            @Override public void afterTextChanged(Editable text){}
+        });
+        previous.setOnClickListener(v->{page[0]--;render.run();});
+        next.setOnClickListener(v->{page[0]++;render.run();});
+        render.run();
+        AlertDialog dlg=new AlertDialog.Builder(this)
+            .setTitle("Select contacts — "+all.size()+" available")
+            .setView(root)
+            .setNegativeButton("Cancel",(dialog,index)->{})
+            .setNeutralButton("Select visible",null)
+            .setPositiveButton("Import selected",null).create();
+        dlg.setOnShowListener(d->{
+            dlg.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v->{
+                String needle=search.getText().toString().trim().toLowerCase(Locale.ROOT);
+                List<PhoneContact> filtered=new ArrayList<>();
+                for(PhoneContact c:all)if(c.name.toLowerCase(Locale.ROOT).contains(needle)||
+                    c.phone.toLowerCase(Locale.ROOT).contains(needle))filtered.add(c);
+                for(int i=page[0]*pageSize;i<Math.min(filtered.size(),(page[0]+1)*pageSize);i++)
+                    chosen.add(filtered.get(i).id);
+                render.run();
+            });
+            dlg.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v->{
+                if(chosen.isEmpty()){Toast.makeText(this,
+                    "Select one or more contacts",Toast.LENGTH_SHORT).show();return;}
+                boolean[] selected=new boolean[all.size()];
+                for(int i=0;i<all.size();i++)selected[i]=chosen.contains(all.get(i).id);
+                dlg.dismiss();
+                importSelectedContacts(all,selected);
+            });
+        });
+        dlg.show();
+    }
+
     private String emailForContact(String id) {
         try(Cursor c=getContentResolver().query(
             ContactsContract.CommonDataKinds.Email.CONTENT_URI,
@@ -916,18 +1442,33 @@ public final class MainActivity extends Activity {
         label(panel, "Job photo " + number, 16, LIGHT);
         try {
             File imageFile = store.photoFile(job, name);
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
-            if (options.outWidth <= 0 || options.outHeight <= 0)
-                throw new IOException("Image cannot be decoded");
-            options.inJustDecodeBounds = false;
-            options.inSampleSize = 1;
-            while (options.outWidth / options.inSampleSize > 1200
-                || options.outHeight / options.inSampleSize > 1200)
-                options.inSampleSize *= 2;
-            Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
-            if (bitmap == null) throw new IOException("Image cannot be decoded");
+            Bitmap bitmap;
+            if(Build.VERSION.SDK_INT>=28){
+                android.graphics.ImageDecoder.Source source=
+                    android.graphics.ImageDecoder.createSource(imageFile);
+                bitmap=android.graphics.ImageDecoder.decodeBitmap(source,(decoder,info,sourceInfo)->{
+                    android.util.Size size=info.getSize();
+                    int width=size.getWidth(),height=size.getHeight();
+                    if(width<=0||height<=0)throw new IllegalArgumentException("Invalid image dimensions");
+                    double divisor=Math.max(1.0,Math.max(width,height)/1200.0);
+                    decoder.setTargetSize(Math.max(1,(int)(width/divisor)),
+                        Math.max(1,(int)(height/divisor)));
+                    decoder.setAllocator(android.graphics.ImageDecoder.ALLOCATOR_SOFTWARE);
+                });
+            }else{
+                BitmapFactory.Options options=new BitmapFactory.Options();
+                options.inJustDecodeBounds=true;
+                BitmapFactory.decodeFile(imageFile.getAbsolutePath(),options);
+                if(options.outWidth<=0||options.outHeight<=0)
+                    throw new IOException("Image codec not supported on this Android version");
+                options.inJustDecodeBounds=false;
+                options.inSampleSize=1;
+                while(options.outWidth/options.inSampleSize>1200||
+                    options.outHeight/options.inSampleSize>1200)
+                    options.inSampleSize*=2;
+                bitmap=BitmapFactory.decodeFile(imageFile.getAbsolutePath(),options);
+            }
+            if(bitmap==null)throw new IOException("Cannot preview this image codec");
             ImageView preview = new ImageView(this);
             preview.setImageBitmap(bitmap);
             preview.setAdjustViewBounds(true);
@@ -964,7 +1505,43 @@ public final class MainActivity extends Activity {
             label(content,brand.business,20,LIGHT);
             label(content,brand.address+" "+brand.phone+" "+brand.email,15,MUTED);
             button(content,"Edit company / default invoice template",this::brandingDialog);
+            button(content,"Apply Jules Gutter Cleaning profile",()->
+                new AlertDialog.Builder(this)
+                .setTitle("Apply business profile?")
+                .setMessage("Replace the current business name/address/phone/email with Jules "
+                    +"Gutter Cleaning? Your logo, document terms and other settings remain.")
+                .setNegativeButton("Cancel",(d,w)->{})
+                .setPositiveButton("Apply",(d,w)->{
+                    try{
+                        CrmWorkspace.Branding old=crm.branding();
+                        crm.saveBranding("Jules Gutter Cleaning",
+                            "15 Ward Street, Hingham, MA 02043","267-667-2321",
+                            "julesguttercleaning@gmail.com",old.accent,old.terms,old.footer);
+                        businessScreen();
+                    }catch(Exception e){error(e);}
+                }).show());
             button(content,"Choose business logo",this::pickLogo);
+            button(content,"Manage item and service pricebook",this::catalogScreen);
+            section("Expenses and costs");
+            button(content,"Record a manual expense",this::expenseDialog);
+            BigDecimal expenseSum=BigDecimal.ZERO;
+            for(CrmWorkspace.Expense expense:crm.expenses())
+                expenseSum=expenseSum.add(new BigDecimal(expense.amount));
+            label(content,"Recorded expenses: $"+expenseSum.toPlainString(),18,LIGHT);
+            for(CrmWorkspace.Expense expense:crm.expenses()){
+                LinearLayout row=card();
+                label(row,expense.date+" · "+expense.category+" · $"+expense.amount,16,LIGHT);
+                label(row,expense.description,14,MUTED);
+                button(row,"Delete expense (confirm)",()->new AlertDialog.Builder(this)
+                    .setTitle("Delete expense?")
+                    .setMessage("This removes $"+expense.amount+" from category "
+                        +expense.category+". Export accounting records first.")
+                    .setNegativeButton("Keep",(d,w)->{})
+                    .setPositiveButton("Delete",(d,w)->{
+                        try{crm.deleteExpense(expense.id);businessScreen();}
+                        catch(Exception e){error(e);}
+                    }).show());
+            }
             section("Payment method ledgers");
             Map<String,BigDecimal> totals=new LinkedHashMap<>();
             for(String method:CrmWorkspace.PAYMENT_METHODS)totals.put(method,BigDecimal.ZERO);
@@ -984,18 +1561,77 @@ public final class MainActivity extends Activity {
             label(content,"Payments recorded: $"+received.toPlainString(),17,LIGHT);
             label(content,"Unreconciled difference (drafts - receipts): $"+
                 draftTotal.subtract(received).toPlainString(),16,LIGHT);
-            label(content,"Quotes manually marked sent: "+sent,15,LIGHT);
+            label(content,"Estimates manually marked sent: "+sent,15,LIGHT);
             for(Map.Entry<String,BigDecimal> item:totals.entrySet())
                 label(content,item.getKey()+" ledger: $"+item.getValue().toPlainString(),17,LIGHT);
             label(content,"No bank, PayPal or Cash App account connection is made. "
                 +"These are manual offline ledger entries, not verified settlements.",14,MUTED);
             button(content,"Create fictional test business data",this::createTestBusiness);
+            section("Optional calendar integration");
+            label(content,"Device/Google calendar sync: "+(
+                CalendarBridge.enabled(this)?"Opted in":"Off (private default)"),15,LIGHT);
+            button(content,"Calendar sync permissions and account",
+                this::calendarSettings);
+            section("Privacy and protection");
+            boolean protectedApp=UnlockActivity.isEnabled(this);
+            label(content,"App unlock: "+(protectedApp?"Fingerprint/device PIN enabled":
+                "Not enabled"),16,LIGHT);
+            button(content,protectedApp?"Disable app unlock":"Enable fingerprint / device PIN",
+                this::configureAppLock);
+            label(content,"Android authentication protects the app UI. The portable "
+                +"workspace and ordinary ZIP backups remain unencrypted. "
+                +"An app lock alone is not encryption at rest.",13,MUTED);
+            section("Reporting and accounting export");
+            button(content,"Create selective accounting / QuickBooks CSV ZIP",
+                this::chooseReportExport);
+            label(content,"Each category produces a separate CSV with documented columns. "
+                +"QuickBooks may require manual field mapping; this is not a live integration.",
+                14,MUTED);
+            section("Workspace safety");
+            button(content,"Create encrypted backup (.acbk)",this::chooseEncryptedBackup);
+            button(content,"Restore encrypted backup (.acbk)",this::chooseEncryptedRestore);
+            button(content,"Restore workspace from ZIP",this::selectRestore);
+            if(store.hasRollbackSnapshot()){
+                button(content,"Revert last restored workspace",this::revertSnapshot);
+                button(content,"Discard verified rollback snapshot",this::discardPreviousSnapshot);
+            }
             button(content,"Export full workspace backup",()->{
                 pendingBackup=true;
                 pendingInvoice=null;
                 document("accubook-workspace.zip","application/zip");
             });
         }catch(Exception e){error(e);}
+    }
+
+    private void configureAppLock() {
+        if(UnlockActivity.isEnabled(this)){
+            new AlertDialog.Builder(this).setTitle("Disable app unlock?")
+                .setMessage("Accubook will no longer require Android fingerprint or device "
+                    +"PIN when it opens. This does not encrypt or decrypt existing files.")
+                .setNegativeButton("Keep lock",(d,w)->{})
+                .setPositiveButton("Disable",(d,w)->{
+                    UnlockActivity.setEnabled(this,false);
+                    getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE);
+                    businessScreen();
+                }).show();
+            return;
+        }
+        if(!UnlockActivity.isSecure(this)){
+            notice("Android screen lock required",
+                "Configure a secure Android PIN, password or pattern in device settings "
+                +"first, then return here.");
+            return;
+        }
+        new AlertDialog.Builder(this).setTitle("Enable fingerprint / device PIN?")
+            .setMessage("Accubook will request your enrolled biometric or device screen "
+                +"lock credential when opening. It also hides screenshots while locked. "
+                +"This protects app access, but does NOT encrypt the on-disk workspace.")
+            .setNegativeButton("Cancel",(d,w)->{})
+            .setPositiveButton("Enable",(d,w)->{
+                UnlockActivity.setEnabled(this,true);
+                getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE);
+                businessScreen();
+            }).show();
     }
 
     private void brandingDialog() {
@@ -1012,9 +1648,11 @@ public final class MainActivity extends Activity {
             email.setText(brand.email);
             EditText color=field(fields,"Brand color · #RRGGBB","#165DAB");
             color.setText(brand.accent);
+            button(fields,"Open custom brand color picker",()->
+                chooseAnyColor(color.getText().toString(),color::setText));
             EditText terms=multiline(fields,"Default payment terms",brand.terms);
             EditText footer=multiline(fields,"Footer / business information",brand.footer);
-            dialog("Default quote and invoice template",fields,()->{
+            dialog("Default estimate and invoice template",fields,()->{
                 try{
                     crm.saveBranding(business.getText().toString(),address.getText().toString(),
                         phone.getText().toString(),email.getText().toString(),
@@ -1054,7 +1692,7 @@ public final class MainActivity extends Activity {
     private void openDocument(WorkspaceStore.Job job,boolean quote) {
         Intent intent=new Intent(this,DocumentActivity.class);
         intent.putExtra("job",job.id);
-        intent.putExtra("quote",quote);
+        intent.putExtra("estimate",quote);
         startActivity(intent);
     }
 
@@ -1110,14 +1748,79 @@ public final class MainActivity extends Activity {
     }
 
     private void chooseJobColor(Button button,String[] chosen) {
-        String[] labels={"Blue · standard","Green · active","Gold · follow-up",
-            "Red · urgent","Purple · special","Slate · other"};
-        new AlertDialog.Builder(this).setTitle("Color-code this job")
-            .setItems(labels,(dialog,index)->{
-                chosen[0]=CrmWorkspace.JOB_COLORS[index];
-                button.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(chosen[0])));
-                button.setText("Job color: "+labels[index]);
-            }).show();
+        chooseAnyColor(chosen[0],value->{
+            chosen[0]=value;
+            button.setText("Custom color: "+value);
+            int color=Color.parseColor(value);
+            button.setBackgroundTintList(ColorStateList.valueOf(color));
+            button.setTextColor(Color.luminance(color)>0.45?Color.BLACK:Color.WHITE);
+        });
+    }
+
+    private void chooseAnyColor(String initial,java.util.function.Consumer<String> accept) {
+        int color;
+        try{color=Color.parseColor(initial);}catch(Exception ignored){color=ACCENT;}
+        LinearLayout root=new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);
+        int pad=dp(16);
+        root.setPadding(pad,dp(12),pad,dp(12));
+        TextView preview=new TextView(this);
+        preview.setText("Custom color preview");
+        preview.setTextSize(17);
+        preview.setGravity(android.view.Gravity.CENTER);
+        preview.setMinHeight(dp(70));
+        root.addView(preview);
+        EditText hex=new EditText(this);
+        hex.setSingleLine(true);
+        hex.setTextColor(Color.BLACK);
+        hex.setHint("#RRGGBB");
+        hex.setText(String.format(Locale.ROOT,"#%06X",color&0xffffff));
+        root.addView(hex,new LinearLayout.LayoutParams(-1,dp(52)));
+        String[] channel={"Red","Green","Blue"};
+        int[] progress={Color.red(color),Color.green(color),Color.blue(color)};
+        android.widget.SeekBar[] sliders=new android.widget.SeekBar[3];
+        Runnable render=()->{
+            int value=Color.rgb(progress[0],progress[1],progress[2]);
+            preview.setBackground(box(value));
+            preview.setTextColor(Color.luminance(value)>0.45?Color.BLACK:Color.WHITE);
+            hex.setText(String.format(Locale.ROOT,"#%06X",value&0xffffff));
+        };
+        for(int i=0;i<3;i++){
+            final int index=i;
+            TextView label=new TextView(this);
+            label.setText(channel[i]+" channel");
+            label.setTextColor(Color.DKGRAY);
+            label.setTextSize(15);
+            root.addView(label);
+            android.widget.SeekBar slider=new android.widget.SeekBar(this);
+            slider.setMax(255);
+            slider.setProgress(progress[i]);
+            slider.setMinHeight(dp(44));
+            sliders[i]=slider;
+            root.addView(slider,new LinearLayout.LayoutParams(-1,dp(52)));
+            slider.setOnSeekBarChangeListener(new android.widget.SeekBar.OnSeekBarChangeListener(){
+                public void onProgressChanged(android.widget.SeekBar bar,int value,boolean user){
+                    if(user){progress[index]=value;render.run();}
+                }
+                public void onStartTrackingTouch(android.widget.SeekBar bar){}
+                public void onStopTrackingTouch(android.widget.SeekBar bar){}
+            });
+        }
+        render.run();
+        AlertDialog dlg=new AlertDialog.Builder(this).setTitle("Choose any color")
+            .setView(root).setNegativeButton("Cancel",(d,w)->{})
+            .setPositiveButton("Apply color",null).create();
+        dlg.setOnShowListener(d->dlg.getButton(AlertDialog.BUTTON_POSITIVE)
+            .setOnClickListener(v->{
+                String value=hex.getText().toString().trim().toUpperCase(Locale.ROOT);
+                if(!value.matches("#[0-9A-F]{6}")){
+                    hex.setError("Enter a six-digit hex color, e.g. #165DAB");
+                    return;
+                }
+                accept.accept(value);
+                dlg.dismiss();
+            }));
+        dlg.show();
     }
 
     private void scheduleEditor(WorkspaceStore.Job job) {
@@ -1182,7 +1885,8 @@ public final class MainActivity extends Activity {
             for(Uri uri:uris){
                 if(photos){
                     try(InputStream stream=getContentResolver().openInputStream(uri)){
-                        store.addPhoto(selected,stream);
+                        store.addPhoto(selected,stream,
+                            getContentResolver().getType(uri));
                     }
                 } else {
                     String name="Attachment";
@@ -1236,6 +1940,193 @@ public final class MainActivity extends Activity {
         }
     }
 
+    private void clockInDialog(WorkspaceStore.Job job) {
+        LinearLayout fields=form();
+        EditText worker=field(fields,"Worker name (required)","Worker or team member");
+        EditText notes=multiline(fields,"Work session notes","");
+        dialog("Clock in for this job",fields,()->{
+            try{
+                crm.clockIn(job,worker.getText().toString(),notes.getText().toString());
+                job(job.id);
+                Toast.makeText(this,"Clock in saved",Toast.LENGTH_SHORT).show();
+            }catch(IOException e){throw new IllegalStateException(e);}
+        });
+    }
+    private void clockOutConfirm(WorkspaceStore.Job job,CrmWorkspace.TimeEntry record){
+        new AlertDialog.Builder(this).setTitle("Clock out "+record.worker+"?")
+            .setMessage("Confirm departure and record elapsed time at this job. "
+                +"The original time entry will be retained.")
+            .setNegativeButton("Cancel",(d,w)->{})
+            .setPositiveButton("Clock out",(d,w)->{
+                try{
+                    crm.clockOut(job,record.id);
+                    job(job.id);
+                }catch(Exception e){error(e);}
+            }).show();
+    }
+
+    private void chooseReportExport(){
+        LinearLayout fields=form();
+        label(fields,"Only checked categories will be included in your report ZIP. "
+            +"No records are sent online. The destination ZIP may contain private data.",
+            16,LIGHT);
+        CheckBox[] sections=new CheckBox[BusinessReports.SECTIONS.length];
+        for(int i=0;i<sections.length;i++){
+            sections[i]=checkbox(fields,BusinessReports.SECTIONS[i],i==4);
+        }
+        dialog("Choose accounting report sections",fields,()->{
+            boolean[] selected=new boolean[sections.length];
+            boolean any=false;
+            for(int i=0;i<sections.length;i++){
+                selected[i]=sections[i].isChecked();
+                any|=selected[i];
+            }
+            if(!any)throw new IllegalArgumentException("Choose at least one report section");
+            pendingReportSections=selected;
+            Intent destination=new Intent(Intent.ACTION_CREATE_DOCUMENT);
+            destination.addCategory(Intent.CATEGORY_OPENABLE);
+            destination.setType("application/zip");
+            destination.putExtra(Intent.EXTRA_TITLE,"accubook-accounting-report.zip");
+            try{startActivityForResult(destination,REPORT_EXPORT_REQUEST);}
+            catch(Exception e){pendingReportSections=null;error(e);}
+        });
+    }
+
+    private void expenseDialog(){
+        LinearLayout fields=form();
+        EditText date=field(fields,"Expense date · YYYY-MM-DD","YYYY-MM-DD");
+        date.setText(LocalDate.now().toString());
+        button(fields,"Choose expense date",()->openDate(date));
+        EditText category=field(fields,"Category (required)","Fuel, tools, materials...");
+        EditText description=field(fields,"Description (required)","Supplies for project");
+        EditText amount=field(fields,"Expense amount (USD)","0.00");
+        amount.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        dialog("New manual expense",fields,()->{
+            // Validate before dismissing the form.
+            LocalDate.parse(date.getText().toString().trim());
+            CrmWorkspace.money(amount.getText().toString(),true);
+            String when=date.getText().toString(),cat=category.getText().toString(),
+                desc=description.getText().toString(),sum=amount.getText().toString();
+            if(cat.trim().isEmpty()||desc.trim().isEmpty())
+                throw new IllegalArgumentException("Expense category and description required");
+            new AlertDialog.Builder(this).setTitle("Confirm expense")
+                .setMessage("Record $"+sum+" in category "+cat+"? "
+                    +"This is a manual accounting entry, not a bank transaction.")
+                .setNegativeButton("Cancel",(d,w)->{})
+                .setPositiveButton("Record",(d,w)->{
+                    try{crm.addExpense(when,cat,desc,sum);businessScreen();}
+                    catch(Exception e){error(e);}
+                }).show();
+        });
+    }
+
+    private void toggleRoute(WorkspaceStore.Job job){
+        if(routeListener!=null){
+            stopRoute();
+            job(job.id);
+            return;
+        }
+        new AlertDialog.Builder(this).setTitle("Record route locally?")
+            .setMessage("Accubook will collect GPS coordinates only while this screen "
+                +"is in the foreground. Coordinates are stored in your local workspace "
+                +"and included in ordinary ZIP exports; no location is uploaded. "
+                +"Opening a map externally later will require another confirmation.")
+            .setNegativeButton("Cancel",(d,w)->{})
+            .setPositiveButton("Enable GPS",(d,w)->{
+                if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)!=
+                    PackageManager.PERMISSION_GRANTED){
+                    routeJobId=job.id;
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        ROUTE_LOCATION_PERMISSION);
+                }else startRoute(job.id);
+            }).show();
+    }
+    private void startRoute(String jobId){
+        try{
+            if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)!=
+                PackageManager.PERMISSION_GRANTED)
+                throw new SecurityException("Precise location permission is required");
+            stopRoute();
+            routeJobId=jobId;
+            locationManager=(android.location.LocationManager)
+                getSystemService(android.content.Context.LOCATION_SERVICE);
+            if(locationManager==null||
+                !locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER))
+                throw new IOException("Enable GPS in Android location settings");
+            routeListener=new android.location.LocationListener(){
+                @Override public void onLocationChanged(android.location.Location location){
+                    try{
+                        if(routeJobId!=null&&location!=null&&location.hasAccuracy()&&
+                            location.getAccuracy()<=150){
+                            crm.recordLocation(jobById(routeJobId),
+                                location.getLatitude(),location.getLongitude(),
+                                location.getAccuracy());
+                        }
+                    }catch(Exception failure){
+                        android.util.Log.e("Accubook","Cannot save route point",failure);
+                        runOnUiThread(()->{stopRoute();error(failure);});
+                    }
+                }
+                @Override public void onStatusChanged(String provider,int status,Bundle extras){}
+                @Override public void onProviderEnabled(String provider){}
+                @Override public void onProviderDisabled(String provider){
+                    runOnUiThread(()->{
+                        stopRoute();
+                        notice("Route paused","GPS was disabled. No background tracking continues.");
+                    });
+                }
+            };
+            locationManager.requestLocationUpdates(
+                android.location.LocationManager.GPS_PROVIDER,15000,20f,routeListener);
+            notice("Local route started","Accubook will record GPS while app is visible. "
+                +"Leaving the app stops recording.");
+        }catch(Exception e){stopRoute();error(e);}
+    }
+    private void stopRoute(){
+        if(locationManager!=null&&routeListener!=null)
+            try{locationManager.removeUpdates(routeListener);}catch(Exception ignored){}
+        routeListener=null;routeJobId=null;
+    }
+    private void openRouteInOSM(WorkspaceStore.Job job) {
+        try{
+            List<CrmWorkspace.RoutePoint> route=crm.routePoints(job);
+            if(route.isEmpty()){notice("No route points","Start local route tracking first.");return;}
+            CrmWorkspace.RoutePoint point=route.get(route.size()-1);
+            new AlertDialog.Builder(this).setTitle("Share a location with OpenStreetMap?")
+                .setMessage("Opening an external OpenStreetMap map will disclose these "
+                    +"coordinates to the chosen browser or map provider. Accubook itself "
+                    +"does not connect to OpenStreetMap. Continue?")
+                .setNegativeButton("Keep private",(d,w)->{})
+                .setPositiveButton("Open externally",(d,w)->{
+                    String lat=point.latitude,lon=point.longitude;
+                    Uri url=Uri.parse("https://www.openstreetmap.org/?mlat="+lat+
+                        "&mlon="+lon+"#map=16/"+lat+"/"+lon);
+                    try{startActivity(new Intent(Intent.ACTION_VIEW,url));}
+                    catch(Exception e){error(e);}
+                }).show();
+        }catch(Exception e){error(e);}
+    }
+    private void exportRoute(WorkspaceStore.Job job){
+        pendingRouteExportId=job.id;
+        Intent save=new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        save.setType("application/gpx+xml");
+        save.addCategory(Intent.CATEGORY_OPENABLE);
+        save.putExtra(Intent.EXTRA_TITLE,"accubook-"+job.date+".gpx");
+        try{startActivityForResult(save,ROUTE_EXPORT_REQUEST);}
+        catch(Exception e){error(e);}
+    }
+    private String asGpx(WorkspaceStore.Job job) throws IOException{
+        StringBuilder result=new StringBuilder(
+            "<?xml version='1.0' encoding='UTF-8'?>\\n"+
+            "<gpx version='1.1' creator='Accubook' xmlns='http://www.topografix.com/GPX/1/1'><trk><name>Private job route</name><trkseg>");
+        for(CrmWorkspace.RoutePoint point:crm.routePoints(job)){
+            result.append("<trkpt lat='").append(point.latitude).append("' lon='")
+                .append(point.longitude).append("'><time>").append(point.at)
+                .append("</time></trkpt>");
+        }
+        return result.append("</trkseg></trk></gpx>").toString();
+    }
+
     private void createTestBusiness() {
         new AlertDialog.Builder(this).setTitle("Load fictional test company?")
             .setMessage("Creates a fictional example contracting business, three demo customers, "
@@ -1244,11 +2135,8 @@ public final class MainActivity extends Activity {
             .setNegativeButton("Cancel",(d,w)->{})
             .setPositiveButton("Create sample",(d,w)->{
                 try {
-                    crm.saveBranding("Evergreen Exterior Services · DEMO",
-                        "20 Sample Way, Boston MA 02108","555-0120",
-                        "office@example.invalid","#165DAB",
-                        "DEMO ONLY: payment due upon completion.",
-                        "This is fictional test data, not a financial document.");
+                    // Never overwrite an owner's business identity when seeding fake data.
+                    // Demo customers and jobs are always labeled DEMO.
                     String[] customers={"Jordan Example","Avery Sample","Taylor Demo"};
                     String[] titles={"Roof inspection","Gutter clean and repair","Siding estimate"};
                     String[] methods={"Cash","Check","PayPal"};
@@ -1266,7 +2154,7 @@ public final class MainActivity extends Activity {
                         store.addLine(j,"DEMO labor","2","95.00");
                         store.addLine(j,"DEMO materials","1","45.00");
                         store.saveFieldNotes(j,"DEMO ONLY: confirm site details, take "
-                            +"photographs and issue a quote before work.");
+                            +"photographs and issue a estimate before work.");
                         crm.setQuoteSent(j,i==2,"Fictional sample status");
                         if(i<2)crm.addPayment(j,LocalDate.now().toString(),methods[i],
                             "50.00","DEMO","Fictional deposit");
@@ -1333,7 +2221,7 @@ public final class MainActivity extends Activity {
             LinearLayout summary=card();
             label(summary,"Today: "+todayJobs+" jobs    Upcoming: "+upcomingJobs,18,LIGHT);
             label(summary,"Customers: "+customers.size()+"    Active work: "+active,17,LIGHT);
-            label(summary,"Quotes marked sent: "+sentQuotes,16,LIGHT);
+            label(summary,"Estimates marked sent: "+sentQuotes,16,LIGHT);
             label(summary,"Draft billing: $"+openDraft.toPlainString(),17,LIGHT);
             label(summary,"Recorded receipts: $"+paid.toPlainString(),17,LIGHT);
 
@@ -1345,6 +2233,7 @@ public final class MainActivity extends Activity {
                 pendingInvoice = null;
                 document("accubook-workspace.zip", "application/zip");
             });
+            button(content,"Create encrypted workspace backup",this::chooseEncryptedBackup);
             button(content, "Restore workspace from ZIP", this::selectRestore);
             if (store.hasRollbackSnapshot()) {
                 button(content, "Revert to previous workspace", this::revertSnapshot);
@@ -1544,6 +2433,31 @@ public final class MainActivity extends Activity {
                 : (notes.length() > 800 ? notes.substring(0, 800) + "…" : notes),
                 15, MUTED);
             button(content, "Edit field notes", () -> fieldNotesDialog(work));
+            section("Logistics and job milestones");
+            button(content,"Edit vendor / material delivery / crew",()->jobLogisticsDialog(work));
+            TradeModules operations=new TradeModules(store);
+            TradeModules.Logistics details=operations.logistics(work);
+            label(content,"Vendor: "+details.vendor+"  ·  Delivery: "+details.delivery,
+                15,MUTED);
+            label(content,"Crew: "+details.crew,15,MUTED);
+            if(!details.notes.isEmpty())label(content,details.notes,15,LIGHT);
+            button(content,"+ Add custom milestone",()->addJobMilestone(work));
+            button(content,"Create dumpster pickup calendar reminder",
+                ()->createPickupReminder(work));
+            button(content,"Schedule device-only dumpster pickup alert",
+                ()->localPickupReminder(work));
+            long pickupDue=PickupReminders.due(store,work);
+            if(pickupDue>0)label(content,"Local pickup reminder: "+
+                java.time.Instant.ofEpochMilli(pickupDue).atZone(
+                    java.time.ZoneId.systemDefault()),14,MUTED);
+            for(TradeModules.Milestone step:operations.milestones(work)){
+                LinearLayout stepCard=card();
+                label(stepCard,(step.complete()?"✓ ":"□ ")+step.name,17,LIGHT);
+                if(step.complete())
+                    label(stepCard,"Completed at "+step.date,13,MUTED);
+                button(stepCard,step.complete()?"Reopen":"Mark complete",
+                    ()->toggleMilestone(work,step));
+            }
             section("Material requests");
             button(content, "Request materials", () -> materialDialog(work, null));
             for (WorkspaceStore.MaterialRequest request : store.materialRequests(work)) {
@@ -1555,31 +2469,46 @@ public final class MainActivity extends Activity {
                 button(entry, "Update material status", () -> materialStatusPicker(work, request));
                 button(entry, "Remove request", () -> removeMaterial(work, request));
             }
-            section("Quote and invoice");
+            section("Estimate and invoice");
             CrmWorkspace.Quote quoteState=crm.quote(work);
-            CheckBox sent=checkbox(content,"Quote sent (manually confirmed)",quoteState.sent);
+            CheckBox sent=checkbox(content,"Estimate sent (manually confirmed)",quoteState.sent);
             if(quoteState.sent)label(content,"Marked sent: "+quoteState.sentDate,14,MUTED);
-            sent.setOnCheckedChangeListener((item,checked)->{
-                try{crm.setQuoteSent(work,checked,"Manual checkbox update");}
-                catch(Exception e){error(e);sent.setChecked(!checked);}
+            sent.setOnClickListener(view->{
+                boolean next=sent.isChecked();
+                sent.setChecked(!next); // avoid changing display until persisted
+                new AlertDialog.Builder(this)
+                    .setTitle(next?"Confirm estimate sent?":"Mark estimate unsent?")
+                    .setMessage(next?"Only check this after you actually deliver the estimate.":
+                        "Remove the manual sent flag? This does not retract a delivered message.")
+                    .setNegativeButton("Cancel",(d,w)->{})
+                    .setPositiveButton("Confirm",(d,w)->{
+                        try{
+                            crm.setQuoteSent(work,next,"Owner confirmed");
+                            sent.setChecked(next);
+                        }catch(Exception e){error(e);}
+                    }).show();
             });
-            button(content,"Preview / edit quote (print or Save as PDF)",
+            button(content,"Preview / edit estimate (print or Save as PDF)",
                 ()->openDocument(work,true));
             button(content,"Preview / edit invoice (print or Save as PDF)",
                 ()->openDocument(work,false));
             label(content,"Draft amount: $"+work.total,22,LIGHT);
+            button(content,"+ Add from service / consumable catalog",
+                ()->catalogLineDialog(work));
             button(content,"Add labor, material or discount",()->lineDialog(work));
             button(content,"Export simple HTML draft",()->{
                 try{
                     pendingInvoice=InvoiceHtml.render(client,work,store.items(work));
                     pendingBackup=false;
-                    document("invoice-"+work.id+".html","text/html");
+                    document(DocumentNumbers.reference(work.id,work.date,false)+".html","text/html");
                 }catch(Exception failure){error(failure);}
             });
             for (WorkspaceStore.LineItem item : store.items(work)) {
                 LinearLayout row = card();
                 label(row, item.description, 17, LIGHT);
                 label(row, item.quantity + " × $" + item.unitRate + " = $" + item.amount, 14, MUTED);
+                button(row,"+ Increase quantity by 1",()->changeLineQuantity(work,item,1));
+                button(row,"− Decrease quantity by 1",()->changeLineQuantity(work,item,-1));
                 button(row, "Edit " + item.description, () -> editLineDialog(work, item));
                 button(row, "Remove " + item.description, () -> deleteLine(work, item));
             }
@@ -1599,9 +2528,216 @@ public final class MainActivity extends Activity {
                 label(row,payment.date+" · "+payment.method+" · $"+payment.amount,16,LIGHT);
                 label(row,"Reference: "+payment.reference+" · "+payment.note,14,MUTED);
             }
+            section("Worker time tracking");
+            label(content,"Recorded hours: "+crm.totalHours(work).toPlainString(),18,LIGHT);
+            button(content,"Clock in a worker",()->clockInDialog(work));
+            for(CrmWorkspace.TimeEntry entry:crm.timeEntries(work)){
+                LinearLayout clock=card();
+                label(clock,entry.worker+" · "+entry.start,16,LIGHT);
+                label(clock,entry.active()?"Clocked in now":
+                    "Clocked out "+entry.end+" · "+entry.hours+" hours",15,MUTED);
+                if(entry.active())button(clock,"Clock out "+entry.worker,
+                    ()->clockOutConfirm(work,entry));
+            }
+            section("Private route / geolocation");
+            List<CrmWorkspace.RoutePoint> route=crm.routePoints(work);
+            label(content,route.size()+" GPS points stored locally. Tracking stops when "
+                +"you leave the app.",14,MUTED);
+            button(content,routeListener!=null?"Stop GPS tracking":
+                "Start optional GPS route tracking",()->toggleRoute(work));
+            if(!route.isEmpty()){
+                button(content,"Export private route as GPX",()->exportRoute(work));
+                button(content,"Open last point in OpenStreetMap (shares coordinates)",
+                    ()->openRouteInOSM(work));
+            }
             label(content,"Offline manual records only. No payment collection, tax calculation "
                 +"or settlement verification occurs. Invoice remains a draft.",13,MUTED);
         } catch (Exception failure) { error(failure); }
+    }
+
+    private void changeLineQuantity(WorkspaceStore.Job job,WorkspaceStore.LineItem line,int change){
+        try {
+            BigDecimal next=new BigDecimal(line.quantity).add(BigDecimal.valueOf(change));
+            if(next.signum()<=0){
+                notice("Quantity minimum","Quantity cannot be zero. Use Remove for deletion.");
+                return;
+            }
+            new AlertDialog.Builder(this).setTitle("Confirm billing change")
+                .setMessage(line.description+": "+line.quantity+" → "+next.toPlainString()
+                    +" at $"+line.unitRate+" per unit. Update this billing line?")
+                .setNegativeButton("Cancel",(d,w)->{})
+                .setPositiveButton("Update",(d,w)->{
+                    try{
+                        store.updateLine(job,line.id,line.description,next.toPlainString(),
+                            line.unitRate);
+                        job(job.id);
+                    }catch(Exception e){error(e);}
+                }).show();
+        }catch(Exception e){error(e);}
+    }
+
+    /** Field-ready catalog selection inserts a canonical invoice line immediately. */
+    private void catalogLineDialog(WorkspaceStore.Job job){
+        try{
+            TradeModules trade=new TradeModules(store);
+            List<TradeModules.CatalogItem> items=trade.catalog();
+            String[] options=new String[items.size()+1];
+            for(int i=0;i<items.size();i++)options[i]=items.get(i).label();
+            options[items.size()]="+ Manage catalog items and prices";
+            new AlertDialog.Builder(this).setTitle("Choose service or consumable")
+                .setItems(options,(d,index)->{
+                    if(index==items.size()){catalogScreen();return;}
+                    TradeModules.CatalogItem item=items.get(index);
+                    LinearLayout fields=form();
+                    label(fields,item.category+" · "+item.name+" · "+item.unit,17,LIGHT);
+                    EditText quantity=field(fields,"Quantity","1");
+                    quantity.setText("1");
+                    quantity.setInputType(InputType.TYPE_CLASS_NUMBER|
+                        InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                    EditText markup=field(fields,"Markup % (this job only)",item.markup);
+                    markup.setText(item.markup);
+                    markup.setInputType(InputType.TYPE_CLASS_NUMBER|
+                        InputType.TYPE_NUMBER_FLAG_DECIMAL|
+                        InputType.TYPE_NUMBER_FLAG_SIGNED);
+                    EditText description=field(fields,"Description on invoice",item.name);
+                    description.setText(item.name);
+                    label(fields,"Base cost: $"+item.cost+" · Default sell price: $"+item.price(),
+                        15,MUTED);
+                    button(fields,"Preview calculated sell rate",()->{
+                        try{
+                            BigDecimal rate=PricingEngine.price(new BigDecimal(item.cost),
+                                new BigDecimal(markup.getText().toString()));
+                            notice("Preview",description.getText().toString()+" · $"+
+                                rate.toPlainString()+" per "+item.unit+
+                                " · extended $"+PricingEngine.extended(
+                                    new BigDecimal(quantity.getText().toString()),rate));
+                        }catch(Exception e){error(e);}
+                    });
+                    dialog("Add catalog item to invoice",fields,()->{
+                        BigDecimal rate=PricingEngine.price(new BigDecimal(item.cost),
+                            new BigDecimal(markup.getText().toString()));
+                        try{
+                            store.addLine(job,description.getText().toString(),
+                                quantity.getText().toString(),rate.toPlainString());
+                            job(job.id);
+                        }catch(IOException e){throw new IllegalStateException(e);}
+                    });
+                }).setNegativeButton("Cancel",(d,index)->{}).show();
+        }catch(Exception e){error(e);}
+    }
+    private void catalogScreen(){
+        currentScreen="catalog";
+        currentJobId=null;
+        currentCustomerId=null;
+        try{
+            screen("Services and consumables",
+                "Editable business-wide items · prices are examples, not supplier quotes");
+            navigation();
+            button(content,"+ Add service or material",()->catalogEdit(null));
+            button(content,"Import supplier price-sheet CSV",this::pickSupplierSheet);
+            label(content,"Supplier APIs require business access. This importer accepts "
+                +"an owner-approved CSV (no background network requests) and records "
+                +"the source and price timestamp.",14,MUTED);
+            label(content,"Catalog changes affect future line items only. Existing estimates "
+                +"and invoices retain the rates you approved.",14,MUTED);
+            for(TradeModules.CatalogItem item:new TradeModules(store).catalog()){
+                LinearLayout row=card();
+                label(row,item.name+" · "+item.category,18,LIGHT);
+                label(row,"Unit: "+item.unit+" · base cost $"+item.cost+
+                    " · markup "+item.markup+"% · sell $"+item.price(),15,MUTED);
+                label(row,"Supplier: "+item.supplier,13,MUTED);
+                button(row,"Edit item or markup",()->catalogEdit(item));
+            }
+        }catch(Exception e){error(e);}
+    }
+    private void pickSupplierSheet(){
+        new AlertDialog.Builder(this).setTitle("Import supplier prices?")
+            .setMessage("Import a CSV you obtained from Lansing, QXO, SRS Distribution "
+                +"or a manual source. Validate the source and prices before using them "
+                +"on customer estimates. This does not connect to a supplier account. "
+                +"Expected columns: Supplier,SKU,Name,Unit,BaseCost,MarkupPercent,AsOfUTC.")
+            .setNegativeButton("Cancel",(d,w)->{})
+            .setPositiveButton("Choose CSV",(d,w)->{
+                Intent pick=new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                pick.addCategory(Intent.CATEGORY_OPENABLE);
+                pick.setType("text/*");
+                try{startActivityForResult(pick,SUPPLIER_CSV_REQUEST);}
+                catch(Exception e){error(e);}
+            }).show();
+    }
+
+    private void catalogEdit(TradeModules.CatalogItem existing){
+        LinearLayout form=form();
+        EditText category=field(form,"Category (any trade)","Gutter cleaning");
+        EditText name=field(form,"Service / item name","Standard gutter cleaning");
+        EditText unit=field(form,"Unit","service / each / linear foot / hour");
+        EditText cost=field(form,"Baseline cost · USD","250.00");
+        EditText markup=field(form,"Default markup %","0");
+        EditText supplier=field(form,"Supplier or pricing source","Manual / Lansing / QXO / SRS");
+        if(existing!=null){
+            category.setText(existing.category);name.setText(existing.name);
+            unit.setText(existing.unit);cost.setText(existing.cost);
+            markup.setText(existing.markup);supplier.setText(existing.supplier);
+        }
+        dialog(existing==null?"New catalog item":"Edit catalog item",form,()->{
+            try{
+                new TradeModules(store).saveItem(existing==null?null:existing.id,
+                    category.getText().toString(),name.getText().toString(),
+                    unit.getText().toString(),cost.getText().toString(),
+                    markup.getText().toString(),supplier.getText().toString());
+                catalogScreen();
+            }catch(IOException e){throw new IllegalStateException(e);}
+        });
+    }
+    private void jobLogisticsDialog(WorkspaceStore.Job job) {
+        try{
+            TradeModules.Logistics current=new TradeModules(store).logistics(job);
+            LinearLayout fields=form();
+            EditText vendor=field(fields,"Assigned dumpster/vendor company",
+                "Vendor name / contact");
+            vendor.setText(current.vendor);
+            EditText delivery=field(fields,"Material delivery contact",
+                "Supplier driver / manager");
+            delivery.setText(current.delivery);
+            EditText crew=field(fields,"Assigned crew or personnel",
+                "Crew names");
+            crew.setText(current.crew);
+            EditText notes=multiline(fields,"Operations notes / site instructions",
+                current.notes);
+            dialog("Job vendors and logistics",fields,()->{
+                try{
+                    new TradeModules(store).saveLogistics(job,vendor.getText().toString(),
+                        delivery.getText().toString(),crew.getText().toString(),
+                        notes.getText().toString());
+                    job(job.id);
+                }catch(IOException e){throw new IllegalStateException(e);}
+            });
+        }catch(Exception e){error(e);}
+    }
+    private void addJobMilestone(WorkspaceStore.Job job) {
+        LinearLayout fields=form();
+        EditText name=field(fields,"Milestone name","Customer approval, inspection...");
+        dialog("Add custom job checklist item",fields,()->{
+            try{
+                new TradeModules(store).addMilestone(job,name.getText().toString());
+                job(job.id);
+            }catch(IOException e){throw new IllegalStateException(e);}
+        });
+    }
+    private void toggleMilestone(WorkspaceStore.Job job,TradeModules.Milestone old) {
+        boolean next=!old.complete();
+        new AlertDialog.Builder(this).setTitle(next?"Mark milestone complete?":"Reopen milestone?")
+            .setMessage(old.name+" — this change will be recorded in the local job log.")
+            .setNegativeButton("Cancel",(d,w)->{})
+            .setPositiveButton("Confirm",(d,w)->{
+                try{
+                    new TradeModules(store).setMilestone(job,old.key,next,old.notes);
+                    job(job.id);
+                    if(next&&old.name.toLowerCase(Locale.ROOT).contains("dumpster delivered"))
+                        notice("Pickup reminder","Remember to schedule a dumpster pickup "
+                            +"before closing the job. Add a calendar reminder from this job.");
+                }catch(Exception e){error(e);}
+            }).show();
     }
 
     private void lineDialog(WorkspaceStore.Job job) {
@@ -1642,6 +2778,19 @@ public final class MainActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==UNLOCK_REQUEST){
+            lockRequestInProgress=false;
+            if(resultCode==RESULT_OK){
+                unlocked=true;
+                if(store==null)initializeWorkspace(restoreAfterUnlock);
+                else home();
+                restoreAfterUnlock=null;
+            }else{
+                unlocked=false;
+                lockedScreen();
+            }
+            return;
+        }
         if (requestCode == RESTORE_REQUEST) {
             if (resultCode != RESULT_OK || data == null || data.getData() == null) return;
             try (InputStream zip = getContentResolver().openInputStream(data.getData())) {
@@ -1657,13 +2806,64 @@ public final class MainActivity extends Activity {
             }
             return;
         }
+        if(requestCode==ENCRYPTED_BACKUP_EXPORT){
+            char[] pass=pendingBackupPassword;
+            pendingBackupPassword=null;
+            if(pass==null)return;
+            if(resultCode==RESULT_OK&&data!=null&&data.getData()!=null)
+                encryptWorkspace(data.getData(),pass);
+            else java.util.Arrays.fill(pass,'\0');
+            return;
+        }
+        if(requestCode==ENCRYPTED_BACKUP_IMPORT){
+            if(resultCode!=RESULT_OK||data==null||data.getData()==null)return;
+            Uri selected=data.getData();
+            backupPasswordDialog("Unlock encrypted backup",false,
+                pass->decryptWorkspace(selected,pass));
+            return;
+        }
+        if(requestCode==SUPPLIER_CSV_REQUEST){
+            if(resultCode!=RESULT_OK||data==null||data.getData()==null)return;
+            try(InputStream in=getContentResolver().openInputStream(data.getData())){
+                int count=new TradeModules(store).importSupplierCsv(in);
+                catalogScreen();
+                notice("Supplier price sheet imported",count+" new catalog items saved. "
+                    +"Review the markup before billing customers.");
+            }catch(Exception e){error(e);}
+            return;
+        }
+        if(requestCode==REPORT_EXPORT_REQUEST){
+            boolean[] sections=pendingReportSections;
+            pendingReportSections=null;
+            if(resultCode!=RESULT_OK||data==null||data.getData()==null)return;
+            if(sections==null){error(new IOException("Report selection expired"));return;}
+            try(OutputStream out=getContentResolver().openOutputStream(data.getData(),"wt")){
+                if(out==null)throw new IOException("Cannot open report destination");
+                BusinessReports.export(store,crm,sections,out);
+                notice("Report exported","Your selected CSV sections were saved locally. "
+                    +"Review the README file before importing into accounting software.");
+            }catch(Exception e){error(e);}
+            return;
+        }
+        if(requestCode==ROUTE_EXPORT_REQUEST){
+            String jobId=pendingRouteExportId;
+            pendingRouteExportId=null;
+            if(resultCode!=RESULT_OK||data==null||data.getData()==null||jobId==null)return;
+            try(OutputStream out=getContentResolver().openOutputStream(data.getData(),"wt")){
+                if(out==null)throw new IOException("Cannot write GPX");
+                out.write(asGpx(jobById(jobId)).getBytes(StandardCharsets.UTF_8));
+                out.flush();
+                notice("GPX exported","A locally recorded route was exported to your chosen file.");
+            }catch(Exception e){error(e);}
+            return;
+        }
         if (requestCode == LOGO_REQUEST) {
             if(resultCode!=RESULT_OK||data==null||data.getData()==null)return;
             try(InputStream in=getContentResolver().openInputStream(data.getData())) {
                 String type=getContentResolver().getType(data.getData());
                 crm.saveLogo(in,type);
                 businessScreen();
-                notice("Logo saved","New quotes and invoices will include this logo.");
+                notice("Logo saved","New estimates and invoices will include this logo.");
             }catch(Exception e){error(e);}
             return;
         }
@@ -1722,7 +2922,7 @@ public final class MainActivity extends Activity {
             if (jobId == null) return;
             try (InputStream input = getContentResolver().openInputStream(data.getData())) {
                 WorkspaceStore.Job work = jobById(jobId);
-                store.addPhoto(work, input);
+                store.addPhoto(work, input,getContentResolver().getType(data.getData()));
                 job(jobId);
             } catch (Exception failure) { error(failure); }
             return;

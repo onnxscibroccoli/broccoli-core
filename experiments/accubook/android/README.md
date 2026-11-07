@@ -1,5 +1,23 @@
 # Accubook — offline-first field-service CRM (engineering preview)
 
+> **Security and operations increment:** Read
+> [SECURITY_ACCOUNTING_INTEGRATION.md](SECURITY_ACCOUNTING_INTEGRATION.md)
+> for verified versus unverified features, supported calendar sharing, supplier
+> price-sheet import, app lock, encrypted backup, and the production release
+> blockers. This branch is an **engineering preview**, not production software.
+>
+> The new-workspace default brand is **Jules Gutter Cleaning**,
+> 15 Ward Street, Hingham, MA 02043 · 267-667-2321 ·
+> julesguttercleaning@gmail.com. Existing brand records are **not overwritten**;
+> Business has an explicit profile-apply action.
+>
+> Live QXO/Lansing/SRS supplier account APIs are **NOT connected**; the app
+> accepts owner-imported supplier price CSVs. Calendar account sync is explicitly
+> opt-in through Android's Calendar Provider, not a background Google API client.
+> Native fingerprint/PIN access lock does not encrypt the active CSV workspace.
+> Portable AES-GCM password-encrypted backups are an **additional** safeguard.
+
+
 **Maturity: In development; not a completed field-service CRM.**
 **Owner:** `onnxscibroccoli/broccoli-core`, isolated `experiments/accubook/android`.
 **Product acceptance contract:** [PRODUCT_REQUIREMENTS.md](PRODUCT_REQUIREMENTS.md).

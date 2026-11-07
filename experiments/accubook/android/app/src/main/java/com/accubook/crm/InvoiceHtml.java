@@ -20,7 +20,7 @@ public final class InvoiceHtml {
         StringBuilder html = new StringBuilder();
         html.append("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\">")
             .append("<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">")
-            .append("<title>Accubook draft ").append(esc(job.id)).append("</title><style>")
+            .append("<title>Accubook estimate / invoice draft ").append(esc(DocumentNumbers.reference(job.id,job.date,false))).append("</title><style>")
             .append("body{font-family:system-ui,Arial,sans-serif;max-width:850px;margin:2rem auto;")
             .append("padding:0 1rem;color:#1b263b}table{width:100%;border-collapse:collapse}")
             .append("th,td{padding:.8rem;border-bottom:1px solid #cad2dd;text-align:left}")
@@ -39,7 +39,7 @@ public final class InvoiceHtml {
             .append(", ").append(esc(job.city)).append(", ").append(esc(job.state))
             .append(" ").append(esc(job.zip))
             .append("<br><strong>Scheduled:</strong> ").append(esc(job.date))
-            .append("<br><strong>Job reference:</strong> ").append(esc(job.id)).append("</p>")
+            .append("<br><strong>Reference:</strong> ").append(esc(DocumentNumbers.reference(job.id,job.date,false))).append("</p>")
             .append("<table><caption>Itemized work</caption><thead><tr>")
             .append("<th scope=\"col\">Description</th><th scope=\"col\">Quantity</th>")
             .append("<th scope=\"col\">Unit rate</th><th scope=\"col\">Amount</th>")
@@ -83,7 +83,7 @@ public final class InvoiceHtml {
                                         java.util.List<WorkspaceStore.LineItem> lines,
                                         CrmWorkspace.Branding brand, CrmWorkspace.Memo memo,
                                         byte[] logoBytes, boolean quote, boolean editable) {
-        String type=quote?"QUOTE / ESTIMATE":"INVOICE DRAFT";
+        String type=quote?"ESTIMATE DRAFT":"INVOICE DRAFT";
         String edit=editable?" contenteditable=\"true\" spellcheck=\"true\"":"";
         StringBuilder html=new StringBuilder();
         html.append("<!doctype html><html lang='en'><head><meta charset='utf-8'>")
@@ -123,7 +123,7 @@ public final class InvoiceHtml {
             .append(esc(brand.phone)).append("<br>").append(esc(brand.email))
             .append("</p></div><div><h1>").append(type).append("</h1>")
             .append("<p class='fine'>").append(quote?"Estimate · approval required":"Unpaid draft · not a receipt")
-            .append("<br>Job reference: ").append(esc(job.id)).append("</p></div></header>")
+            .append("<br>Document: ").append(esc(DocumentNumbers.reference(job.id,job.date,quote))).append("</p></div></header>")
             .append("<div class='meta'><section><h2>Prepared for</h2>")
             .append("<strong>").append(esc(customer.displayName())).append("</strong><br>")
             .append(esc(customer.street)).append("<br>").append(esc(customer.city))
@@ -146,14 +146,14 @@ public final class InvoiceHtml {
                 .append(esc(line.amount)).append("</td></tr>");
         }
         html.append("</tbody></table><div class='total'>")
-            .append(quote?"Quoted total: $":"Draft total: $").append(esc(job.total))
+            .append(quote?"Estimated total: $":"Draft total: $").append(esc(job.total))
             .append("</div></section><section><h2>Terms</h2><p>")
             .append(esc(brand.terms).replace("\n","<br>"))
             .append("</p><div id='closing' class='rich'").append(edit).append(">")
             .append(safeRichFragment(memo.closing)).append("</div></section>")
             .append("<footer class='fine'><p>").append(esc(brand.footer))
             .append("</p><p>Generated locally with Accubook. ")
-            .append(quote?"Quote is not an invoice.":"Draft is not proof of payment.")
+            .append(quote?"Estimate is not an invoice.":"Draft is not proof of payment.")
             .append("</p></footer></main></body></html>");
         return html.toString();
     }

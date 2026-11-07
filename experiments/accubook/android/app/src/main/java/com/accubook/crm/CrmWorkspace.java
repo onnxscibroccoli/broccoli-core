@@ -34,6 +34,10 @@ public final class CrmWorkspace {
     private static final String[] QUOTE = {"QuoteSent","DateSent","QuoteNote"};
     private static final String[] PAYMENTS = {"PaymentID","Date","Method","Amount","Reference","Notes"};
     private static final String[] ATTACHMENTS = {"AttachmentID","DisplayName","MimeType","SizeBytes","StoredName"};
+    private static final String[] EXPENSES = {"ExpenseID","Date","Category","Description","Amount"};
+    private static final String[] TIME_ENTRIES = {"EntryID","Worker","StartedAt","EndedAt","Hours","Notes"};
+    private static final String[] ROUTE = {"RecordedAt","Latitude","Longitude","AccuracyMeters"};
+
     private static final String[] BRANDING = {"BusinessName","Address","Phone","Email","AccentColor","Terms","Footer","LogoMimeType"};
     private static final String[] MEMO = {"Greeting","Closing"};
     public static final String[] PAYMENT_METHODS = {"Cash", "Check", "Cash App", "PayPal", "Bank Transfer", "Other"};
@@ -67,6 +71,27 @@ public final class CrmWorkspace {
         public final String id, name, mime, bytes, stored;
         Attachment(List<String> row) {
             id=row.get(0); name=row.get(1); mime=row.get(2); bytes=row.get(3); stored=row.get(4);
+        }
+    }
+    public static final class Expense {
+        public final String id,date,category,description,amount;
+        Expense(List<String> r) {
+            id=r.get(0);date=r.get(1);category=r.get(2);
+            description=r.get(3);amount=r.get(4);
+        }
+    }
+    public static final class TimeEntry {
+        public final String id,worker,start,end,hours,note;
+        TimeEntry(List<String> r) {
+            id=r.get(0);worker=r.get(1);start=r.get(2);end=r.get(3);
+            hours=r.get(4);note=r.get(5);
+        }
+        public boolean active(){return end.isEmpty();}
+    }
+    public static final class RoutePoint {
+        public final String at,latitude,longitude,accuracy;
+        RoutePoint(List<String> r){
+            at=r.get(0);latitude=r.get(1);longitude=r.get(2);accuracy=r.get(3);
         }
     }
     public static final class Branding {
@@ -263,6 +288,96 @@ public final class CrmWorkspace {
         return new BigDecimal(job.total).subtract(received(job));
     }
 
+    /** Manual offline costs. Never equate an expense with a bank-cleared payment. */
+    public synchronized List<Expense> expenses() throws IOException {
+        List<List<String>> rows=table(global("master_data/expenses.csv"),EXPENSES);
+        List<Expense> result=new ArrayList<>();
+        for(int i=1;i<rows.size();i++)result.add(new Expense(rows.get(i)));
+        return result;
+    }
+    public synchronized Expense addExpense(String when,String category,String description,
+                                          String amount) throws IOException {
+        List<String> r=row("EXP-"+UUID.randomUUID().toString().replace("-",""),
+            date(when),text(category,100,true),text(description,250,true),
+            money(amount,true).toPlainString());
+        File path=global("master_data/expenses.csv");
+        List<List<String>> rows=table(path,EXPENSES);
+        rows.add(r);writeTable(path,rows);
+        return new Expense(r);
+    }
+    public synchronized void deleteExpense(String identifier) throws IOException {
+        File path=global("master_data/expenses.csv");
+        List<List<String>> rows=table(path,EXPENSES);
+        boolean removed=rows.removeIf(r->r.get(0).equals(identifier));
+        if(!removed)throw new IOException("Expense not found");
+        writeTable(path,rows);
+    }
+
+    /** One device may register multiple named workers, each with a separate timer. */
+    public synchronized List<TimeEntry> timeEntries(WorkspaceStore.Job job) throws IOException {
+        List<List<String>> rows=table(new File(jobDir(job),"time_entries.csv"),TIME_ENTRIES);
+        List<TimeEntry> entries=new ArrayList<>();
+        for(int i=1;i<rows.size();i++)entries.add(new TimeEntry(rows.get(i)));
+        return entries;
+    }
+    public synchronized TimeEntry clockIn(WorkspaceStore.Job job,String worker,String note)
+        throws IOException {
+        String name=text(worker,100,true);
+        for(TimeEntry existing:timeEntries(job))
+            if(existing.active()&&existing.worker.equalsIgnoreCase(name))
+                throw new IllegalArgumentException("This worker is already clocked in");
+        List<String> r=row("TIME-"+UUID.randomUUID().toString().replace("-",""),name,
+            java.time.Instant.now().toString(),"","",text(note,1000,false));
+        File path=new File(jobDir(job),"time_entries.csv");
+        List<List<String>> rows=table(path,TIME_ENTRIES);
+        rows.add(r);writeTable(path,rows);
+        return new TimeEntry(r);
+    }
+    public synchronized TimeEntry clockOut(WorkspaceStore.Job job,String id) throws IOException {
+        File path=new File(jobDir(job),"time_entries.csv");
+        List<List<String>> rows=table(path,TIME_ENTRIES);
+        for(int i=1;i<rows.size();i++){
+            List<String> record=rows.get(i);
+            if(record.get(0).equals(id)&&record.get(3).isEmpty()){
+                java.time.Instant start=java.time.Instant.parse(record.get(2));
+                java.time.Instant end=java.time.Instant.now();
+                if(!end.isAfter(start))throw new IOException("Clock time moved backward");
+                BigDecimal hours=BigDecimal.valueOf(java.time.Duration.between(start,end)
+                    .toMillis()).divide(new BigDecimal("3600000"),4,RoundingMode.HALF_UP);
+                record.set(3,end.toString());
+                record.set(4,hours.toPlainString());
+                writeTable(path,rows);
+                return new TimeEntry(record);
+            }
+        }
+        throw new IOException("Active timer not found; no changes saved");
+    }
+    public synchronized BigDecimal totalHours(WorkspaceStore.Job job) throws IOException {
+        BigDecimal total=BigDecimal.ZERO;
+        for(TimeEntry entry:timeEntries(job))
+            if(!entry.hours.isEmpty())total=total.add(new BigDecimal(entry.hours));
+        return total;
+    }
+    /** Route coordinates are recorded only after explicit opt-in, locally. */
+    public synchronized void recordLocation(WorkspaceStore.Job job,double lat,double lon,
+                                            float accuracy) throws IOException {
+        if(!Double.isFinite(lat)||!Double.isFinite(lon)||lat< -90||lat>90||
+            lon< -180||lon>180||!Float.isFinite(accuracy)||accuracy<0)
+            throw new IllegalArgumentException("Invalid location point");
+        File path=new File(jobDir(job),"route_points.csv");
+        List<List<String>> rows=table(path,ROUTE);
+        if(rows.size()>10001)throw new IOException("Route point limit reached");
+        rows.add(row(java.time.Instant.now().toString(),
+            Double.toString(lat),Double.toString(lon),Float.toString(accuracy)));
+        writeTable(path,rows);
+    }
+    public synchronized List<RoutePoint> routePoints(WorkspaceStore.Job job) throws IOException {
+        List<List<String>> rows=table(new File(jobDir(job),"route_points.csv"),ROUTE);
+        List<RoutePoint> result=new ArrayList<>();
+        for(int i=1;i<rows.size();i++)result.add(new RoutePoint(rows.get(i)));
+        return result;
+    }
+
     private File attachmentDirectory(WorkspaceStore.Job job) throws IOException {
         return directory(new File(jobDir(job),"attachments"));
     }
@@ -332,7 +447,9 @@ public final class CrmWorkspace {
     private File brandingFile() throws IOException {return global("templates/branding.csv");}
     public synchronized Branding branding() throws IOException {
         List<List<String>> rows=table(brandingFile(),BRANDING);
-        if(rows.size()==1)return new Branding(row("My Business","","","","#165DAB",
+        if(rows.size()==1)return new Branding(row("Jules Gutter Cleaning",
+            "15 Ward Street, Hingham, MA 02043","267-667-2321",
+            "julesguttercleaning@gmail.com","#165DAB",
             "Payment due on receipt.","Thank you for your business.",""));
         return new Branding(rows.get(1));
     }

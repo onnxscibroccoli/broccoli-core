@@ -83,6 +83,31 @@ public final class BackupArchiveSmoke {
                 new String[]{"BusinessName","Address","Phone","Email","AccentColor","Terms","Footer","LogoMimeType"},
                 row("Demo LLC","Boston, MA","555-0100","demo@example.invalid",
                     "#165DAB","Pay on delivery","Thank you",""));
+            table(root,"master_data/pricebook.csv",
+                new String[]{"CatalogID","Category","Name","Unit","BaseCost",
+                    "MarkupPercent","Supplier","UpdatedUTC"},
+                row("CAT-"+"a".repeat(32),"Gutter Cleaning","Standard gutter cleaning",
+                    "service","250.00","0","Manual","2026-11-07T00:00:00Z"));
+            table(root,"master_data/calendar_links.csv",
+                new String[]{"JobID","CalendarID","EventID"},
+                row(jid,"123","456"));
+            table(root,jdir+"/time_entries.csv",
+                new String[]{"EntryID","Worker","StartedAt","EndedAt","Hours","Notes"},
+                row("TIME-"+"1".repeat(32),"Crew A","2026-11-07T12:00:00Z",
+                    "2026-11-07T13:30:00Z","1.5000","Test"));
+            table(root,jdir+"/route_points.csv",
+                new String[]{"RecordedAt","Latitude","Longitude","AccuracyMeters"},
+                row("2026-11-07T12:30:00Z","42.24","-70.88","15.0"));
+            table(root,jdir+"/job_milestones.csv",
+                new String[]{"Key","Name","Complete","CompletedUTC","Notes"},
+                row("MILE-"+"2".repeat(32),"Dumpster delivered","true",
+                    "2026-11-07T11:00:00Z","Delivered"));
+            table(root,jdir+"/job_logistics.csv",
+                new String[]{"Vendor","MaterialDeliveryContact","AssignedCrew","OperationsNotes"},
+                row("Sample Dumpster","Material Driver","Crew A","Demo"));
+            table(root,jdir+"/pickup_reminder.csv",
+                new String[]{"DueAtUTC","ConfiguredAtUTC","State"},
+                row("2026-11-08T12:00:00Z","2026-11-07T12:00:00Z","Scheduled"));
             File profile = new File(root, directory + "/profile.md");
             Files.createDirectories(profile.getParentFile().toPath());
             Files.writeString(profile.toPath(), "# notes\n", StandardCharsets.UTF_8);
@@ -166,6 +191,19 @@ public final class BackupArchiveSmoke {
             .contains("true"),"Quote status missing");
         check(Files.readString(new File(live,jdir+"/payments.csv").toPath())
             .contains("Cash"),"Payment ledger missing");
+        check(Files.readString(new File(live,jdir+"/time_entries.csv").toPath())
+            .contains("1.5000"),"Work time not restored");
+        check(Files.readString(new File(live,jdir+"/job_milestones.csv").toPath())
+            .contains("Dumpster delivered"),"Milestones not restored");
+        check(Files.readString(new File(live,jdir+"/job_logistics.csv").toPath())
+            .contains("Sample Dumpster"),"Vendor logistics not restored");
+        check(Files.readString(new File(live,jdir+"/pickup_reminder.csv").toPath())
+            .contains("Scheduled"),"Pickup alarm metadata not restored");
+        check(Files.readString(new File(live,"master_data/pricebook.csv").toPath())
+            .contains("250.00"),"Catalog pricing not restored");
+        check(Files.readString(new File(live,"master_data/calendar_links.csv").toPath())
+            .contains("456"),"Calendar mapping not restored");
+
         check(Files.readAllBytes(new File(live,jdir+"/attachments/ATT-"+
             "f".repeat(32)+".bin").toPath()).length==5,"Attachment missing");
         File invalid=new File(tmp,"corrupt");

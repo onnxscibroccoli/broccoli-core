@@ -57,9 +57,67 @@ public final class DocumentActivity extends Activity {
             .setMessage(e.getMessage()==null?"Unable to complete action":e.getMessage())
             .setPositiveButton("OK",(d,w)->{}).show();
     }
+    private static final int UNLOCK_REQUEST=854;
+    private boolean unlocked=false;
+    private long lastHiddenAt=0;
+    private boolean unlocking=false;
+
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state);
-        quote=getIntent().getBooleanExtra("quote",false);
+        if(UnlockActivity.isEnabled(this)){
+            getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE);
+            showLock();
+            return;
+        }
+        unlocked=true;
+        initializeDocument();
+    }
+
+    private void showLock() {
+        TextView view=new TextView(this);
+        view.setText("Document locked. Confirm fingerprint or device PIN.");
+        view.setTextSize(20);
+        view.setTextColor(LIGHT);
+        view.setBackgroundColor(DARK);
+        view.setPadding(dp(24),dp(50),dp(24),dp(30));
+        setContentView(view);
+        if(!unlocking){
+            unlocking=true;
+            startActivityForResult(new Intent(this,UnlockActivity.class),UNLOCK_REQUEST);
+        }
+    }
+    @Override protected void onStart(){
+        super.onStart();
+        if(unlocked && UnlockActivity.isEnabled(this) && !unlocking && lastHiddenAt>0 &&
+            android.os.SystemClock.elapsedRealtime()-lastHiddenAt>30000) {
+            unlocked=false;
+            showLock();
+        }
+    }
+    @Override protected void onStop(){
+        if(UnlockActivity.isEnabled(this))lastHiddenAt=android.os.SystemClock.elapsedRealtime();
+        super.onStop();
+    }
+    @Override protected void onActivityResult(int request,int result,Intent data){
+        super.onActivityResult(request,result,data);
+        if(request==UNLOCK_REQUEST){
+            unlocking=false;
+            if(result==RESULT_OK){
+                unlocked=true;
+                if(store==null)initializeDocument();
+                else try{build();}catch(Exception error){error(error);}
+            }else showLockedUntilRetry();
+        }
+    }
+    private void showLockedUntilRetry(){
+        android.widget.Button button=new android.widget.Button(this);
+        button.setText("Unlock document");
+        button.setOnClickListener(v->showLock());
+        setContentView(button);
+    }
+
+    private void initializeDocument() {
+        quote=getIntent().getBooleanExtra("estimate",false);
         String jobId=getIntent().getStringExtra("job");
         try {
             store=new WorkspaceStore(this);
@@ -87,7 +145,7 @@ public final class DocumentActivity extends Activity {
         setContentView(main);
 
         TextView title=new TextView(this);
-        title.setText(quote?"Quote / estimate · live document editor":
+        title.setText(quote?"Estimate draft · live document editor":
             "Invoice draft · live document editor");
         title.setTextColor(LIGHT);
         title.setTextSize(21);
@@ -124,8 +182,8 @@ public final class DocumentActivity extends Activity {
             catch(Exception error){error(error);}
         });
         if(quote) {
-            action(actions,"Share quote text using installed app",this::shareQuote);
-            action(actions,"Mark quote sent / unsent",this::quoteStatus);
+            action(actions,"Share estimate text using installed app",this::shareQuote);
+            action(actions,"Mark estimate sent / unsent",this::quoteStatus);
         }
         preview=new WebView(this);
         preview.setBackgroundColor(Color.WHITE);
@@ -187,8 +245,9 @@ public final class DocumentActivity extends Activity {
         try {
             PrintManager printer=(PrintManager)getSystemService(Context.PRINT_SERVICE);
             if(printer==null)throw new IOException("Android printing is unavailable");
-            printer.print((quote?"Accubook-Quote-":"Accubook-Invoice-")+job.id,
-                preview.createPrintDocumentAdapter("Accubook Document"),
+            printer.print(DocumentNumbers.reference(job.id,job.date,quote),
+                preview.createPrintDocumentAdapter(
+                    DocumentNumbers.reference(job.id,job.date,quote)),
                 new PrintAttributes.Builder()
                     .setMediaSize(PrintAttributes.MediaSize.NA_LETTER)
                     .setColorMode(PrintAttributes.COLOR_MODE_COLOR)
@@ -205,17 +264,17 @@ public final class DocumentActivity extends Activity {
                 Html.FROM_HTML_MODE_COMPACT).toString();
             Intent send=new Intent(Intent.ACTION_SEND);
             send.setType("text/plain");
-            send.putExtra(Intent.EXTRA_SUBJECT,"Quote - "+job.title);
+            send.putExtra(Intent.EXTRA_SUBJECT,"Estimate - "+job.title);
             send.putExtra(Intent.EXTRA_TEXT,text);
-            startActivity(Intent.createChooser(send,"Share quote with"));
-            Toast.makeText(this,"After sending, mark Quote sent separately",
+            startActivity(Intent.createChooser(send,"Share estimate with"));
+            Toast.makeText(this,"After sending, mark Estimate sent separately",
                 Toast.LENGTH_LONG).show();
         }catch(Exception e){error(e);}
     }
     private void quoteStatus() {
         try {
             CrmWorkspace.Quote state=crm.quote(job);
-            new AlertDialog.Builder(this).setTitle("Quote sent status")
+            new AlertDialog.Builder(this).setTitle("Estimate sent status")
                 .setMessage(state.sent?"Marked sent on "+state.sentDate+
                     ". This is a manual delivery flag, not proof of delivery.":
                     "Mark sent only after your message has actually been sent.")
@@ -223,7 +282,7 @@ public final class DocumentActivity extends Activity {
                 .setPositiveButton(state.sent?"Mark unsent":"Mark sent",(d,w)->{
                     try {
                         crm.setQuoteSent(job,!state.sent,"Manually confirmed by user");
-                        Toast.makeText(this,!state.sent?"Quote marked sent":"Quote marked unsent",
+                        Toast.makeText(this,!state.sent?"Estimate marked sent":"Estimate marked unsent",
                             Toast.LENGTH_SHORT).show();
                     }catch(Exception e){error(e);}
                 }).show();
