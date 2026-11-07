@@ -3,6 +3,9 @@
     <!-- No INTERNET, external-storage or privileged Android permission.
          READ_CONTACTS is runtime-requested only for user-approved batch selection. -->
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <!-- Foreground-only user-initiated route recording. No network permission. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <application
         android:label="Accubook (Development)"
         android:theme="@android:style/Theme.Material.NoActionBar"
