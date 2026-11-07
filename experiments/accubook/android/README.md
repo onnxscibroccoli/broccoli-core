@@ -35,6 +35,13 @@ Jobber / Housecall Pro / JobNimbus comparison and decision record.
   records are manual and are **not** a balanced double-entry general ledger,
   payroll system, bank reconciliation, vendor-bill subsystem, audited revenue
   measure, or automatically compatible QuickBooks import format.
+- **Distinct brand assets:** the dog-with-hardhat image supplied by the owner
+  is now the native Android launcher icon (`res/drawable/accubook_launcher.webp`).
+  The turquoise Jules Gutter Cleaning leaf is embedded separately as a
+  transparent PNG (`res/drawable/jules_gutter_leaf.png`). Business >
+  **Use Jules Gutter Cleaning leaf as business logo** explicitly applies it
+  to future document previews without silently replacing a different company's
+  branding or touching the Accubook launcher icon.
 - **Accessibility:** visual controls remain compact; a discoverable
   accessibility-labeled `⋯` button is provided alongside long-press,
   with optional extra arrow buttons. Accubook cannot and should not toggle
@@ -49,7 +56,7 @@ gradle :app:assembleDebug --no-daemon
 # Device smoke is defined in .github/workflows/accubook-emulator-smoke.yml
 ```
 
-**Still open:** modern launcher app icon and logo asset integration; physical
+**Still open:** physical
 device tests; PDF pagination visual QA; expense/ledger export differential
 tests; richer accounting models and production signing. Passing CI must not
 be labeled a successful customer accounting deployment.
