@@ -341,8 +341,17 @@ public final class BackupArchive {
         File businessSetup=new File(root,"templates/business_setup.csv");
         if(businessSetup.isFile()){
             if(businessSetup.length()>4096)throw new IOException("Business setup too large");
-            BusinessSetupProfile.fromCsv(Files.readString(
-                businessSetup.toPath(),StandardCharsets.UTF_8));
+            byte[] setupBytes=Files.readAllBytes(businessSetup.toPath());
+            String setupText;
+            try{
+                setupText=StandardCharsets.UTF_8.newDecoder()
+                    .onMalformedInput(CodingErrorAction.REPORT)
+                    .onUnmappableCharacter(CodingErrorAction.REPORT)
+                    .decode(java.nio.ByteBuffer.wrap(setupBytes)).toString();
+            }catch(java.nio.charset.CharacterCodingException error){
+                throw new IOException("Setup data must be valid UTF-8",error);
+            }
+            BusinessSetupProfile.fromCsv(setupText);
         }
         Map<String, String> folders = new HashMap<>();
         for (int i = 1; i < clients.size(); i++) {
