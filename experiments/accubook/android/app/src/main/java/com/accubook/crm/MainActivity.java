@@ -148,6 +148,7 @@ public final class MainActivity extends Activity {
                     else if ("customers".equals(page)) customersScreen();
                     else if ("schedule".equals(page)) scheduleScreen();
                 else if("calendar".equals(page))calendarScreen();
+                else if("catalog".equals(page))catalogScreen();
                     else home();
                 } else home();
             } catch (Exception error) {
@@ -1345,6 +1346,7 @@ public final class MainActivity extends Activity {
                     }catch(Exception e){error(e);}
                 }).show());
             button(content,"Choose business logo",this::pickLogo);
+            button(content,"Manage item and service pricebook",this::catalogScreen);
             section("Expenses and costs");
             button(content,"Record a manual expense",this::expenseDialog);
             BigDecimal expenseSum=BigDecimal.ZERO;
@@ -2251,6 +2253,23 @@ public final class MainActivity extends Activity {
                 : (notes.length() > 800 ? notes.substring(0, 800) + "…" : notes),
                 15, MUTED);
             button(content, "Edit field notes", () -> fieldNotesDialog(work));
+            section("Logistics and job milestones");
+            button(content,"Edit vendor / material delivery / crew",()->jobLogisticsDialog(work));
+            TradeModules operations=new TradeModules(store);
+            TradeModules.Logistics details=operations.logistics(work);
+            label(content,"Vendor: "+details.vendor+"  ·  Delivery: "+details.delivery,
+                15,MUTED);
+            label(content,"Crew: "+details.crew,15,MUTED);
+            if(!details.notes.isEmpty())label(content,details.notes,15,LIGHT);
+            button(content,"+ Add custom milestone",()->addJobMilestone(work));
+            for(TradeModules.Milestone step:operations.milestones(work)){
+                LinearLayout stepCard=card();
+                label(stepCard,(step.complete()?"✓ ":"□ ")+step.name,17,LIGHT);
+                if(step.complete())
+                    label(stepCard,"Completed at "+step.date,13,MUTED);
+                button(stepCard,step.complete()?"Reopen":"Mark complete",
+                    ()->toggleMilestone(work,step));
+            }
             section("Material requests");
             button(content, "Request materials", () -> materialDialog(work, null));
             for (WorkspaceStore.MaterialRequest request : store.materialRequests(work)) {
@@ -2286,6 +2305,8 @@ public final class MainActivity extends Activity {
             button(content,"Preview / edit invoice (print or Save as PDF)",
                 ()->openDocument(work,false));
             label(content,"Draft amount: $"+work.total,22,LIGHT);
+            button(content,"+ Add from service / consumable catalog",
+                ()->catalogLineDialog(work));
             button(content,"Add labor, material or discount",()->lineDialog(work));
             button(content,"Export simple HTML draft",()->{
                 try{
@@ -2365,6 +2386,150 @@ public final class MainActivity extends Activity {
                     }catch(Exception e){error(e);}
                 }).show();
         }catch(Exception e){error(e);}
+    }
+
+    /** Field-ready catalog selection inserts a canonical invoice line immediately. */
+    private void catalogLineDialog(WorkspaceStore.Job job){
+        try{
+            TradeModules trade=new TradeModules(store);
+            List<TradeModules.CatalogItem> items=trade.catalog();
+            String[] options=new String[items.size()+1];
+            for(int i=0;i<items.size();i++)options[i]=items.get(i).label();
+            options[items.size()]="+ Manage catalog items and prices";
+            new AlertDialog.Builder(this).setTitle("Choose service or consumable")
+                .setItems(options,(d,index)->{
+                    if(index==items.size()){catalogScreen();return;}
+                    TradeModules.CatalogItem item=items.get(index);
+                    LinearLayout fields=form();
+                    label(fields,item.category+" · "+item.name+" · "+item.unit,17,LIGHT);
+                    EditText quantity=field(fields,"Quantity","1");
+                    quantity.setText("1");
+                    quantity.setInputType(InputType.TYPE_CLASS_NUMBER|
+                        InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                    EditText markup=field(fields,"Markup % (this job only)",item.markup);
+                    markup.setText(item.markup);
+                    markup.setInputType(InputType.TYPE_CLASS_NUMBER|
+                        InputType.TYPE_NUMBER_FLAG_DECIMAL|
+                        InputType.TYPE_NUMBER_FLAG_SIGNED);
+                    EditText description=field(fields,"Description on invoice",item.name);
+                    description.setText(item.name);
+                    label(fields,"Base cost: $"+item.cost+" · Default sell price: $"+item.price(),
+                        15,MUTED);
+                    button(fields,"Preview calculated sell rate",()->{
+                        try{
+                            BigDecimal rate=PricingEngine.price(new BigDecimal(item.cost),
+                                new BigDecimal(markup.getText().toString()));
+                            notice("Preview",description.getText().toString()+" · $"+
+                                rate.toPlainString()+" per "+item.unit+
+                                " · extended $"+PricingEngine.extended(
+                                    new BigDecimal(quantity.getText().toString()),rate));
+                        }catch(Exception e){error(e);}
+                    });
+                    dialog("Add catalog item to invoice",fields,()->{
+                        BigDecimal rate=PricingEngine.price(new BigDecimal(item.cost),
+                            new BigDecimal(markup.getText().toString()));
+                        try{
+                            store.addLine(job,description.getText().toString(),
+                                quantity.getText().toString(),rate.toPlainString());
+                            job(job.id);
+                        }catch(IOException e){throw new IllegalStateException(e);}
+                    });
+                }).setNegativeButton("Cancel",(d,index)->{}).show();
+        }catch(Exception e){error(e);}
+    }
+    private void catalogScreen(){
+        currentScreen="catalog";
+        currentJobId=null;
+        currentCustomerId=null;
+        try{
+            screen("Services and consumables",
+                "Editable business-wide items · prices are examples, not supplier quotes");
+            navigation();
+            button(content,"+ Add service or material",()->catalogEdit(null));
+            label(content,"Catalog changes affect future line items only. Existing estimates "
+                +"and invoices retain the rates you approved.",14,MUTED);
+            for(TradeModules.CatalogItem item:new TradeModules(store).catalog()){
+                LinearLayout row=card();
+                label(row,item.name+" · "+item.category,18,LIGHT);
+                label(row,"Unit: "+item.unit+" · base cost $"+item.cost+
+                    " · markup "+item.markup+"% · sell $"+item.price(),15,MUTED);
+                label(row,"Supplier: "+item.supplier,13,MUTED);
+                button(row,"Edit item or markup",()->catalogEdit(item));
+            }
+        }catch(Exception e){error(e);}
+    }
+    private void catalogEdit(TradeModules.CatalogItem existing){
+        LinearLayout form=form();
+        EditText category=field(form,"Category (any trade)","Gutter cleaning");
+        EditText name=field(form,"Service / item name","Standard gutter cleaning");
+        EditText unit=field(form,"Unit","service / each / linear foot / hour");
+        EditText cost=field(form,"Baseline cost · USD","250.00");
+        EditText markup=field(form,"Default markup %","0");
+        EditText supplier=field(form,"Supplier or pricing source","Manual / Lansing / QXO / SRS");
+        if(existing!=null){
+            category.setText(existing.category);name.setText(existing.name);
+            unit.setText(existing.unit);cost.setText(existing.cost);
+            markup.setText(existing.markup);supplier.setText(existing.supplier);
+        }
+        dialog(existing==null?"New catalog item":"Edit catalog item",form,()->{
+            try{
+                new TradeModules(store).saveItem(existing==null?null:existing.id,
+                    category.getText().toString(),name.getText().toString(),
+                    unit.getText().toString(),cost.getText().toString(),
+                    markup.getText().toString(),supplier.getText().toString());
+                catalogScreen();
+            }catch(IOException e){throw new IllegalStateException(e);}
+        });
+    }
+    private void jobLogisticsDialog(WorkspaceStore.Job job) {
+        try{
+            TradeModules.Logistics current=new TradeModules(store).logistics(job);
+            LinearLayout fields=form();
+            EditText vendor=field(fields,"Assigned dumpster/vendor company",
+                "Vendor name / contact");
+            vendor.setText(current.vendor);
+            EditText delivery=field(fields,"Material delivery contact",
+                "Supplier driver / manager");
+            delivery.setText(current.delivery);
+            EditText crew=field(fields,"Assigned crew or personnel",
+                "Crew names");
+            crew.setText(current.crew);
+            EditText notes=multiline(fields,"Operations notes / site instructions",
+                current.notes);
+            dialog("Job vendors and logistics",fields,()->{
+                try{
+                    new TradeModules(store).saveLogistics(job,vendor.getText().toString(),
+                        delivery.getText().toString(),crew.getText().toString(),
+                        notes.getText().toString());
+                    job(job.id);
+                }catch(IOException e){throw new IllegalStateException(e);}
+            });
+        }catch(Exception e){error(e);}
+    }
+    private void addJobMilestone(WorkspaceStore.Job job) {
+        LinearLayout fields=form();
+        EditText name=field(fields,"Milestone name","Customer approval, inspection...");
+        dialog("Add custom job checklist item",fields,()->{
+            try{
+                new TradeModules(store).addMilestone(job,name.getText().toString());
+                job(job.id);
+            }catch(IOException e){throw new IllegalStateException(e);}
+        });
+    }
+    private void toggleMilestone(WorkspaceStore.Job job,TradeModules.Milestone old) {
+        boolean next=!old.complete();
+        new AlertDialog.Builder(this).setTitle(next?"Mark milestone complete?":"Reopen milestone?")
+            .setMessage(old.name+" — this change will be recorded in the local job log.")
+            .setNegativeButton("Cancel",(d,w)->{})
+            .setPositiveButton("Confirm",(d,w)->{
+                try{
+                    new TradeModules(store).setMilestone(job,old.key,next,old.notes);
+                    job(job.id);
+                    if(next&&old.name.toLowerCase(Locale.ROOT).contains("dumpster delivered"))
+                        notice("Pickup reminder","Remember to schedule a dumpster pickup "
+                            +"before closing the job. Add a calendar reminder from this job.");
+                }catch(Exception e){error(e);}
+            }).show();
     }
 
     private void lineDialog(WorkspaceStore.Job job) {
