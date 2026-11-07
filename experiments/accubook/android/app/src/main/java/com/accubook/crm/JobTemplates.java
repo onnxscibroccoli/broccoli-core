@@ -144,19 +144,21 @@ public final class JobTemplates {
     }
     private List<List<String>> jobRows(WorkspaceStore.Job job)throws IOException{
         File path=jobFile(job);
-        List<List<String>> all=read(path,JOB);
-        Set<String> known=new HashSet<>();
-        for(int i=1;i<all.size();i++)known.add(all.get(i).get(0));
-        boolean dirty=false;
-        for(Field def:master()){
-            if(known.add(def.id)){
-                all.add(row(def.id,def.label,def.kind,Boolean.toString(def.required),
-                    def.value,"true","Master"));
-                dirty=true;
+        boolean uninitialized=!path.isFile()&&
+            !new File(path.getPath()+".bak").isFile();
+        if(uninitialized){
+            // One-time snapshot: subsequent master changes never unexpectedly
+            // add required fields to an existing customer's active job.
+            List<List<String>> seed=new ArrayList<>();
+            seed.add(row(JOB));
+            for(Field defaultField:master()){
+                seed.add(row(defaultField.id,defaultField.label,defaultField.kind,
+                    Boolean.toString(defaultField.required),defaultField.value,
+                    "true","Master"));
             }
+            write(path,seed);
         }
-        if(dirty)write(path,all);
-        return all;
+        return read(path,JOB);
     }
     public synchronized List<Field> forJob(WorkspaceStore.Job job)throws IOException{
         List<Field> fields=new ArrayList<>();
