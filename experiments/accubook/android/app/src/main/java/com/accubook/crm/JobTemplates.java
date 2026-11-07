@@ -203,25 +203,7 @@ public final class JobTemplates {
      */
     private static boolean moveActive(List<List<String>> rows,String fieldId,int newIndex)
         throws IOException {
-        List<Integer> slots=new ArrayList<>();
-        List<List<String>> active=new ArrayList<>();
-        for(int i=1;i<rows.size();i++){
-            if("true".equals(rows.get(i).get(5))){
-                slots.add(i);
-                active.add(rows.get(i));
-            }
-        }
-        int old=-1;
-        for(int i=0;i<active.size();i++)
-            if(active.get(i).get(0).equals(fieldId)) {old=i;break;}
-        if(old<0)throw new IOException("Active field not found");
-        if(newIndex<0||newIndex>=active.size())
-            throw new IOException("Field destination is out of range");
-        if(old==newIndex)return false;
-        List<String> moved=active.remove(old);
-        active.add(newIndex,moved);
-        for(int i=0;i<slots.size();i++)rows.set(slots.get(i),active.get(i));
-        return true;
+        return FieldOrdering.moveActive(rows,fieldId,newIndex,5);
     }
 
     /** Move a master field; new jobs inherit the new sequence. */
