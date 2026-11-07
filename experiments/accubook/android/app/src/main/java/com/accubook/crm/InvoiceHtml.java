@@ -20,7 +20,7 @@ public final class InvoiceHtml {
         StringBuilder html = new StringBuilder();
         html.append("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\">")
             .append("<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">")
-            .append("<title>Accubook estimate / invoice draft ").append(esc(DocumentNumbers.reference(job.id,job.date,false))).append("</title><style>")
+            .append("<title>Accubook Invoice ").append(esc(DocumentNumbers.reference(job.id,job.date,false))).append("</title><style>")
             .append("body{font-family:system-ui,Arial,sans-serif;max-width:850px;margin:2rem auto;")
             .append("padding:0 1rem;color:#1b263b}table{width:100%;border-collapse:collapse}")
             .append("th,td{padding:.8rem;border-bottom:1px solid #cad2dd;text-align:left}")
@@ -28,8 +28,8 @@ public final class InvoiceHtml {
             .append(".total{text-align:right;font-size:1.4rem;font-weight:bold}")
             .append("@media print{body{margin:0}}")
             .append("</style></head><body>")
-            .append("<h1>Accubook — Draft invoice</h1>")
-            .append("<p><strong>Draft — review before sending. Not proof of payment.</strong></p>")
+            .append("<h1>Accubook — Invoice</h1>")
+            .append("<p><strong>Review before sending. Not proof of payment.</strong></p>")
             .append("<p><strong>Customer:</strong> ").append(esc(customer.displayName()))
             .append("<br><strong>Billing:</strong> ").append(esc(customer.street))
             .append(", ").append(esc(customer.city)).append(", ").append(esc(customer.state))
@@ -83,7 +83,7 @@ public final class InvoiceHtml {
                                         java.util.List<WorkspaceStore.LineItem> lines,
                                         CrmWorkspace.Branding brand, CrmWorkspace.Memo memo,
                                         byte[] logoBytes, boolean quote, boolean editable) {
-        String type=quote?"ESTIMATE DRAFT":"INVOICE DRAFT";
+        String type=quote?"ESTIMATE":"INVOICE";
         String edit=editable?" contenteditable=\"true\" spellcheck=\"true\"":"";
         StringBuilder html=new StringBuilder();
         html.append("<!doctype html><html lang='en'><head><meta charset='utf-8'>")
@@ -122,7 +122,7 @@ public final class InvoiceHtml {
             .append(esc(brand.address).replace("\n","<br>")).append("</address><p>")
             .append(esc(brand.phone)).append("<br>").append(esc(brand.email))
             .append("</p></div><div><h1>").append(type).append("</h1>")
-            .append("<p class='fine'>").append(quote?"Estimate · approval required":"Unpaid draft · not a receipt")
+            .append("<p class='fine'>").append(quote?"Estimate · approval required":"Invoice · not a receipt")
             .append("<br>Document: ").append(esc(DocumentNumbers.reference(job.id,job.date,quote))).append("</p></div></header>")
             .append("<div class='meta'><section><h2>Prepared for</h2>")
             .append("<strong>").append(esc(customer.displayName())).append("</strong><br>")
@@ -146,14 +146,14 @@ public final class InvoiceHtml {
                 .append(esc(line.amount)).append("</td></tr>");
         }
         html.append("</tbody></table><div class='total'>")
-            .append(quote?"Estimated total: $":"Draft total: $").append(esc(job.total))
+            .append(quote?"Estimated total: $":"Invoice total: $").append(esc(job.total))
             .append("</div></section><section><h2>Terms</h2><p>")
             .append(esc(brand.terms).replace("\n","<br>"))
             .append("</p><div id='closing' class='rich'").append(edit).append(">")
             .append(safeRichFragment(memo.closing)).append("</div></section>")
             .append("<footer class='fine'><p>").append(esc(brand.footer))
             .append("</p><p>Generated locally with Accubook. ")
-            .append(quote?"Estimate is not an invoice.":"Draft is not proof of payment.")
+            .append(quote?"Estimate is not an invoice.":"Invoice is not proof of payment.")
             .append("</p></footer></main></body></html>");
         return html.toString();
     }

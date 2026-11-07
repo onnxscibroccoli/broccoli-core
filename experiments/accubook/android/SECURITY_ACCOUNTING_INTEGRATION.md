@@ -32,7 +32,7 @@ against the exact head; do not claim device usability from an APK build alone.
 
 | Domain | Behavior | Known limitations |
 | --- | --- | --- |
-| Contacts | Whole authorized address-book browse with search, persistent selection across 60-item pages and dedupe | Large address-book usability/device test pending; current import uses selected phone/email |
+| Contacts | Separate Contacts directory; explicit Import ALL, optional searchable multi-selection, independent customer promotion and atomic CSV persistence | Device performance/privacy tests pending on large address books |
 | Terminology | Customer-facing Estimate language in primary UI/documents; internal legacy identifiers may remain for migration | Audit all historic docs and screens before production |
 | Documents | Deterministic friendly `EST-XXXX-XXXX-XXXX` / `INV-XXXX-XXXX-XXXX` references and merged line items | These are not issued legal sequential tax invoice numbers; collision test and immutable issued state pending |
 | Photos/files | Original-format JPEG, PNG, WebP, HEIC/HEIF, AVIF, GIF, BMP, TIFF, DNG and image picker MIME; private file attachments | Preview codec depends on Android support; 25MB limit, no arbitrary executable preview |
@@ -41,12 +41,12 @@ against the exact head; do not claim device usability from an APK build alone.
 | CSV exports | User-selectable ZIP sections for customers, jobs, line items, payments, expenses, timesheets | Manual QuickBooks column mapping; no QuickBooks account connection or automatic tax calculations |
 | Calendar UX | Native month grid with colored counts, day/week/month agenda and drag/date edit | Accessibility manual tests and crew conflict detection pending |
 | Backup | Export ZIP, prominent restore/revert; encrypted ACBK2 export/restore | Test full power-fail restore, key loss and low-memory failure |
-| Branding | Default new-profile Jules Gutter Cleaning, explicit apply to saved workspaces, RGB+hex color controls | Owner confirmation needed on old workspaces to avoid overwriting intentional customization |
+| Branding | Default new-profile Jules Gutter Cleaning, explicit apply to saved workspaces, visual rainbow hue + 2D shade picker, optional hex | Manual color interaction and screen reader testing pending |
 | Billing ergonomics | Catalog inserts to canonical line items, quantity +/- confirmation, estimate-sent confirmation | Financial approval/reversal policy and issued-invoice locking pending |
-| Trade templates | Editable any-trade service/material catalog, markup per default or job, custom job milestones, vendor/crew/delivery notes | Template-pack versioning, per-trade permissions/roles pending |
+| Trade templates | Owner-editable master job field template and per-job overrides (checkbox/text/date/number, required completion gates), plus service/material catalog and logistics | Existing legacy checklist is retained separately; role permissions and versioning pending |
 | Clock in/out | Multiple named worker clocks on one device, UTC instants and decimal-hours export | Not true authenticated multiuser or multi-device collaboration; break/overtime/payroll rules pending |
 | GPS/maps | Explicit foreground-only GPS point logging, opt-in GPX export, browser handoff to OpenStreetMap after location-sharing confirmation | No full map renderer or online routing API; GPS collection stops when app backgrounded |
-| Calendar sync | Explicit READ/WRITE_CALENDAR opt-in and selected writable Android calendar; reconciles jobs by tag; local Google account sync handled by installed calendar | Not a first-party Google Calendar OAuth client; no guaranteed background sync, conflict reconciliation, shared-account permissions or automatic deletion on opt-out |
+| Calendar sharing | Recommended: explicit Android Calendar event-editor handoff per job, user selects account and saves. Advanced optional provider-based one-way sync is manual only. | No guaranteed automatic/bidirectional Google sync; event editor may create duplicates if repeatedly confirmed; user-reported direct provider sync issues pending investigation |
 | Pickup reminders | User-scheduled local inexact alarm; permission-gated notifications; rearm on device boot | Android may delay notifications; no exact timing/SLA and no fully automatic vendor dispatch |
 | Supplier pricing | Owner-approved price sheets from Lansing/QXO/SRS/Manual with timestamp, bounded all-or-nothing import; catalog item cost/markup | **No live supplier API requests.** Contract, credentials and approved API schemas are required before implementing remote connectors |
 
@@ -80,13 +80,55 @@ Android's supported `CalendarContract` provider can insert/update events
 into the user-selected writable calendar once permission is granted. A device
 Google account may then synchronize events to Google. This sends job titles,
 addresses, scheduling dates and daybook notes off-device through the **calendar
-app/account provider**, and must remain opt-in. Sync is one-way and currently
-refreshes when the user opens the schedule or explicitly taps sync; it is not
-guaranteed background/real-time bidirectional synchronization. Disabling
+app/account provider**, and must remain opt-in. Advanced synchronization is now manual only; opening the schedule does not
+trigger automatic event publication. The recommended pathway opens the installed
+calendar editor for one job, requiring the user to explicitly save the event.
+It does not provide background or bidirectional synchronization. Disabling
 sync does not retroactively revoke already-shared events.
 
 Calendar event ownership is validated before updating a stored event ID to
 avoid overwriting unrelated calendar entries after workspace restoration.
+
+## November 7 owner feedback and ergonomic corrections
+
+The owner confirmed Android photo bulk import, local pickup reminders and
+biometric/device PIN app unlock during hands-on testing. Google Calendar automatic
+sync had unresolved problems. The next increment makes a one-job, permissionless
+Android Calendar event-editor handoff the recommended path, with advanced sync
+explicitly experimental. The previous automatic-on-schedule-open invocation is
+removed.
+
+Contacts are no longer silently promoted into Customers. The entire visible
+Android contacts address book can be copied to a separate CSV with one explicit
+permission-gated action. The app retains a searchable Contacts directory and
+per-contact manual promotion to Customers. Both file types are included in
+validated ZIP backup and restoration.
+
+The master job form is user-editable and trade-agnostic, with independently
+editable per-job fields (Checkbox, Text, Date, Number), required completion rules,
+field renaming, and deletion confirmation. Existing legacy checklists remain
+accessible but no longer dictate the master workflow.
+
+The visual color picker now uses an actual rainbow hue surface and a large
+light/dark shade selector, with keyboard navigation and named swatches. RGB
+channel sliders have been removed from the owner-facing workflow. The main UI
+has rounder touch targets and a higher-contrast dashboard HUD.
+
+Customer-visible estimate and invoice headings no longer display “Draft”.
+This is a presentation change only: the app does not yet implement immutable
+issued-invoice accounting, tax compliance or settlement verification.
+
+### Additional acceptance checks (unmet)
+
+- Import hundreds/thousands of device contacts with and without phone numbers;
+  test duplicates, denied permission and process interruption.
+- Confirm zero customers are created until explicitly promoted from Contacts.
+- Verify custom master fields on subsequent jobs; test that an existing job's
+  renamed/removed fields survive a master template change and ZIP restore.
+- Test required field completion gate and all four input types.
+- Verify rainbow picker under TalkBack, 200% text scaling, orientation changes.
+- Test one-job Calendar handoff with Google and local account selection and
+  accidental duplicate prevention; advanced sync remains experimental.
 
 ## Production release gates (unmet)
 

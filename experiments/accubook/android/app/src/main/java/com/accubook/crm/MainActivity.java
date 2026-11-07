@@ -66,11 +66,12 @@ public final class MainActivity extends Activity {
     private static final int ATTACHMENT_EXPORT_REQUEST = 708;
     private static final int BULK_CONTACT_PERMISSION = 709;
     private static final int BULK_PHOTO_REQUEST = 710;
-    private static final int BACKGROUND = Color.rgb(10, 15, 29);
-    private static final int CARD = Color.rgb(25, 36, 56);
-    private static final int LIGHT = Color.rgb(233, 240, 252);
-    private static final int MUTED = Color.rgb(175, 193, 218);
-    private static final int ACCENT = Color.rgb(26, 104, 184);
+    private boolean pendingImportAllContacts=false;
+    private static final int BACKGROUND = Color.rgb(13, 22, 38);
+    private static final int CARD = Color.rgb(30, 50, 73);
+    private static final int LIGHT = Color.rgb(246, 250, 255);
+    private static final int MUTED = Color.rgb(201, 216, 232);
+    private static final int ACCENT = Color.rgb(23, 126, 198);
 
     private WorkspaceStore store;
     private CrmWorkspace crm;
@@ -158,6 +159,10 @@ public final class MainActivity extends Activity {
                     else if ("schedule".equals(page)) scheduleScreen();
                 else if("calendar".equals(page))calendarScreen();
                 else if("catalog".equals(page))catalogScreen();
+                else if("contacts".equals(page))contactsScreen();
+                else if("contact".equals(page))contactsScreen();
+                else if("jobs".equals(page))jobsScreen();
+                else if("job_template".equals(page))masterJobTemplateScreen();
                     else home();
                 } else home();
             } catch (Exception error) {
@@ -233,7 +238,7 @@ public final class MainActivity extends Activity {
     private GradientDrawable box(int color) {
         GradientDrawable background = new GradientDrawable();
         background.setColor(color);
-        background.setCornerRadius(dp(22));
+        background.setCornerRadius(dp(26));
         return background;
     }
 
@@ -277,7 +282,9 @@ public final class MainActivity extends Activity {
         control.setAllCaps(false);
         control.setTextColor(Color.WHITE);
         control.setMinHeight(dp(52));
-        control.setBackgroundTintList(ColorStateList.valueOf(ACCENT));
+        control.setBackground(new android.graphics.drawable.RippleDrawable(
+            ColorStateList.valueOf(0x44ffffff),box(ACCENT),null));
+        control.setElevation(dp(2));
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.setMargins(0, dp(7), 0, dp(7));
@@ -291,7 +298,7 @@ public final class MainActivity extends Activity {
         result.setOrientation(LinearLayout.VERTICAL);
         result.setPadding(dp(17), dp(15), dp(17), dp(15));
         result.setBackground(box(CARD));
-        result.setElevation(dp(3));
+        result.setElevation(dp(5));
         LinearLayout.LayoutParams margins = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         margins.setMargins(0, dp(10), 0, dp(10));
@@ -360,30 +367,30 @@ public final class MainActivity extends Activity {
     }
 
 
-    /** Two rows avoid tiny taps and overlapping text at large font scaling. */
+    /** Six clear workspaces; two columns preserve 48dp touch targets at large text. */
     private void navigation() {
-        String[] labels = {"Home", "Customers", "Schedule", "Business"};
-        Runnable[] actions = {this::home, this::customersScreen,
-            this::scheduleScreen, this::businessScreen};
-        for (int row=0; row<2; row++) {
+        String[] labels={"Home","Jobs","Calendar","Contacts","Customers","Business"};
+        Runnable[] actions={this::home,this::jobsScreen,this::calendarScreen,
+            this::contactsScreen,this::customersScreen,this::businessScreen};
+        for(int row=0;row<3;row++){
             LinearLayout bar=new LinearLayout(this);
             bar.setOrientation(LinearLayout.HORIZONTAL);
             content.addView(bar,new LinearLayout.LayoutParams(-1,-2));
-            for (int column=0; column<2; column++) {
-                int index=row*2+column;
+            for(int col=0;col<2;col++){
+                int index=row*2+col;
                 Button tab=new Button(this);
                 tab.setText(labels[index]);
                 tab.setAllCaps(false);
+                tab.setTextSize(15);
                 tab.setTextColor(LIGHT);
-                tab.setTextSize(14);
                 tab.setMinHeight(dp(52));
-                tab.setContentDescription("Go to "+labels[index]);
-                tab.setBackgroundTintList(ColorStateList.valueOf(CARD));
-                LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,-2,1);
-                lp.setMargins(dp(3),dp(3),dp(3),dp(3));
-                bar.addView(tab,lp);
-                final Runnable action=actions[index];
-                tab.setOnClickListener(v->action.run());
+                tab.setBackground(box(CARD));
+                tab.setContentDescription("Open "+labels[index]+" workspace");
+                LinearLayout.LayoutParams cell=new LinearLayout.LayoutParams(0,-2,1);
+                cell.setMargins(dp(3),dp(3),dp(3),dp(3));
+                bar.addView(tab,cell);
+                final Runnable click=actions[index];
+                tab.setOnClickListener(v->click.run());
             }
         }
     }
@@ -426,6 +433,191 @@ public final class MainActivity extends Activity {
         } catch(Exception e){error(e);}
     }
 
+    private void jobsScreen(){
+        currentScreen="jobs";currentJobId=null;currentCustomerId=null;
+        try{
+            List<WorkspaceStore.Job> jobs=store.jobs();
+            jobs.sort((a,b)->a.date.compareTo(b.date));
+            screen("Jobs","Search all work · open a job to manage fields, billing and visits");
+            navigation();
+            button(content,"+ New job",this::chooseCustomer);
+            button(content,"Open daybook",this::scheduleScreen);
+            EditText search=field(content,"Search jobs","Name, status or address");
+            LinearLayout results=new LinearLayout(this);
+            results.setOrientation(LinearLayout.VERTICAL);
+            content.addView(results);
+            Runnable render=()->{
+                results.removeAllViews();
+                String needle=search.getText().toString().toLowerCase(Locale.ROOT).trim();
+                int shown=0;
+                for(WorkspaceStore.Job j:jobs){
+                    String searchable=(j.title+" "+j.status+" "+j.street+" "+j.date)
+                        .toLowerCase(Locale.ROOT);
+                    if(!searchable.contains(needle))continue;
+                    if(shown++>=120)continue;
+                    Button row=button(results,j.date+" · "+j.title+"\n"+j.status+
+                        " · $"+j.total,()->job(j.id));
+                    row.setContentDescription("Open job "+j.title+" on "+j.date);
+                }
+                if(shown>120)label(results,"Showing 120 of "+shown+
+                    " matches. Type to refine your search.",14,MUTED);
+                if(shown==0)label(results,"No matching jobs.",16,MUTED);
+            };
+            search.addTextChangedListener(new TextWatcher(){
+                public void beforeTextChanged(CharSequence value,int st,int ct,int after){}
+                public void onTextChanged(CharSequence value,int st,int before,int count){
+                    render.run();
+                }
+                public void afterTextChanged(Editable e){}
+            });
+            render.run();
+        }catch(Exception e){error(e);}
+    }
+
+    /** Independent contact directory. No automatic customer creation. */
+    private void contactsScreen(){
+        currentScreen="contacts";currentCustomerId=null;currentJobId=null;
+        try{
+            List<ContactDirectory.Contact> all=new ContactDirectory(store).all();
+            screen("Contacts",all.size()+" people · customers are a separate list");
+            navigation();
+            button(content,"Import ALL phone contacts",()->requestPhoneContacts(true));
+            button(content,"Choose contacts to import",()->requestPhoneContacts(false));
+            button(content,"Pick one Android contact",this::pickContact);
+            button(content,"+ Add contact manually",()->contactEdit(null));
+            label(content,"Importing contacts does not create customers or change jobs. "
+                +"Promote only the people you decide to work with.",14,MUTED);
+            EditText search=field(content,"Find any contact","Search name, phone or email");
+            LinearLayout results=new LinearLayout(this);
+            results.setOrientation(LinearLayout.VERTICAL);
+            content.addView(results);
+            final int[] page={0};
+            final int size=55;
+            Runnable render=()->{
+                results.removeAllViews();
+                String needle=search.getText().toString().trim().toLowerCase(Locale.ROOT);
+                List<ContactDirectory.Contact> matching=new ArrayList<>();
+                for(ContactDirectory.Contact c:all)
+                    if((c.name+" "+c.phone+" "+c.email).toLowerCase(Locale.ROOT)
+                        .contains(needle))matching.add(c);
+                int pages=Math.max(1,(matching.size()+size-1)/size);
+                page[0]=Math.max(0,Math.min(page[0],pages-1));
+                label(results,matching.size()+" contacts · page "+(page[0]+1)+
+                    " of "+pages,14,MUTED);
+                int start=page[0]*size;
+                for(int i=start;i<Math.min(start+size,matching.size());i++){
+                    ContactDirectory.Contact item=matching.get(i);
+                    button(results,item.name+"\n"+item.phone+
+                        (item.customerId.isEmpty()?" · Contact":" · Customer linked"),
+                        ()->contactDetails(item.id));
+                }
+                LinearLayout bar=new LinearLayout(this);
+                bar.setOrientation(LinearLayout.HORIZONTAL);
+                results.addView(bar);
+                Button previous=button(bar,"← Previous",()->{page[0]--;renderContactsRefresh[0].run();});
+                Button next=button(bar,"Next →",()->{page[0]++;renderContactsRefresh[0].run();});
+                previous.setEnabled(page[0]>0);
+                next.setEnabled(page[0]+1<pages);
+            };
+            // Pass a stable callback via a one-element holder to avoid recursing
+            // inside its own lambda initializer.
+            renderContactsRefresh[0]=render;
+            search.addTextChangedListener(new TextWatcher(){
+                public void beforeTextChanged(CharSequence value,int st,int ct,int after){}
+                public void onTextChanged(CharSequence value,int st,int before,int ct){
+                    page[0]=0;render.run();
+                }
+                public void afterTextChanged(Editable value){}
+            });
+            render.run();
+        }catch(Exception e){error(e);}
+    }
+    private final Runnable[] renderContactsRefresh=new Runnable[1];
+
+    private void contactDetails(String identifier){
+        try{
+            ContactDirectory.Contact c=null;
+            for(ContactDirectory.Contact x:new ContactDirectory(store).all())
+                if(x.id.equals(identifier))c=x;
+            if(c==null)throw new IOException("Contact no longer available");
+            final ContactDirectory.Contact selected=c;
+            currentScreen="contact";
+            screen(c.name,"Private contact · independent from customers");
+            navigation();
+            label(content,"Phone: "+(c.phone.isEmpty()?"Not provided":c.phone),17,LIGHT);
+            label(content,"Email: "+(c.email.isEmpty()?"Not provided":c.email),16,LIGHT);
+            button(content,"Edit contact",()->contactEdit(selected));
+            if(c.customerId.isEmpty())
+                button(content,"+ Make this contact a customer",
+                    ()->promoteContact(selected));
+            else{
+                final String customerId=c.customerId;
+                button(content,"Open linked customer",()->customer(customerId));
+            }
+            button(content,"Remove contact from Contacts",()->new AlertDialog.Builder(this)
+                .setTitle("Delete contact?")
+                .setMessage("Only this local directory record is deleted. "
+                    +"Any already-created customer remains untouched.")
+                .setNegativeButton("Cancel",(d,w)->{})
+                .setPositiveButton("Delete",(d,w)->{
+                    try{new ContactDirectory(store).delete(selected.id);contactsScreen();}
+                    catch(Exception e){error(e);}
+                }).show());
+        }catch(Exception e){error(e);}
+    }
+    private void contactEdit(ContactDirectory.Contact existing){
+        LinearLayout fields=form();
+        EditText name=field(fields,"Contact name","Name");
+        EditText phone=field(fields,"Telephone","Phone");
+        phone.setInputType(InputType.TYPE_CLASS_PHONE);
+        EditText email=field(fields,"Email address","Email");
+        email.setInputType(InputType.TYPE_CLASS_TEXT|
+            InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        if(existing!=null){
+            name.setText(existing.name);phone.setText(existing.phone);
+            email.setText(existing.email);
+        }
+        dialog(existing==null?"New contact":"Edit contact",fields,()->{
+            try{
+                ContactDirectory directory=new ContactDirectory(store);
+                if(existing==null){
+                    directory.add(name.getText().toString(),phone.getText().toString(),
+                        email.getText().toString());
+                    contactsScreen();
+                }else{
+                    directory.update(existing.id,name.getText().toString(),
+                        phone.getText().toString(),email.getText().toString());
+                    contactDetails(existing.id);
+                }
+            }catch(IOException e){throw new IllegalStateException(e);}
+        });
+    }
+    private void promoteContact(ContactDirectory.Contact contact){
+        new AlertDialog.Builder(this).setTitle("Create customer from this contact?")
+            .setMessage("Promote "+contact.name+" to Customers? This is a separate action. "
+                +"The original Contacts entry remains available.")
+            .setNegativeButton("Not yet",(d,w)->{})
+            .setPositiveButton("Create customer",(d,w)->{
+                try{
+                    for(WorkspaceStore.Customer existing:store.customers()){
+                        if((!contact.phone.isEmpty()&&contact.phone.equals(existing.phone))||
+                            (!contact.email.isEmpty()&&
+                                contact.email.equalsIgnoreCase(existing.email))){
+                            new ContactDirectory(store).linkCustomer(contact.id,existing.id);
+                            customer(existing.id);
+                            notice("Linked existing customer",
+                                "Matching customer already exists; no duplicate created.");
+                            return;
+                        }
+                    }
+                    WorkspaceStore.Customer created=store.addCustomer("",contact.name,
+                        contact.phone,contact.email,"","","","");
+                    new ContactDirectory(store).linkCustomer(contact.id,created.id);
+                    customer(created.id);
+                }catch(Exception e){error(e);}
+            }).show();
+    }
+
     private void customersScreen() {
         currentScreen = "customers";
         currentJobId = null;
@@ -435,8 +627,8 @@ public final class MainActivity extends Activity {
             screen("Customers", "Tap a customer to see contact details and every job");
             navigation();
             button(content, "Add customer", this::customerDialog);
-            button(content, "Import selected phone contact", this::pickContact);
-            button(content, "Import multiple phone contacts", this::requestBulkContacts);
+            button(content, "Open contacts directory (separate from customers)",
+                this::contactsScreen);
             EditText search = field(content, "Find a customer", "Search name, phone, email or city");
             LinearLayout results = new LinearLayout(this);
             results.setOrientation(LinearLayout.VERTICAL);
@@ -503,7 +695,7 @@ public final class MainActivity extends Activity {
             screen("Schedule", scheduleMode + " · " + first + " through " + last);
             navigation();
             button(content,"Open full month calendar grid",this::calendarScreen);
-            if(CalendarBridge.enabled(this))syncCalendarNow();
+            // No silent batch publishing on schedule open; explicit calendar action only.
             button(content, "Change view (currently " + scheduleMode + ")", () -> {
                 String[] options = {"Day", "Week", "Month"};
                 new AlertDialog.Builder(this).setTitle("Show schedule by")
@@ -785,35 +977,111 @@ public final class MainActivity extends Activity {
             result.accept(pass);
         });
     }
+    /**
+     * Default calendar workflow uses Android's event composer, like the working
+     * pickup reminder handoff. It needs no calendar-provider write permission.
+     * Advanced one-way reconciliation remains available but is never automatic.
+     */
     private void calendarSettings(){
+        String[] options={
+            "Add a job to Calendar app (recommended)",
+            "Advanced account sync (experimental)",
+            CalendarBridge.enabled(this)?"Disable automatic calendar sync":
+                "Calendar sharing privacy explanation"
+        };
+        new AlertDialog.Builder(this).setTitle("Calendar options")
+            .setMessage("For reliable Google Calendar scheduling, choose a job, "
+                +"review its event, and save it in your installed Calendar app. "
+                +"The app chooses which Google or device account receives it. "
+                +"No background syncing or hidden sharing.")
+            .setItems(options,(d,index)->{
+                if(index==0)chooseJobForCalendar();
+                else if(index==1)advancedCalendarSettings();
+                else if(CalendarBridge.enabled(this)){
+                    CalendarBridge.setEnabled(this,-1,false);businessScreen();
+                }else notice("Calendar privacy","Only explicitly exported events go "
+                    +"to your selected Calendar app. The optional advanced sync "
+                    +"requires separate permission and may share jobs through Google.");
+            }).setNegativeButton("Close",(d,w)->{}).show();
+    }
+    private void chooseJobForCalendar(){
+        try{
+            List<WorkspaceStore.Job> jobs=store.jobs();
+            jobs.sort((x,y)->x.date.compareTo(y.date));
+            if(jobs.isEmpty()){notice("No jobs scheduled","Create a job first.");return;}
+            String[] options=new String[jobs.size()];
+            for(int i=0;i<jobs.size();i++)
+                options[i]=jobs.get(i).date+" · "+jobs.get(i).title;
+            new AlertDialog.Builder(this).setTitle("Choose a job to add to Calendar")
+                .setItems(options,(d,index)->addJobToCalendar(jobs.get(index)))
+                .setNegativeButton("Cancel",(d,w)->{}).show();
+        }catch(Exception e){error(e);}
+    }
+    private void addJobToCalendar(WorkspaceStore.Job job){
+        try{
+            CrmWorkspace.Appointment schedule=crm.appointment(job);
+            java.time.ZoneId zone=java.time.ZoneId.systemDefault();
+            long begin=java.time.LocalDateTime.parse(job.date+"T"+schedule.start)
+                .atZone(zone).toInstant().toEpochMilli();
+            long finish=java.time.LocalDateTime.parse(job.date+"T"+schedule.end)
+                .atZone(zone).toInstant().toEpochMilli();
+            if(finish<=begin)throw new IOException("Appointment end precedes start");
+            new AlertDialog.Builder(this).setTitle("Review calendar event")
+                .setMessage(job.title+"\n"+job.date+" · "+schedule.start+"–"+
+                    schedule.end+"\n"+job.street+", "+job.city+"\n\n"
+                    +"Choose a calendar account and press Save in the Calendar app. "
+                    +"This shares the job title, date/time, site and short daybook note "
+                    +"with that calendar provider. Nothing is sent by Accubook. "
+                    +"The event is not saved until you confirm in Calendar.")
+                .setNegativeButton("Keep private",(d,w)->{})
+                .setPositiveButton("Open Calendar editor",(d,w)->{
+                    Intent insert=new Intent(Intent.ACTION_INSERT,
+                        android.provider.CalendarContract.Events.CONTENT_URI);
+                    insert.putExtra(android.provider.CalendarContract.Events.TITLE,
+                        job.title);
+                    insert.putExtra(android.provider.CalendarContract.EXTRA_EVENT_BEGIN_TIME,
+                        begin);
+                    insert.putExtra(android.provider.CalendarContract.EXTRA_EVENT_END_TIME,
+                        finish);
+                    insert.putExtra(android.provider.CalendarContract.Events.EVENT_LOCATION,
+                        job.street+", "+job.city+", "+job.state+" "+job.zip);
+                    insert.putExtra(android.provider.CalendarContract.Events.DESCRIPTION,
+                        "Accubook job · "+job.status+"\n"+schedule.notes);
+                    try{startActivity(insert);}
+                    catch(Exception failure){
+                        error(new IllegalStateException("No compatible Calendar editor "
+                            +"is available. Install or enable your calendar app.",
+                            failure));
+                    }
+                }).show();
+        }catch(Exception e){error(e);}
+    }
+    private void advancedCalendarSettings(){
         if(CalendarBridge.enabled(this)){
-            new AlertDialog.Builder(this).setTitle("Calendar synchronization")
-                .setMessage("Jobs are shared one way with your selected device calendar. "
-                    +"If it belongs to Google, that account may upload the events. "
-                    +"Turning sync off stops future updates but does not delete past events.")
-                .setNegativeButton("Keep enabled",(d,w)->{})
-                .setNeutralButton("Sync now",(d,w)->syncCalendarNow())
-                .setPositiveButton("Disable sync",(d,w)->{
-                    CalendarBridge.setEnabled(this,-1,false);
-                    businessScreen();
+            new AlertDialog.Builder(this).setTitle("Experimental account sync enabled")
+                .setMessage("One-way sync writes job data into the selected account. "
+                    +"It can create unexpected calendar events if account settings "
+                    +"change. Use manual sync only until device tests pass.")
+                .setNegativeButton("Cancel",(d,w)->{})
+                .setNeutralButton("Try sync once",(d,w)->syncCalendarNow())
+                .setPositiveButton("Disable",(d,w)->{
+                    CalendarBridge.setEnabled(this,-1,false);businessScreen();
                 }).show();
         }else new AlertDialog.Builder(this)
-            .setTitle("Share schedules with an Android / Google calendar?")
-            .setMessage("OFF by default. Selecting a calendar grants permission to copy "
-                +"job titles, site addresses, dates, status and daybook notes to that "
-                +"calendar. Google-account calendars can synchronize this information "
-                +"off-device. Nothing is transmitted by Accubook itself. "
-                +"Sync is one-way; only jobs are published and no customer phone/email "
-                +"or route points are included. No background sync is guaranteed.")
-            .setNegativeButton("Keep private",(d,w)->{})
-            .setPositiveButton("Choose calendar",(d,w)->{
+            .setTitle("Experimental account synchronization")
+            .setMessage("This requires Android calendar read/write access and account "
+                +"selection. Google calendars can upload job details. "
+                +"The recommended event-editor workflow needs no such permissions. "
+                +"Turn this on only after understanding data sharing.")
+            .setNegativeButton("Not now",(d,w)->{})
+            .setPositiveButton("Select calendar",(d,w)->{
                 if(checkSelfPermission(Manifest.permission.READ_CALENDAR)!=
-                    PackageManager.PERMISSION_GRANTED ||
+                    PackageManager.PERMISSION_GRANTED||
                     checkSelfPermission(Manifest.permission.WRITE_CALENDAR)!=
-                    PackageManager.PERMISSION_GRANTED){
+                    PackageManager.PERMISSION_GRANTED)
                     requestPermissions(new String[]{Manifest.permission.READ_CALENDAR,
                         Manifest.permission.WRITE_CALENDAR},CALENDAR_PERMISSIONS);
-                }else chooseSyncCalendar();
+                else chooseSyncCalendar();
             }).show();
     }
     private void chooseSyncCalendar(){
@@ -1038,27 +1306,90 @@ public final class MainActivity extends Activity {
     }
 
 
-    /** User-approved bulk phone book browsing; never silently import the whole address book. */
+    /** Contacts are independent from customers until explicitly promoted. */
     private static final class PhoneContact {
         final String id,name,phone;
-        PhoneContact(String id,String name,String phone) {
+        PhoneContact(String id,String name,String phone){
             this.id=id;this.name=name;this.phone=phone;
         }
     }
-    private void requestBulkContacts() {
-        new AlertDialog.Builder(this).setTitle("Select contacts to import")
-            .setMessage("Accubook needs temporary access to display phone contacts so "
-                +"you can choose several customers. It does not sync your address book. "
-                +"Only checked contacts are copied into the local workspace.")
+    private void requestBulkContacts(){
+        new AlertDialog.Builder(this).setTitle("Import contacts — not customers")
+            .setMessage("Import your whole phone address book with one tap, or choose "
+                +"individual contacts. Imported people go into Contacts only. "
+                +"No customer records or jobs are created.")
             .setNegativeButton("Cancel",(d,w)->{})
-            .setPositiveButton("Continue",(d,w)->{
-                if(checkSelfPermission(Manifest.permission.READ_CONTACTS)
-                    !=PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},
-                        BULK_CONTACT_PERMISSION);
-                }else showBulkContactPicker();
-            }).show();
+            .setNeutralButton("Choose some",(d,w)->requestPhoneContacts(false))
+            .setPositiveButton("Import all",(d,w)->new AlertDialog.Builder(this)
+                .setTitle("Import all device contacts?")
+                .setMessage("Accubook will copy your visible Android contacts into "
+                    +"its PRIVATE local Contacts directory. Duplicates are skipped. "
+                    +"Nothing is uploaded or converted into customers.")
+                .setNegativeButton("Cancel",(dialog,which)->{})
+                .setPositiveButton("Import all contacts",
+                    (dialog,which)->requestPhoneContacts(true))
+                .show()).show();
     }
+    private void requestPhoneContacts(boolean all){
+        pendingImportAllContacts=all;
+        if(checkSelfPermission(Manifest.permission.READ_CONTACTS)!=
+            PackageManager.PERMISSION_GRANTED){
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},
+                BULK_CONTACT_PERMISSION);
+        }else if(all)importAllPhoneContacts();
+        else showBulkContactPicker();
+    }
+    /** Single bulk operation; all phone contacts plus contacts without phone numbers. */
+    private void importAllPhoneContacts(){
+        Toast.makeText(this,"Importing contacts locally…",Toast.LENGTH_LONG).show();
+        new Thread(()->{
+            try{
+                android.content.ContentResolver resolver=getContentResolver();
+                Map<String,String> phones=new LinkedHashMap<>(),emails=new LinkedHashMap<>();
+                try(Cursor c=resolver.query(
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                    new String[]{ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
+                        ContactsContract.CommonDataKinds.Phone.NUMBER},null,null,null)){
+                    if(c!=null)while(c.moveToNext()){
+                        String key=c.getString(0),value=c.getString(1);
+                        if(key!=null&&value!=null&&!phones.containsKey(key))
+                            phones.put(key,value);
+                    }
+                }
+                try(Cursor c=resolver.query(
+                    ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+                    new String[]{ContactsContract.CommonDataKinds.Email.CONTACT_ID,
+                        ContactsContract.CommonDataKinds.Email.ADDRESS},null,null,null)){
+                    if(c!=null)while(c.moveToNext()){
+                        String key=c.getString(0),value=c.getString(1);
+                        if(key!=null&&value!=null&&!emails.containsKey(key))
+                            emails.put(key,value);
+                    }
+                }
+                List<ContactDirectory.ImportEntry> entries=new ArrayList<>();
+                try(Cursor c=resolver.query(ContactsContract.Contacts.CONTENT_URI,
+                    new String[]{ContactsContract.Contacts._ID,
+                        ContactsContract.Contacts.DISPLAY_NAME_PRIMARY},
+                    null,null,ContactsContract.Contacts.DISPLAY_NAME_PRIMARY+" ASC")){
+                    if(c==null)throw new IOException("Android contacts unavailable");
+                    while(c.moveToNext()){
+                        String id=c.getString(0),name=c.getString(1);
+                        if(id!=null&&name!=null&&!name.trim().isEmpty())
+                            entries.add(new ContactDirectory.ImportEntry("android:"+id,
+                                name,phones.getOrDefault(id,""),emails.getOrDefault(id,"")));
+                    }
+                }
+                ContactDirectory.Result result=new ContactDirectory(store).importBatch(entries);
+                runOnUiThread(()->{
+                    contactsScreen();
+                    notice("Contact import complete",result.added+
+                        " contacts imported, "+result.skipped+" duplicates skipped. "
+                        +"Contacts are not customers until you promote them.");
+                });
+            }catch(Exception ex){runOnUiThread(()->error(ex));}
+        },"accubook-all-contact-import").start();
+    }
+
     @Override public void onRequestPermissionsResult(int code,String[] permissions,
                                                      int[] grants) {
         super.onRequestPermissionsResult(code,permissions,grants);
@@ -1093,10 +1424,12 @@ public final class MainActivity extends Activity {
             return;
         }
         if(code==BULK_CONTACT_PERMISSION) {
-            if(grants.length>0&&grants[0]==PackageManager.PERMISSION_GRANTED)
-                showBulkContactPicker();
-            else notice("Permission not granted","You can still import one contact "
-                +"using Android's contact picker, without this permission.");
+            if(grants.length>0&&grants[0]==PackageManager.PERMISSION_GRANTED){
+                if(pendingImportAllContacts)importAllPhoneContacts();
+                else showBulkContactPicker();
+            }else notice("Permission not granted","No address book access. You can "
+                +"add a contact manually or use the one-contact Android picker.");
+            pendingImportAllContacts=false;
         }
     }
 
@@ -1244,32 +1577,26 @@ public final class MainActivity extends Activity {
         String digits=number.replaceAll("[^0-9]","");
         return digits.length()>=7?digits:"";
     }
-    private void importSelectedContacts(List<PhoneContact> choices,boolean[] selected) {
-        try {
-            Set<String> phones=new HashSet<>();
-            Set<String> emails=new HashSet<>();
-            for(WorkspaceStore.Customer c:store.customers()){
-                if(!phoneKey(c.phone).isEmpty())phones.add(phoneKey(c.phone));
-                if(!c.email.isEmpty())emails.add(c.email.toLowerCase(Locale.ROOT));
-            }
-            int imported=0,skipped=0;
-            for(int i=0;i<choices.size();i++){
-                if(!selected[i])continue;
-                PhoneContact phone=choices.get(i);
-                String number=phoneKey(phone.phone),mail=emailForContact(phone.id);
-                if((!number.isEmpty()&&phones.contains(number))||
-                    (!mail.isEmpty()&&emails.contains(mail.toLowerCase(Locale.ROOT)))){
-                    skipped++;continue;
+    private void importSelectedContacts(List<PhoneContact> choices,boolean[] selected){
+        Toast.makeText(this,"Copying selected contacts…",Toast.LENGTH_SHORT).show();
+        new Thread(()->{
+            try{
+                List<ContactDirectory.ImportEntry> entries=new ArrayList<>();
+                for(int i=0;i<choices.size();i++){
+                    if(!selected[i])continue;
+                    PhoneContact c=choices.get(i);
+                    entries.add(new ContactDirectory.ImportEntry("android:"+c.id,
+                        c.name,c.phone,emailForContact(c.id)));
                 }
-                store.addCustomer("",phone.name,phone.phone,mail,"","","","");
-                if(!number.isEmpty())phones.add(number);
-                if(!mail.isEmpty())emails.add(mail.toLowerCase(Locale.ROOT));
-                imported++;
-            }
-            customersScreen();
-            notice("Contact import",imported+" customers imported; "+skipped
-                +" duplicates skipped. Imported customer information is editable.");
-        }catch(Exception e){error(e);}
+                ContactDirectory.Result result=new ContactDirectory(store).importBatch(entries);
+                runOnUiThread(()->{
+                    contactsScreen();
+                    notice("Contact import complete",result.added+
+                        " saved as contacts, "+result.skipped+
+                        " duplicates skipped. No customers created.");
+                });
+            }catch(Exception failure){runOnUiThread(()->error(failure));}
+        },"accubook-selected-contact-import").start();
     }
 
     private void pickContact() {
@@ -1297,6 +1624,15 @@ public final class MainActivity extends Activity {
         new AlertDialog.Builder(this).setTitle("Job status")
             .setItems(statuses, (dialog, index) -> {
                 try {
+                    if("Completed".equals(statuses[index])){
+                        List<String> incomplete=new JobTemplates(store).missingRequired(job);
+                        if(!incomplete.isEmpty()){
+                            notice("Complete required fields first",
+                                "Open the job checklist and finish: "+
+                                    String.join(", ",incomplete));
+                            return;
+                        }
+                    }
                     store.updateJob(job.id, job.date, statuses[index]);
                     job(job.id);
                 } catch (Exception failure) { error(failure); }
@@ -1522,6 +1858,8 @@ public final class MainActivity extends Activity {
                 }).show());
             button(content,"Choose business logo",this::pickLogo);
             button(content,"Manage item and service pricebook",this::catalogScreen);
+            button(content,"Customize master job fields / checklists",
+                this::masterJobTemplateScreen);
             section("Expenses and costs");
             button(content,"Record a manual expense",this::expenseDialog);
             BigDecimal expenseSum=BigDecimal.ZERO;
@@ -1557,9 +1895,9 @@ public final class MainActivity extends Activity {
                     received=received.add(value);
                 }
             }
-            label(content,"Draft job billing: $"+draftTotal.toPlainString(),17,LIGHT);
+            label(content,"Recorded job value: $"+draftTotal.toPlainString(),17,LIGHT);
             label(content,"Payments recorded: $"+received.toPlainString(),17,LIGHT);
-            label(content,"Unreconciled difference (drafts - receipts): $"+
+            label(content,"Job value minus receipts (not a bank balance): $"+
                 draftTotal.subtract(received).toPlainString(),16,LIGHT);
             label(content,"Estimates manually marked sent: "+sent,15,LIGHT);
             for(Map.Entry<String,BigDecimal> item:totals.entrySet())
@@ -1570,7 +1908,7 @@ public final class MainActivity extends Activity {
             section("Optional calendar integration");
             label(content,"Device/Google calendar sync: "+(
                 CalendarBridge.enabled(this)?"Opted in":"Off (private default)"),15,LIGHT);
-            button(content,"Calendar sync permissions and account",
+            button(content,"Calendar · share a job / advanced settings",
                 this::calendarSettings);
             section("Privacy and protection");
             boolean protectedApp=UnlockActivity.isEnabled(this);
@@ -1757,70 +2095,76 @@ public final class MainActivity extends Activity {
         });
     }
 
-    private void chooseAnyColor(String initial,java.util.function.Consumer<String> accept) {
-        int color;
-        try{color=Color.parseColor(initial);}catch(Exception ignored){color=ACCENT;}
-        LinearLayout root=new LinearLayout(this);
-        root.setOrientation(LinearLayout.VERTICAL);
-        int pad=dp(16);
-        root.setPadding(pad,dp(12),pad,dp(12));
-        TextView preview=new TextView(this);
-        preview.setText("Custom color preview");
-        preview.setTextSize(17);
-        preview.setGravity(android.view.Gravity.CENTER);
-        preview.setMinHeight(dp(70));
-        root.addView(preview);
-        EditText hex=new EditText(this);
-        hex.setSingleLine(true);
-        hex.setTextColor(Color.BLACK);
-        hex.setHint("#RRGGBB");
-        hex.setText(String.format(Locale.ROOT,"#%06X",color&0xffffff));
-        root.addView(hex,new LinearLayout.LayoutParams(-1,dp(52)));
-        String[] channel={"Red","Green","Blue"};
-        int[] progress={Color.red(color),Color.green(color),Color.blue(color)};
-        android.widget.SeekBar[] sliders=new android.widget.SeekBar[3];
-        Runnable render=()->{
-            int value=Color.rgb(progress[0],progress[1],progress[2]);
-            preview.setBackground(box(value));
-            preview.setTextColor(Color.luminance(value)>0.45?Color.BLACK:Color.WHITE);
-            hex.setText(String.format(Locale.ROOT,"#%06X",value&0xffffff));
+    /** Actual draggable rainbow/gradient GUI, no RGB channel sliders. */
+    private void chooseAnyColor(String initial,java.util.function.Consumer<String> accept){
+        int chosen;
+        try{chosen=Color.parseColor(initial);}catch(Exception ignored){chosen=ACCENT;}
+        LinearLayout wrapper=new LinearLayout(this);
+        wrapper.setOrientation(LinearLayout.VERTICAL);
+        wrapper.setPadding(dp(15),dp(8),dp(15),dp(14));
+        TextView instructions=new TextView(this);
+        instructions.setText("Drag across the rainbow to choose a color. "
+            +"Touch the large colored square to adjust the shade.");
+        instructions.setTextColor(Color.DKGRAY);
+        instructions.setTextSize(16);
+        wrapper.addView(instructions);
+        ColorSpectrumPicker spectrum=new ColorSpectrumPicker(this,chosen);
+        wrapper.addView(spectrum,new LinearLayout.LayoutParams(-1,dp(300)));
+        TextView sample=new TextView(this);
+        sample.setText("Preview · "+spectrum.hex());
+        sample.setGravity(android.view.Gravity.CENTER);
+        sample.setTextSize(17);
+        sample.setMinHeight(dp(55));
+        wrapper.addView(sample);
+        Runnable refresh=()->{
+            int color=spectrum.chosenColor();
+            sample.setBackground(box(color));
+            sample.setTextColor(Color.luminance(color)>0.45?Color.BLACK:Color.WHITE);
+            sample.setText("Preview · "+spectrum.hex());
         };
-        for(int i=0;i<3;i++){
-            final int index=i;
-            TextView label=new TextView(this);
-            label.setText(channel[i]+" channel");
-            label.setTextColor(Color.DKGRAY);
-            label.setTextSize(15);
-            root.addView(label);
-            android.widget.SeekBar slider=new android.widget.SeekBar(this);
-            slider.setMax(255);
-            slider.setProgress(progress[i]);
-            slider.setMinHeight(dp(44));
-            sliders[i]=slider;
-            root.addView(slider,new LinearLayout.LayoutParams(-1,dp(52)));
-            slider.setOnSeekBarChangeListener(new android.widget.SeekBar.OnSeekBarChangeListener(){
-                public void onProgressChanged(android.widget.SeekBar bar,int value,boolean user){
-                    if(user){progress[index]=value;render.run();}
-                }
-                public void onStartTrackingTouch(android.widget.SeekBar bar){}
-                public void onStopTrackingTouch(android.widget.SeekBar bar){}
-            });
+        spectrum.onChanged(refresh);refresh.run();
+        // Optional exact entry for expert users; no need for sliders or codes.
+        EditText expert=new EditText(this);
+        expert.setSingleLine(true);
+        expert.setTextColor(Color.DKGRAY);
+        expert.setHint("Optional exact #HEX code");
+        expert.setContentDescription("Optional exact six digit hex color");
+        expert.setInputType(InputType.TYPE_CLASS_TEXT|
+            InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
+        wrapper.addView(expert,new LinearLayout.LayoutParams(-1,dp(50)));
+        LinearLayout swatches=new LinearLayout(this);
+        swatches.setOrientation(LinearLayout.HORIZONTAL);
+        wrapper.addView(swatches);
+        String[] names={"Blue","Green","Orange","Purple","Red"};
+        int[] swatchColors={0xff287bd0,0xff178a64,0xffe78b38,0xff8955ca,0xffc84857};
+        for(int i=0;i<names.length;i++){
+            final int tint=swatchColors[i];
+            Button swatch=new Button(this);
+            swatch.setText("");
+            swatch.setContentDescription("Select "+names[i]+" color");
+            swatch.setMinHeight(dp(44));
+            swatch.setBackgroundTintList(ColorStateList.valueOf(tint));
+            LinearLayout.LayoutParams size=new LinearLayout.LayoutParams(0,dp(44),1);
+            size.setMargins(dp(3),dp(2),dp(3),dp(2));
+            swatches.addView(swatch,size);
+            swatch.setOnClickListener(v->spectrum.setChosenColor(tint));
         }
-        render.run();
-        AlertDialog dlg=new AlertDialog.Builder(this).setTitle("Choose any color")
-            .setView(root).setNegativeButton("Cancel",(d,w)->{})
-            .setPositiveButton("Apply color",null).create();
-        dlg.setOnShowListener(d->dlg.getButton(AlertDialog.BUTTON_POSITIVE)
+        AlertDialog dialog=new AlertDialog.Builder(this).setTitle("Pick a color")
+            .setView(wrapper)
+            .setNegativeButton("Cancel",(d,w)->{})
+            .setPositiveButton("Use this color",null).create();
+        dialog.setOnShowListener(d->dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             .setOnClickListener(v->{
-                String value=hex.getText().toString().trim().toUpperCase(Locale.ROOT);
-                if(!value.matches("#[0-9A-F]{6}")){
-                    hex.setError("Enter a six-digit hex color, e.g. #165DAB");
+                String typed=expert.getText().toString().trim().toUpperCase(Locale.ROOT);
+                String hex=typed.isEmpty()?spectrum.hex():typed;
+                if(!hex.matches("#[A-F0-9]{6}")){
+                    expert.setError("Use six-digit #HEX or choose visually");
                     return;
                 }
-                accept.accept(value);
-                dlg.dismiss();
+                accept.accept(hex);
+                dialog.dismiss();
             }));
-        dlg.show();
+        dialog.show();
     }
 
     private void scheduleEditor(WorkspaceStore.Job job) {
@@ -2130,7 +2474,7 @@ public final class MainActivity extends Activity {
     private void createTestBusiness() {
         new AlertDialog.Builder(this).setTitle("Load fictional test company?")
             .setMessage("Creates a fictional example contracting business, three demo customers, "
-                +"three jobs, appointment times, draft charges and sample payment-method entries. "
+                +"three jobs, appointment times, sample charges and sample payment-method entries. "
                 +"Existing records are not replaced. Never use this data for real accounting.")
             .setNegativeButton("Cancel",(d,w)->{})
             .setPositiveButton("Create sample",(d,w)->{
@@ -2189,7 +2533,7 @@ public final class MainActivity extends Activity {
                         + "before and after photos, and review materials.");
                     customer(example.id);
                     notice("Sample ready", "Tap the sample job under Job history. "
-                        + "Reschedule it, attach a test photo, and inspect the draft invoice.");
+                        + "Reschedule it, attach a test photo, and preview the invoice.");
                 } catch (Exception failure) { error(failure); }
             }).show();
     }
@@ -2201,13 +2545,12 @@ public final class MainActivity extends Activity {
         try {
             List<WorkspaceStore.Customer> customers = store.customers();
             List<WorkspaceStore.Job> jobs = store.jobs();
-            screen("Accubook", "Your offline field service workspace");
+            String greeting=LocalTime.now().getHour()<12?"Good morning":
+                LocalTime.now().getHour()<17?"Good afternoon":"Good evening";
+            screen("Accubook · Dashboard",greeting+
+                "  |  PRIVATE • OFFLINE • YOUR DATA");
             navigation();
-            section("Quick actions");
-            button(content, "+ Schedule job / create customer", this::chooseCustomer);
-            button(content, "New customer", this::customerDialog);
-            button(content, "Try with a sample customer and job", this::createDemoWorkspace);
-            section("At a glance");
+            section("Today · live overview");
             int todayJobs=0,upcomingJobs=0,sentQuotes=0,active=0;
             BigDecimal openDraft=BigDecimal.ZERO,paid=BigDecimal.ZERO;
             for(WorkspaceStore.Job entry:jobs){
@@ -2219,15 +2562,40 @@ public final class MainActivity extends Activity {
                 paid=paid.add(crm.received(entry));
             }
             LinearLayout summary=card();
-            label(summary,"Today: "+todayJobs+" jobs    Upcoming: "+upcomingJobs,18,LIGHT);
-            label(summary,"Customers: "+customers.size()+"    Active work: "+active,17,LIGHT);
-            label(summary,"Estimates marked sent: "+sentQuotes,16,LIGHT);
-            label(summary,"Draft billing: $"+openDraft.toPlainString(),17,LIGHT);
-            label(summary,"Recorded receipts: $"+paid.toPlainString(),17,LIGHT);
+            label(summary,"TODAY  "+LocalDate.now().getDayOfWeek()+" · "+
+                LocalDate.now(),15,MUTED);
+            label(summary,todayJobs+" appointments today   ·   "+upcomingJobs+
+                " upcoming",21,LIGHT);
+            label(summary,active+" active jobs   ·   "+customers.size()+
+                " customers",17,LIGHT);
+            label(summary,new ContactDirectory(store).all().size()+
+                " saved contacts   ·   "+sentQuotes+" estimates sent",16,MUTED);
+            label(summary,"JOB VALUE   $"+openDraft.toPlainString(),19,LIGHT);
+            label(summary,"RECEIVED   $"+paid.toPlainString()+"   ·   OPEN   $"+
+                openDraft.subtract(paid).toPlainString(),16,LIGHT);
+            WorkspaceStore.Job next=null;
+            for(WorkspaceStore.Job j:jobs)
+                if(j.date.compareTo(LocalDate.now().toString())>=0 &&
+                    (next==null||j.date.compareTo(next.date)<0))
+                    next=j;
+            if(next!=null){
+                CrmWorkspace.Appointment time=crm.appointment(next);
+                LinearLayout upcoming=card();
+                label(upcoming,"NEXT VISIT",14,MUTED);
+                label(upcoming,next.title,20,LIGHT);
+                label(upcoming,next.date+"  ·  "+time.start+"–"+time.end,17,LIGHT);
+                final String nextJob=next.id;
+                button(upcoming,"Open next job →",()->job(nextJob));
+            }
+            section("Quick actions");
+            button(content,"＋ New scheduled job",this::chooseCustomer);
+            button(content,"Calendar · look ahead",this::calendarScreen);
+            button(content,"Contacts · import all or browse",this::contactsScreen);
+            button(content,"＋ New customer",this::customerDialog);
+            button(content,"Customize job checklist",this::masterJobTemplateScreen);
+            button(content,"Try fictional sample job",this::createDemoWorkspace);
 
-            button(content, "Open daybook schedule", this::scheduleScreen);
-            button(content, "Import one phone contact", this::pickContact);
-            button(content, "Import multiple phone contacts", this::requestBulkContacts);
+            button(content,"Open daybook schedule",this::scheduleScreen);
             button(content, "Export workspace ZIP backup", () -> {
                 pendingBackup = true;
                 pendingInvoice = null;
@@ -2426,6 +2794,7 @@ public final class MainActivity extends Activity {
                 + " " + work.zip, 16, LIGHT);
             button(content, "Reschedule / change time / color / daybook note",
                 () -> scheduleEditor(work));
+            button(content,"Add this job to Calendar app",()->addJobToCalendar(work));
             button(content, "Change job status", () -> statusPicker(work));
             section("Field notes and site instructions");
             String notes = store.fieldNotes(work);
@@ -2433,31 +2802,23 @@ public final class MainActivity extends Activity {
                 : (notes.length() > 800 ? notes.substring(0, 800) + "…" : notes),
                 15, MUTED);
             button(content, "Edit field notes", () -> fieldNotesDialog(work));
-            section("Logistics and job milestones");
+            jobCustomFields(work);
+            section("Vendors, crew and deliveries");
             button(content,"Edit vendor / material delivery / crew",()->jobLogisticsDialog(work));
             TradeModules operations=new TradeModules(store);
             TradeModules.Logistics details=operations.logistics(work);
-            label(content,"Vendor: "+details.vendor+"  ·  Delivery: "+details.delivery,
-                15,MUTED);
+            label(content,"Vendor: "+details.vendor+" · Delivery: "+details.delivery,15,MUTED);
             label(content,"Crew: "+details.crew,15,MUTED);
             if(!details.notes.isEmpty())label(content,details.notes,15,LIGHT);
-            button(content,"+ Add custom milestone",()->addJobMilestone(work));
             button(content,"Create dumpster pickup calendar reminder",
                 ()->createPickupReminder(work));
             button(content,"Schedule device-only dumpster pickup alert",
                 ()->localPickupReminder(work));
             long pickupDue=PickupReminders.due(store,work);
-            if(pickupDue>0)label(content,"Local pickup reminder: "+
-                java.time.Instant.ofEpochMilli(pickupDue).atZone(
-                    java.time.ZoneId.systemDefault()),14,MUTED);
-            for(TradeModules.Milestone step:operations.milestones(work)){
-                LinearLayout stepCard=card();
-                label(stepCard,(step.complete()?"✓ ":"□ ")+step.name,17,LIGHT);
-                if(step.complete())
-                    label(stepCard,"Completed at "+step.date,13,MUTED);
-                button(stepCard,step.complete()?"Reopen":"Mark complete",
-                    ()->toggleMilestone(work,step));
-            }
+            if(pickupDue>0)
+                label(content,"Local pickup reminder: "+
+                    java.time.Instant.ofEpochMilli(pickupDue).atZone(
+                        java.time.ZoneId.systemDefault()),14,MUTED);
             section("Material requests");
             button(content, "Request materials", () -> materialDialog(work, null));
             for (WorkspaceStore.MaterialRequest request : store.materialRequests(work)) {
@@ -2492,11 +2853,11 @@ public final class MainActivity extends Activity {
                 ()->openDocument(work,true));
             button(content,"Preview / edit invoice (print or Save as PDF)",
                 ()->openDocument(work,false));
-            label(content,"Draft amount: $"+work.total,22,LIGHT);
+            label(content,"Job total: $"+work.total,22,LIGHT);
             button(content,"+ Add from service / consumable catalog",
                 ()->catalogLineDialog(work));
             button(content,"Add labor, material or discount",()->lineDialog(work));
-            button(content,"Export simple HTML draft",()->{
+            button(content,"Export invoice as HTML",()->{
                 try{
                     pendingInvoice=InvoiceHtml.render(client,work,store.items(work));
                     pendingBackup=false;
@@ -2521,7 +2882,7 @@ public final class MainActivity extends Activity {
             attachmentList(work);
             section("Payment ledger");
             label(content,"Payments recorded: $"+crm.received(work).toPlainString(),17,LIGHT);
-            label(content,"Draft balance: $"+crm.balance(work).toPlainString(),17,LIGHT);
+            label(content,"Open job balance: $"+crm.balance(work).toPlainString(),17,LIGHT);
             button(content,"Record cash, check, PayPal or other payment",()->paymentDialog(work));
             for(CrmWorkspace.Payment payment:crm.payments(work)){
                 LinearLayout row=card();
@@ -2551,7 +2912,7 @@ public final class MainActivity extends Activity {
                     ()->openRouteInOSM(work));
             }
             label(content,"Offline manual records only. No payment collection, tax calculation "
-                +"or settlement verification occurs. Invoice remains a draft.",13,MUTED);
+                +"or settlement verification occurs. An invoice is not a payment receipt.",13,MUTED);
         } catch (Exception failure) { error(failure); }
     }
 
@@ -2689,6 +3050,162 @@ public final class MainActivity extends Activity {
             }catch(IOException e){throw new IllegalStateException(e);}
         });
     }
+    private void masterJobTemplateScreen(){
+        currentScreen="job_template";currentCustomerId=null;currentJobId=null;
+        try{
+            screen("Master job template",
+                "Your workflow, your fields · new jobs inherit these editable defaults");
+            navigation();
+            label(content,"Add any trade-specific checklist item, text, date, or number. "
+                +"Mark a field required if a job cannot be completed without it. "
+                +"Editing the master changes future jobs only; existing job entries "
+                +"are protected from unwanted overwrites.",15,MUTED);
+            button(content,"+ Add template field",()->editMasterField(null));
+            for(JobTemplates.Field f:new JobTemplates(store).master()){
+                LinearLayout entry=card();
+                label(entry,f.label,18,LIGHT);
+                label(entry,f.kind+" · "+(f.required?"Required":"Optional")+
+                    (f.value.isEmpty()?"":" · Default: "+f.value),14,MUTED);
+                button(entry,"Rename / edit "+f.label,()->editMasterField(f));
+                button(entry,"− Remove from future job templates",()->
+                    new AlertDialog.Builder(this).setTitle("Remove template field?")
+                        .setMessage(f.label+" will be excluded from future jobs. "
+                            +"Existing job records are not erased.")
+                        .setNegativeButton("Keep",(d,w)->{})
+                        .setPositiveButton("Remove",(d,w)->{
+                            try{new JobTemplates(store).removeMaster(f.id);
+                                masterJobTemplateScreen();}
+                            catch(Exception e){error(e);}
+                        }).show());
+            }
+        }catch(Exception e){error(e);}
+    }
+    /** Type-specific editor: no user must enter true/false for a checkbox. */
+    private static String customFieldValue(String kind,CheckBox checked,
+        EditText text,EditText date,EditText number){
+        if(kind.equals(JobTemplates.CHECK))return Boolean.toString(checked.isChecked());
+        if(kind.equals(JobTemplates.DATE))return date.getText().toString();
+        if(kind.equals(JobTemplates.NUMBER))return number.getText().toString();
+        return text.getText().toString();
+    }
+    private void customFieldEditor(JobTemplates.Field old,WorkspaceStore.Job job){
+        boolean master=job==null;
+        LinearLayout fields=form();
+        EditText name=field(fields,"Field name · you can rename it","Site visit confirmed");
+        if(old!=null)name.setText(old.label);
+        String[] kind={old==null?JobTemplates.CHECK:old.kind};
+        Button type=button(fields,"Field type: "+kind[0],()->{});
+        CheckBox required=checkbox(fields,"Required before a job can be completed",
+            old!=null&&old.required);
+        CheckBox checked=checkbox(fields,"Completed / checked",
+            old!=null&&old.kind.equals(JobTemplates.CHECK)&&old.checked());
+        EditText text=multiline(fields,master?"Default text or instructions":
+            "Job-specific notes or value",
+            old!=null&&old.kind.equals(JobTemplates.TEXT)?old.value:"");
+        EditText date=field(fields,"Date (tap calendar or type YYYY-MM-DD)","YYYY-MM-DD");
+        if(old!=null&&old.kind.equals(JobTemplates.DATE))date.setText(old.value);
+        Button datePicker=button(fields,"Pick date",()->openDate(date));
+        EditText number=field(fields,"Number","0");
+        number.setInputType(InputType.TYPE_CLASS_NUMBER|
+            InputType.TYPE_NUMBER_FLAG_DECIMAL|InputType.TYPE_NUMBER_FLAG_SIGNED);
+        if(old!=null&&old.kind.equals(JobTemplates.NUMBER))number.setText(old.value);
+        Runnable show=()->{
+            checked.setVisibility(kind[0].equals(JobTemplates.CHECK)?View.VISIBLE:View.GONE);
+            text.setVisibility(kind[0].equals(JobTemplates.TEXT)?View.VISIBLE:View.GONE);
+            date.setVisibility(kind[0].equals(JobTemplates.DATE)?View.VISIBLE:View.GONE);
+            datePicker.setVisibility(kind[0].equals(JobTemplates.DATE)?View.VISIBLE:View.GONE);
+            number.setVisibility(kind[0].equals(JobTemplates.NUMBER)?View.VISIBLE:View.GONE);
+        };
+        show.run();
+        type.setOnClickListener(v->new AlertDialog.Builder(this)
+            .setTitle("Choose field type")
+            .setItems(JobTemplates.KINDS,(d,index)->{
+                kind[0]=JobTemplates.KINDS[index];
+                type.setText("Field type: "+kind[0]);show.run();
+            }).show());
+        dialog(master?(old==null?"Add to master template":"Edit master template field"):
+            (old==null?"New job field":"Edit job field"),fields,()->{
+            String value=customFieldValue(kind[0],checked,text,date,number);
+            try {
+                JobTemplates templates=new JobTemplates(store);
+                if(master){
+                    templates.saveMaster(old==null?null:old.id,name.getText().toString(),
+                        kind[0],required.isChecked(),value);
+                    masterJobTemplateScreen();
+                }else{
+                    templates.saveJob(job,old==null?null:old.id,name.getText().toString(),
+                        kind[0],required.isChecked(),value);
+                    job(job.id);
+                }
+            }catch(IOException failure){throw new IllegalStateException(failure);}
+        });
+    }
+    private void editMasterField(JobTemplates.Field old){customFieldEditor(old,null);}
+    private void editJobField(WorkspaceStore.Job job,JobTemplates.Field old){
+        customFieldEditor(old,job);
+    }
+
+    private void jobCustomFields(WorkspaceStore.Job work)throws IOException{
+        section("Your customizable job checklist");
+        button(content,"+ Add any field or checklist item",()->editJobField(work,null));
+        button(content,"Edit master job template (future jobs)",this::masterJobTemplateScreen);
+        List<JobTemplates.Field> fields=new JobTemplates(store).forJob(work);
+        for(JobTemplates.Field f:fields){
+            LinearLayout row=card();
+            if(f.kind.equals(JobTemplates.CHECK)){
+                CheckBox check=checkbox(row,f.label+
+                    (f.required?" · Required":""),f.checked());
+                check.setOnClickListener(v->{
+                    boolean newValue=check.isChecked();
+                    try{
+                        new JobTemplates(store).saveJob(work,f.id,f.label,f.kind,
+                            f.required,Boolean.toString(newValue));
+                        Toast.makeText(this,"Saved "+f.label,Toast.LENGTH_SHORT).show();
+                    }catch(Exception e){
+                        check.setChecked(!newValue);
+                        error(e);
+                    }
+                });
+            }else{
+                label(row,f.label+(f.required?" · Required":""),17,LIGHT);
+                label(row,f.value.isEmpty()?"Not entered":f.value,15,MUTED);
+            }
+            button(row,"Edit / rename "+f.label,()->editJobField(work,f));
+            button(row,"− Remove "+f.label+" from this job",()->
+                new AlertDialog.Builder(this).setTitle("Remove job field?")
+                    .setMessage("Remove '"+f.label+"' from THIS job only? "
+                        +"Your master template and other jobs remain unchanged.")
+                    .setNegativeButton("Keep",(d,w)->{})
+                    .setPositiveButton("Remove",(d,w)->{
+                        try{new JobTemplates(store).removeJob(work,f.id);job(work.id);}
+                        catch(Exception e){error(e);}
+                    }).show());
+        }
+        List<String> incomplete=new JobTemplates(store).missingRequired(work);
+        if(!incomplete.isEmpty())
+            label(content,"Required before completion: "+
+                String.join(", ",incomplete),14,MUTED);
+        button(content,"View previous-format milestone checklist",
+            ()->legacyMilestonesScreen(work));
+    }
+    private void legacyMilestonesScreen(WorkspaceStore.Job job){
+        currentScreen="job";currentJobId=job.id;
+        try{
+            screen("Previous milestone checklist",job.title+
+                " · legacy checklist preserved for compatibility");
+            navigation();
+            button(content,"Return to job",()->job(job.id));
+            button(content,"+ Add previous-format milestone",()->addJobMilestone(job));
+            TradeModules operations=new TradeModules(store);
+            for(TradeModules.Milestone step:operations.milestones(job)){
+                LinearLayout row=card();
+                label(row,(step.complete()?"✓ ":"□ ")+step.name,17,LIGHT);
+                button(row,step.complete()?"Reopen":"Mark complete",
+                    ()->toggleMilestone(job,step));
+            }
+        }catch(Exception e){error(e);}
+    }
+
     private void jobLogisticsDialog(WorkspaceStore.Job job) {
         try{
             TradeModules.Logistics current=new TradeModules(store).logistics(job);
@@ -2911,7 +3428,10 @@ public final class MainActivity extends Activity {
                     throw new IOException("Selected contact cannot be read");
                 }
                 // Scoped result URI, no full address book access.
-                customerDialog(null, cursor.getString(0), cursor.getString(1));
+                new ContactDirectory(store).add(cursor.getString(0),
+                    cursor.getString(1),"");
+                contactsScreen();
+                notice("Contact saved","This person is in Contacts, not Customers.");
             } catch (Exception failure) { error(failure); }
             return;
         }
@@ -2953,11 +3473,22 @@ public final class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        if (currentJobId != null) {
-            if (currentCustomerId != null) customer(currentCustomerId);
-            else scheduleScreen();
-        } else if (currentCustomerId != null) customersScreen();
-        else super.onBackPressed();
+        if("contact".equals(currentScreen)){contactsScreen();return;}
+        if("job_template".equals(currentScreen)||"catalog".equals(currentScreen)){
+            businessScreen();return;
+        }
+        if(currentJobId!=null){
+            if(currentCustomerId!=null)customer(currentCustomerId);
+            else jobsScreen();
+            return;
+        }
+        if(currentCustomerId!=null){customersScreen();return;}
+        if("contacts".equals(currentScreen)||"customers".equals(currentScreen)||
+            "jobs".equals(currentScreen)||"calendar".equals(currentScreen)||
+            "schedule".equals(currentScreen)||"business".equals(currentScreen)){
+            home();return;
+        }
+        super.onBackPressed();
     }
 
 
