@@ -2462,10 +2462,10 @@ public final class MainActivity extends Activity {
                 for(int i=0;i<sections.length;i++)chosen[i]=sections[i].isChecked();
                 java.util.Set<String> chosenMethods=new java.util.LinkedHashSet<>();
                 for(int i=0;i<methods.length;i++)
-                    if(methods[i].isChecked())chosenMethods.add(ReportSelection.PAYMENT_METHODS[i]);
+                    if(chosen[3]&&methods[i].isChecked())chosenMethods.add(ReportSelection.PAYMENT_METHODS[i]);
                 java.util.Set<String> chosenCategories=new java.util.LinkedHashSet<>();
                 for(int i=0;i<categories.length;i++)
-                    if(categoryChecks[i].isChecked())chosenCategories.add(categories[i]);
+                    if(chosen[4]&&categoryChecks[i].isChecked())chosenCategories.add(categories[i]);
                 ReportSelection selection=new ReportSelection(
                     chosen,chosenMethods,chosenCategories);
                 pendingReportSections=selection.sections();
