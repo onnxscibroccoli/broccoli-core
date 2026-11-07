@@ -56,6 +56,11 @@ public final class BackupArchive {
     private static final String[] MEMO = {"Greeting","Closing"};
     private static final String[] TIME = {"EntryID","Worker","StartedAt","EndedAt","Hours","Notes"};
     private static final String[] ROUTE = {"RecordedAt","Latitude","Longitude","AccuracyMeters"};
+    private static final String[] PRICEBOOK={
+        "CatalogID","Category","Name","Unit","BaseCost","MarkupPercent","Supplier","UpdatedUTC"};
+    private static final String[] MILESTONE={"Key","Name","Complete","CompletedUTC","Notes"};
+    private static final String[] LOGISTICS={
+        "Vendor","MaterialDeliveryContact","AssignedCrew","OperationsNotes"};
 
 
     public static File rollback(File live) {
@@ -100,7 +105,7 @@ public final class BackupArchive {
     }
 
     private static boolean allowedFile(String name) {
-        if (name.matches("master_data/(customers|jobs|catalog|expenses)\\.csv")) return true;
+        if (name.matches("master_data/(customers|jobs|catalog|expenses|pricebook)\\.csv")) return true;
         if(name.equals("templates/branding.csv")||name.equals("templates/default_memo.csv")
             ||name.equals("templates/logo.bin"))return true;
         if (name.matches("templates/[A-Za-z0-9_./-]{1,220}\\.(html|txt|md|json)"))
@@ -111,7 +116,7 @@ public final class BackupArchive {
         String job = client + "/jobs/JOB-[a-f0-9]{32}_[A-Za-z0-9_-]{1,40}";
         return name.matches(job + "/(job_items\\.csv|material_requests\\.csv|field_notes\\.md|job_details\\.json|"
             + "appointment\\.csv|quote\\.csv|payments\\.csv|invoice_memo\\.csv|"
-            + "time_entries\\.csv|route_points\\.csv|"
+            + "time_entries\\.csv|route_points\\.csv|job_milestones\\.csv|job_logistics\\.csv|"
             + "attachments\\.csv|attachments/ATT-[a-f0-9]{32}\\.bin|"
             + "photos/PHOTO-[a-f0-9]{32}\\.(jpg|png|webp|heic|heif|avif|gif|bmp|tiff|dng|img))");
     }
@@ -218,6 +223,23 @@ public final class BackupArchive {
         if(new File(root,"templates/default_memo.csv").isFile()){
             List<List<String>> templates=rows(root,"templates/default_memo.csv",MEMO);
             if(templates.size()>2)throw new IOException("Invalid default document template");
+        }
+        if(new File(root,"master_data/pricebook.csv").isFile()){
+            List<List<String>> book=rows(root,"master_data/pricebook.csv",PRICEBOOK);
+            Set<String> ids=new HashSet<>();
+            for(int i=1;i<book.size();i++){
+                List<String> r=book.get(i);
+                if(!r.get(0).matches("CAT-[a-f0-9]{32}")||!ids.add(r.get(0)))
+                    throw new IOException("Invalid pricebook item ID");
+                try {
+                    BigDecimal cost=new BigDecimal(r.get(4));
+                    BigDecimal markup=new BigDecimal(r.get(5));
+                    if(cost.signum()<0||cost.scale()>2||markup.compareTo(
+                        new BigDecimal("-100"))<0||markup.compareTo(
+                        new BigDecimal("1000"))>0)
+                        throw new IOException("Invalid base price/markup");
+                }catch(NumberFormatException e){throw new IOException("Invalid pricing number",e);}
+            }
         }
         File branding=new File(root,"templates/branding.csv");
         if(branding.isFile()){
@@ -396,6 +418,27 @@ public final class BackupArchive {
                         throw new IOException("Invalid route coordinate",e);
                     }
                 }
+            }
+            String milestonesPath=jobFolder+"/job_milestones.csv";
+            if(new File(root,milestonesPath).isFile()){
+                List<List<String>> milestones=rows(root,milestonesPath,MILESTONE);
+                Set<String> ids=new HashSet<>();
+                for(int k=1;k<milestones.size();k++){
+                    List<String> m=milestones.get(k);
+                    if(!m.get(0).matches("MILE-[a-f0-9]{32}")||!ids.add(m.get(0))||
+                        !(m.get(2).equals("true")||m.get(2).equals("false")))
+                        throw new IOException("Invalid milestone");
+                    if(!m.get(3).isEmpty()){
+                        try{java.time.Instant.parse(m.get(3));}
+                        catch(java.time.format.DateTimeParseException e){
+                            throw new IOException("Invalid milestone timestamp",e);}
+                    }
+                }
+            }
+            String logisticsPath=jobFolder+"/job_logistics.csv";
+            if(new File(root,logisticsPath).isFile()){
+                List<List<String>> rows=rows(root,logisticsPath,LOGISTICS);
+                if(rows.size()>2)throw new IOException("Repeated job logistics record");
             }
             String attachmentsPath=jobFolder+"/attachments.csv";
             if(new File(root,attachmentsPath).isFile()){
