@@ -118,3 +118,10 @@ From **Home → Find anything**, type part of a name, phone number, address, job
 ## Printable service reminders
 
 Check the actual date work was completed before setting a due rule. Mileage-only services need a current reading; Accubook cannot read vehicle odometers. The optional due-service PDF does not contact anyone automatically. Choosing a cloud document provider for the save destination may upload the PDF through that provider, despite Accubook itself having no INTERNET permission.
+
+
+## Reorder a bill without changing the money
+
+Open **Job → Money** and use the three-dot menu beside a line to Move up or Move down. Long-press offers the same actions. There are no permanently enlarged Edit/Delete buttons. Signed change-order lines stay locked against edits or deletion, but their placement on the invoice can change.
+
+To turn site notes into a line, open **Job → Notes → Use this note in a new invoice line**, then review description, quantity and rate before saving. Nothing is charged just because somebody wrote a note.
