@@ -992,6 +992,21 @@
             label(content,brand.business,20,LIGHT);
             label(content,brand.address+" "+brand.phone+" "+brand.email,15,MUTED);
             button(content,"Edit company / default invoice template",this::brandingDialog);
+            button(content,"Apply Jules Gutter Cleaning profile",()->
+                new AlertDialog.Builder(this)
+                .setTitle("Apply business profile?")
+                .setMessage("Replace the current business name/address/phone/email with Jules "
+                    +"Gutter Cleaning? Your logo, document terms and other settings remain.")
+                .setNegativeButton("Cancel",(d,w)->{})
+                .setPositiveButton("Apply",(d,w)->{
+                    try{
+                        CrmWorkspace.Branding old=crm.branding();
+                        crm.saveBranding("Jules Gutter Cleaning",
+                            "15 Ward Street, Hingham, MA 02043","267-667-2321",
+                            "julesguttercleaning@gmail.com",old.accent,old.terms,old.footer);
+                        businessScreen();
+                    }catch(Exception e){error(e);}
+                }).show());
             button(content,"Choose business logo",this::pickLogo);
             section("Payment method ledgers");
             Map<String,BigDecimal> totals=new LinkedHashMap<>();
@@ -1018,12 +1033,58 @@
             label(content,"No bank, PayPal or Cash App account connection is made. "
                 +"These are manual offline ledger entries, not verified settlements.",14,MUTED);
             button(content,"Create fictional test business data",this::createTestBusiness);
+            section("Privacy and protection");
+            boolean protectedApp=UnlockActivity.isEnabled(this);
+            label(content,"App unlock: "+(protectedApp?"Fingerprint/device PIN enabled":
+                "Not enabled"),16,LIGHT);
+            button(content,protectedApp?"Disable app unlock":"Enable fingerprint / device PIN",
+                this::configureAppLock);
+            label(content,"Android authentication protects the app UI. The portable "
+                +"workspace and ordinary ZIP backups remain unencrypted. "
+                +"An app lock alone is not encryption at rest.",13,MUTED);
+            section("Workspace safety");
+            button(content,"Restore workspace from ZIP",this::selectRestore);
+            if(store.hasRollbackSnapshot()){
+                button(content,"Revert last restored workspace",this::revertSnapshot);
+                button(content,"Discard verified rollback snapshot",this::discardPreviousSnapshot);
+            }
             button(content,"Export full workspace backup",()->{
                 pendingBackup=true;
                 pendingInvoice=null;
                 document("accubook-workspace.zip","application/zip");
             });
         }catch(Exception e){error(e);}
+    }
+
+    private void configureAppLock() {
+        if(UnlockActivity.isEnabled(this)){
+            new AlertDialog.Builder(this).setTitle("Disable app unlock?")
+                .setMessage("Accubook will no longer require Android fingerprint or device "
+                    +"PIN when it opens. This does not encrypt or decrypt existing files.")
+                .setNegativeButton("Keep lock",(d,w)->{})
+                .setPositiveButton("Disable",(d,w)->{
+                    UnlockActivity.setEnabled(this,false);
+                    getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE);
+                    businessScreen();
+                }).show();
+            return;
+        }
+        if(!UnlockActivity.isSecure(this)){
+            notice("Android screen lock required",
+                "Configure a secure Android PIN, password or pattern in device settings "
+                +"first, then return here.");
+            return;
+        }
+        new AlertDialog.Builder(this).setTitle("Enable fingerprint / device PIN?")
+            .setMessage("Accubook will request your enrolled biometric or device screen "
+                +"lock credential when opening. It also hides screenshots while locked. "
+                +"This protects app access, but does NOT encrypt the on-disk workspace.")
+            .setNegativeButton("Cancel",(d,w)->{})
+            .setPositiveButton("Enable",(d,w)->{
+                UnlockActivity.setEnabled(this,true);
+                getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE);
+                businessScreen();
+            }).show();
     }
 
     private void brandingDialog() {
@@ -1272,11 +1333,8 @@
             .setNegativeButton("Cancel",(d,w)->{})
             .setPositiveButton("Create sample",(d,w)->{
                 try {
-                    crm.saveBranding("Evergreen Exterior Services · DEMO",
-                        "20 Sample Way, Boston MA 02108","555-0120",
-                        "office@example.invalid","#165DAB",
-                        "DEMO ONLY: payment due upon completion.",
-                        "This is fictional test data, not a financial document.");
+                    // Never overwrite an owner's business identity when seeding fake data.
+                    // Demo customers and jobs are always labeled DEMO.
                     String[] customers={"Jordan Example","Avery Sample","Taylor Demo"};
                     String[] titles={"Roof inspection","Gutter clean and repair","Siding estimate"};
                     String[] methods={"Cash","Check","PayPal"};
