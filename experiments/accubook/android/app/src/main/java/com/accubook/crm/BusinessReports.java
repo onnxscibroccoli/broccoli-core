@@ -112,11 +112,11 @@ public final class BusinessReports {
                 put(zip,"worker_hours.csv",rows);
             }
             zip.putNextEntry(new ZipEntry("EXPORT_SCOPE.txt"));
-            StringBuilder scope=new StringBuilder("Explicit export scope. Files not selected are not included.\\n");
+            StringBuilder scope=new StringBuilder("Explicit export scope. Files not selected are not included.\n");
             for(int i=0;i<SECTIONS.length;i++)
-                scope.append(sections[i]?"INCLUDED: ":"EXCLUDED: ").append(SECTIONS[i]).append('\\n');
-            scope.append("Included payment methods: ").append(selection.paymentMethods).append('\\n')
-                .append("Included expense categories: ").append(selection.expenseCategories).append('\\n');
+                scope.append(sections[i]?"INCLUDED: ":"EXCLUDED: ").append(SECTIONS[i]).append('\n');
+            scope.append("Included payment methods: ").append(selection.paymentMethods).append('\n')
+                .append("Included expense categories: ").append(selection.expenseCategories).append('\n');
             zip.write(scope.toString().getBytes(StandardCharsets.UTF_8));
             zip.closeEntry();
 
