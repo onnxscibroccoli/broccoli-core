@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- No INTERNET, external-storage, or privileged Android permissions. -->
+    <!-- No INTERNET, external-storage or privileged Android permission.
+         READ_CONTACTS is runtime-requested only for user-approved batch selection. -->
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
     <application
         android:label="Accubook (Development)"
         android:theme="@android:style/Theme.Material.NoActionBar"
         android:allowBackup="false"
         android:usesCleartextTraffic="false">
+        <activity android:name=".DocumentActivity" android:exported="false"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">

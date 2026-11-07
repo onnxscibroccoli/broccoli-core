@@ -47,8 +47,10 @@ jobs:
         with:
           api-level: 35
           arch: x86_64
-          target: google_apis
-          profile: pixel_6
+          # AOSP target avoids Pixel Launcher ANRs observed with API35 Google APIs image.
+          target: default
+          profile: pixel_2
+          ram-size: 3072M
           disable-animations: true
           emulator-boot-timeout: 600
           # The emulator action executes multiline scripts as separate shell invocations.

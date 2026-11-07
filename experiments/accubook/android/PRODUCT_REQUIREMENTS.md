@@ -42,26 +42,50 @@ All records must be reachable in at most a few obvious taps without memorizing I
 
 | Area | Complete behavior expected | State on this development branch |
 | --- | --- | --- |
-| Customers | Create/edit/archive/merge, multi-contact, phone/email/address, notes, tags, lead source, searchable job history | **Partial:** customer detail, edit, search, job list; no archive/merge/multi-contact |
-| Phone import | Explicit single/bulk import with dedupe, multi-number/email, cancel/consent handling | **Partial:** opt-in single phone selection; name/phone prefill only |
+| Customers | Create/edit/archive/merge, multi-contact, phone/email/address, notes, tags, lead source, searchable job history | **Partial:** customer detail, edit, search, job history, preferred method checkboxes and color; no archive/merge/multi-contact |
+| Phone import | Explicit single/bulk import with dedupe, multi-number/email, cancel/consent handling | **Partial:** single-contact picker plus opt-in READ_CONTACTS multi-checklist (first 250 entries, basic phone/email dedupe); no complete import history/merge |
 | Properties | Multiple service sites per customer, property/equipment history, site photos | Not implemented; job site fields exist |
-| Leads / requests | Lead intake, stage, notes, follow-ups and quote conversion | Not implemented |
+| Leads / requests | Lead intake, stage, notes, follow-ups and quote conversion | **Partial:** customer/active jobs/quote/payment method dashboard, no full A/R/profit reports |
 | Estimates | Templates, grouped labor/material, alternatives, taxes, approval, revision log | Not implemented |
 | Jobs | Prospect→Quoted→Approved→Scheduled→In Progress→Completed→Invoiced→Paid (payment-backed), field notes/gate codes/material requests, assignable and recurring work, change orders, attachments | **Partial:** add job, status/date change, field notes, materials requests, photo import and basic line items |
-| Scheduler | Day/week/month calendar, date and time slots, timezone, crews, capacity/conflicts, drag or accessible reschedule | **Partial:** day/week/month date agenda, native date picker; no time slots, crew or conflicts |
+| Scheduler | Day/week/month calendar, date and time slots, timezone, crews, capacity/conflicts, drag or accessible reschedule | **Partial:** day/week/month daybook, native calendar/clock and typed date/time, notes/colors, basic drag-to-date plus accessible alternative; no crew or conflict detection |
 | Crew operations | Personnel, assignments, check-in/out, on-site tracking, work orders | Not implemented |
-| Photo evidence | Camera, gallery, metadata, annotation, before/after, album, export, deletion | **Partial:** private JPEG/PNG/WebP attachment, preview, remove; no camera/annotation |
+| Photo evidence | Camera, gallery, metadata, annotation, before/after, album, export, deletion | **Partial:** private JPEG/PNG/WebP attachment, bulk photo selection, preview, remove; no camera/annotation |
 | Pricebook | Searchable service/material catalog, units, rates, templates | Initial CSV container only |
 | Costs | Expenses, purchase orders, receipts, labor cost and profitability | Initial CSV container only |
-| Invoices | Numbering, estimates->invoices, adjustments, tax, print-ready HTML and PDF with optional evidence photos, email, balance, due dates | **Partial:** editable lines and HTML *draft* |
-| Payments | Offline cash/check ledger, deposits, partial payments, refunds, reconciliation, audit | Not implemented; **no card processing** |
-| Communications | Explicit dial/SMS/email via installed apps, notes and logged activity | **Partial:** explicit dial/text/email handoff, no history |
+| Invoices | Numbering, estimates->invoices, adjustments, tax, print-ready HTML and PDF with optional evidence photos, email, balance, due dates | **Partial:** editable lines, offline WYSIWYG message/footer, reusable default template, brand/logo, HTML preview, native Print/Save as PDF; no tax/settlement |
+| Payments | Offline cash/check ledger, deposits, partial payments, refunds, reconciliation, audit | **Partial:** user-entered per-job cash/check/Cash App/PayPal/Bank Transfer/Other receipts, derived method totals; no card processing, refund/reconciliation |
+| Communications | Explicit dial/SMS/email via installed apps, notes and logged activity | **Partial:** dial/text/email handoff, share quote text, manual Quote sent checkbox, no delivery receipts/history |
 | Reporting | A/R aging, pipeline, jobs by status, revenue/cost/profit, CSV exports | Not implemented |
 | Backup/restore | Verified, safe, versioned backup AND restore; migration and corruption tests | **Partial / not accepted:** staged ZIP restore, structural validation, retained rollback, JVM fault/abuse smoke. Real-device and power-loss testing pending |
 | Desktop/iOS | Portable domain, parity and user-controlled interoperability | Not implemented |
 | Accessibility | Automated and manual testing with TalkBack, Switch Access and font scaling | **Unverified** |
 | Installation | Android 8+ device install, upgrade, rollback/data-preservation testing | **Unverified** |
 | Release | Key custody, migration rehearsal, privacy/security review, owner acceptance | Not approved |
+
+## New in opt-in development branch `feat/accubook-workflows-20261106`
+
+- Job creation now links to **Create new customer** and returns to scheduling.
+  Date is empty until explicitly chosen or typed; native calendar and clock
+  fields have keyboard alternatives. Time zones/overnight visits remain unmodeled.
+- Daybook includes colored appointment blocks, notes, and drag-to-date; a
+  keyboard/screen-reader-accessible Reschedule dialog is mandatory.
+- Customer preferred Call/SMS/Email checkboxes, color selection, optional
+  opt-in bulk contact selection; READ_CONTACTS is granted/denied by Android.
+- Mixed-format attachments: arbitrary MIME formats copied to app-private
+  storage through user-selected SAF; max 25 MB each/40 per batch; export copies
+  through SAF. No preview/execution of unknown binary content.
+- Quote status checkbox is a **manual self-report**, not proof of customer
+  receipt. Quotes and draft invoices use canonical job line items and optional
+  business logo, HTML editing regions and native system Print/Save as PDF.
+- Payments are offline **manual** ledger entries, not payment acceptance or
+  external-provider settlement. Refunds, reversals and correction controls
+  remain blockers before trusting production accounting.
+- Default rich text template is user-controlled and locally stored. On Android,
+  WYSIWYG formatting, PDF print and TalkBack navigation still require device
+  acceptance (no green compilation substitutes).
+- Fictional test company and three jobs/ledgers may be inserted on demand;
+  no real client data and no background imports.
 
 ## Interaction design contracts
 
