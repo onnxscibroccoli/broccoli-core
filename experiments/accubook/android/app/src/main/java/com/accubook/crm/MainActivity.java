@@ -2929,6 +2929,7 @@ public final class MainActivity extends Activity {
             jobSectionTabs(id);
             button(content, "Customer: " + client.displayName(), () -> customer(client.id));
             if("Overview".equals(selectedJobSection)){
+            jobQuickActions(work,client);
             section("Job details");
             CrmWorkspace.Appointment appt=crm.appointment(work);
             label(content, "Scheduled: " + work.date + " · "+appt.start+"–"+appt.end,
@@ -3086,6 +3087,39 @@ public final class MainActivity extends Activity {
     }
 
     /** Fast job-specific navigation; section switching never loses the selected job. */
+    /** Adopt only high-value ServiceTitan-like field actions, without any SDK,
+     * contacts permission, location tracking, or hidden information sharing.
+     */
+    private void jobQuickActions(WorkspaceStore.Job work,WorkspaceStore.Customer client){
+        String location=(work.street+" "+work.city+" "+work.state+" "+work.zip).trim();
+        boolean canCall=client.phone!=null&&!client.phone.trim().isEmpty();
+        boolean canRoute=!location.isEmpty();
+        if(!canCall&&!canRoute)return;
+        LinearLayout row=new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        content.addView(row,new LinearLayout.LayoutParams(-1,-2));
+        if(canCall)jobActionButton(row,"Call customer",
+            "Open phone dialer for "+client.displayName(),
+            ()->external(Intent.ACTION_DIAL,Uri.fromParts("tel",client.phone,null)));
+        if(canRoute)jobActionButton(row,"Directions","Open mapping app to job site",
+            ()->external(Intent.ACTION_VIEW,
+                Uri.parse("geo:0,0?q="+Uri.encode(location))));
+    }
+    private void jobActionButton(LinearLayout row,String title,String accessibility,Runnable run){
+        Button action=new Button(this);
+        action.setAllCaps(false);
+        action.setText(title);
+        action.setTextColor(LIGHT);
+        action.setTextSize(15);
+        action.setContentDescription(accessibility);
+        action.setMinHeight(dp(48));
+        action.setBackground(box(CARD));
+        LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(0,-2,1);
+        params.setMargins(dp(3),dp(4),dp(3),dp(4));
+        row.addView(action,params);
+        action.setOnClickListener(v->run.run());
+    }
+
     private void jobSectionTabs(String jobId){
         String[] names={"Overview","Notes","Materials","Billing","Photos","Time & route"};
         LinearLayout row=null;int visible=0;
