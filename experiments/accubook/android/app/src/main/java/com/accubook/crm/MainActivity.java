@@ -779,6 +779,328 @@ public final class MainActivity extends Activity {
     }
 
 
+
+    /** All business settings are local. Company identity merges into every document. */
+    private void businessScreen() {
+        currentScreen="business";
+        currentJobId=null;
+        currentCustomerId=null;
+        try {
+            CrmWorkspace.Branding brand=crm.branding();
+            screen("Business dashboard","Offline accounting overview · local only");
+            navigation();
+            section("Your business");
+            label(content,brand.business,20,LIGHT);
+            label(content,brand.address+" "+brand.phone+" "+brand.email,15,MUTED);
+            button(content,"Edit company / default invoice template",this::brandingDialog);
+            button(content,"Choose business logo",this::pickLogo);
+            section("Payment method ledgers");
+            Map<String,BigDecimal> totals=new LinkedHashMap<>();
+            for(String method:CrmWorkspace.PAYMENT_METHODS)totals.put(method,BigDecimal.ZERO);
+            BigDecimal draftTotal=BigDecimal.ZERO;
+            BigDecimal received=BigDecimal.ZERO;
+            int sent=0;
+            for(WorkspaceStore.Job job:store.jobs()){
+                draftTotal=draftTotal.add(new BigDecimal(job.total));
+                if(crm.quote(job).sent)sent++;
+                for(CrmWorkspace.Payment entry:crm.payments(job)){
+                    BigDecimal value=new BigDecimal(entry.amount);
+                    totals.put(entry.method,totals.get(entry.method).add(value));
+                    received=received.add(value);
+                }
+            }
+            label(content,"Draft job billing: $"+draftTotal.toPlainString(),17,LIGHT);
+            label(content,"Payments recorded: $"+received.toPlainString(),17,LIGHT);
+            label(content,"Unreconciled difference (drafts - receipts): $"+
+                draftTotal.subtract(received).toPlainString(),16,LIGHT);
+            label(content,"Quotes manually marked sent: "+sent,15,LIGHT);
+            for(Map.Entry<String,BigDecimal> item:totals.entrySet())
+                label(content,item.getKey()+" ledger: $"+item.getValue().toPlainString(),17,LIGHT);
+            label(content,"No bank, PayPal or Cash App account connection is made. "
+                +"These are manual offline ledger entries, not verified settlements.",14,MUTED);
+            button(content,"Create fictional test business data",this::createTestBusiness);
+            button(content,"Export full workspace backup",()->{
+                pendingBackup=true;
+                pendingInvoice=null;
+                document("accubook-workspace.zip","application/zip");
+            });
+        }catch(Exception e){error(e);}
+    }
+
+    private void brandingDialog() {
+        try {
+            CrmWorkspace.Branding brand=crm.branding();
+            LinearLayout fields=form();
+            EditText business=field(fields,"Business name (required)","Example Contracting LLC");
+            business.setText(brand.business);
+            EditText address=field(fields,"Business address","Address");
+            address.setText(brand.address);
+            EditText phone=field(fields,"Business phone","Phone");
+            phone.setText(brand.phone);
+            EditText email=field(fields,"Business email","Email");
+            email.setText(brand.email);
+            EditText color=field(fields,"Brand color · #RRGGBB","#165DAB");
+            color.setText(brand.accent);
+            EditText terms=multiline(fields,"Default payment terms",brand.terms);
+            EditText footer=multiline(fields,"Footer / business information",brand.footer);
+            dialog("Default quote and invoice template",fields,()->{
+                try{
+                    crm.saveBranding(business.getText().toString(),address.getText().toString(),
+                        phone.getText().toString(),email.getText().toString(),
+                        color.getText().toString(),terms.getText().toString(),
+                        footer.getText().toString());
+                    businessScreen();
+                }catch(IOException e){throw new IllegalStateException(e);}
+            });
+        }catch(Exception e){error(e);}
+    }
+
+    private EditText multiline(LinearLayout parent,String title,String value) {
+        TextView heading=label(parent,title,15,LIGHT);
+        EditText field=new EditText(this);
+        field.setId(View.generateViewId());
+        heading.setLabelFor(field.getId());
+        field.setText(value==null?"":value);
+        field.setTextColor(LIGHT);
+        field.setHintTextColor(MUTED);
+        field.setTextSize(16);
+        field.setMinHeight(dp(100));
+        field.setSingleLine(false);
+        field.setInputType(InputType.TYPE_CLASS_TEXT |
+            InputType.TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        parent.addView(field,new LinearLayout.LayoutParams(-1,-2));
+        return field;
+    }
+
+    private void pickLogo() {
+        Intent pick=new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        pick.setType("image/*");
+        pick.addCategory(Intent.CATEGORY_OPENABLE);
+        try {startActivityForResult(pick,LOGO_REQUEST);}
+        catch(Exception e){error(e);}
+    }
+
+    private void openDocument(WorkspaceStore.Job job,boolean quote) {
+        Intent intent=new Intent(this,DocumentActivity.class);
+        intent.putExtra("job",job.id);
+        intent.putExtra("quote",quote);
+        startActivity(intent);
+    }
+
+    private void paymentDialog(WorkspaceStore.Job job) {
+        LinearLayout fields=form();
+        EditText date=field(fields,"Payment received date · YYYY-MM-DD","Tap calendar or type");
+        date.setText(LocalDate.now().toString());
+        button(fields,"Choose payment date",()->openDate(date));
+        EditText amount=field(fields,"Amount received · USD","100.00");
+        amount.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        EditText reference=field(fields,"Reference / check number (optional)","Check #, transfer ID");
+        EditText notes=multiline(fields,"Payment notes","");
+        String[] method={CrmWorkspace.PAYMENT_METHODS[0]};
+        Button choose=button(fields,"Method: "+method[0],()->{
+            new AlertDialog.Builder(this).setTitle("Payment method")
+                .setItems(CrmWorkspace.PAYMENT_METHODS,(d,index)->{
+                    method[0]=CrmWorkspace.PAYMENT_METHODS[index];
+                }).show();
+        });
+        // Update button caption whenever the chooser closes.
+        choose.setOnClickListener(v->new AlertDialog.Builder(this)
+            .setTitle("Payment method")
+            .setItems(CrmWorkspace.PAYMENT_METHODS,(d,index)->{
+                method[0]=CrmWorkspace.PAYMENT_METHODS[index];
+                choose.setText("Method: "+method[0]);
+            }).show());
+        dialog("Record offline payment",fields,()->{
+            try{
+                crm.addPayment(job,date.getText().toString(),method[0],
+                    amount.getText().toString(),reference.getText().toString(),
+                    notes.getText().toString());
+                job(job.id);
+            }catch(IOException e){throw new IllegalStateException(e);}
+        });
+    }
+
+    private void openDate(EditText target) {
+        LocalDate initial;
+        try{initial=LocalDate.parse(target.getText().toString());}
+        catch(Exception ignored){initial=LocalDate.now();}
+        new DatePickerDialog(this,(picker,year,month,day)->
+            target.setText(LocalDate.of(year,month+1,day).toString()),
+            initial.getYear(),initial.getMonthValue()-1,initial.getDayOfMonth()).show();
+    }
+
+    private void openClock(EditText target) {
+        LocalTime initial;
+        try{initial=LocalTime.parse(target.getText().toString());}
+        catch(Exception ignored){initial=LocalTime.of(9,0);}
+        new TimePickerDialog(this,(picker,hour,minute)->
+            target.setText(String.format(Locale.ROOT,"%02d:%02d",hour,minute)),
+            initial.getHour(),initial.getMinute(),false).show();
+    }
+
+    private void chooseJobColor(Button button,String[] chosen) {
+        String[] labels={"Blue · standard","Green · active","Gold · follow-up",
+            "Red · urgent","Purple · special","Slate · other"};
+        new AlertDialog.Builder(this).setTitle("Color-code this job")
+            .setItems(labels,(dialog,index)->{
+                chosen[0]=CrmWorkspace.JOB_COLORS[index];
+                button.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(chosen[0])));
+                button.setText("Job color: "+labels[index]);
+            }).show();
+    }
+
+    private void scheduleEditor(WorkspaceStore.Job job) {
+        try {
+            CrmWorkspace.Appointment old=crm.appointment(job);
+            LinearLayout fields=form();
+            EditText date=field(fields,"Appointment date · YYYY-MM-DD","YYYY-MM-DD");
+            date.setText(job.date);
+            button(fields,"Select date in calendar",()->openDate(date));
+            EditText start=field(fields,"Start time · HH:mm","09:00");
+            start.setText(old.start);
+            button(fields,"Choose start time on clock",()->openClock(start));
+            EditText end=field(fields,"End time · HH:mm","10:00");
+            end.setText(old.end);
+            button(fields,"Choose end time on clock",()->openClock(end));
+            String[] tint={old.color};
+            Button colorButton=button(fields,"Choose job color",()->{});
+            colorButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(tint[0])));
+            colorButton.setOnClickListener(v->chooseJobColor(colorButton,tint));
+            EditText note=multiline(fields,"Daybook appointment note",old.notes);
+            dialog("Reschedule job / edit daybook",fields,()->{
+                LocalTime from=LocalTime.parse(start.getText().toString());
+                LocalTime to=LocalTime.parse(end.getText().toString());
+                if(!to.isAfter(from))throw new IllegalArgumentException("End time must follow start time");
+                try{
+                    // Date is canonical in jobs.csv; appointment details are a separate
+                    // additive file. This multi-file edit needs journaled recovery later.
+                    WorkspaceStore.Job changed=store.updateJob(job.id,date.getText().toString(),
+                        job.status);
+                    crm.saveAppointment(changed,start.getText().toString(),end.getText().toString(),
+                        tint[0],note.getText().toString());
+                    job(changed.id);
+                }catch(IOException e){throw new IllegalStateException(e);}
+            });
+        }catch(Exception e){error(e);}
+    }
+
+    private void pickAttachments(WorkspaceStore.Job job,boolean imagesOnly) {
+        pendingAttachmentJobId=job.id;
+        bulkPhotoSelection=imagesOnly;
+        Intent pick=new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        pick.setType(imagesOnly?"image/*":"*/*");
+        pick.addCategory(Intent.CATEGORY_OPENABLE);
+        pick.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);
+        try{startActivityForResult(pick,imagesOnly?BULK_PHOTO_REQUEST:ATTACHMENT_REQUEST);}
+        catch(Exception e){pendingAttachmentJobId=null;error(e);}
+    }
+
+    private void saveSelectedAttachments(Intent data,boolean photos) {
+        String jobId=pendingAttachmentJobId;
+        pendingAttachmentJobId=null;
+        if(jobId==null)return;
+        try{
+            WorkspaceStore.Job selected=jobById(jobId);
+            ArrayList<Uri> uris=new ArrayList<>();
+            if(data.getClipData()!=null){
+                ClipData clip=data.getClipData();
+                for(int i=0;i<clip.getItemCount();i++)uris.add(clip.getItemAt(i).getUri());
+            }else if(data.getData()!=null)uris.add(data.getData());
+            if(uris.size()>40)throw new IOException("Choose no more than 40 files in one batch");
+            int imported=0;
+            for(Uri uri:uris){
+                if(photos){
+                    try(InputStream stream=getContentResolver().openInputStream(uri)){
+                        store.addPhoto(selected,stream);
+                    }
+                } else {
+                    String name="Attachment";
+                    try(Cursor cursor=getContentResolver().query(uri,
+                        new String[]{OpenableColumns.DISPLAY_NAME},null,null,null)){
+                        if(cursor!=null&&cursor.moveToFirst())name=cursor.getString(0);
+                    }
+                    if(name==null||name.isEmpty())name="Attachment";
+                    String mime=getContentResolver().getType(uri);
+                    try(InputStream stream=getContentResolver().openInputStream(uri)){
+                        crm.importAttachment(selected,stream,name,mime==null?"":mime);
+                    }
+                }
+                imported++;
+            }
+            job(jobId);
+            notice("Import completed",imported+" files saved privately with this job.");
+        }catch(Exception e){error(e);}
+    }
+
+    private void exportAttachment(WorkspaceStore.Job job,CrmWorkspace.Attachment attachment) {
+        pendingAttachmentExport=attachment;
+        pendingAttachmentExportJob=job.id;
+        document(attachment.name,attachment.mime);
+    }
+
+    private void attachmentList(WorkspaceStore.Job job) throws IOException {
+        section("Job files and attachments");
+        button(content,"Attach files (select multiple, any format)",()->pickAttachments(job,false));
+        button(content,"Import multiple photographs",()->pickAttachments(job,true));
+        List<CrmWorkspace.Attachment> files=crm.attachments(job);
+        if(files.isEmpty())label(content,"No files attached yet.",15,MUTED);
+        for(CrmWorkspace.Attachment file:files){
+            LinearLayout row=card();
+            label(row,file.name+" · "+file.mime+" · "+file.bytes+" bytes",15,LIGHT);
+            button(row,"Save a copy of "+file.name,()->exportAttachment(job,file));
+            button(row,"Remove "+file.name,()->new AlertDialog.Builder(this)
+                .setTitle("Remove attached file?")
+                .setMessage(file.name+" will be deleted from this job.")
+                .setNegativeButton("Cancel",(d,w)->{})
+                .setPositiveButton("Delete",(d,w)->{
+                    try{crm.deleteAttachment(job,file);job(job.id);}
+                    catch(Exception e){error(e);}
+                }).show());
+        }
+    }
+
+    private void createTestBusiness() {
+        new AlertDialog.Builder(this).setTitle("Load fictional test company?")
+            .setMessage("Creates a fictional example contracting business, three demo customers, "
+                +"three jobs, appointment times, draft charges and sample payment-method entries. "
+                +"Existing records are not replaced. Never use this data for real accounting.")
+            .setNegativeButton("Cancel",(d,w)->{})
+            .setPositiveButton("Create sample",(d,w)->{
+                try {
+                    crm.saveBranding("Evergreen Exterior Services · DEMO",
+                        "20 Sample Way, Boston MA 02108","555-0120",
+                        "office@example.invalid","#165DAB",
+                        "DEMO ONLY: payment due upon completion.",
+                        "This is fictional test data, not a financial document.");
+                    String[] customers={"Jordan Example","Avery Sample","Taylor Demo"};
+                    String[] titles={"Roof inspection","Gutter clean and repair","Siding estimate"};
+                    String[] methods={"Cash","Check","PayPal"};
+                    for(int i=0;i<3;i++){
+                        WorkspaceStore.Customer c=store.addCustomer("",
+                            customers[i],"555-01"+(20+i),"client"+i+"@example.invalid",
+                            (i+20)+" Sample Street","Boston","MA","02108");
+                        WorkspaceStore.Job j=store.addJob(c,"DEMO - "+titles[i],
+                            c.street,c.city,c.state,c.zip,
+                            LocalDate.now().plusDays(i+1).toString());
+                        crm.saveAppointment(j,String.format(Locale.ROOT,"%02d:00",9+i),
+                            String.format(Locale.ROOT,"%02d:00",10+i),
+                            CrmWorkspace.JOB_COLORS[i],"DEMO daybook note "+(i+1));
+                        crm.savePreferences(c,true,i==1,true,CrmWorkspace.JOB_COLORS[i]);
+                        store.addLine(j,"DEMO labor","2","95.00");
+                        store.addLine(j,"DEMO materials","1","45.00");
+                        store.saveFieldNotes(j,"DEMO ONLY: confirm site details, take "
+                            +"photographs and issue a quote before work.");
+                        crm.setQuoteSent(j,i==2,"Fictional sample status");
+                        if(i<2)crm.addPayment(j,LocalDate.now().toString(),methods[i],
+                            "50.00","DEMO","Fictional deposit");
+                    }
+                    businessScreen();
+                    notice("Demo company created","Three fictional customers, jobs, schedules "
+                        +"and sample financial records are now available.");
+                }catch(Exception e){error(e);}
+            }).show();
+    }
+
     /** Explicit demo seeding: no real contacts, no network, no silent first-run writes. */
     private void createDemoWorkspace() {
         new AlertDialog.Builder(this)
