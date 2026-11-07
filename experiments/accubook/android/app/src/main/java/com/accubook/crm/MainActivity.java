@@ -107,6 +107,9 @@ public final class MainActivity extends Activity {
     private String routeJobId;
     private String pendingRouteExportId;
     private boolean[] pendingReportSections;
+    private String[] pendingReportMethods;
+    private String[] pendingReportCategories;
+    private boolean pendingReportPdf;
     private android.location.LocationManager locationManager;
     private android.location.LocationListener routeListener;
     private char[] pendingBackupPassword;
@@ -125,6 +128,9 @@ public final class MainActivity extends Activity {
             pendingAttachmentExportJob = state.getString("attachmentExportJob");
             pendingAttachmentExportId = state.getString("attachmentExportId");
             pendingReportSections=state.getBooleanArray("reportSections");
+            pendingReportMethods=state.getStringArray("reportMethods");
+            pendingReportCategories=state.getStringArray("reportCategories");
+            pendingReportPdf=state.getBoolean("reportPdf",false);
             pendingRouteExportId=state.getString("routeExportId");
             pendingPickupJobId=state.getString("pickupJobId");
             pendingPickupWhen=state.getLong("pickupWhen",0);
@@ -220,6 +226,9 @@ public final class MainActivity extends Activity {
         state.putString("attachmentExportJob", pendingAttachmentExportJob);
         state.putString("attachmentExportId", pendingAttachmentExportId);
         state.putBooleanArray("reportSections",pendingReportSections);
+        state.putStringArray("reportMethods",pendingReportMethods);
+        state.putStringArray("reportCategories",pendingReportCategories);
+        state.putBoolean("reportPdf",pendingReportPdf);
         state.putString("routeExportId",pendingRouteExportId);
         state.putString("pickupJobId",pendingPickupJobId);
         state.putLong("pickupWhen",pendingPickupWhen);
@@ -1920,10 +1929,11 @@ public final class MainActivity extends Activity {
                 +"workspace and ordinary ZIP backups remain unencrypted. "
                 +"An app lock alone is not encryption at rest.",13,MUTED);
             section("Reporting and accounting export");
-            button(content,"Create selective accounting / QuickBooks CSV ZIP",
-                this::chooseReportExport);
-            label(content,"Each category produces a separate CSV with documented columns. "
-                +"QuickBooks may require manual field mapping; this is not a live integration.",
+            button(content,"Quick PDF financial report",()->chooseReportExport(true));
+            button(content,"Custom accounting CSV ZIP",()->chooseReportExport(false));
+            label(content,"Choose exactly which sections, payment methods and expense "
+                +"categories leave Accubook. A PDF is a quick summary; a ZIP contains "
+                +"selected editable CSV records. No direct QuickBooks connection exists.",
                 14,MUTED);
             section("Workspace safety");
             button(content,"Create encrypted backup (.acbk)",this::chooseEncryptedBackup);
@@ -2309,31 +2319,94 @@ public final class MainActivity extends Activity {
             }).show();
     }
 
-    private void chooseReportExport(){
-        LinearLayout fields=form();
-        label(fields,"Only checked categories will be included in your report ZIP. "
-            +"No records are sent online. The destination ZIP may contain private data.",
-            16,LIGHT);
-        CheckBox[] sections=new CheckBox[BusinessReports.SECTIONS.length];
-        for(int i=0;i<sections.length;i++){
-            sections[i]=checkbox(fields,BusinessReports.SECTIONS[i],i==4);
-        }
-        dialog("Choose accounting report sections",fields,()->{
-            boolean[] selected=new boolean[sections.length];
-            boolean any=false;
-            for(int i=0;i<sections.length;i++){
-                selected[i]=sections[i].isChecked();
-                any|=selected[i];
+    private void chooseReportExport(boolean pdf){
+        try{
+            LinearLayout fields=form();
+            label(fields,pdf?
+                "Quick PDF totals only. Choose what to summarize. No customer names, "
+                    +"payment references, or itemized expenses appear in a quick PDF.":
+                "Export ONLY checked sections and selected payment methods and expense "
+                    +"categories into local CSV files. QuickBooks mapping is manual.",
+                16,LIGHT);
+            CheckBox[] sections=new CheckBox[BusinessReports.SECTIONS.length];
+            for(int i=0;i<sections.length;i++)
+                sections[i]=checkbox(fields,BusinessReports.SECTIONS[i],i==1);
+
+            LinearLayout methodGroup=new LinearLayout(this);
+            methodGroup.setOrientation(LinearLayout.VERTICAL);
+            fields.addView(methodGroup);
+            label(methodGroup,"Payment methods to include (none chosen by default)",16,LIGHT);
+            CheckBox[] methods=new CheckBox[ReportSelection.PAYMENT_METHODS.length];
+            for(int i=0;i<methods.length;i++)
+                methods[i]=checkbox(methodGroup,ReportSelection.PAYMENT_METHODS[i],false);
+            button(methodGroup,"Select every payment method",()->{
+                for(CheckBox check:methods)check.setChecked(true);
+            });
+            button(methodGroup,"Clear payment selection",()->{
+                for(CheckBox check:methods)check.setChecked(false);
+            });
+            methodGroup.setVisibility(View.GONE);
+            sections[3].setOnCheckedChangeListener((view,checked)->
+                methodGroup.setVisibility(checked?View.VISIBLE:View.GONE));
+
+            LinearLayout expenseGroup=new LinearLayout(this);
+            expenseGroup.setOrientation(LinearLayout.VERTICAL);
+            fields.addView(expenseGroup);
+            label(expenseGroup,"Expense categories to include (none chosen by default)",
+                16,LIGHT);
+            java.util.TreeSet<String> labels=new java.util.TreeSet<>();
+            for(CrmWorkspace.Expense expense:crm.expenses())
+                if(!expense.category.trim().isEmpty())labels.add(expense.category);
+            String[] categories=labels.toArray(new String[0]);
+            CheckBox[] categoryChecks=new CheckBox[categories.length];
+            for(int i=0;i<categories.length;i++)
+                categoryChecks[i]=checkbox(expenseGroup,categories[i],false);
+            if(categories.length==0)
+                label(expenseGroup,"No expense categories recorded. "
+                    +"Record an expense before exporting this section.",14,MUTED);
+            else{
+                button(expenseGroup,"Select every expense category",()->{
+                    for(CheckBox check:categoryChecks)check.setChecked(true);
+                });
+                button(expenseGroup,"Clear expense selection",()->{
+                    for(CheckBox check:categoryChecks)check.setChecked(false);
+                });
             }
-            if(!any)throw new IllegalArgumentException("Choose at least one report section");
-            pendingReportSections=selected;
-            Intent destination=new Intent(Intent.ACTION_CREATE_DOCUMENT);
-            destination.addCategory(Intent.CATEGORY_OPENABLE);
-            destination.setType("application/zip");
-            destination.putExtra(Intent.EXTRA_TITLE,"accubook-accounting-report.zip");
-            try{startActivityForResult(destination,REPORT_EXPORT_REQUEST);}
-            catch(Exception e){pendingReportSections=null;error(e);}
-        });
+            expenseGroup.setVisibility(View.GONE);
+            sections[4].setOnCheckedChangeListener((view,checked)->
+                expenseGroup.setVisibility(checked?View.VISIBLE:View.GONE));
+            label(fields,"Nothing is uploaded. Generated documents are saved to the "
+                +"location you explicitly choose. Never use a CSV ZIP as a workspace backup.",
+                14,MUTED);
+            dialog(pdf?"Configure quick PDF report":"Configure accounting CSV ZIP",fields,()->{
+                boolean[] chosen=new boolean[sections.length];
+                for(int i=0;i<sections.length;i++)chosen[i]=sections[i].isChecked();
+                java.util.Set<String> chosenMethods=new java.util.LinkedHashSet<>();
+                for(int i=0;i<methods.length;i++)
+                    if(methods[i].isChecked())chosenMethods.add(ReportSelection.PAYMENT_METHODS[i]);
+                java.util.Set<String> chosenCategories=new java.util.LinkedHashSet<>();
+                for(int i=0;i<categories.length;i++)
+                    if(categoryChecks[i].isChecked())chosenCategories.add(categories[i]);
+                ReportSelection selection=new ReportSelection(
+                    chosen,chosenMethods,chosenCategories);
+                pendingReportSections=selection.sections();
+                pendingReportMethods=selection.methods().toArray(new String[0]);
+                pendingReportCategories=selection.categories().toArray(new String[0]);
+                pendingReportPdf=pdf;
+                Intent destination=new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                destination.addCategory(Intent.CATEGORY_OPENABLE);
+                destination.setType(pdf?"application/pdf":"application/zip");
+                destination.putExtra(Intent.EXTRA_TITLE,
+                    pdf?"accubook-financial-summary.pdf":"accubook-selected-accounting.zip");
+                try{startActivityForResult(destination,REPORT_EXPORT_REQUEST);}
+                catch(Exception failure){
+                    pendingReportSections=null;
+                    pendingReportMethods=null;
+                    pendingReportCategories=null;
+                    error(failure);
+                }
+            });
+        }catch(Exception error){error(error);}
     }
 
     private void expenseDialog(){
@@ -3351,14 +3424,26 @@ public final class MainActivity extends Activity {
         }
         if(requestCode==REPORT_EXPORT_REQUEST){
             boolean[] sections=pendingReportSections;
+            String[] methods=pendingReportMethods,categories=pendingReportCategories;
+            boolean pdf=pendingReportPdf;
             pendingReportSections=null;
+            pendingReportMethods=null;
+            pendingReportCategories=null;
+            pendingReportPdf=false;
             if(resultCode!=RESULT_OK||data==null||data.getData()==null)return;
-            if(sections==null){error(new IOException("Report selection expired"));return;}
+            if(sections==null||methods==null||categories==null){
+                error(new IOException("Report selection expired; please try again"));return;
+            }
             try(OutputStream out=getContentResolver().openOutputStream(data.getData(),"wt")){
                 if(out==null)throw new IOException("Cannot open report destination");
-                BusinessReports.export(store,crm,sections,out);
-                notice("Report exported","Your selected CSV sections were saved locally. "
-                    +"Review the README file before importing into accounting software.");
+                ReportSelection selection=new ReportSelection(sections,
+                    new java.util.LinkedHashSet<>(java.util.Arrays.asList(methods)),
+                    new java.util.LinkedHashSet<>(java.util.Arrays.asList(categories)));
+                if(pdf)QuickReportPdf.write(BusinessReports.summary(store,crm,selection),out);
+                else BusinessReports.export(store,crm,selection,out);
+                notice("Report saved",pdf?"Local PDF summary saved to your chosen file.":
+                    "Selected CSV ZIP saved. Review its README before importing into "
+                        +"accounting software.");
             }catch(Exception e){error(e);}
             return;
         }
