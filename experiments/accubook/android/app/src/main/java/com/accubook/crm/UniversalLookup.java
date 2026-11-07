@@ -98,6 +98,12 @@ public final class UniversalLookup {
                         terms.add(line.description);
                 }
             }
+            if(FeatureSettings.enabled(context,FeatureSettings.INVENTORY) &&
+                new File(folder,"job_site_materials.csv").isFile()){
+                for(InventoryLayers.SiteEntry site:new InventoryLayers(store).siteMaterials(job)){
+                    terms.add(site.name);terms.add(site.unit);terms.add(site.status);
+                }
+            }
             add(found,query,"JOB",job.id,job.title,
                 "Job · "+(customer==null?"Unknown customer":customer.displayName())+
                     " · "+job.date+" · "+job.status,combined(terms));
@@ -108,6 +114,21 @@ public final class UniversalLookup {
                 add(found,query,"CATALOG",item.id,item.name,
                     "Catalog · "+item.category+" · $"+item.price(),
                     item.id,item.name,item.category,item.unit,item.supplier);
+            }
+        }
+        if(FeatureSettings.enabled(context,FeatureSettings.INVENTORY)){
+            InventoryLayers inventory=new InventoryLayers(store);
+            if(new File(store.root(),"master_data/inventory_materials.csv").isFile()){
+                for(InventoryLayers.Material stock:inventory.companyMaterials())
+                    add(found,query,"INVENTORY",stock.id,stock.name,
+                        "Company stock · "+stock.onHand+" "+stock.unit,
+                        stock.name,stock.unit,stock.catalogId);
+            }
+            if(new File(store.root(),"master_data/inventory_tools.csv").isFile()){
+                for(InventoryLayers.Tool tool:inventory.tools())
+                    add(found,query,"TOOL",tool.id,tool.name,
+                        "Equipment · "+tool.status,
+                        tool.name,tool.assetTag,tool.jobId,tool.status);
             }
         }
         found.sort(Comparator.comparingInt((Match m)->m.score).reversed()

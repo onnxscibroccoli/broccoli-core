@@ -118,7 +118,7 @@ public final class BackupArchive {
     }
 
     private static boolean allowedFile(String name) {
-        if (name.matches("master_data/(customers|jobs|catalog|expenses|pricebook|calendar_links|contacts|service_intervals)\\.csv")) return true;
+        if (name.matches("master_data/(customers|jobs|catalog|expenses|pricebook|calendar_links|contacts|service_intervals|inventory_materials|inventory_tools)\\.csv")) return true;
         if(name.equals("templates/branding.csv")||name.equals("templates/job_fields.csv")
             ||name.equals("templates/default_memo.csv")
             ||name.equals("templates/logo.bin"))return true;
@@ -132,7 +132,7 @@ public final class BackupArchive {
             + "appointment\\.csv|quote\\.csv|payments\\.csv|invoice_memo\\.csv|"
             + "time_entries\\.csv|route_points\\.csv|job_milestones\\.csv|"
             + "job_logistics\\.csv|pickup_reminder\\.csv|custom_fields\\.csv|photo_order\\.csv|"
-            + "change_orders\\.csv|change_order_lines\\.csv|"
+            + "change_orders\\.csv|change_order_lines\\.csv|job_site_materials\\.csv|"
             + "change_order_signatures/CO-[a-f0-9]{32}\\.png|"
             + "attachments\\.csv|attachments/ATT-[a-f0-9]{32}\\.bin|"
             + "photos/PHOTO-[a-f0-9]{32}\\.(jpg|png|webp|heic|heif|avif|gif|bmp|tiff|dng|img))");
@@ -241,6 +241,73 @@ public final class BackupArchive {
         }
     }
 
+
+
+    /** Restore must reject corrupt inventory, orphan tool assignments and duplicate IDs. */
+    private static void validateInventory(File root,List<List<String>> jobs,
+            Map<String,String> customerFolders)throws IOException {
+        Set<String> knownJobs=new HashSet<>();
+        for(int i=1;i<jobs.size();i++)knownJobs.add(jobs.get(i).get(0));
+        String[] company={"master_data/inventory_materials.csv",
+            "master_data/inventory_tools.csv"};
+        String[][] headers={InventoryRules.COMPANY,InventoryRules.TOOLS};
+        for(int file=0;file<company.length;file++){
+            if(!new File(root,company[file]).isFile())continue;
+            List<List<String>> entries=rows(root,company[file],headers[file]);
+            if(entries.size()>2001)throw new IOException("Inventory record limit exceeded");
+            Set<String> seen=new HashSet<>();
+            for(int i=1;i<entries.size();i++){
+                List<String> record=entries.get(i);
+                try{
+                    if(file==0)InventoryRules.company(record);
+                    else InventoryRules.tool(record);
+                }catch(IllegalArgumentException e){
+                    throw new IOException("Invalid company inventory in backup",e);
+                }
+                if(!seen.add(record.get(0)))
+                    throw new IOException("Duplicate inventory ID in backup");
+                if(file==1&&!record.get(4).isEmpty()&&!knownJobs.contains(record.get(4)))
+                    throw new IOException("Tool checked out to a missing job");
+            }
+        }
+        Set<String> expectedSitePaths=new HashSet<>();
+        for(int j=1;j<jobs.size();j++){
+            List<String> job=jobs.get(j);
+            String prefix=customerFolders.get(job.get(1))+"/jobs/"+
+                job.get(0)+"_"+slug(job.get(2));
+            String path=prefix+"/job_site_materials.csv";
+            expectedSitePaths.add(path);
+            if(!new File(root,path).isFile())continue;
+            List<List<String>> entries=rows(root,path,InventoryRules.SITE);
+            if(entries.size()>2001)throw new IOException("Job inventory record limit exceeded");
+            Set<String> seen=new HashSet<>();
+            for(int i=1;i<entries.size();i++){
+                try{InventoryRules.site(entries.get(i));}
+                catch(IllegalArgumentException e){
+                    throw new IOException("Invalid job-site material in backup",e);
+                }
+                if(!seen.add(entries.get(i).get(0)))
+                    throw new IOException("Duplicate job-site inventory ID");
+            }
+        }
+        // A path matching the ZIP allowlist is not proof it belongs to a real
+        // job. Check for unindexed site tables rather than ignoring them.
+        File customerRoot=new File(root,"customers");
+        if(customerRoot.isDirectory()){
+            try(java.util.stream.Stream<java.nio.file.Path> walk=
+                Files.walk(customerRoot.toPath())){
+                for(java.nio.file.Path p:(Iterable<java.nio.file.Path>)walk::iterator){
+                    if(!p.getFileName().toString().equals("job_site_materials.csv"))continue;
+                    if(Files.isSymbolicLink(p))
+                        throw new IOException("Unsafe linked inventory file");
+                    String relative=root.toPath().relativize(p).toString()
+                        .replace(File.separatorChar,'/');
+                    if(!expectedSitePaths.contains(relative))
+                        throw new IOException("Orphaned job-site inventory file: "+relative);
+                }
+            }
+        }
+    }
 
     private static void validateChangeOrders(File root,String folder,String jobId)
         throws IOException {
@@ -671,6 +738,7 @@ public final class BackupArchive {
                 throw new IOException("Invalid cached job total", error);
             }
         }
+        validateInventory(root,jobs,folders);
         File scheduleFile=new File(root,"master_data/service_intervals.csv");
         if(scheduleFile.isFile()){
             List<List<String>> schedules=rows(root,"master_data/service_intervals.csv",

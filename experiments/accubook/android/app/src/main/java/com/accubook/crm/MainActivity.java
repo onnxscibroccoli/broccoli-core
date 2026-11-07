@@ -555,6 +555,8 @@ public final class MainActivity extends Activity {
                                 case "CONTACT": contactDetails(item.id); break;
                                 case "JOB": job(item.id); break;
                                 case "CATALOG": catalogScreen(); break;
+                                case "INVENTORY":
+                                case "TOOL": inventoryScreen(); break;
                                 default: notice("Search result","This record cannot be opened.");
                             }
                         });
@@ -2243,6 +2245,8 @@ public final class MainActivity extends Activity {
             button(content,"Settings · features and accessibility",this::settingsScreen);
             if(FeatureSettings.enabled(this,FeatureSettings.CATALOG))
                 button(content,"Manage item and service pricebook",this::catalogScreen);
+            if(FeatureSettings.enabled(this,FeatureSettings.INVENTORY))
+                button(content,"Company materials + tool inventory",this::inventoryScreen);
             button(content,"Customize master job fields / checklists",
                 this::masterJobTemplateScreen);
             section("Expenses and costs");
@@ -3356,6 +3360,48 @@ public final class MainActivity extends Activity {
                 button(entry, "Update material status", () -> materialStatusPicker(work, request));
                 button(entry, "Remove request", () -> removeMaterial(work, request));
             }
+            if(FeatureSettings.enabled(this,FeatureSettings.INVENTORY)){
+                section("Job-site materials (manual log)");
+                label(content,"Record what arrived, was used or returned. These rows do not "+
+                    "automatically change company stock or invoices.",14,MUTED);
+                button(content,"＋ Record delivered / used / returned material",
+                    ()->siteMaterialDialog(work,null));
+                int shownSite=0;
+                for(InventoryLayers.SiteEntry entry:new InventoryLayers(store).siteMaterials(work)){
+                    if(++shownSite>120)break;
+                    LinearLayout row=card();
+                    label(row,entry.name+" · "+entry.quantity+" "+entry.unit+
+                        " · "+entry.status,16,LIGHT);
+                    button(row,"Edit site material",()->siteMaterialDialog(work,entry));
+                    button(row,"Remove site entry",()->new AlertDialog.Builder(this)
+                        .setTitle("Remove this material log entry?")
+                        .setMessage(entry.name+" · "+entry.quantity+" "+entry.unit+
+                            ". This cannot be undone.")
+                        .setNegativeButton("Keep",(d,w)->{})
+                        .setPositiveButton("Remove",(d,w)->{
+                            try{
+                                new InventoryLayers(store).deleteSite(work,entry.id);
+                                job(work.id);
+                            }catch(Exception failure){error(failure);}
+                        }).show());
+                }
+                section("Tools / equipment at this job");
+                button(content,"Check out an available company tool",
+                    ()->checkOutToolDialog(work));
+                for(InventoryLayers.Tool tool:new InventoryLayers(store).tools()){
+                    if(!work.id.equals(tool.jobId))continue;
+                    LinearLayout row=card();
+                    label(row,tool.name+(tool.assetTag.isEmpty()?"":" · "+tool.assetTag),
+                        16,LIGHT);
+                    button(row,"Return tool to company",()->{
+                        try{
+                            new InventoryLayers(store).setToolState(
+                                tool.id,"Available",null);
+                            job(work.id);
+                        }catch(Exception failure){error(failure);}
+                    });
+                }
+            }
             }
             if("costing".equals(currentJobSection)){
             section("Estimate and invoice");
@@ -3956,6 +4002,215 @@ public final class MainActivity extends Activity {
             }).show();
     }
 
+
+    /** Optional inventory stays visible only to owners who enable the module. */
+    private void inventoryScreen(){
+        currentScreen="inventory";currentJobId=null;currentCustomerId=null;
+        try{
+            screen("Materials and tools","Company stock · equipment · optional offline records");
+            navigation();
+            label(content,"Simple lists. Edit by tapping. Job deliveries do NOT "+
+                "automatically reduce stock or create invoice/expense lines.",15,MUTED);
+            section("Company material stock");
+            button(content,"＋ Add company material",()->companyMaterialDialog(null,null));
+            if(FeatureSettings.enabled(this,FeatureSettings.CATALOG))
+                button(content,"＋ Copy a material from pricebook",
+                    this::companyMaterialFromCatalog);
+            int count=0;
+            for(InventoryLayers.Material material:new InventoryLayers(store).companyMaterials()){
+                if(++count>150)break;
+                LinearLayout row=card();
+                label(row,material.name+" · "+material.onHand+" "+material.unit,17,LIGHT);
+                label(row,"Unit cost: $"+material.cost+
+                    (material.catalogId.isEmpty()?"":" · Pricebook linked"),14,MUTED);
+                button(row,"Edit",()->companyMaterialDialog(material,null));
+                button(row,"Remove stock record",()->new AlertDialog.Builder(this)
+                    .setTitle("Remove company material?")
+                    .setMessage("Remove "+material.name+" from the company stock list? "+
+                        "Existing job-site records remain unchanged.")
+                    .setNegativeButton("Keep",(d,w)->{})
+                    .setPositiveButton("Remove",(d,w)->{
+                        try{
+                            new InventoryLayers(store).deleteMaterial(material.id);
+                            inventoryScreen();
+                        }catch(Exception error){error(error);}
+                    }).show());
+            }
+            if(count>150)label(content,"Only the first 150 materials are shown.",14,MUTED);
+            section("Company tools / equipment");
+            button(content,"＋ Add tool",()->toolInventoryDialog(null));
+            count=0;
+            for(InventoryLayers.Tool tool:new InventoryLayers(store).tools()){
+                if(++count>150)break;
+                LinearLayout row=card();
+                label(row,tool.name+(tool.assetTag.isEmpty()?"":" · "+tool.assetTag),
+                    17,LIGHT);
+                String location=tool.status;
+                if("Checked Out".equals(tool.status)){
+                    for(WorkspaceStore.Job j:store.jobs())if(j.id.equals(tool.jobId)){
+                        location="Checked out · "+j.title;break;
+                    }
+                }
+                label(row,location,15,MUTED);
+                button(row,"Edit tool",()->toolInventoryDialog(tool));
+                if("Checked Out".equals(tool.status))
+                    button(row,"Return to company",()->{
+                        try{
+                            new InventoryLayers(store).setToolState(
+                                tool.id,"Available",null);
+                            inventoryScreen();
+                        }catch(Exception failure){error(failure);}
+                    });
+                else {
+                    button(row,"Set "+("Maintenance".equals(tool.status)?
+                        "available":"maintenance"),()->{
+                        try{
+                            new InventoryLayers(store).setToolState(tool.id,
+                                "Maintenance".equals(tool.status)?"Available":"Maintenance",
+                                null);
+                            inventoryScreen();
+                        }catch(Exception failure){error(failure);}
+                    });
+                    button(row,"Remove tool record",()->new AlertDialog.Builder(this)
+                        .setTitle("Remove this tool?")
+                        .setMessage(tool.name+" will be removed from the inventory list.")
+                        .setNegativeButton("Keep",(d,w)->{})
+                        .setPositiveButton("Remove",(d,w)->{
+                            try{
+                                new InventoryLayers(store).deleteTool(tool.id);
+                                inventoryScreen();
+                            }catch(Exception failure){error(failure);}
+                        }).show());
+                }
+            }
+            if(count>150)label(content,"Only the first 150 tools are shown.",14,MUTED);
+            label(content,"Workspaces, CSV backups and encrypted backup archives include "+
+                "these local records. There is no supplier connection or stock automation.",
+                13,MUTED);
+        }catch(Exception failure){error(failure);}
+    }
+
+    private void companyMaterialFromCatalog(){
+        try{
+            List<TradeModules.CatalogItem> catalog=new TradeModules(store).catalog();
+            if(catalog.isEmpty()){notice("No pricebook items","Add a pricebook item first.");return;}
+            int limit=Math.min(catalog.size(),150);
+            String[] names=new String[limit];
+            for(int i=0;i<limit;i++)names[i]=catalog.get(i).label();
+            new AlertDialog.Builder(this).setTitle("Copy from pricebook")
+                .setItems(names,(d,which)->companyMaterialDialog(null,catalog.get(which)))
+                .setNegativeButton("Cancel",(d,w)->{}).show();
+        }catch(Exception failure){error(failure);}
+    }
+
+    private void companyMaterialDialog(InventoryLayers.Material previous,
+            TradeModules.CatalogItem preset){
+        LinearLayout fields=form();
+        EditText name=field(fields,"Material","Shingles / fasteners / pipe");
+        name.setText(previous!=null?previous.name:preset!=null?preset.name:"");
+        EditText unit=field(fields,"Unit","bundle / each / foot");
+        unit.setText(previous!=null?previous.unit:preset!=null?preset.unit:"each");
+        EditText stock=field(fields,"On hand (manually counted)","0");
+        stock.setText(previous!=null?previous.onHand:"0");
+        stock.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        EditText cost=field(fields,"Unit cost · USD","0.00");
+        cost.setText(previous!=null?previous.cost:preset!=null?preset.cost:"0.00");
+        cost.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        String catalogId=previous!=null?previous.catalogId:preset!=null?preset.id:"";
+        label(fields,"Counting stock is manual. Existing jobs and invoices are not changed.",
+            14,MUTED);
+        dialog(previous==null?"Add company material":"Edit company material",fields,()->{
+            try{
+                new InventoryLayers(store).saveMaterial(previous==null?null:previous.id,
+                    name.getText().toString(),unit.getText().toString(),
+                    stock.getText().toString(),cost.getText().toString(),catalogId);
+                inventoryScreen();
+            }catch(IOException failure){throw new IllegalStateException(failure);}
+        });
+    }
+
+    private void toolInventoryDialog(InventoryLayers.Tool previous){
+        LinearLayout fields=form();
+        EditText name=field(fields,"Tool or equipment name","Ladder / nailer / compressor");
+        name.setText(previous==null?"":previous.name);
+        EditText tag=field(fields,"Tag, serial or identifying mark (optional)","TAG-004");
+        tag.setText(previous==null?"":previous.assetTag);
+        label(fields,"To assign a tool to a job: open that job → Materials → "+
+            "Check out an available company tool.",14,MUTED);
+        dialog(previous==null?"Add tool":"Edit tool",fields,()->{
+            try{
+                new InventoryLayers(store).saveTool(previous==null?null:previous.id,
+                    name.getText().toString(),tag.getText().toString());
+                inventoryScreen();
+            }catch(IOException failure){throw new IllegalStateException(failure);}
+        });
+    }
+
+    private void siteMaterialDialog(WorkspaceStore.Job job,InventoryLayers.SiteEntry previous){
+        LinearLayout fields=form();
+        EditText name=field(fields,"Material","Roofing bundles / lumber / downspouts");
+        name.setText(previous==null?"":previous.name);
+        EditText unit=field(fields,"Unit","bundle / each / foot");
+        unit.setText(previous==null?"each":previous.unit);
+        EditText quantity=field(fields,"Quantity","1");
+        quantity.setText(previous==null?"1":previous.quantity);
+        quantity.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        label(fields,"What happened to this material?",16,LIGHT);
+        android.widget.RadioGroup states=new android.widget.RadioGroup(this);
+        states.setOrientation(android.widget.RadioGroup.VERTICAL);
+        for(String option:InventoryRules.SITE_STATES){
+            android.widget.RadioButton choice=new android.widget.RadioButton(this);
+            choice.setText(option);
+            choice.setTextColor(LIGHT);
+            choice.setTextSize(17);
+            choice.setMinHeight(dp(48));
+            choice.setId(android.view.View.generateViewId());
+            states.addView(choice);
+            if((previous==null?"Delivered":previous.status).equals(option))
+                choice.setChecked(true);
+        }
+        fields.addView(states);
+        label(fields,"For billing, add a line under Money. A delivery is not "+
+            "automatically a charge.",14,MUTED);
+        dialog(previous==null?"Record site material":"Edit site material",fields,()->{
+            android.widget.RadioButton chosen=states.findViewById(states.getCheckedRadioButtonId());
+            if(chosen==null)throw new IllegalArgumentException("Choose Delivered, Used or Returned");
+            try{
+                new InventoryLayers(store).saveSite(job,
+                    previous==null?null:previous.id,name.getText().toString(),
+                    unit.getText().toString(),quantity.getText().toString(),
+                    chosen.getText().toString());
+                currentJobSection="materials";job(job.id);
+            }catch(IOException failure){throw new IllegalStateException(failure);}
+        });
+    }
+
+    private void checkOutToolDialog(WorkspaceStore.Job job){
+        try{
+            List<InventoryLayers.Tool> available=new ArrayList<>();
+            for(InventoryLayers.Tool tool:new InventoryLayers(store).tools())
+                if("Available".equals(tool.status))available.add(tool);
+            if(available.isEmpty()){
+                notice("No available tools","Add tools in Business → Materials and tools, "+
+                    "or return a checked-out tool first.");
+                return;
+            }
+            int limit=Math.min(available.size(),150);
+            String[] names=new String[limit];
+            for(int i=0;i<limit;i++)names[i]=available.get(i).name+
+                (available.get(i).assetTag.isEmpty()?"":" · "+available.get(i).assetTag);
+            new AlertDialog.Builder(this)
+                .setTitle("Check out tool to "+job.title)
+                .setItems(names,(d,index)->{
+                    try{
+                        new InventoryLayers(store).setToolState(
+                            available.get(index).id,"Checked Out",job);
+                        currentJobSection="materials";job(job.id);
+                    }catch(Exception failure){error(failure);}
+                })
+                .setNegativeButton("Cancel",(d,w)->{}).show();
+        }catch(Exception failure){error(failure);}
+    }
 
     private void changeOrderCreateDialog(WorkspaceStore.Job job){
         LinearLayout fields=form();

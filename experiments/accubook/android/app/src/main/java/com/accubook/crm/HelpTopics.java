@@ -99,6 +99,19 @@ public final class HelpTopics {
                 "For an Android Calendar event, use Add to Calendar. "+
                 "External calendar account synchronization is optional and experimental.",
                 "due dates dumpster local alarm calendar reminders"),
+            new Topic("Keep a simple material and tool inventory",
+                "Turn on just the inventory you use. Nothing is automatically billed.",
+                "Open Business → Settings and enable Company materials, job-site stock "+
+                "and tools. Then open Business → Company materials + tool inventory. "+
+                "Add stock with a name, unit, counted quantity and cost; or copy a "+
+                "pricebook item. Add tools with an optional identifying tag. "+
+                "Open a job → Materials to record Delivered, Used or Returned items "+
+                "and check out an available tool. Return a tool from the job or "+
+                "Business inventory. All records are local and included in backup. "+
+                "Job-site observations do not silently reduce company counts, "+
+                "create expenses or add invoice lines. Update stock manually.",
+                "inventory counts stock supplies equipment checkout returned tools "+
+                "materials deliveries ledger offline"),
             new Topic("Know who needs repeat service",
                 "Repeat service is an optional due-by-date and mileage list.",
                 "Enable Repeat-service due dates in Business → Settings. Open an old "+

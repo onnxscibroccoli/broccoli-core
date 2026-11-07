@@ -47,6 +47,7 @@ jobs:
             app/src/main/java/com/accubook/crm/CatalogSuggestions.java \
             app/src/main/java/com/accubook/crm/SearchTerms.java \
             app/src/main/java/com/accubook/crm/ServiceIntervals.java \
+            app/src/main/java/com/accubook/crm/InventoryRules.java \
             app/src/main/java/com/accubook/crm/InvoiceLineOrdering.java \
             app/src/main/java/com/accubook/crm/ReportSelection.java \
             app/src/main/java/com/accubook/crm/FieldOrdering.java \
@@ -63,6 +64,7 @@ jobs:
             app/src/test/java/com/accubook/crm/CatalogSuggestionsSmoke.java \
             app/src/test/java/com/accubook/crm/SearchTermsSmoke.java \
             app/src/test/java/com/accubook/crm/ServiceIntervalsSmoke.java \
+            app/src/test/java/com/accubook/crm/InventoryRulesSmoke.java \
             app/src/test/java/com/accubook/crm/InvoiceLineOrderingSmoke.java
           java -cp build/csv-test com.accubook.crm.CsvCodecSmoke
           java -cp build/csv-test com.accubook.crm.BackupArchiveSmoke
@@ -75,6 +77,7 @@ jobs:
           java -cp build/csv-test com.accubook.crm.CatalogSuggestionsSmoke
           java -cp build/csv-test com.accubook.crm.SearchTermsSmoke
           java -cp build/csv-test com.accubook.crm.ServiceIntervalsSmoke
+          java -cp build/csv-test com.accubook.crm.InventoryRulesSmoke
           java -cp build/csv-test com.accubook.crm.InvoiceLineOrderingSmoke
       # GitHub-hosted Ubuntu runners already include command-line Android SDK
       # tools. The setup-android@v3 action attempts a removed legacy 'tools'

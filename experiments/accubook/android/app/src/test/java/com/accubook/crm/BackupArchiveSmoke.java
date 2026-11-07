@@ -91,6 +91,16 @@ public final class BackupArchiveSmoke {
                     "MarkupPercent","Supplier","UpdatedUTC"},
                 row("CAT-"+"a".repeat(32),"Gutter Cleaning","Standard gutter cleaning",
                     "service","250.00","0","Manual","2026-11-07T00:00:00Z"));
+            // The optional inventories are complete, portable CSV modules.
+            table(root,"master_data/inventory_materials.csv",InventoryRules.COMPANY,
+                row("MAT-"+"7".repeat(32),"Roofing nails","box","12",
+                    "29.95","CAT-"+"a".repeat(32)));
+            table(root,"master_data/inventory_tools.csv",InventoryRules.TOOLS,
+                row("TOOL-"+"8".repeat(32),"Extension ladder","LDR-01",
+                    "Checked Out",jid));
+            table(root,jdir+"/job_site_materials.csv",InventoryRules.SITE,
+                row("SITE-"+"9".repeat(32),"Shingle bundles","bundle",
+                    "3","Delivered"));
             table(root,"master_data/service_intervals.csv",
                 new String[]{"ScheduleID","CustomerID","SourceJobID","ServiceLabel","SiteName",
                     "LastServiceDate","IntervalMonths","LastMileage","IntervalMiles",
@@ -239,6 +249,12 @@ public final class BackupArchiveSmoke {
             .contains("456"),"Calendar mapping not restored");
         check(Files.readString(new File(live,"master_data/service_intervals.csv").toPath())
             .contains("58812"),"Service mileage interval lost in backup");
+        check(Files.readString(new File(live,"master_data/inventory_materials.csv").toPath())
+            .contains("Roofing nails"),"Company stock lost in backup");
+        check(Files.readString(new File(live,"master_data/inventory_tools.csv").toPath())
+            .contains("Extension ladder"),"Tool assignments lost in backup");
+        check(Files.readString(new File(live,jdir+"/job_site_materials.csv").toPath())
+            .contains("Shingle bundles"),"Site inventory lost in backup");
 
         check(Files.readAllBytes(new File(live,jdir+"/attachments/ATT-"+
             "f".repeat(32)+".bin").toPath()).length==5,"Attachment missing");
@@ -272,6 +288,36 @@ public final class BackupArchiveSmoke {
         try{BackupArchive.validate(wrongDue);}
         catch(IOException expected){refusedDue=true;}
         check(refusedDue,"Altered due date accepted in backup");
+
+        File badTool=new File(tmp,"bad-tool-link");
+        workspace(badTool,true);
+        table(badTool,"master_data/inventory_tools.csv",InventoryRules.TOOLS,
+            row("TOOL-"+"8".repeat(32),"Extension ladder","LDR-01",
+                "Checked Out","JOB-"+"f".repeat(32)));
+        boolean refusedTool=false;
+        try{BackupArchive.validate(badTool);}catch(IOException expected){refusedTool=true;}
+        check(refusedTool,"Orphaned checked-out equipment accepted in backup");
+
+        File orphanSite=new File(tmp,"orphan-site-inventory");
+        workspace(orphanSite,true);
+        String extra="customers/CUST-"+"a".repeat(32)+"_Example/jobs/JOB-"+
+            "f".repeat(32)+"_Unexpected/job_site_materials.csv";
+        table(orphanSite,extra,InventoryRules.SITE,
+            row("SITE-"+"c".repeat(32),"Orphan shingle","bundle","2","Used"));
+        boolean refusedOrphanSite=false;
+        try{BackupArchive.validate(orphanSite);}
+        catch(IOException expected){refusedOrphanSite=true;}
+        check(refusedOrphanSite,"Unregistered job-site inventory accepted");
+
+        File invalidSite=new File(tmp,"invalid-site-inventory");
+        workspace(invalidSite,true);
+        table(invalidSite,jdir+"/job_site_materials.csv",InventoryRules.SITE,
+            row("SITE-"+"9".repeat(32),"Shingles","bundle","3","Delivered"),
+            row("SITE-"+"9".repeat(32),"Shingles","bundle","2","Returned"));
+        boolean refusedSite=false;
+        try{BackupArchive.validate(invalidSite);}
+        catch(IOException expected){refusedSite=true;}
+        check(refusedSite,"Repeated job-site inventory ID accepted");
 
         File badPhotos=new File(tmp,"bad-photo-order");
         workspace(badPhotos,true);

@@ -16,8 +16,9 @@ public final class FeatureSettings {
     public static final String GPS="gps";
     public static final String ADVANCED_CALENDAR="advanced_calendar";
     public static final String RECURRING="recurring_services";
+    public static final String INVENTORY="inventory";
     public static final String[] KEYS={
-        CREW,CATALOG,WORKER_TIME,GPS,ADVANCED_CALENDAR,RECURRING
+        CREW,CATALOG,WORKER_TIME,GPS,ADVANCED_CALENDAR,RECURRING,INVENTORY
     };
     public static final String[] LABELS={
         "Crew assignment fields",
@@ -25,7 +26,8 @@ public final class FeatureSettings {
         "Worker time tracking",
         "Private GPS route capture",
         "Experimental calendar account sync",
-        "Repeat-service due dates (monthly or mileage)"
+        "Repeat-service due dates (monthly or mileage)",
+        "Company materials, job-site stock and tools (manual)"
     };
     private FeatureSettings(){}
     private static void validate(String key){
