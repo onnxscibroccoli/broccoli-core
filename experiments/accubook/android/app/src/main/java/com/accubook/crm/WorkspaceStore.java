@@ -115,6 +115,11 @@ public final class WorkspaceStore {
     }
 
     public File root() { return root; }
+    /** Validated job directory for additive, local-only workflow modules. */
+    public synchronized File directoryForJob(Job job) throws IOException {
+        return jobFolder(job);
+    }
+
 
     private static void directory(File target) throws IOException {
         if (!target.isDirectory() && !target.mkdirs()) {
