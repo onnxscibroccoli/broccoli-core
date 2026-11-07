@@ -95,6 +95,7 @@ public final class MainActivity extends Activity {
     private static final int ENCRYPTED_BACKUP_EXPORT=858;
     private static final int ENCRYPTED_BACKUP_IMPORT=859;
     private static final int CALENDAR_PERMISSIONS=860;
+    private static final int SUPPLIER_CSV_REQUEST=861;
     private boolean lockRequestInProgress=false;
     private boolean unlocked=false;
     private long lastHiddenAt=0;
@@ -2564,6 +2565,10 @@ public final class MainActivity extends Activity {
                 "Editable business-wide items · prices are examples, not supplier quotes");
             navigation();
             button(content,"+ Add service or material",()->catalogEdit(null));
+            button(content,"Import supplier price-sheet CSV",this::pickSupplierSheet);
+            label(content,"Supplier APIs require business access. This importer accepts "
+                +"an owner-approved CSV (no background network requests) and records "
+                +"the source and price timestamp.",14,MUTED);
             label(content,"Catalog changes affect future line items only. Existing estimates "
                 +"and invoices retain the rates you approved.",14,MUTED);
             for(TradeModules.CatalogItem item:new TradeModules(store).catalog()){
@@ -2576,6 +2581,22 @@ public final class MainActivity extends Activity {
             }
         }catch(Exception e){error(e);}
     }
+    private void pickSupplierSheet(){
+        new AlertDialog.Builder(this).setTitle("Import supplier prices?")
+            .setMessage("Import a CSV you obtained from Lansing, QXO, SRS Distribution "
+                +"or a manual source. Validate the source and prices before using them "
+                +"on customer estimates. This does not connect to a supplier account. "
+                +"Expected columns: Supplier,SKU,Name,Unit,BaseCost,MarkupPercent,AsOfUTC.")
+            .setNegativeButton("Cancel",(d,w)->{})
+            .setPositiveButton("Choose CSV",(d,w)->{
+                Intent pick=new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                pick.addCategory(Intent.CATEGORY_OPENABLE);
+                pick.setType("text/*");
+                try{startActivityForResult(pick,SUPPLIER_CSV_REQUEST);}
+                catch(Exception e){error(e);}
+            }).show();
+    }
+
     private void catalogEdit(TradeModules.CatalogItem existing){
         LinearLayout form=form();
         EditText category=field(form,"Category (any trade)","Gutter cleaning");
@@ -2730,6 +2751,16 @@ public final class MainActivity extends Activity {
             Uri selected=data.getData();
             backupPasswordDialog("Unlock encrypted backup",false,
                 pass->decryptWorkspace(selected,pass));
+            return;
+        }
+        if(requestCode==SUPPLIER_CSV_REQUEST){
+            if(resultCode!=RESULT_OK||data==null||data.getData()==null)return;
+            try(InputStream in=getContentResolver().openInputStream(data.getData())){
+                int count=new TradeModules(store).importSupplierCsv(in);
+                catalogScreen();
+                notice("Supplier price sheet imported",count+" new catalog items saved. "
+                    +"Review the markup before billing customers.");
+            }catch(Exception e){error(e);}
             return;
         }
         if(requestCode==REPORT_EXPORT_REQUEST){
