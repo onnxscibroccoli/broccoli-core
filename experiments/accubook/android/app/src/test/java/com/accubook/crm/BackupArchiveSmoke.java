@@ -91,6 +91,13 @@ public final class BackupArchiveSmoke {
                     "MarkupPercent","Supplier","UpdatedUTC"},
                 row("CAT-"+"a".repeat(32),"Gutter Cleaning","Standard gutter cleaning",
                     "service","250.00","0","Manual","2026-11-07T00:00:00Z"));
+            table(root,"master_data/service_intervals.csv",
+                new String[]{"ScheduleID","CustomerID","SourceJobID","ServiceLabel","SiteName",
+                    "LastServiceDate","IntervalMonths","LastMileage","IntervalMiles",
+                    "DueDate","DueMileage","Active"},
+                row("SERVICE-"+"5".repeat(32),cid,jid,
+                    "Oil service","Truck 1","2026-05-07","6","55812","3000",
+                    "2026-11-07","58812","true"));
             table(root,"master_data/calendar_links.csv",
                 new String[]{"JobID","CalendarID","EventID"},
                 row(jid,"123","456"));
@@ -230,6 +237,8 @@ public final class BackupArchiveSmoke {
             .contains("250.00"),"Catalog pricing not restored");
         check(Files.readString(new File(live,"master_data/calendar_links.csv").toPath())
             .contains("456"),"Calendar mapping not restored");
+        check(Files.readString(new File(live,"master_data/service_intervals.csv").toPath())
+            .contains("58812"),"Service mileage interval lost in backup");
 
         check(Files.readAllBytes(new File(live,jdir+"/attachments/ATT-"+
             "f".repeat(32)+".bin").toPath()).length==5,"Attachment missing");
@@ -250,6 +259,20 @@ public final class BackupArchiveSmoke {
         try{BackupArchive.validate(invalid);}
         catch(IOException expected){rejectedFields=true;}
         check(rejectedFields,"Malformed required job field was accepted");
+        File wrongDue=new File(tmp,"invalid-service-due");
+        workspace(wrongDue,true);
+        table(wrongDue,"master_data/service_intervals.csv",
+            new String[]{"ScheduleID","CustomerID","SourceJobID","ServiceLabel","SiteName",
+                "LastServiceDate","IntervalMonths","LastMileage","IntervalMiles",
+                "DueDate","DueMileage","Active"},
+            row("SERVICE-"+"5".repeat(32),"CUST-"+"a".repeat(32),
+                "JOB-"+"b".repeat(32),"Oil service","Truck 1","2026-05-07",
+                "6","55812","3000","2026-12-07","58812","true"));
+        boolean refusedDue=false;
+        try{BackupArchive.validate(wrongDue);}
+        catch(IOException expected){refusedDue=true;}
+        check(refusedDue,"Altered due date accepted in backup");
+
         File badPhotos=new File(tmp,"bad-photo-order");
         workspace(badPhotos,true);
         table(badPhotos,jdir+"/photo_order.csv",
