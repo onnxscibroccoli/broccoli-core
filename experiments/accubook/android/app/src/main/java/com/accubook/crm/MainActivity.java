@@ -2464,17 +2464,33 @@ public final class MainActivity extends Activity {
                 for(int i=0;i<categories.length;i++)
                     if(categories[i].isChecked())chosenCategories.add(names[i]);
                 ExportSelection verified=new ExportSelection(selected,chosenMethods,chosenCategories);
-                pendingReportSections=verified.selectedSections();
-                pendingPaymentMethods=new LinkedHashSet<>(verified.paymentMethods);
-                pendingExpenseCategories=new LinkedHashSet<>(verified.expenseCategories);
-                pendingReportPdf=pdf;
-                Intent destination=new Intent(Intent.ACTION_CREATE_DOCUMENT);
-                destination.addCategory(Intent.CATEGORY_OPENABLE);
-                destination.setType(pdf?"application/pdf":"application/zip");
-                destination.putExtra(Intent.EXTRA_TITLE,
-                    pdf?"accubook-financial-report.pdf":"accubook-accounting-report.zip");
-                try{startActivityForResult(destination,REPORT_EXPORT_REQUEST);}
-                catch(Exception e){pendingReportSections=null;error(e);}
+                StringBuilder scope=new StringBuilder("Selected report data:\\n");
+                for(int i=0;i<selected.length;i++)
+                    if(verified.included(i))
+                        scope.append("• ").append(BusinessReports.SECTIONS[i]).append('\\n');
+                if(verified.included(3))scope.append("\\nPayment ledgers: ")
+                    .append(verified.paymentMethods).append('\\n');
+                if(verified.included(4))scope.append("\\nExpense categories: ")
+                    .append(verified.expenseCategories).append('\\n');
+                scope.append("\\nOnly this data is included. The saved file remains "
+                    +"on your device unless you choose to share it.");
+                new AlertDialog.Builder(this)
+                    .setTitle("Confirm private "+(pdf?"PDF report":"CSV ZIP")+" scope")
+                    .setMessage(scope.toString())
+                    .setNegativeButton("Go back",(d,w)->{})
+                    .setPositiveButton("Choose save location",(d,w)->{
+                        pendingReportSections=verified.selectedSections();
+                        pendingPaymentMethods=new LinkedHashSet<>(verified.paymentMethods);
+                        pendingExpenseCategories=new LinkedHashSet<>(verified.expenseCategories);
+                        pendingReportPdf=pdf;
+                        Intent destination=new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                        destination.addCategory(Intent.CATEGORY_OPENABLE);
+                        destination.setType(pdf?"application/pdf":"application/zip");
+                        destination.putExtra(Intent.EXTRA_TITLE,
+                            pdf?"accubook-financial-report.pdf":"accubook-accounting-report.zip");
+                        try{startActivityForResult(destination,REPORT_EXPORT_REQUEST);}
+                        catch(Exception e){pendingReportSections=null;error(e);}
+                    }).show();
             });
         }catch(Exception e){error(e);}
     }
