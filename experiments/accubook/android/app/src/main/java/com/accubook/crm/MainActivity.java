@@ -1789,9 +1789,41 @@ public final class MainActivity extends Activity {
         throw new IOException("Job no longer exists");
     }
 
-    private void photoCard(WorkspaceStore.Job job, String name, int number) {
+    private void photoActionMenu(WorkspaceStore.Job job,String name,int index,int count){
+        List<String> actions=new ArrayList<>();
+        if(index>0)actions.add("Move up");
+        if(index<count-1)actions.add("Move down");
+        actions.add("Delete photo");
+        new AlertDialog.Builder(this).setTitle("Photo "+(index+1))
+            .setItems(actions.toArray(new String[0]),(d,which)->{
+                String choice=actions.get(which);
+                if(choice.equals("Delete photo")){
+                    new AlertDialog.Builder(this).setTitle("Delete this photo?")
+                        .setMessage("This cannot be undone. Export a backup first.")
+                        .setNegativeButton("Keep",(dialog,w)->{})
+                        .setPositiveButton("Delete",(dialog,w)->{
+                            try{store.deletePhoto(job,name);job(job.id);}
+                            catch(Exception error){error(error);}
+                        }).show();
+                }else{
+                    try{
+                        store.movePhoto(job,name,index+(choice.equals("Move up")?-1:1));
+                        job(job.id);
+                    }catch(Exception error){error(error);}
+                }
+            }).setNegativeButton("Cancel",(d,w)->{}).show();
+    }
+    private void photoCard(WorkspaceStore.Job job, String name, int number,int count) {
         LinearLayout panel = card();
-        label(panel, "Job photo " + number, 16, LIGHT);
+        LinearLayout header=new LinearLayout(this);
+        header.setOrientation(LinearLayout.HORIZONTAL);
+        panel.addView(header,new LinearLayout.LayoutParams(-1,-2));
+        TextView title=label(header,"Photo "+number,16,LIGHT);
+        title.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));
+        Runnable actions=()->photoActionMenu(job,name,number-1,count);
+        fieldMoreButton(header,"photo "+number,actions);
+        panel.setOnLongClickListener(v->{actions.run();return true;});
+        title.setOnLongClickListener(v->{actions.run();return true;});
         try {
             File imageFile = store.photoFile(job, name);
             Bitmap bitmap;
@@ -1830,16 +1862,7 @@ public final class MainActivity extends Activity {
         } catch (Exception exception) {
             label(panel, "Photo preview unavailable: " + exception.getMessage(), 13, MUTED);
         }
-        button(panel, "Remove photo " + number, () -> new AlertDialog.Builder(this)
-            .setTitle("Delete this photo?")
-            .setMessage("This action cannot be undone. Export a backup first.")
-            .setNegativeButton("Keep", (d, w) -> {})
-            .setPositiveButton("Delete", (d, w) -> {
-                try {
-                    store.deletePhoto(job, name);
-                    job(job.id);
-                } catch (Exception failure) { error(failure); }
-            }).show());
+
     }
 
 
@@ -3070,7 +3093,8 @@ public final class MainActivity extends Activity {
             button(content, "Add photo from device", () -> pickPhoto(work));
             button(content, "Import multiple photos",()->pickAttachments(work,true));
             int index = 0;
-            for (String name : store.photos(work)) photoCard(work, name, ++index);
+            List<String> photoNames=store.photos(work);
+            for(String name:photoNames)photoCard(work,name,++index,photoNames.size());
             if (index == 0) label(content, "No photos attached to this job.", 15, MUTED);
             attachmentList(work);
             }
