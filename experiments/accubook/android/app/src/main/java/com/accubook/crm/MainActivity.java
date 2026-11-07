@@ -84,6 +84,8 @@ public final class MainActivity extends Activity {
     private boolean bulkPhotoSelection;
     private LinearLayout content;
     private String currentJobId;
+    private String selectedJobSection="Overview";
+    private String lastJobSectionId;
     private String currentCustomerId;
     private String pendingPhotoJobId;
     private String pendingInvoice;
@@ -136,6 +138,8 @@ public final class MainActivity extends Activity {
                 java.util.Collections.emptyList():state.getStringArrayList("reportCategories"));
             pendingReportPdf=state.getBoolean("reportPdf",false);
             pendingRouteExportId=state.getString("routeExportId");
+            selectedJobSection=state.getString("jobSection","Overview");
+            lastJobSectionId=state.getString("lastSectionJobId");
             pendingPickupJobId=state.getString("pickupJobId");
             pendingPickupWhen=state.getLong("pickupWhen",0);
             scheduleMode = state.getString("scheduleMode", "Week");
@@ -236,6 +240,8 @@ public final class MainActivity extends Activity {
             new ArrayList<>(pendingExpenseCategories));
         state.putBoolean("reportPdf",pendingReportPdf);
         state.putString("routeExportId",pendingRouteExportId);
+        state.putString("jobSection",selectedJobSection);
+        state.putString("lastSectionJobId",lastJobSectionId);
         state.putString("pickupJobId",pendingPickupJobId);
         state.putLong("pickupWhen",pendingPickupWhen);
         state.putString("scheduleMode", scheduleMode);
@@ -2821,6 +2827,10 @@ public final class MainActivity extends Activity {
     private void job(String id) {
         currentScreen = "job";
         currentJobId = id;
+        if(!id.equals(lastJobSectionId)){
+            selectedJobSection="Overview";
+            lastJobSectionId=id;
+        }
         try {
             WorkspaceStore.Job selected = jobById(id);
             WorkspaceStore.Customer customer = null;
@@ -2832,7 +2842,9 @@ public final class MainActivity extends Activity {
             final WorkspaceStore.Customer client = customer;
             screen(work.title, client.displayName() + " · " + work.date + " · " + work.status);
             navigation();
+            jobSectionTabs(id);
             button(content, "Customer: " + client.displayName(), () -> customer(client.id));
+            if("Overview".equals(selectedJobSection)){
             section("Job details");
             CrmWorkspace.Appointment appt=crm.appointment(work);
             label(content, "Scheduled: " + work.date + " · "+appt.start+"–"+appt.end,
@@ -2845,6 +2857,8 @@ public final class MainActivity extends Activity {
                 () -> scheduleEditor(work));
             button(content,"Add this job to Calendar app",()->addJobToCalendar(work));
             button(content, "Change job status", () -> statusPicker(work));
+            }
+            if("Notes".equals(selectedJobSection)){
             section("Field notes and site instructions");
             String notes = store.fieldNotes(work);
             label(content, notes.isEmpty() ? "No field notes yet."
@@ -2852,12 +2866,15 @@ public final class MainActivity extends Activity {
                 15, MUTED);
             button(content, "Edit field notes", () -> fieldNotesDialog(work));
             jobCustomFields(work);
+            }
+            if("Materials".equals(selectedJobSection)){
             section("Vendors, crew and deliveries");
             button(content,"Edit vendor / material delivery / crew",()->jobLogisticsDialog(work));
             TradeModules operations=new TradeModules(store);
             TradeModules.Logistics details=operations.logistics(work);
             label(content,"Vendor: "+details.vendor+" · Delivery: "+details.delivery,15,MUTED);
-            label(content,"Crew: "+details.crew,15,MUTED);
+            if(new AppFeatures(this).enabled(AppFeatures.CREWS))
+                label(content,"Crew: "+details.crew,15,MUTED);
             if(!details.notes.isEmpty())label(content,details.notes,15,LIGHT);
             button(content,"Create dumpster pickup calendar reminder",
                 ()->createPickupReminder(work));
@@ -2868,6 +2885,7 @@ public final class MainActivity extends Activity {
                 label(content,"Local pickup reminder: "+
                     java.time.Instant.ofEpochMilli(pickupDue).atZone(
                         java.time.ZoneId.systemDefault()),14,MUTED);
+            if(new AppFeatures(this).enabled(AppFeatures.MATERIALS)){
             section("Material requests");
             button(content, "Request materials", () -> materialDialog(work, null));
             for (WorkspaceStore.MaterialRequest request : store.materialRequests(work)) {
@@ -2879,6 +2897,9 @@ public final class MainActivity extends Activity {
                 button(entry, "Update material status", () -> materialStatusPicker(work, request));
                 button(entry, "Remove request", () -> removeMaterial(work, request));
             }
+            }
+            }
+            if("Billing".equals(selectedJobSection)){
             section("Estimate and invoice");
             CrmWorkspace.Quote quoteState=crm.quote(work);
             CheckBox sent=checkbox(content,"Estimate sent (manually confirmed)",quoteState.sent);
@@ -2903,8 +2924,9 @@ public final class MainActivity extends Activity {
             button(content,"Preview / edit invoice (print or Save as PDF)",
                 ()->openDocument(work,false));
             label(content,"Job total: $"+work.total,22,LIGHT);
-            button(content,"+ Add from service / consumable catalog",
-                ()->catalogLineDialog(work));
+            if(new AppFeatures(this).enabled(AppFeatures.PRICEBOOK))
+                button(content,"+ Add from service / consumable catalog",
+                    ()->catalogLineDialog(work));
             button(content,"Add labor, material or discount",()->lineDialog(work));
             button(content,"Export invoice as HTML",()->{
                 try{
@@ -2922,6 +2944,8 @@ public final class MainActivity extends Activity {
                 button(row, "Edit " + item.description, () -> editLineDialog(work, item));
                 button(row, "Remove " + item.description, () -> deleteLine(work, item));
             }
+            }
+            if("Photos".equals(selectedJobSection)){
             section("Job photos");
             button(content, "Add photo from device", () -> pickPhoto(work));
             button(content, "Import multiple photos",()->pickAttachments(work,true));
@@ -2929,6 +2953,8 @@ public final class MainActivity extends Activity {
             for (String name : store.photos(work)) photoCard(work, name, ++index);
             if (index == 0) label(content, "No photos attached to this job.", 15, MUTED);
             attachmentList(work);
+            }
+            if("Billing".equals(selectedJobSection)){
             section("Payment ledger");
             label(content,"Payments recorded: $"+crm.received(work).toPlainString(),17,LIGHT);
             label(content,"Open job balance: $"+crm.balance(work).toPlainString(),17,LIGHT);
@@ -2938,6 +2964,9 @@ public final class MainActivity extends Activity {
                 label(row,payment.date+" · "+payment.method+" · $"+payment.amount,16,LIGHT);
                 label(row,"Reference: "+payment.reference+" · "+payment.note,14,MUTED);
             }
+            }
+            if("Time & route".equals(selectedJobSection)){
+            if(new AppFeatures(this).enabled(AppFeatures.WORKER_TIME)){
             section("Worker time tracking");
             label(content,"Recorded hours: "+crm.totalHours(work).toPlainString(),18,LIGHT);
             button(content,"Clock in a worker",()->clockInDialog(work));
@@ -2949,6 +2978,8 @@ public final class MainActivity extends Activity {
                 if(entry.active())button(clock,"Clock out "+entry.worker,
                     ()->clockOutConfirm(work,entry));
             }
+            }
+            if(new AppFeatures(this).enabled(AppFeatures.GPS_ROUTES)){
             section("Private route / geolocation");
             List<CrmWorkspace.RoutePoint> route=crm.routePoints(work);
             label(content,route.size()+" GPS points stored locally. Tracking stops when "
@@ -2960,9 +2991,44 @@ public final class MainActivity extends Activity {
                 button(content,"Open last point in OpenStreetMap (shares coordinates)",
                     ()->openRouteInOSM(work));
             }
+            }
+            }
+            if("Billing".equals(selectedJobSection))
             label(content,"Offline manual records only. No payment collection, tax calculation "
                 +"or settlement verification occurs. An invoice is not a payment receipt.",13,MUTED);
         } catch (Exception failure) { error(failure); }
+    }
+
+    /** Fast job-specific navigation; section switching never loses the selected job. */
+    private void jobSectionTabs(String jobId){
+        String[] names={"Overview","Notes","Materials","Billing","Photos","Time & route"};
+        LinearLayout row=null;int visible=0;
+        AppFeatures features=new AppFeatures(this);
+        for(String name:names){
+            if("Time & route".equals(name)&&
+                !features.enabled(AppFeatures.WORKER_TIME)&&
+                !features.enabled(AppFeatures.GPS_ROUTES))continue;
+            if(visible%3==0){
+                row=new LinearLayout(this);
+                row.setOrientation(LinearLayout.HORIZONTAL);
+                content.addView(row,new LinearLayout.LayoutParams(-1,-2));
+            }
+            final String target=name;
+            Button tab=new Button(this);
+            tab.setText(name);
+            tab.setTextSize(13);
+            tab.setAllCaps(false);
+            tab.setTextColor(LIGHT);
+            tab.setMinHeight(dp(48));
+            tab.setContentDescription("Job section "+name+
+                (name.equals(selectedJobSection)?", selected":""));
+            tab.setBackground(box(name.equals(selectedJobSection)?ACCENT:CARD));
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,-2,1);
+            lp.setMargins(dp(2),dp(3),dp(2),dp(3));
+            row.addView(tab,lp);
+            tab.setOnClickListener(v->{selectedJobSection=target;job(jobId);});
+            visible++;
+        }
     }
 
     private void changeLineQuantity(WorkspaceStore.Job job,WorkspaceStore.LineItem line,int change){
