@@ -1836,19 +1836,45 @@ public final class MainActivity extends Activity {
         } catch (Exception exception) {
             label(panel, "Photo preview unavailable: " + exception.getMessage(), 13, MUTED);
         }
-        button(panel, "Remove photo " + number, () -> new AlertDialog.Builder(this)
-            .setTitle("Delete this photo?")
-            .setMessage("This action cannot be undone. Export a backup first.")
-            .setNegativeButton("Keep", (d, w) -> {})
-            .setPositiveButton("Delete", (d, w) -> {
-                try {
-                    store.deletePhoto(job, name);
-                    job(job.id);
-                } catch (Exception failure) { error(failure); }
-            }).show());
+        Runnable actions=()->photoActions(job,name,number);
+        panel.setOnLongClickListener(v->{actions.run();return true;});
+        tinyAction(panel,"⋯","Options for photo "+number,actions);
+        if(new AppFeatures(this).enabled(AppFeatures.EXTRA_MOVE_CONTROLS)){
+            LinearLayout row=new LinearLayout(this);
+            row.setOrientation(LinearLayout.HORIZONTAL);
+            panel.addView(row);
+            try{
+                int count=store.photos(job).size();
+                if(number>1)tinyAction(row,"↑","Move photo "+number+" up",
+                    ()->movePhoto(job,name,number-2));
+                if(number<count)tinyAction(row,"↓","Move photo "+number+" down",
+                    ()->movePhoto(job,name,number));
+            }catch(Exception e){error(e);}
+        }
     }
 
 
+
+    private void movePhoto(WorkspaceStore.Job job,String name,int position){
+        try{store.movePhoto(job,name,position);job(job.id);}
+        catch(Exception e){error(e);}
+    }
+    private void photoActions(WorkspaceStore.Job job,String name,int oneBased){
+        new AlertDialog.Builder(this).setTitle("Photo "+oneBased)
+            .setItems(new String[]{"Move up","Move down","Delete (confirm)"},
+                (d,choice)->{
+                    if(choice==0)movePhoto(job,name,oneBased-2);
+                    else if(choice==1)movePhoto(job,name,oneBased);
+                    else new AlertDialog.Builder(this)
+                        .setTitle("Delete photo?").setMessage(
+                            "This cannot be undone. Export a backup first.")
+                        .setNegativeButton("Keep",(a,b)->{})
+                        .setPositiveButton("Delete",(a,b)->{
+                            try{store.deletePhoto(job,name);job(job.id);}
+                            catch(Exception e){error(e);}
+                        }).show();
+                }).setNegativeButton("Cancel",(d,w)->{}).show();
+    }
 
     /** All business settings are local. Company identity merges into every document. */
     private void businessScreen() {
