@@ -21,6 +21,7 @@ import java.util.UUID;
  * No background network, no destructive synchronization, no hidden balances.
  */
 public final class InventoryStore {
+    private static final Object PROCESS_LOCK=new Object();
     private final WorkspaceStore store;
     private final File itemFile,moveFile;
     public InventoryStore(WorkspaceStore workspace) {
@@ -75,9 +76,11 @@ public final class InventoryStore {
         for(WorkspaceStore.Job job:store.jobs())found.add(job.id);
         return found;
     }
-    public synchronized StockLedger.State state()throws IOException{
-        return StockLedger.validate(read(itemFile,StockLedger.ITEMS),
-            read(moveFile,StockLedger.MOVES),jobs());
+    public StockLedger.State state()throws IOException{
+        synchronized(PROCESS_LOCK){
+            return StockLedger.validate(read(itemFile,StockLedger.ITEMS),
+                read(moveFile,StockLedger.MOVES),jobs());
+        }
     }
     private static String text(String s,int max,String title) throws IOException{
         String value=s==null?"":s.trim();
@@ -86,7 +89,8 @@ public final class InventoryStore {
         return value;
     }
     /** An inventory item has zero stock until a receipt or adjustment is logged. */
-    public synchronized String addItem(String label,String kind,String unit) throws IOException {
+    public String addItem(String label,String kind,String unit) throws IOException {
+        synchronized(PROCESS_LOCK){
         String name=text(label,180,"name"), u=text(unit,40,"unit");
         if(!kind.equals(StockLedger.MATERIAL)&&!kind.equals(StockLedger.TOOL))
             throw new IOException("Choose material or tool");
@@ -97,14 +101,35 @@ public final class InventoryStore {
         StockLedger.validate(items,moves,jobs());
         write(itemFile,items);
         return id;
+        }
+    }
+    /** Change an item's display label, never its kind, units or event history. */
+    public void renameItem(String itemId,String label) throws IOException {
+        synchronized(PROCESS_LOCK){
+            List<List<String>> items=read(itemFile,StockLedger.ITEMS);
+            List<List<String>> moves=read(moveFile,StockLedger.MOVES);
+            boolean found=false;
+            for(int i=1;i<items.size();i++){
+                List<String> row=items.get(i);
+                if(row.get(0).equals(itemId)){
+                    row.set(1,text(label,180,"item name"));
+                    found=true;
+                    break;
+                }
+            }
+            if(!found)throw new IOException("Unknown inventory item");
+            StockLedger.validate(items,moves,jobs());
+            write(itemFile,items);
+        }
     }
     /**
      * Append exactly one immutable event after replaying the full ledger.
      * A failed validation cannot change stock. Never delete history to fix it:
      * record a compensating transaction with an explanation instead.
      */
-    public synchronized void move(String itemId,String action,String from,String to,
-                                  String quantity,String note) throws IOException {
+    public void move(String itemId,String action,String from,String to,
+                     String quantity,String note) throws IOException {
+        synchronized(PROCESS_LOCK){
         List<List<String>> items=read(itemFile,StockLedger.ITEMS);
         List<List<String>> moves=read(moveFile,StockLedger.MOVES);
         String reason=note==null?"":note.trim();
@@ -114,5 +139,6 @@ public final class InventoryStore {
             itemId,Instant.now().toString(),action,from,to,quantity,reason));
         StockLedger.validate(items,moves,jobs());
         write(moveFile,moves);
+        }
     }
 }
