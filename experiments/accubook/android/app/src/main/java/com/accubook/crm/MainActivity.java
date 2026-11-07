@@ -3473,11 +3473,22 @@ public final class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        if (currentJobId != null) {
-            if (currentCustomerId != null) customer(currentCustomerId);
-            else scheduleScreen();
-        } else if (currentCustomerId != null) customersScreen();
-        else super.onBackPressed();
+        if("contact".equals(currentScreen)){contactsScreen();return;}
+        if("job_template".equals(currentScreen)||"catalog".equals(currentScreen)){
+            businessScreen();return;
+        }
+        if(currentJobId!=null){
+            if(currentCustomerId!=null)customer(currentCustomerId);
+            else jobsScreen();
+            return;
+        }
+        if(currentCustomerId!=null){customersScreen();return;}
+        if("contacts".equals(currentScreen)||"customers".equals(currentScreen)||
+            "jobs".equals(currentScreen)||"calendar".equals(currentScreen)||
+            "schedule".equals(currentScreen)||"business".equals(currentScreen)){
+            home();return;
+        }
+        super.onBackPressed();
     }
 
 
