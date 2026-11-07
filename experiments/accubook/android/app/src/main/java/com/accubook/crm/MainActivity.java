@@ -138,8 +138,10 @@ public final class MainActivity extends Activity {
         animation.setDuration(150);
         animation.setRepeatCount(android.animation.ValueAnimator.INFINITE);
         animation.setRepeatMode(android.animation.ValueAnimator.REVERSE);
-        photoJiggles.add(animation);
-        animation.start();
+        if(android.animation.ValueAnimator.areAnimatorsEnabled()){
+            photoJiggles.add(animation);
+            animation.start();
+        }else tile.setAlpha(0.85f); // Android reduced-motion setting.
     }
     private boolean startPhotoDrag(View touched,View panel,String photo){
         if(!photoReorderMode)return false;
@@ -2186,6 +2188,7 @@ public final class MainActivity extends Activity {
             thumbnail.setOnClickListener(v->{
                 if(!photoReorderMode)showPhotoPreview(job,name);
             });
+            AnnotationUi.bind(thumbnail,"job/"+job.id+"/photo/"+name);
             thumbnail.setOnLongClickListener(v->{
                 if(photoReorderMode)return true;
                 actions.run();return true;
