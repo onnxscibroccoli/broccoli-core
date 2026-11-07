@@ -16,7 +16,7 @@ public final class BusinessSetupProfileSmoke {
     public static void main(String[] args) throws Exception {
         BusinessSetupProfile initial=BusinessSetupProfile.defaults();
         check(initial.team.equals("SOLO"),"First-run must be solo");
-        check(initial.catalog && !initial.crew && !initial.gps
+        check(initial.catalog && !initial.inventory && !initial.crew && !initial.gps
             && !initial.advancedCalendar && !initial.recurring,
             "Unsafe/default modules were enabled");
         check(initial.status.equals(BusinessSetupProfile.NOT_STARTED),
@@ -34,11 +34,22 @@ public final class BusinessSetupProfileSmoke {
         BusinessSetupProfile later=restored.withFeature("gps",true);
         check(later.gps&&!restored.gps&&later.vendors.equals(restored.vendors),
             "Changing one switch modified unrelated answers");
-        check(!restored.enabled("gps")&&restored.enabled("recurring_services"),
-            "Incorrect key mapping");
+        check(!restored.enabled("gps")&&restored.enabled("recurring_services")
+            &&!restored.enabled("inventory"),"Incorrect key mapping");
+        BusinessSetupProfile withStock=restored.withFeature("inventory",true);
+        check(withStock.inventory&&restored.inventory==false,
+            "Inventory must be opt-in without mutating prior state");
+        check(BusinessSetupProfile.fromCsv(withStock.toCsv()).inventory,
+            "Portable v2 inventory setting lost");
+        String legacy="Version,Status,Team,Trade,Vendors,MaterialDeliveries,Dumpsters,"
+            +"Crew,Catalog,WorkerTime,GPS,AdvancedCalendar,Recurring\\r\\n"
+            +"1,COMPLETE,SOLO,Gutters,,false,false,false,true,false,false,false,false\\r\\n";
+        BusinessSetupProfile old=BusinessSetupProfile.fromCsv(legacy);
+        check(!old.inventory && old.catalog && old.status.equals("COMPLETE"),
+            "Legacy v1 profile incompatible with v2 schema");
         invalid(csv.replace("TEAM","EITHER"),"Invalid team accepted");
         invalid(csv.replace("COMPLETE","DELETED"),"Unknown status accepted");
-        invalid(csv.replace(",false,false,true\r\n",",FALSE,false,true\r\n"),
+        invalid(csv.replaceFirst(",false,",",FALSE,"),
             "Noncanonical boolean accepted");
         invalid(csv.replace("Version","Schema"),"Unknown schema accepted");
         invalid(csv+"extra,row\r\n","Extra data row accepted");
