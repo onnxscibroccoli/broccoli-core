@@ -124,6 +124,8 @@ public final class BackupArchive {
             + "appointment\\.csv|quote\\.csv|payments\\.csv|invoice_memo\\.csv|"
             + "time_entries\\.csv|route_points\\.csv|job_milestones\\.csv|"
             + "job_logistics\\.csv|pickup_reminder\\.csv|custom_fields\\.csv|photo_order\\.csv|"
+            + "change_orders\\.csv|change_order_lines\\.csv|"
+            + "change_order_signatures/CO-[a-f0-9]{32}\\.png|"
             + "attachments\\.csv|attachments/ATT-[a-f0-9]{32}\\.bin|"
             + "photos/PHOTO-[a-f0-9]{32}\\.(jpg|png|webp|heic|heif|avif|gif|bmp|tiff|dng|img))");
     }
@@ -228,6 +230,67 @@ public final class BackupArchive {
             if(r.get(2).equals("Number")&&!r.get(4).isEmpty())
                 try{new BigDecimal(r.get(4));}
                 catch(NumberFormatException e){throw new IOException("Invalid custom number",e);}
+        }
+    }
+
+
+    private static void validateChangeOrders(File root,String folder,String jobId)
+        throws IOException {
+        File index=new File(root,folder+"/change_orders.csv");
+        File lineFile=new File(root,folder+"/change_order_lines.csv");
+        if(!index.isFile()&&!lineFile.isFile())return; // Older workspace.
+        if(!index.isFile()||!lineFile.isFile())
+            throw new IOException("Incomplete change-order tables");
+        List<List<String>> orders=rows(root,folder+"/change_orders.csv",ChangeOrders.ORDERS);
+        List<List<String>> lines=rows(root,folder+"/change_order_lines.csv",ChangeOrders.LINES);
+        if(orders.size()>1001||lines.size()>1001)
+            throw new IOException("Too many change-order entries");
+        Set<String> orderIds=new HashSet<>(),lineIds=new HashSet<>();
+        for(int i=1;i<orders.size();i++) {
+            List<String> order=orders.get(i);
+            if(!order.get(0).matches("CO-[a-f0-9]{32}")||
+                !orderIds.add(order.get(0))||order.get(1).isEmpty()||
+                !Arrays.asList(ChangeOrders.PROPOSED,ChangeOrders.ACKNOWLEDGED,
+                    ChangeOrders.INVOICED).contains(order.get(2)))
+                throw new IOException("Invalid change order in backup");
+        }
+        for(int i=1;i<lines.size();i++){
+            List<String> line=lines.get(i);
+            if(!line.get(0).matches("COL-[a-f0-9]{32}")||
+                !lineIds.add(line.get(0))||!orderIds.contains(line.get(1))||
+                line.get(2).trim().isEmpty())
+                throw new IOException("Invalid change-order line in backup");
+            try{ChangeOrderProof.total(java.util.Collections.singletonList(line));}
+            catch(IllegalArgumentException e){
+                throw new IOException("Invalid change-order amount in backup",e);
+            }
+        }
+        for(int i=1;i<orders.size();i++){
+            List<String> order=orders.get(i);
+            String id=order.get(0);
+            List<List<String>> subset=new ArrayList<>();
+            for(int k=1;k<lines.size();k++)if(id.equals(lines.get(k).get(1)))
+                subset.add(lines.get(k));
+            if(ChangeOrders.PROPOSED.equals(order.get(2))) {
+                if(!order.get(4).isEmpty()||!order.get(5).isEmpty()||
+                    !order.get(6).isEmpty()||!order.get(7).isEmpty())
+                    throw new IOException("Unsigned change order has signoff metadata");
+                continue;
+            }
+            if(subset.isEmpty()||order.get(4).isEmpty()||order.get(5).isEmpty())
+                throw new IOException("Acknowledged change order has no evidence");
+            File sig=new File(root,folder+"/change_order_signatures/"+id+".png");
+            if(!sig.isFile()||Files.isSymbolicLink(sig.toPath())||
+                sig.length()<100||sig.length()>256*1024)
+                throw new IOException("Change-order signature missing or oversized");
+            byte[] png=Files.readAllBytes(sig.toPath());
+            byte[] magic={(byte)137,80,78,71,13,10,26,10};
+            for(int k=0;k<magic.length;k++)if(png[k]!=magic[k])
+                throw new IOException("Invalid change-order PNG");
+            if(!ChangeOrderProof.sha256(png).equals(order.get(6))||
+                !ChangeOrderProof.contentHash(jobId,id,order.get(1),order.get(4),
+                    order.get(5),order.get(6),subset).equals(order.get(7)))
+                throw new IOException("Change-order integrity check failed");
         }
     }
 
@@ -553,6 +616,7 @@ public final class BackupArchive {
                     }catch(NumberFormatException e){throw new IOException("Invalid attachment size",e);}
                 }
             }
+            validateChangeOrders(root,jobFolder,id);
             BigDecimal sum = BigDecimal.ZERO;
             for (int n = 1; n < details.size(); n++) {
                 List<String> line = details.get(n);
