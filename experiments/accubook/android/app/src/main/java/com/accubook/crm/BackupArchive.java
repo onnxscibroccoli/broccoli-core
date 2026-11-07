@@ -70,6 +70,10 @@ public final class BackupArchive {
         "CreatedUTC","AcknowledgedUTC","SignedBy","SignatureSHA256","ContentSHA256"};
     private static final String[] CHANGE_ORDER_LINES={"LineID","ChangeOrderID",
         "Description","Quantity","UnitRate","Amount"};
+    private static final String[] SERVICE_INTERVALS={
+        "ScheduleID","CustomerID","SourceJobID","ServiceLabel","SiteName",
+        "LastServiceDate","IntervalMonths","LastMileage","IntervalMiles",
+        "DueDate","DueMileage","Active"};
 
 
     public static File rollback(File live) {
@@ -114,7 +118,7 @@ public final class BackupArchive {
     }
 
     private static boolean allowedFile(String name) {
-        if (name.matches("master_data/(customers|jobs|catalog|expenses|pricebook|calendar_links|contacts)\\.csv")) return true;
+        if (name.matches("master_data/(customers|jobs|catalog|expenses|pricebook|calendar_links|contacts|service_intervals)\\.csv")) return true;
         if(name.equals("templates/branding.csv")||name.equals("templates/job_fields.csv")
             ||name.equals("templates/default_memo.csv")
             ||name.equals("templates/logo.bin"))return true;
@@ -640,6 +644,43 @@ public final class BackupArchive {
                     throw new IOException("Job total disagrees with canonical lines: " + id);
             } catch (NumberFormatException error) {
                 throw new IOException("Invalid cached job total", error);
+            }
+        }
+        File scheduleFile=new File(root,"master_data/service_intervals.csv");
+        if(scheduleFile.isFile()){
+            List<List<String>> schedules=rows(root,"master_data/service_intervals.csv",
+                SERVICE_INTERVALS);
+            if(schedules.size()>2001)throw new IOException("Too many service intervals");
+            Map<String,String> customerOfJob=new HashMap<>();
+            for(int i=1;i<jobs.size();i++)
+                customerOfJob.put(jobs.get(i).get(0),jobs.get(i).get(1));
+            Set<String> scheduleIds=new HashSet<>();
+            for(int i=1;i<schedules.size();i++){
+                List<String> rule=schedules.get(i);
+                if(!rule.get(0).matches("SERVICE-[a-f0-9]{32}") ||
+                    !scheduleIds.add(rule.get(0))||
+                    !rule.get(1).equals(customerOfJob.get(rule.get(2)))||
+                    rule.get(3).trim().isEmpty()||rule.get(3).length()>180||
+                    rule.get(4).length()>180||
+                    !Arrays.asList("true","false").contains(rule.get(11)))
+                    throw new IOException("Invalid or orphaned recurring service schedule");
+                try{
+                    int months=Integer.parseInt(rule.get(6));
+                    if(months<0||months>120)throw new IllegalArgumentException();
+                    int miles=Integer.parseInt(rule.get(8));
+                    if(miles<0||miles>1000000)throw new IllegalArgumentException();
+                    if(!rule.get(7).isEmpty()){
+                        long reading=Long.parseLong(rule.get(7));
+                        if(reading<0||reading>9999999)throw new IllegalArgumentException();
+                    }
+                    String dueDate=ServiceIntervals.dueDate(rule.get(5),months);
+                    String dueMiles=ServiceIntervals.dueMileage(rule.get(7),rule.get(8));
+                    if(months==0&&miles==0||!rule.get(9).equals(dueDate)||
+                        !rule.get(10).equals(dueMiles))
+                        throw new IOException("Recurring schedule due values were altered");
+                }catch(IllegalArgumentException error){
+                    throw new IOException("Invalid service months/mileage in backup",error);
+                }
             }
         }
     }
