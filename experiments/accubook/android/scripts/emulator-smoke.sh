@@ -133,10 +133,16 @@ tap_job_tab 'Photos'
 assert_visible 'Add photo from device'
 tap_job_tab 'Money'
 assert_visible 'Estimate and invoice'
+assert_visible 'New change order'
+tap_job_tab 'Notes'
+assert_visible 'Edit field notes'
 tap_job_tab 'Checklist'
 assert_visible 'Custom checklist and fields'
 adb shell am force-stop com.accubook.crm
 adb shell am start -n com.accubook.crm/.MainActivity
 sleep 2
 assert_visible 'In Progress'
-echo "ACCUBOOK_EMULATOR_SMOKE_PASS: launch/demo/customer/job/status/restart"
+tap_node 'Open Home workspace'
+tap_node 'Find anything'
+assert_visible 'Search this device'
+echo "ACCUBOOK_EMULATOR_SMOKE_PASS: launch/demo/job/changes/notes/restart/local-lookup"
