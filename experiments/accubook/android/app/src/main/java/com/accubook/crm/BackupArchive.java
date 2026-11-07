@@ -65,6 +65,7 @@ public final class BackupArchive {
     private static final String[] CONTACTS={"ContactID","Name","Phone","Email","SourceID","CustomerID"};
     private static final String[] JOB_MASTER={"FieldID","Label","Kind","Required","DefaultValue","Active"};
     private static final String[] JOB_FIELD={"FieldID","Label","Kind","Required","Value","Active","Origin"};
+    private static final String[] PHOTO_ORDER={"PhotoFile","Position"};
 
 
     public static File rollback(File live) {
@@ -122,7 +123,7 @@ public final class BackupArchive {
         return name.matches(job + "/(job_items\\.csv|material_requests\\.csv|field_notes\\.md|job_details\\.json|"
             + "appointment\\.csv|quote\\.csv|payments\\.csv|invoice_memo\\.csv|"
             + "time_entries\\.csv|route_points\\.csv|job_milestones\\.csv|"
-            + "job_logistics\\.csv|pickup_reminder\\.csv|custom_fields\\.csv|"
+            + "job_logistics\\.csv|pickup_reminder\\.csv|custom_fields\\.csv|photo_order\\.csv|"
             + "attachments\\.csv|attachments/ATT-[a-f0-9]{32}\\.bin|"
             + "photos/PHOTO-[a-f0-9]{32}\\.(jpg|png|webp|heic|heif|avif|gif|bmp|tiff|dng|img))");
     }
@@ -375,6 +376,20 @@ public final class BackupArchive {
                         .decode(java.nio.ByteBuffer.wrap(Files.readAllBytes(notes.toPath())));
                 } catch (java.nio.charset.CharacterCodingException error) {
                     throw new IOException("Job notes are invalid UTF-8", error);
+                }
+            }
+            String photoIndex=jobFolder+"/photo_order.csv";
+            if(new File(root,photoIndex).isFile()){
+                List<List<String>> ordered=rows(root,photoIndex,PHOTO_ORDER);
+                Set<String> seenPhotos=new HashSet<>();
+                if(ordered.size()>2001)throw new IOException("Too many indexed photos");
+                for(int n=1;n<ordered.size();n++){
+                    List<String> row=ordered.get(n);
+                    String photo=row.get(0);
+                    if(!PhotoOrdering.valid(photo)||!seenPhotos.add(photo)||
+                        !row.get(1).equals(Integer.toString(n-1))||
+                        !new File(root,jobFolder+"/photos/"+photo).isFile())
+                        throw new IOException("Corrupt photo order index");
                 }
             }
             String custom=jobFolder+"/custom_fields.csv";
