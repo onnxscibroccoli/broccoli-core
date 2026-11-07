@@ -18,6 +18,54 @@
 > Portable AES-GCM password-encrypted backups are an **additional** safeguard.
 
 
+## v0.5 development branch — focused jobs, solo modules and private reporting
+
+**Branch:** `feat/accubook-v05-frictionless-reporting-20261107`
+**Status:** implementation in progress. See
+[UX_V05_COMPETITIVE_REVIEW.md](UX_V05_COMPETITIVE_REVIEW.md)
+for screenshot-informed competitor analysis, acceptance conditions and unresolved work.
+
+- **No more full-page job form:** each job offers a horizontally scrollable
+  focus rail: Overview, Photos, Notes, Materials, Money, Checklist and Schedule;
+  optional Time and Route appear only when enabled. Existing photo import,
+  status, calendar editor and dumpster reminder actions remain available.
+- **Photo ordering:** stable filenames, new `photo_order.csv`, AtomicFile rewrite, backward-compatible listing, long-press or three-dot Move up/down and Delete, and strict ZIP restore validation. A two-column, 16-per-page thumbnail gallery now supports tap-to-preview, optional drag-to-drop on another photo, and accessible move up/down through the visible action menu. Physical-device gesture acceptance remains outstanding.
+- **Smaller edit controls:** master and per-job custom fields provide a compact
+  visible three-dot overflow and equivalent long-press action sheet. Move
+  up/down, edit, toggle required and remove actions use stable IDs and
+  per-file AtomicFile writes. Stored job values and other jobs are unchanged.
+- **Settings > Modules:** independently hide crew, pricebook, time, GPS and
+  experimental calendar account-sync controls. Solo defaults hide crew,
+  time and GPS. The catalog remains visible by default to preserve existing
+  workflows. Turning a switch off **never deletes historical data**.
+- **Normal visual UI first, not visual clutter disguised as accessibility:** the
+  action overflow is always available, while keyboard/TalkBack semantics remain.
+  Settings links to Android Accessibility Settings for users who want TalkBack;
+  the app cannot activate that OS service itself.
+- **Quick PDF reports:** one native Android PDF containing totals for selected
+  sections, payment methods and expense categories. This is an aggregate
+  management summary, not a bank statement or tax filing.
+- **Custom CSV ZIP:** explicitly choose sections, methods (including Cash App or
+  cash) and expense categories. All methods/categories start unchecked.
+  A jobs-only CSV has no payment/balance columns, so money data is not exported
+  incidentally through the jobs section. CSV mapping to QuickBooks is manual.
+- **Regression tests:** standalone privacy-filter and stable-ID reorder tests
+  have been added to debug APK CI. Compilation does not certify Android
+  device UX, accounting correctness or production readiness.
+
+**Still open:** physical validation of photo-grid drag, color consistency on every surface, multi-property workflows and automatic recurring job creation, report presets/date ranges, direct QuickBooks import, full device/TalkBack acceptance and data-recovery validation. Bundled logo resources are implemented but their invoice rendering and launcher appearance need device acceptance. Existing working features must be
+regression-tested before merging this branch.
+
+### Try the report workflow with synthetic data
+
+Open **Business > Quick PDF financial report** or **Business > Custom accounting
+CSV ZIP**. Choose only the sections needed. If including payments, check each
+payment method; if including expenses, check each expense category. Select a
+destination through Android's document picker. Check ZIP contents before import,
+or inspect the PDF totals. Reports never leave the device unless the user
+chooses an external document provider or later shares them.
+
+
 ## November 7, 2026 — owner-led usability iteration (development)
 
 ### Verified user feedback
@@ -296,3 +344,32 @@ Accubook's customer data stays separate from the Broccoli Core governor/event-bu
 Grasshopper/Helix and privileged rish transports. Future adapters must be
 provider-agnostic, opt-in and explicitly permissioned. Synchronization to an
 unconfirmed Google Drive folder is not performed.
+
+
+## AccuLube-derived field-to-office workflow — November 7 v0.5 increment
+
+The baseline interaction is **Customer → Job → Notes/Photos → Invoice → Paid flag/payment ledger**. Owners may customize the job, but the first visit should remain simple enough to use without training. [The standalone point-and-tap guide](USER_GUIDE.md) covers field work, accounting exports, trade extension, accessibility, and troubleshooting. Searchable help is available from Home and Settings without INTERNET.
+
+- **Free-text first billing:** Type any work description under Job → Money → Add labor/material/discount. Up to three nonbinding local catalog suggestions can fill the selling rate; there is no enforced pricebook match or cloud AI.
+- **Linked change orders:** Job → Money → New change order → Add work → Sign on this device → Add to invoice. Order and lines have stable IDs and independent local CSV records. The acknowledgment PNG is captured only on explicit user action; SHA-256 integrity is checked on display, billing and backup restore. This is not cryptographic identity verification or legal certification. The signed order becomes immutable and interrupted invoice line postings are designed to retry without duplicate line IDs.
+- **Photo gallery:** Two-column thumbnails, tap preview, 16-photo pages, optional drag-to another thumbnail, long-press/visible overflow and move up/down. Photo sorting is persisted through stable filenames and verified ZIP backup/restore.
+- **Brand graphics bundled:** The mascot is included as the Android launcher icon. The original leaf is bundled as a print-document fallback logo only for default Jules Gutter Cleaning branding with no custom logo. Selecting a custom logo still overrides it.
+- **Regression coverage:** New standalone JVM pricing/suggestion/proof tests, ZIP signed-order roundtrip and tamper rejection; Android build and emulator CI gates remain required at exact HEAD.
+
+**Not implemented yet:** automatic recurring job creation, multi-layer inventory, AR/AP/GL posting, signed change-order PDF, optional front-camera evidence, import-ready QuickBooks format, production release. No device-collected proof is claimed in advance.
+
+
+## Nov 7 — universal local lookup and manual repeat-service due lists
+
+**One search box:** Home → Find anything. Explicit search scans customer/contact records, job addresses, invoice references, line descriptions, field notes, custom fields (including VIN/PO values), materials, payment references and the optional pricebook. Results open existing records. No INTERNET, account, search telemetry or cloud indexing. Searches use a worker thread and return up to 80 matches. This is not yet an incremental full-text index.
+
+**Repeat-service schedules:** Business → Settings enables a local month/mileage module. Open a job → Overview to set the last completion date and interval. Home shows due-by-date counts; the due list permits pause/resume and manual reset. Due-date slips can be printed to PDF through Android’s document picker. Mileage-only rules display a target odometer reading, not an assumed due notification. No jobs or outbound customer messages are created automatically.
+
+**CSV and proof:** master_data/service_intervals.csv stores stable references, intervals and calculated due values. Backup restore checks customer/job ownership, date/mileage consistency and IDs. Pure-Java tests cover month-end and leap-year calculations, lookup matching and forged reminders. Device-based acceptance remains required.
+
+
+### Nov 7 — orderable invoice rows and notes-to-money bridge
+
+- **Job → Money:** invoice line rows now have one visible compact action menu (and long-press alternative) for move up/down, quantity change, edit and remove. Atomic stable-ID row reordering does not change prices or totals; lines posted from a signed change order cannot be edited or removed, but can be reordered visually.
+- **Job → Notes:** when a note exists, tap **Use this note in a new invoice line**. The first nonempty sentence is copied into an editable billing line, where optional on-device catalog suggestions can fill a rate. The owner reviews quantity and price before saving. Original field notes are untouched; no invisible billable charges are created.
+- Repeat services, signed change orders, and photo order are additive. All features still require precise Android 15 and backup/restore acceptance before a release claim.
