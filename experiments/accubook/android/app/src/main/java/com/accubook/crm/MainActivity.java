@@ -1828,7 +1828,7 @@ public final class MainActivity extends Activity {
             return android.graphics.ImageDecoder.decodeBitmap(source,(decoder,info,sourceInfo)->{
                 android.util.Size dimensions=info.getSize();
                 int w=dimensions.getWidth(),h=dimensions.getHeight();
-                if(w<=0||h<=0)throw new IOException("Invalid photo dimensions");
+                if(w<=0||h<=0)throw new IllegalArgumentException("Invalid photo dimensions");
                 double divisor=Math.max(1.0,Math.max(w,h)/(double)maxDimension);
                 decoder.setTargetSize(Math.max(1,(int)(w/divisor)),
                     Math.max(1,(int)(h/divisor)));
@@ -1882,7 +1882,7 @@ public final class MainActivity extends Activity {
             switch(event.getAction()){
                 case android.view.DragEvent.ACTION_DRAG_STARTED:
                     return event.getClipDescription()!=null &&
-                        "AccubookPhoto".contentEquals(event.getClipDescription().getLabel());
+                        "AccubookPhoto".equals(String.valueOf(event.getClipDescription().getLabel()));
                 case android.view.DragEvent.ACTION_DRAG_ENTERED:
                     panel.setAlpha(0.65f);return true;
                 case android.view.DragEvent.ACTION_DRAG_EXITED:
