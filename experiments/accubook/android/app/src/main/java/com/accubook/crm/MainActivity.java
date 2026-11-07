@@ -103,6 +103,7 @@ public final class MainActivity extends Activity {
     private static final int PICKUP_NOTIFY_PERMISSION=862;
     private static final int SERVICE_SLIP_PDF_REQUEST=863;
     private static final int BUSINESS_SETUP_REQUEST=864;
+    private static final int CONTACT_CSV_IMPORT_REQUEST=865;
     private String pendingPickupJobId;
     private long pendingPickupWhen;
     private boolean lockRequestInProgress=false;
@@ -194,6 +195,9 @@ public final class MainActivity extends Activity {
                 button(content, "Restore from workspace ZIP backup", this::selectRestore);
                 button(content, "Revert to previous validated workspace", this::revertSnapshot);
             }
+    }
+    private void openContactCsvImport(){
+        startActivityForResult(new Intent(this,LegacyContactsImportActivity.class),CONTACT_CSV_IMPORT_REQUEST);
     }
     private void openBusinessSetup(){
         startActivityForResult(new Intent(this,BusinessSetupActivity.class),BUSINESS_SETUP_REQUEST);
@@ -706,6 +710,7 @@ public final class MainActivity extends Activity {
             screen("Contacts",all.size()+" people · customers are a separate list");
             navigation();
             button(content,"Import ALL phone contacts",()->requestPhoneContacts(true));
+            button(content,"Move contacts from another CRM · CSV preview",this::openContactCsvImport);
             button(content,"Choose contacts to import",()->requestPhoneContacts(false));
             button(content,"Pick one Android contact",this::pickContact);
             button(content,"+ Add contact manually",()->contactEdit(null));
@@ -2252,6 +2257,7 @@ public final class MainActivity extends Activity {
                 }).show());
             button(content,"Choose business logo",this::pickLogo);
             button(content,"Settings · features and accessibility",this::settingsScreen);
+            button(content,"Import legacy CRM contacts from CSV",this::openContactCsvImport);
             button(content,"Quick setup · tailor Accubook to your business",
                 ()->openBusinessSetup());
             if(FeatureSettings.enabled(this,FeatureSettings.CATALOG))
@@ -4156,6 +4162,10 @@ public final class MainActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==CONTACT_CSV_IMPORT_REQUEST){
+            if(resultCode==RESULT_OK && store!=null)contactsScreen();
+            return;
+        }
         if(requestCode==BUSINESS_SETUP_REQUEST){
             if(resultCode==RESULT_OK && store!=null)home();
             return;

@@ -1,5 +1,34 @@
 # Accubook — offline-first field-service CRM (engineering preview)
 
+## November 7, 2026 — first legacy-CRM migration slice (draft)
+
+**Branch:** `feat/accubook-csv-contact-migration-20261107` (stacked on PR #93).
+**Scope:** contact records in a local UTF-8 CSV **only**. This feature does **not**
+yet import customer accounts, jobs, materials, invoices, notes, photos, payment
+history or CRM APIs. It is not automatic conversion of all records.
+
+Open **Contacts → Move contacts from another CRM · CSV preview** or use
+**Business → Import legacy CRM contacts from CSV**. Choose a local export through
+Android's system file picker. Map Name (required), Phone and Email (optional)
+with visible drop-downs. Review the import count, omitted nameless rows and
+sample names before confirming. The app commits a single atomic Contacts table
+update. It **never** silently promotes contacts to Customers, and never
+overwrites existing contacts; it skips duplicates based on source ID,
+normalized phone or email. Reimporting the same bytes is idempotent for source
+IDs. Export a backup before bulk import.
+
+**Safety contract:** 2 MB / 5,000 rows / 64 columns per file; no CRM
+credentials, runtime AI, network, scripting, cloud storage or remote API
+access required. Reject invalid UTF-8, duplicate/empty headers, inconsistent
+row widths, invalid quoting and oversized fields. Ambiguous field names require
+manual mapping. No global one-click vendor conversion is claimed.
+
+**Validation required:** pure-JVM `LegacyContactsCsvSmoke`, CI debug APK
+build, emulator test, physical Android 15 review of two sample CSV exports,
+TalkBack/large fonts, handling of duplicate names and phones, and backup
+restore after bulk import. Current implementation is an engineering preview.
+
+
 ## November 7, 2026 — modular onboarding foundation (stacked draft branch)
 
 **Branch:** `feat/accubook-onboarding-foundation-20261107`, based on the v0.5 draft PR #91.

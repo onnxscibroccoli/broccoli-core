@@ -1,5 +1,27 @@
 # Accubook — Point, tap, and get the job done
 
+## Move your contacts from another CRM (CSV — development preview)
+
+1. In your old CRM, **export contacts** as a UTF-8 CSV file. Save the file on
+   your device using Files or another document provider. You do not need to
+   share your old CRM password.
+2. In Accubook, create an encrypted workspace backup. Open **Contacts**
+   and tap **Move contacts from another CRM · CSV preview**.
+3. Pick the CSV. Check which column contains **Name**, **Phone** and **Email**.
+   Choose **None** for a field you do not have. Tap **Preview contacts**.
+4. Review how many names are ready and how many blank-name rows will be
+   skipped. Tap **Import into Contacts**, then confirm.
+5. Contacts are still **not Customers**. Explicitly promote an individual
+   contact when they actually become a customer. You can import the same file
+   again without duplicating identical source IDs.
+
+**Limits:** up to 2 MB and 5,000 rows at a time. No migration of jobs,
+invoices, inventory or other CRM records yet. If the file fails, re-export
+as UTF-8 CSV with a header row and consistent columns. A rejected file does
+not delete records. For future imports, use an offline staged preview and
+explicit owner confirmation rather than an automated unreviewed merge.
+
+
 ## Make Accubook fit your work (development preview)
 
 When you first open an empty workspace, the **Make Accubook yours** screen

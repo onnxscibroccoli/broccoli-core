@@ -21,6 +21,21 @@ public final class HelpTopics {
     }
     public static List<Topic> all(){
         return Arrays.asList(
+            new Topic("Set up Accubook in a few taps",
+                "Choose solo or crew, then check only the modules you need.",
+                "A fresh, empty workspace opens Make Accubook yours. Choose Just me or "+
+                "I assign work to a crew. You can enter a trade, vendor names and "+
+                "delivery preferences. Tap Save setup or Skip setup. Reopen it anytime "+
+                "from Business or Settings → Quick setup. Existing jobs are not changed.",
+                "setup onboarding new business modules configure edit owner"),
+            new Topic("Import contacts from another CRM CSV",
+                "Choose a CSV, map columns, preview, then confirm.",
+                "Open Contacts → Move contacts from another CRM. Select a UTF-8 CSV "+
+                "up to 2 MB/5,000 rows. Verify Name, Phone and Email headings. "+
+                "Preview the names and skipped rows, then confirm Import. "+
+                "Duplicate contacts are skipped; no customer or job is created. "+
+                "For now this imports contacts only, not invoices or other CRM tables.",
+                "migration legacy csv excel import mapping names phone export"),
             new Topic("Start with one customer and one job",
                 "Add a customer, create a job, and do the work. Everything else is optional.",
                 "1. Open Customers → New customer.\n2. Add the name and save.\n"+
