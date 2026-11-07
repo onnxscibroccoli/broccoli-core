@@ -115,6 +115,11 @@ public final class RecurringServices {
                 !Arrays.asList("true","false").contains(r.get(11)))
                 throw new IOException("Invalid recurring service row");
             try{
+                if(!r.get(7).isEmpty()){
+                    long current=Long.parseLong(r.get(7));
+                    if(current<0||current>9999999)throw new IOException(
+                        "Out-of-range recorded mileage");
+                }
                 int month=months(r.get(6));
                 String nextDate=ServiceIntervals.dueDate(r.get(5),month);
                 String nextMiles=ServiceIntervals.dueMileage(r.get(7),r.get(8));
@@ -129,7 +134,8 @@ public final class RecurringServices {
     }
     public synchronized List<Rule> all()throws IOException{
         List<Rule> result=new ArrayList<>();
-        for(List<String> r:read().subList(1,read().size()))result.add(new Rule(r));
+        List<List<String>> rows=read();
+        for(List<String> r:rows.subList(1,rows.size()))result.add(new Rule(r));
         return result;
     }
     public synchronized Rule save(WorkspaceStore.Job source,String existingId,
@@ -144,6 +150,15 @@ public final class RecurringServices {
         int m=months(intervalMonths);
         String mileageInterval=miles(intervalMiles);
         String currentMileage=value(lastMileage,9,false);
+        if(!currentMileage.isEmpty()){
+            try{
+                long reading=Long.parseLong(currentMileage);
+                if(reading<0||reading>9999999)throw new IllegalArgumentException(
+                    "Mileage reading is out of range");
+            }catch(NumberFormatException ex){
+                throw new IllegalArgumentException("Enter whole-number mileage",ex);
+            }
+        }
         if(!mileageInterval.equals("0")&&currentMileage.isEmpty())
             throw new IllegalArgumentException("Enter last mileage for mileage reminders");
         if(m==0 && mileageInterval.equals("0"))
