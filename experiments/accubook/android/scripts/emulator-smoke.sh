@@ -151,4 +151,27 @@ assert_visible 'In Progress'
 tap_node 'Open Home workspace'
 tap_node 'Find anything'
 assert_visible 'Search this device'
-echo "ACCUBOOK_EMULATOR_SMOKE_PASS: launch/demo/job/changes/notes/restart/local-lookup"
+# Optional inventory is OFF by default. Enable explicitly as an owner, then
+# verify that its two screens are reachable without a role/admin setup or network.
+# This is a layout/interaction smoke, not a substitute for real-device acceptance.
+tap_node 'Open Business workspace'
+tap_node 'Settings · features and accessibility'
+assert_visible 'Company materials, job-site stock and tools'
+tap_node 'Company materials, job-site stock and tools'
+tap_node 'Open Business workspace'
+tap_node 'Company materials + tool inventory'
+assert_visible 'Company material stock'
+assert_visible 'Company tools / equipment'
+tap_node 'Add company material'
+assert_visible 'On hand (manually counted)'
+tap_node 'Cancel'
+tap_node 'Add tool'
+assert_visible 'Tag, serial or identifying mark'
+tap_node 'Cancel'
+tap_node 'Open Jobs workspace'
+tap_node 'DEMO - Gutter'
+tap_job_tab 'Materials'
+assert_visible 'Job-site materials (manual log)'
+assert_visible 'Check out an available company tool'
+echo "ACCUBOOK_EMULATOR_SMOKE_PASS: launch/demo/job/changes/notes/restart/local-lookup/inventory-navigation"
+
