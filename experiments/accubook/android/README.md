@@ -366,3 +366,10 @@ The baseline interaction is **Customer → Job → Notes/Photos → Invoice → 
 **Repeat-service schedules:** Business → Settings enables a local month/mileage module. Open a job → Overview to set the last completion date and interval. Home shows due-by-date counts; the due list permits pause/resume and manual reset. Due-date slips can be printed to PDF through Android’s document picker. Mileage-only rules display a target odometer reading, not an assumed due notification. No jobs or outbound customer messages are created automatically.
 
 **CSV and proof:** master_data/service_intervals.csv stores stable references, intervals and calculated due values. Backup restore checks customer/job ownership, date/mileage consistency and IDs. Pure-Java tests cover month-end and leap-year calculations, lookup matching and forged reminders. Device-based acceptance remains required.
+
+
+### Nov 7 — orderable invoice rows and notes-to-money bridge
+
+- **Job → Money:** invoice line rows now have one visible compact action menu (and long-press alternative) for move up/down, quantity change, edit and remove. Atomic stable-ID row reordering does not change prices or totals; lines posted from a signed change order cannot be edited or removed, but can be reordered visually.
+- **Job → Notes:** when a note exists, tap **Use this note in a new invoice line**. The first nonempty sentence is copied into an editable billing line, where optional on-device catalog suggestions can fill a rate. The owner reviews quantity and price before saving. Original field notes are untouched; no invisible billable charges are created.
+- Repeat services, signed change orders, and photo order are additive. All features still require precise Android 15 and backup/restore acceptance before a release claim.
