@@ -42,8 +42,8 @@ public final class BusinessSetupProfileSmoke {
         check(BusinessSetupProfile.fromCsv(withStock.toCsv()).inventory,
             "Portable v2 inventory setting lost");
         String legacy="Version,Status,Team,Trade,Vendors,MaterialDeliveries,Dumpsters,"
-            +"Crew,Catalog,WorkerTime,GPS,AdvancedCalendar,Recurring\\r\\n"
-            +"1,COMPLETE,SOLO,Gutters,,false,false,false,true,false,false,false,false\\r\\n";
+            +"Crew,Catalog,WorkerTime,GPS,AdvancedCalendar,Recurring\r\n"
+            +"1,COMPLETE,SOLO,Gutters,,false,false,false,true,false,false,false,false\r\n";
         BusinessSetupProfile old=BusinessSetupProfile.fromCsv(legacy);
         check(!old.inventory && old.catalog && old.status.equals("COMPLETE"),
             "Legacy v1 profile incompatible with v2 schema");
