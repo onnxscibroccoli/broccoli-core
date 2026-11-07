@@ -18,6 +18,56 @@
 > Portable AES-GCM password-encrypted backups are an **additional** safeguard.
 
 
+## v0.5 development branch — focused jobs, solo modules and private reporting
+
+**Branch:** `feat/accubook-v05-frictionless-reporting-20261107`
+**Status:** implementation in progress. See
+[UX_V05_COMPETITIVE_REVIEW.md](UX_V05_COMPETITIVE_REVIEW.md)
+for screenshot-informed competitor analysis, acceptance conditions and unresolved work.
+
+- **No more full-page job form:** each job offers a horizontally scrollable
+  focus rail: Overview, Photos, Notes, Materials, Money, Checklist and Schedule;
+  optional Time and Route appear only when enabled. Existing photo import,
+  status, calendar editor and dumpster reminder actions remain available.
+- **Smaller edit controls:** master and per-job custom fields provide a compact
+  visible three-dot overflow and equivalent long-press action sheet. Move
+  up/down, edit, toggle required and remove actions use stable IDs and
+  per-file AtomicFile writes. Stored job values and other jobs are unchanged.
+- **Settings > Modules:** independently hide crew, pricebook, time, GPS and
+  experimental calendar account-sync controls. Solo defaults hide crew,
+  time and GPS. The catalog remains visible by default to preserve existing
+  workflows. Turning a switch off **never deletes historical data**.
+- **Normal visual UI first, not visual clutter disguised as accessibility:** the
+  action overflow is always available, while keyboard/TalkBack semantics remain.
+  Settings links to Android Accessibility Settings for users who want TalkBack;
+  the app cannot activate that OS service itself.
+- **Quick PDF reports:** one native Android PDF containing totals for selected
+  sections, payment methods and expense categories. This is an aggregate
+  management summary, not a bank statement or tax filing.
+- **Custom CSV ZIP:** explicitly choose sections, methods (including Cash App or
+  cash) and expense categories. All methods/categories start unchecked.
+  A jobs-only CSV has no payment/balance columns, so money data is not exported
+  incidentally through the jobs section. CSV mapping to QuickBooks is manual.
+- **Regression tests:** standalone privacy-filter and stable-ID reorder tests
+  have been added to debug APK CI. Compilation does not certify Android
+  device UX, accounting correctness or production readiness.
+
+**Still open:** photo ordering metadata and drag gestures, full color
+consistency, multi-property/recurring work, comprehensive report presets/date
+ranges, packaged brand assets, direct QuickBooks import, full device/TalkBack
+acceptance and data-recovery validation. Existing working features must be
+regression-tested before merging this branch.
+
+### Try the report workflow with synthetic data
+
+Open **Business > Quick PDF financial report** or **Business > Custom accounting
+CSV ZIP**. Choose only the sections needed. If including payments, check each
+payment method; if including expenses, check each expense category. Select a
+destination through Android's document picker. Check ZIP contents before import,
+or inspect the PDF totals. Reports never leave the device unless the user
+chooses an external document provider or later shares them.
+
+
 ## November 7, 2026 — owner-led usability iteration (development)
 
 ### Verified user feedback
