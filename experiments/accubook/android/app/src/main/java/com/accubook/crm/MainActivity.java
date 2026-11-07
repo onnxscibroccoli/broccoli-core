@@ -695,7 +695,7 @@ public final class MainActivity extends Activity {
             screen("Schedule", scheduleMode + " · " + first + " through " + last);
             navigation();
             button(content,"Open full month calendar grid",this::calendarScreen);
-            if(CalendarBridge.enabled(this))syncCalendarNow();
+            // No silent batch publishing on schedule open; explicit calendar action only.
             button(content, "Change view (currently " + scheduleMode + ")", () -> {
                 String[] options = {"Day", "Week", "Month"};
                 new AlertDialog.Builder(this).setTitle("Show schedule by")
@@ -977,35 +977,111 @@ public final class MainActivity extends Activity {
             result.accept(pass);
         });
     }
+    /**
+     * Default calendar workflow uses Android's event composer, like the working
+     * pickup reminder handoff. It needs no calendar-provider write permission.
+     * Advanced one-way reconciliation remains available but is never automatic.
+     */
     private void calendarSettings(){
+        String[] options={
+            "Add a job to Calendar app (recommended)",
+            "Advanced account sync (experimental)",
+            CalendarBridge.enabled(this)?"Disable automatic calendar sync":
+                "Calendar sharing privacy explanation"
+        };
+        new AlertDialog.Builder(this).setTitle("Calendar options")
+            .setMessage("For reliable Google Calendar scheduling, choose a job, "
+                +"review its event, and save it in your installed Calendar app. "
+                +"The app chooses which Google or device account receives it. "
+                +"No background syncing or hidden sharing.")
+            .setItems(options,(d,index)->{
+                if(index==0)chooseJobForCalendar();
+                else if(index==1)advancedCalendarSettings();
+                else if(CalendarBridge.enabled(this)){
+                    CalendarBridge.setEnabled(this,-1,false);businessScreen();
+                }else notice("Calendar privacy","Only explicitly exported events go "
+                    +"to your selected Calendar app. The optional advanced sync "
+                    +"requires separate permission and may share jobs through Google.");
+            }).setNegativeButton("Close",(d,w)->{}).show();
+    }
+    private void chooseJobForCalendar(){
+        try{
+            List<WorkspaceStore.Job> jobs=store.jobs();
+            jobs.sort((x,y)->x.date.compareTo(y.date));
+            if(jobs.isEmpty()){notice("No jobs scheduled","Create a job first.");return;}
+            String[] options=new String[jobs.size()];
+            for(int i=0;i<jobs.size();i++)
+                options[i]=jobs.get(i).date+" · "+jobs.get(i).title;
+            new AlertDialog.Builder(this).setTitle("Choose a job to add to Calendar")
+                .setItems(options,(d,index)->addJobToCalendar(jobs.get(index)))
+                .setNegativeButton("Cancel",(d,w)->{}).show();
+        }catch(Exception e){error(e);}
+    }
+    private void addJobToCalendar(WorkspaceStore.Job job){
+        try{
+            CrmWorkspace.Appointment schedule=crm.appointment(job);
+            java.time.ZoneId zone=java.time.ZoneId.systemDefault();
+            long begin=java.time.LocalDateTime.parse(job.date+"T"+schedule.start)
+                .atZone(zone).toInstant().toEpochMilli();
+            long finish=java.time.LocalDateTime.parse(job.date+"T"+schedule.end)
+                .atZone(zone).toInstant().toEpochMilli();
+            if(finish<=begin)throw new IOException("Appointment end precedes start");
+            new AlertDialog.Builder(this).setTitle("Review calendar event")
+                .setMessage(job.title+"\n"+job.date+" · "+schedule.start+"–"+
+                    schedule.end+"\n"+job.street+", "+job.city+"\n\n"
+                    +"Choose a calendar account and press Save in the Calendar app. "
+                    +"This shares the job title, date/time, site and short daybook note "
+                    +"with that calendar provider. Nothing is sent by Accubook. "
+                    +"The event is not saved until you confirm in Calendar.")
+                .setNegativeButton("Keep private",(d,w)->{})
+                .setPositiveButton("Open Calendar editor",(d,w)->{
+                    Intent insert=new Intent(Intent.ACTION_INSERT,
+                        android.provider.CalendarContract.Events.CONTENT_URI);
+                    insert.putExtra(android.provider.CalendarContract.Events.TITLE,
+                        job.title);
+                    insert.putExtra(android.provider.CalendarContract.EXTRA_EVENT_BEGIN_TIME,
+                        begin);
+                    insert.putExtra(android.provider.CalendarContract.EXTRA_EVENT_END_TIME,
+                        finish);
+                    insert.putExtra(android.provider.CalendarContract.Events.EVENT_LOCATION,
+                        job.street+", "+job.city+", "+job.state+" "+job.zip);
+                    insert.putExtra(android.provider.CalendarContract.Events.DESCRIPTION,
+                        "Accubook job · "+job.status+"\n"+schedule.notes);
+                    try{startActivity(insert);}
+                    catch(Exception failure){
+                        error(new IllegalStateException("No compatible Calendar editor "
+                            +"is available. Install or enable your calendar app.",
+                            failure));
+                    }
+                }).show();
+        }catch(Exception e){error(e);}
+    }
+    private void advancedCalendarSettings(){
         if(CalendarBridge.enabled(this)){
-            new AlertDialog.Builder(this).setTitle("Calendar synchronization")
-                .setMessage("Jobs are shared one way with your selected device calendar. "
-                    +"If it belongs to Google, that account may upload the events. "
-                    +"Turning sync off stops future updates but does not delete past events.")
-                .setNegativeButton("Keep enabled",(d,w)->{})
-                .setNeutralButton("Sync now",(d,w)->syncCalendarNow())
-                .setPositiveButton("Disable sync",(d,w)->{
-                    CalendarBridge.setEnabled(this,-1,false);
-                    businessScreen();
+            new AlertDialog.Builder(this).setTitle("Experimental account sync enabled")
+                .setMessage("One-way sync writes job data into the selected account. "
+                    +"It can create unexpected calendar events if account settings "
+                    +"change. Use manual sync only until device tests pass.")
+                .setNegativeButton("Cancel",(d,w)->{})
+                .setNeutralButton("Try sync once",(d,w)->syncCalendarNow())
+                .setPositiveButton("Disable",(d,w)->{
+                    CalendarBridge.setEnabled(this,-1,false);businessScreen();
                 }).show();
         }else new AlertDialog.Builder(this)
-            .setTitle("Share schedules with an Android / Google calendar?")
-            .setMessage("OFF by default. Selecting a calendar grants permission to copy "
-                +"job titles, site addresses, dates, status and daybook notes to that "
-                +"calendar. Google-account calendars can synchronize this information "
-                +"off-device. Nothing is transmitted by Accubook itself. "
-                +"Sync is one-way; only jobs are published and no customer phone/email "
-                +"or route points are included. No background sync is guaranteed.")
-            .setNegativeButton("Keep private",(d,w)->{})
-            .setPositiveButton("Choose calendar",(d,w)->{
+            .setTitle("Experimental account synchronization")
+            .setMessage("This requires Android calendar read/write access and account "
+                +"selection. Google calendars can upload job details. "
+                +"The recommended event-editor workflow needs no such permissions. "
+                +"Turn this on only after understanding data sharing.")
+            .setNegativeButton("Not now",(d,w)->{})
+            .setPositiveButton("Select calendar",(d,w)->{
                 if(checkSelfPermission(Manifest.permission.READ_CALENDAR)!=
-                    PackageManager.PERMISSION_GRANTED ||
+                    PackageManager.PERMISSION_GRANTED||
                     checkSelfPermission(Manifest.permission.WRITE_CALENDAR)!=
-                    PackageManager.PERMISSION_GRANTED){
+                    PackageManager.PERMISSION_GRANTED)
                     requestPermissions(new String[]{Manifest.permission.READ_CALENDAR,
                         Manifest.permission.WRITE_CALENDAR},CALENDAR_PERMISSIONS);
-                }else chooseSyncCalendar();
+                else chooseSyncCalendar();
             }).show();
     }
     private void chooseSyncCalendar(){
@@ -1831,7 +1907,7 @@ public final class MainActivity extends Activity {
             section("Optional calendar integration");
             label(content,"Device/Google calendar sync: "+(
                 CalendarBridge.enabled(this)?"Opted in":"Off (private default)"),15,LIGHT);
-            button(content,"Calendar sync permissions and account",
+            button(content,"Calendar · share a job / advanced settings",
                 this::calendarSettings);
             section("Privacy and protection");
             boolean protectedApp=UnlockActivity.isEnabled(this);
@@ -2717,6 +2793,7 @@ public final class MainActivity extends Activity {
                 + " " + work.zip, 16, LIGHT);
             button(content, "Reschedule / change time / color / daybook note",
                 () -> scheduleEditor(work));
+            button(content,"Add this job to Calendar app",()->addJobToCalendar(work));
             button(content, "Change job status", () -> statusPicker(work));
             section("Field notes and site instructions");
             String notes = store.fieldNotes(work);
