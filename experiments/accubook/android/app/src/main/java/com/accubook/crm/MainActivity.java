@@ -4169,7 +4169,7 @@ public final class MainActivity extends Activity {
         label(fields,"For billing, add a line under Money. A delivery is not "+
             "automatically a charge.",14,MUTED);
         dialog(previous==null?"Record site material":"Edit site material",fields,()->{
-            android.widget.RadioButton chosen=findViewById(states.getCheckedRadioButtonId());
+            android.widget.RadioButton chosen=states.findViewById(states.getCheckedRadioButtonId());
             if(chosen==null)throw new IllegalArgumentException("Choose Delivered, Used or Returned");
             try{
                 new InventoryLayers(store).saveSite(job,
