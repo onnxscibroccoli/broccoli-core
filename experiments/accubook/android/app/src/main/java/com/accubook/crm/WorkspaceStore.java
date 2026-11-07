@@ -464,6 +464,13 @@ public final class WorkspaceStore {
         throw new IOException("Line item not found");
     }
 
+    /** Persist line position without rewriting rates, amounts, or stable identifiers. */
+    public synchronized void moveLine(Job job,String lineId,int index)throws IOException{
+        File file=new File(jobFolder(job),"job_items.csv");
+        List<List<String>> rows=table(file,ITEM_HEADER);
+        if(InvoiceLineOrdering.move(rows,lineId,index))writeRows(file,rows);
+    }
+
     private static boolean isChangeOrderLine(List<String> row) {
         return row.size()>=2 && row.get(1).matches("(?s).*\\[CO:COL-[a-f0-9]{32}\\]$");
     }
