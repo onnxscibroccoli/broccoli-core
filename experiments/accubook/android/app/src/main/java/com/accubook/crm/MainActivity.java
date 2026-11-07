@@ -1016,6 +1016,26 @@
                     }catch(Exception e){error(e);}
                 }).show());
             button(content,"Choose business logo",this::pickLogo);
+            section("Expenses and costs");
+            button(content,"Record a manual expense",this::expenseDialog);
+            BigDecimal expenseSum=BigDecimal.ZERO;
+            for(CrmWorkspace.Expense expense:crm.expenses())
+                expenseSum=expenseSum.add(new BigDecimal(expense.amount));
+            label(content,"Recorded expenses: $"+expenseSum.toPlainString(),18,LIGHT);
+            for(CrmWorkspace.Expense expense:crm.expenses()){
+                LinearLayout row=card();
+                label(row,expense.date+" · "+expense.category+" · $"+expense.amount,16,LIGHT);
+                label(row,expense.description,14,MUTED);
+                button(row,"Delete expense (confirm)",()->new AlertDialog.Builder(this)
+                    .setTitle("Delete expense?")
+                    .setMessage("This removes $"+expense.amount+" from category "
+                        +expense.category+". Export accounting records first.")
+                    .setNegativeButton("Keep",(d,w)->{})
+                    .setPositiveButton("Delete",(d,w)->{
+                        try{crm.deleteExpense(expense.id);businessScreen();}
+                        catch(Exception e){error(e);}
+                    }).show());
+            }
             section("Payment method ledgers");
             Map<String,BigDecimal> totals=new LinkedHashMap<>();
             for(String method:CrmWorkspace.PAYMENT_METHODS)totals.put(method,BigDecimal.ZERO);
@@ -1813,9 +1833,20 @@
             CrmWorkspace.Quote quoteState=crm.quote(work);
             CheckBox sent=checkbox(content,"Estimate sent (manually confirmed)",quoteState.sent);
             if(quoteState.sent)label(content,"Marked sent: "+quoteState.sentDate,14,MUTED);
-            sent.setOnCheckedChangeListener((item,checked)->{
-                try{crm.setQuoteSent(work,checked,"Manual checkbox update");}
-                catch(Exception e){error(e);sent.setChecked(!checked);}
+            sent.setOnClickListener(view->{
+                boolean next=sent.isChecked();
+                sent.setChecked(!next); // avoid changing display until persisted
+                new AlertDialog.Builder(this)
+                    .setTitle(next?"Confirm estimate sent?":"Mark estimate unsent?")
+                    .setMessage(next?"Only check this after you actually deliver the estimate.":
+                        "Remove the manual sent flag? This does not retract a delivered message.")
+                    .setNegativeButton("Cancel",(d,w)->{})
+                    .setPositiveButton("Confirm",(d,w)->{
+                        try{
+                            crm.setQuoteSent(work,next,"Owner confirmed");
+                            sent.setChecked(next);
+                        }catch(Exception e){error(e);}
+                    }).show();
             });
             button(content,"Preview / edit estimate (print or Save as PDF)",
                 ()->openDocument(work,true));
@@ -1834,6 +1865,8 @@
                 LinearLayout row = card();
                 label(row, item.description, 17, LIGHT);
                 label(row, item.quantity + " × $" + item.unitRate + " = $" + item.amount, 14, MUTED);
+                button(row,"+ Increase quantity by 1",()->changeLineQuantity(work,item,1));
+                button(row,"− Decrease quantity by 1",()->changeLineQuantity(work,item,-1));
                 button(row, "Edit " + item.description, () -> editLineDialog(work, item));
                 button(row, "Remove " + item.description, () -> deleteLine(work, item));
             }
@@ -1853,9 +1886,52 @@
                 label(row,payment.date+" · "+payment.method+" · $"+payment.amount,16,LIGHT);
                 label(row,"Reference: "+payment.reference+" · "+payment.note,14,MUTED);
             }
+            section("Worker time tracking");
+            label(content,"Recorded hours: "+crm.totalHours(work).toPlainString(),18,LIGHT);
+            button(content,"Clock in a worker",()->clockInDialog(work));
+            for(CrmWorkspace.TimeEntry entry:crm.timeEntries(work)){
+                LinearLayout clock=card();
+                label(clock,entry.worker+" · "+entry.start,16,LIGHT);
+                label(clock,entry.active()?"Clocked in now":
+                    "Clocked out "+entry.end+" · "+entry.hours+" hours",15,MUTED);
+                if(entry.active())button(clock,"Clock out "+entry.worker,
+                    ()->clockOutConfirm(work,entry));
+            }
+            section("Private route / geolocation");
+            List<CrmWorkspace.RoutePoint> route=crm.routePoints(work);
+            label(content,route.size()+" GPS points stored locally. Tracking stops when "
+                +"you leave the app.",14,MUTED);
+            button(content,routeListener!=null?"Stop GPS tracking":
+                "Start optional GPS route tracking",()->toggleRoute(work));
+            if(!route.isEmpty()){
+                button(content,"Export private route as GPX",()->exportRoute(work));
+                button(content,"Open last point in OpenStreetMap (shares coordinates)",
+                    ()->openRouteInOSM(work));
+            }
             label(content,"Offline manual records only. No payment collection, tax calculation "
                 +"or settlement verification occurs. Invoice remains a draft.",13,MUTED);
         } catch (Exception failure) { error(failure); }
+    }
+
+    private void changeLineQuantity(WorkspaceStore.Job job,WorkspaceStore.LineItem line,int change){
+        try {
+            BigDecimal next=new BigDecimal(line.quantity).add(BigDecimal.valueOf(change));
+            if(next.signum()<=0){
+                notice("Quantity minimum","Quantity cannot be zero. Use Remove for deletion.");
+                return;
+            }
+            new AlertDialog.Builder(this).setTitle("Confirm billing change")
+                .setMessage(line.description+": "+line.quantity+" → "+next.toPlainString()
+                    +" at $"+line.unitRate+" per unit. Update this billing line?")
+                .setNegativeButton("Cancel",(d,w)->{})
+                .setPositiveButton("Update",(d,w)->{
+                    try{
+                        store.updateLine(job,line.id,line.description,next.toPlainString(),
+                            line.unitRate);
+                        job(job.id);
+                    }catch(Exception e){error(e);}
+                }).show();
+        }catch(Exception e){error(e);}
     }
 
     private void lineDialog(WorkspaceStore.Job job) {
