@@ -1314,11 +1314,28 @@ public final class MainActivity extends Activity {
             List<WorkspaceStore.Job> jobs = store.jobs();
             screen("Accubook", "Your offline field service workspace");
             navigation();
-            section("Overview");
-            label(content, customers.size() + " customers · " + jobs.size() + " jobs", 18, LIGHT);
+            section("At a glance");
+            int todayJobs=0,upcomingJobs=0,sentQuotes=0,active=0;
+            BigDecimal openDraft=BigDecimal.ZERO,paid=BigDecimal.ZERO;
+            for(WorkspaceStore.Job entry:jobs){
+                if(entry.date.equals(LocalDate.now().toString()))todayJobs++;
+                if(entry.date.compareTo(LocalDate.now().toString())>=0)upcomingJobs++;
+                if(entry.status.equals("Scheduled")||entry.status.equals("In Progress"))active++;
+                if(crm.quote(entry).sent)sentQuotes++;
+                openDraft=openDraft.add(new BigDecimal(entry.total));
+                paid=paid.add(crm.received(entry));
+            }
+            LinearLayout summary=card();
+            label(summary,"Today: "+todayJobs+" jobs    Upcoming: "+upcomingJobs,18,LIGHT);
+            label(summary,"Customers: "+customers.size()+"    Active work: "+active,17,LIGHT);
+            label(summary,"Quotes marked sent: "+sentQuotes,16,LIGHT);
+            label(summary,"Draft billing: $"+openDraft.toPlainString(),17,LIGHT);
+            label(summary,"Recorded receipts: $"+paid.toPlainString(),17,LIGHT);
+            section("Quick actions");
+            button(content,"+ Schedule job / create customer",this::chooseCustomer);
             button(content, "New customer", this::customerDialog);
             button(content, "Try with a sample customer and job", this::createDemoWorkspace);
-            button(content, "Schedule job", this::chooseCustomer);
+            button(content, "Open daybook schedule", this::scheduleScreen);
             button(content, "Import one phone contact", this::pickContact);
             button(content, "Import multiple phone contacts", this::requestBulkContacts);
             button(content, "Export workspace ZIP backup", () -> {
