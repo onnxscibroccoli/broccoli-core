@@ -342,6 +342,37 @@ public final class BackupArchiveSmoke {
         boolean rejectedSigned=false;
         try{BackupArchive.validate(signed);}catch(IOException expected){rejectedSigned=true;}
         check(rejectedSigned,"Tampered signed change order was accepted");
+        // An invoiced order must preserve each signed line and the cached total.
+        table(signed,jdir+"/change_order_lines.csv",
+            new String[]{"LineID","ChangeOrderID","Description","Quantity","UnitRate","Amount"},
+            row(coLineId,coId,"Extra downspout","2","25.00","50.00"));
+        table(signed,jdir+"/change_orders.csv",
+            new String[]{"ChangeOrderID","Title","Status","CreatedUTC","AcknowledgedUTC",
+                "SignedBy","SignatureSHA256","ContentSHA256"},
+            row(coId,"Customer-approved work","Invoiced",
+                "2026-11-07T19:00:00Z",at,"Sample Signer",sigHash,contentHash));
+        table(signed,jdir+"/job_items.csv",ITEM,
+            row("CUSTOM-1","Labor","2","10.00","20.00"),
+            row("CUSTOM-2","Extra downspout [CO:"+coLineId+"]","2","25.00","50.00"));
+        table(signed,"master_data/jobs.csv",JOB,
+            row("JOB-"+"b".repeat(32),"CUST-"+"a".repeat(32),
+                "Gutter","","Boston","MA","02108","Scheduled","2026-11-07","70.00"));
+        BackupArchive.validate(signed);
+        table(signed,jdir+"/job_items.csv",ITEM,
+            row("CUSTOM-1","Labor","2","10.00","20.00"),
+            row("CUSTOM-2","Unauthorized description [CO:"+coLineId+"]",
+                "2","25.00","50.00"));
+        boolean refusedChangedInvoice=false;
+        try{BackupArchive.validate(signed);}
+        catch(IOException expected){refusedChangedInvoice=true;}
+        check(refusedChangedInvoice,"Altered billed description was accepted");
+        table(signed,jdir+"/job_items.csv",ITEM,
+            row("CUSTOM-1","Labor","2","10.00","20.00"));
+        boolean refusedMissingInvoice=false;
+        try{BackupArchive.validate(signed);}
+        catch(IOException expected){refusedMissingInvoice=true;}
+        check(refusedMissingInvoice,"Missing invoiced change-order line was accepted");
+
 
         System.out.println("BackupArchiveSmoke: PASS (validation, traversal, rollback, crash)");
     }
