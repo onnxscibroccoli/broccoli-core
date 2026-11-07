@@ -67,7 +67,7 @@ public final class AnnotationUi {
             // Long-click on editable fields is Android text selection; preserve it.
             // Long-clickable elements already implement drag/reorder/actions; never overwrite.
             boolean leaf = node instanceof TextView || node instanceof android.widget.ImageView
-                || (node.hasOnClickListeners() && !(node instanceof ViewGroup));
+                || (node.hasOnClickListeners() && !(node instanceof ScrollView));
             if (leaf && !(node instanceof EditText) && !node.isLongClickable()) {
                 node.setOnLongClickListener(v -> {
                     String screen = screenSource.get();
@@ -163,7 +163,7 @@ public final class AnnotationUi {
                 .setTitle(existing == null ? "Add annotation" : "Edit annotation")
                 .setView(box)
                 .setNegativeButton("Cancel", (d, w) -> {})
-                .setNeutralButton(existing == null ? "Keep empty" : "Delete", (d, w) -> {
+                .setNeutralButton(existing == null ? null : "Delete", (d, w) -> {
                     if (existing == null) return;
                     new AlertDialog.Builder(activity).setTitle("Delete this annotation?")
                         .setMessage("This removes only the private testing note.")
