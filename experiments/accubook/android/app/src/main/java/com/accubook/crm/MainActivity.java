@@ -22,6 +22,7 @@
                         customer(currentCustomerId);
                     else if ("customers".equals(page)) customersScreen();
                     else if ("schedule".equals(page)) scheduleScreen();
+                else if("calendar".equals(page))calendarScreen();
                     else home();
                 } else home();
             } catch (Exception error) {
@@ -362,6 +363,7 @@
             }
             screen("Schedule", scheduleMode + " · " + first + " through " + last);
             navigation();
+            button(content,"Open full month calendar grid",this::calendarScreen);
             button(content, "Change view (currently " + scheduleMode + ")", () -> {
                 String[] options = {"Day", "Week", "Month"};
                 new AlertDialog.Builder(this).setTitle("Show schedule by")
@@ -448,6 +450,99 @@
                 +"Time conflicts and crew capacity are not yet calculated.",13,MUTED);
 
         } catch (Exception error) { error(error); }
+    }
+
+    /** True month grid with accessible date actions, not a disguised job list. */
+    private void calendarScreen(){
+        currentScreen="calendar";
+        currentJobId=null;currentCustomerId=null;
+        try{
+            LocalDate first=selectedDate.withDayOfMonth(1);
+            LocalDate last=first.plusMonths(1).minusDays(1);
+            screen("Calendar",first.getMonth()+" "+first.getYear()+
+                " · choose a day to view its time-ordered daybook");
+            navigation();
+            LinearLayout controls=card();
+            button(controls,"Previous month",()->{
+                selectedDate=selectedDate.minusMonths(1);calendarScreen();
+            });
+            button(controls,"Go to current month",()->{
+                selectedDate=LocalDate.now();calendarScreen();
+            });
+            button(controls,"Next month",()->{
+                selectedDate=selectedDate.plusMonths(1);calendarScreen();
+            });
+            button(controls,"Jump to any date",()->{
+                EditText date=field(controls,"Jump date · YYYY-MM-DD",selectedDate.toString());
+                date.setText(selectedDate.toString());
+                openDate(date);
+                // The date picker writes the field; tapping a day applies selection.
+                button(controls,"Show selected calendar date",()->{
+                    try{selectedDate=LocalDate.parse(date.getText().toString());calendarScreen();}
+                    catch(Exception e){error(e);}
+                });
+            });
+            int offset=first.getDayOfWeek().getValue()-1; // Monday=1
+            int cells=((offset+last.getDayOfMonth()+6)/7)*7;
+            String[] weekdays={"Mon","Tue","Wed","Thu","Fri","Sat","Sun"};
+            LinearLayout names=new LinearLayout(this);
+            names.setOrientation(LinearLayout.HORIZONTAL);
+            content.addView(names);
+            for(String name:weekdays){
+                TextView cell=new TextView(this);
+                cell.setText(name);
+                cell.setGravity(android.view.Gravity.CENTER);
+                cell.setTextSize(13);
+                cell.setTextColor(MUTED);
+                names.addView(cell,new LinearLayout.LayoutParams(0,dp(38),1));
+            }
+            List<WorkspaceStore.Job> jobs=store.jobs();
+            for(int row=0;row<cells/7;row++){
+                LinearLayout week=new LinearLayout(this);
+                week.setOrientation(LinearLayout.HORIZONTAL);
+                content.addView(week,new LinearLayout.LayoutParams(-1,-2));
+                for(int day=0;day<7;day++){
+                    int dayOfMonth=row*7+day-offset+1;
+                    Button tile=new Button(this);
+                    tile.setAllCaps(false);
+                    tile.setTextSize(14);
+                    tile.setMinHeight(dp(68));
+                    LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(0,dp(70),1);
+                    params.setMargins(dp(2),dp(2),dp(2),dp(2));
+                    week.addView(tile,params);
+                    if(dayOfMonth<1||dayOfMonth>last.getDayOfMonth()){
+                        tile.setEnabled(false);
+                        tile.setText("");
+                        tile.setBackgroundTintList(ColorStateList.valueOf(BACKGROUND));
+                        continue;
+                    }
+                    LocalDate date=first.withDayOfMonth(dayOfMonth);
+                    int count=0;
+                    String color=CrmWorkspace.JOB_COLORS[0];
+                    for(WorkspaceStore.Job job:jobs)
+                        if(job.date.equals(date.toString())){
+                            count++;
+                            if(count==1)color=crm.appointment(job).color;
+                        }
+                    tile.setText(dayOfMonth+(count>0?"\n"+count+" job"+(count>1?"s":""):""));
+                    tile.setTextColor(Color.WHITE);
+                    if(count>0){
+                        int chosen=Color.parseColor(color);
+                        tile.setBackgroundTintList(ColorStateList.valueOf(chosen));
+                        tile.setTextColor(Color.luminance(chosen)>0.45?Color.BLACK:Color.WHITE);
+                    }else tile.setBackgroundTintList(ColorStateList.valueOf(CARD));
+                    if(date.equals(LocalDate.now()))tile.setElevation(dp(6));
+                    final int jobCount=count;
+                    tile.setContentDescription(date+" · "+jobCount+" scheduled jobs. Open day.");
+                    tile.setOnClickListener(v->{
+                        selectedDate=date;scheduleMode="Day";scheduleScreen();
+                    });
+                }
+            }
+            label(content,"Job colors indicate scheduled work; open a day to see the "
+                +"customer, start/end time and notes. Route and worker data stay local.",
+                14,MUTED);
+        }catch(Exception e){error(e);}
     }
 
     private void moveSchedule(int direction) {
