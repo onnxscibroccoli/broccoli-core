@@ -7,7 +7,7 @@ import java.util.Set;
 /** Explicit, immutable export allow-list. Nothing is exported by implicit default. */
 public final class ExportSelection {
     public static final int SECTION_COUNT=6;
-    public final boolean[] sections;
+    private final boolean[] sections;
     public final Set<String> paymentMethods;
     public final Set<String> expenseCategories;
     public ExportSelection(boolean[] sections,Set<String> paymentMethods,
@@ -34,6 +34,8 @@ public final class ExportSelection {
         }
         return Collections.unmodifiableSet(copy);
     }
+    public boolean included(int section){return sections[section];}
+    public boolean[] selectedSections(){return sections.clone();}
     public boolean includesPayment(String method){
         return sections[3]&&paymentMethods.contains(method);
     }
