@@ -480,7 +480,11 @@ public final class MainActivity extends Activity {
             navigation();
             button(content, "Back to customers", this::customersScreen);
             section("Contact information");
+            CrmWorkspace.ContactPreferences prefs=crm.preferences(c);
             label(content, "Contact: " + c.contact, 17, LIGHT);
+            label(content, "Preferred: " + (prefs.call?"Call  ":"")+
+                (prefs.sms?"SMS  ":"")+(prefs.email?"Email":"")+
+                " · Customer color "+prefs.color,15,LIGHT);
             label(content, "Company: " + (c.company.isEmpty() ? "Not provided" : c.company),
                 16, LIGHT);
             label(content, "Phone: " + (c.phone.isEmpty() ? "Not provided" : c.phone),
@@ -1332,11 +1336,15 @@ public final class MainActivity extends Activity {
             navigation();
             button(content, "Customer: " + client.displayName(), () -> customer(client.id));
             section("Job details");
-            label(content, "Scheduled: " + work.date, 17, LIGHT);
+            CrmWorkspace.Appointment appt=crm.appointment(work);
+            label(content, "Scheduled: " + work.date + " · "+appt.start+"–"+appt.end,
+                18, LIGHT);
+            if(!appt.notes.isEmpty())label(content,"Daybook: "+appt.notes,16,MUTED);
             label(content, "Status: " + work.status, 17, LIGHT);
             label(content, "Site: " + work.street + ", " + work.city + ", " + work.state
                 + " " + work.zip, 16, LIGHT);
-            button(content, "Reschedule date", () -> datePicker(work));
+            button(content, "Reschedule / change time / color / daybook note",
+                () -> scheduleEditor(work));
             button(content, "Change job status", () -> statusPicker(work));
             section("Field notes and site instructions");
             String notes = store.fieldNotes(work);
@@ -1355,15 +1363,26 @@ public final class MainActivity extends Activity {
                 button(entry, "Update material status", () -> materialStatusPicker(work, request));
                 button(entry, "Remove request", () -> removeMaterial(work, request));
             }
-            section("Invoice draft");
-            label(content, "Total: $" + work.total, 22, LIGHT);
-            button(content, "Add labor, material or discount", () -> lineDialog(work));
-            button(content, "Export draft HTML invoice", () -> {
-                try {
-                    pendingInvoice = InvoiceHtml.render(client, work, store.items(work));
-                    pendingBackup = false;
-                    document("invoice-" + work.id + ".html", "text/html");
-                } catch (Exception failure) { error(failure); }
+            section("Quote and invoice");
+            CrmWorkspace.Quote quoteState=crm.quote(work);
+            CheckBox sent=checkbox(content,"Quote sent (manually confirmed)",quoteState.sent);
+            if(quoteState.sent)label(content,"Marked sent: "+quoteState.sentDate,14,MUTED);
+            sent.setOnCheckedChangeListener((item,checked)->{
+                try{crm.setQuoteSent(work,checked,"Manual checkbox update");}
+                catch(Exception e){error(e);sent.setChecked(!checked);}
+            });
+            button(content,"Preview / edit quote (print or Save as PDF)",
+                ()->openDocument(work,true));
+            button(content,"Preview / edit invoice (print or Save as PDF)",
+                ()->openDocument(work,false));
+            label(content,"Draft amount: $"+work.total,22,LIGHT);
+            button(content,"Add labor, material or discount",()->lineDialog(work));
+            button(content,"Export simple HTML draft",()->{
+                try{
+                    pendingInvoice=InvoiceHtml.render(client,work,store.items(work));
+                    pendingBackup=false;
+                    document("invoice-"+work.id+".html","text/html");
+                }catch(Exception failure){error(failure);}
             });
             for (WorkspaceStore.LineItem item : store.items(work)) {
                 LinearLayout row = card();
@@ -1374,11 +1393,22 @@ public final class MainActivity extends Activity {
             }
             section("Job photos");
             button(content, "Add photo from device", () -> pickPhoto(work));
+            button(content, "Import multiple photos",()->pickAttachments(work,true));
             int index = 0;
             for (String name : store.photos(work)) photoCard(work, name, ++index);
             if (index == 0) label(content, "No photos attached to this job.", 15, MUTED);
-            label(content, "Draft invoice only. Payment, tax and appointment-time accounting "
-                + "are not configured.", 13, MUTED);
+            attachmentList(work);
+            section("Payment ledger");
+            label(content,"Payments recorded: $"+crm.received(work).toPlainString(),17,LIGHT);
+            label(content,"Draft balance: $"+crm.balance(work).toPlainString(),17,LIGHT);
+            button(content,"Record cash, check, PayPal or other payment",()->paymentDialog(work));
+            for(CrmWorkspace.Payment payment:crm.payments(work)){
+                LinearLayout row=card();
+                label(row,payment.date+" · "+payment.method+" · $"+payment.amount,16,LIGHT);
+                label(row,"Reference: "+payment.reference+" · "+payment.note,14,MUTED);
+            }
+            label(content,"Offline manual records only. No payment collection, tax calculation "
+                +"or settlement verification occurs. Invoice remains a draft.",13,MUTED);
         } catch (Exception failure) { error(failure); }
     }
 
