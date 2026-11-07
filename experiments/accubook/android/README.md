@@ -3,7 +3,7 @@
 **Maturity: In development; not a completed field-service CRM.**
 **Owner:** `onnxscibroccoli/broccoli-core`, isolated `experiments/accubook/android`.
 **Product acceptance contract:** [PRODUCT_REQUIREMENTS.md](PRODUCT_REQUIREMENTS.md).
-**Base experimental APK:** draft PR #81. **Integrated development:** draft PR #82.
+**Base experimental APK:** draft PR #81. **Integrated development:** draft PR #82. **Workflow pass:** draft PR #84.
 
 ## Purpose
 
@@ -12,6 +12,77 @@ businesses. It must connect people, properties, schedules, work, evidence,
 estimates, invoices, payments and operations without imposing a hosted backend or
 runtime AI dependency. A passing APK compilation does not establish feature
 completeness, accessibility or data-recovery readiness.
+
+## New integrated workflow branch (draft PR #84, 2026-11-06)
+
+Branch: `feat/accubook-workflows-20261106`. **Experimental only; no device acceptance.**
+This branch adds connected workflows to the PR #82 foundation:
+
+- **New job -> new customer** directly inside the job flow, and quick customer
+  selection. The job form does not silently default the appointment date.
+- **Schedule** with native calendar picker **and typed ISO date**, native clock
+  pickers **and typed 24-hour start/end**, appointment notes, color coding,
+  day/week/month daybook, drag/drop jobs onto another date with a documented
+  accessible calendar-based alternative.
+- **Customer preferences**: independent checkboxes for call, SMS, email, and a
+  customer color. These are preferences, **not** marketing consent.
+- **Bulk phone contact import**: Android READ_CONTACTS is requested only when
+  explicitly choosing bulk import. User selects checked entries (up to 250 shown)
+  and duplicates are skipped by matching normalized phone/email. Permission may
+  remain granted until revoked in Android settings. Existing one-contact Android
+  system picker remains available without READ_CONTACTS.
+- **Bulk media and file import**: SAF chooses up to 40 files in a batch;
+  any file MIME may be privately attached (25 MB max each), then exported or
+  removed. Media photo import also supports multiple images. File bytes are
+  never executed as code.
+- **Quote and invoice visual editor**: a local HTML paper preview with directly
+  editable message and closing sections, limited text-format toolbar, live
+  customer/billing-line merge, brand palette and chosen company logo. Reuse
+  the saved layout as a **default template** for new jobs. Print through
+  Android's native print flow and select **Save as PDF**. This editor is a
+  limited in-app WYSIWYG document composer, **not** a complete word processor.
+- **Quotes**: preview/share text through an explicitly chosen external app
+  (no proof of delivery) and manually mark Quote sent via checkbox.
+- **Payments**: manually record payment receipts by Cash, Check, Cash App,
+  PayPal, Bank Transfer or Other with date, reference and note. Dashboard
+  displays separate method-based ledger totals. No live payment-provider
+  integration, receipt guarantee, refunds, tax engine or reconciliation.
+- **Fictional test business**: explicitly chosen seed of three test customers,
+  jobs, colored appointments, quote flag, invoice rows and example payments,
+  without overwriting other data.
+
+**Operational dependencies:** None for core offline features. `READ_CONTACTS`
+is used exclusively for opt-in multi-selection; print/save to PDF and
+document picking use Android framework interactions. No INTERNET permission.
+
+### New prototype acceptance walkthrough (fictional data only)
+
+1. From Home choose **+ Schedule job / create customer**. Select **Create new
+   customer**, save contact preferences, then return directly to job creation.
+2. Type an ISO date or open the calendar, use both clock buttons for start/end,
+   select job color and add a short daybook note. Save. Confirm it appears in
+   Schedule with its color and time. Long-press and drag onto another day or
+   open the job and use **Reschedule** (screen-reader alternative).
+3. From Business, enter example business branding and choose a small PNG/JPEG
+   logo. In a job add invoice lines. Open the **Quote editor**, edit message/
+   footer inline, save it as the default template, preview, and select
+   **Print / Save as PDF** using the native print destination.
+4. Share quote text explicitly, then check **Quote sent** only if actually sent.
+   Record a fictional check/cash receipt and verify the correct method ledger.
+5. Import several test files, save a copy, and verify backup ZIP export/restore
+   to a disposable workspace. Avoid real contacts until migrations are accepted.
+6. From Business choose **Create fictional test business data** to exercise
+   three customers/jobs and the dashboard. Running twice inserts duplicates
+   because it deliberately does not overwrite existing sample records.
+
+### Still blocked
+
+Device-level user journey acceptance, TalkBack/switch/large-text and PDF print
+validation, conflict detection, crew assignment, recurring bookings, tax rules,
+payment refunds/settlement and audited cross-file transaction recovery. The UI
+includes accessible rescheduling; drag-and-drop **must not** be the sole method.
+The App's private records are deleted on uninstall. Export a backup before any
+reinstallation, and remember CI debug builds may use different signing keys.
 
 ## Currently implemented in this child development branch
 
@@ -32,7 +103,7 @@ completeness, accessibility or data-recovery readiness.
   of prior workspace as a rollback snapshot and crash recovery between swaps.
   Explicit revert and cleanup controls. These paths require device testing
   before they are approved for real customer data.
-- No `INTERNET`, root, broad storage, `READ_CONTACTS`, or Shizuku privileges.
+- No `INTERNET`, root, broad storage, or Shizuku privileges; `READ_CONTACTS` is optional and consent-gated for multi-import.
   No runtime AI calls, cloud database, service worker or telemetry.
 
 ## Prototype smoke walkthrough (fictional data only)
