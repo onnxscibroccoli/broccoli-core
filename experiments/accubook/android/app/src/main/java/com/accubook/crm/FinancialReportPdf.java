@@ -87,7 +87,7 @@ public final class FinancialReportPdf {
         w.newPage();
         w.writeLine("REPORT SCOPE (explicitly selected)",11,NAVY,true);
         for(int i=0;i<BusinessReports.SECTIONS.length;i++)
-            if(selection.included(i])
+            if(selection.included(i))
                 w.writeLine("Included: "+BusinessReports.SECTIONS[i],9,GRAY,false);
         if(selection.included(3))
             w.writeLine("Payment methods: "+selection.paymentMethods,9,GRAY,false);
