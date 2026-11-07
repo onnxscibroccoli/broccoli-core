@@ -1862,11 +1862,17 @@ public final class MainActivity extends Activity {
         catch(Exception e){error(e);}
     }
     private void photoActions(WorkspaceStore.Job job,String name,int oneBased){
-        new AlertDialog.Builder(this).setTitle("Photo "+oneBased)
-            .setItems(new String[]{"Move up","Move down","Delete (confirm)"},
-                (d,choice)->{
-                    if(choice==0)movePhoto(job,name,oneBased-2);
-                    else if(choice==1)movePhoto(job,name,oneBased);
+        try{
+            int count=store.photos(job).size();
+            List<String> options=new ArrayList<>();
+            if(oneBased>1)options.add("Move up");
+            if(oneBased<count)options.add("Move down");
+            options.add("Delete (confirm)");
+            new AlertDialog.Builder(this).setTitle("Photo "+oneBased)
+                .setItems(options.toArray(new String[0]),(d,index)->{
+                    String chosen=options.get(index);
+                    if(chosen.equals("Move up"))movePhoto(job,name,oneBased-2);
+                    else if(chosen.equals("Move down"))movePhoto(job,name,oneBased);
                     else new AlertDialog.Builder(this)
                         .setTitle("Delete photo?").setMessage(
                             "This cannot be undone. Export a backup first.")
@@ -1876,6 +1882,7 @@ public final class MainActivity extends Activity {
                             catch(Exception e){error(e);}
                         }).show();
                 }).setNegativeButton("Cancel",(d,w)->{}).show();
+        }catch(Exception e){error(e);}
     }
 
     /** All business settings are local. Company identity merges into every document. */
