@@ -90,6 +90,14 @@ public final class BackupArchiveSmoke {
                 new BusinessSetupProfile("COMPLETE","SOLO","Gutters","ABC Supply",
                     true,true,false,true,false,false,false,true).toCsv(),
                 StandardCharsets.UTF_8);
+            String inventoryId="INV-"+"1".repeat(32);
+            table(root,"master_data/inventory_items.csv",StockLedger.ITEMS,
+                row(inventoryId,"Shingle bundles","MATERIAL","bundle","true"));
+            table(root,"master_data/inventory_movements.csv",StockLedger.MOVES,
+                row("MOVE-"+"1".repeat(32),inventoryId,"2026-11-07T11:00:00Z",
+                    "RECEIVE","EXTERNAL","COMPANY","6","Delivery"),
+                row("MOVE-"+"2".repeat(32),inventoryId,"2026-11-07T11:30:00Z",
+                    "TRANSFER","COMPANY",jid,"2","Site delivery"));
             table(root,"master_data/pricebook.csv",
                 new String[]{"CatalogID","Category","Name","Unit","BaseCost",
                     "MarkupPercent","Supplier","UpdatedUTC"},
@@ -246,6 +254,18 @@ public final class BackupArchiveSmoke {
         check(recovered.status.equals("COMPLETE")&&recovered.recurring
             &&recovered.vendors.equals("ABC Supply"),
             "Portable business setup lost in restore");
+        check(Files.readString(new File(live,"master_data/inventory_items.csv").toPath())
+            .contains("Shingle bundles"),"Inventory item catalog not restored");
+        List<List<String>> stock=CsvCodec.read(
+            Files.readString(new File(live,"master_data/inventory_items.csv").toPath()));
+        List<List<String>> moves=CsvCodec.read(
+            Files.readString(new File(live,"master_data/inventory_movements.csv").toPath()));
+        StockLedger.State counts=StockLedger.validate(stock,moves,
+            new java.util.HashSet<>(java.util.Arrays.asList("JOB-"+"b".repeat(32))));
+        check(counts.balance("INV-"+"1".repeat(32),"COMPANY").intValueExact()==4,
+            "Company stock lost during backup restore");
+        check(counts.balance("INV-"+"1".repeat(32),"JOB-"+"b".repeat(32))
+            .intValueExact()==2,"Job-site stock lost during backup restore");
         check(Files.readString(new File(live,"master_data/service_intervals.csv").toPath())
             .contains("58812"),"Service mileage interval lost in backup");
 
@@ -292,6 +312,18 @@ public final class BackupArchiveSmoke {
         try{BackupArchive.validate(badSetup);}
         catch(IOException expected){rejectedSetup=true;}
         check(rejectedSetup,"Malformed restored business setup was accepted");
+        File badStock=new File(tmp,"tampered-inventory");
+        workspace(badStock,true);
+        table(badStock,"master_data/inventory_movements.csv",StockLedger.MOVES,
+            row("MOVE-"+"1".repeat(32),"INV-"+"1".repeat(32),
+                "2026-11-07T11:00:00Z","RECEIVE","EXTERNAL","COMPANY","1","received"),
+            row("MOVE-"+"2".repeat(32),"INV-"+"1".repeat(32),
+                "2026-11-07T11:30:00Z","TRANSFER","COMPANY",
+                "JOB-"+"b".repeat(32),"99","invalid transfer"));
+        boolean rejectedInventory=false;
+        try{BackupArchive.validate(badStock);}
+        catch(IOException expected){rejectedInventory=true;}
+        check(rejectedInventory,"Tampered inventory stock accepted in backup");
         File badPhotos=new File(tmp,"bad-photo-order");
         workspace(badPhotos,true);
         table(badPhotos,jdir+"/photo_order.csv",
