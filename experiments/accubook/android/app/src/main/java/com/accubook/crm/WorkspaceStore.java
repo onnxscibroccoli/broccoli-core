@@ -555,7 +555,35 @@ public final class WorkspaceStore {
             }
         }
         names.sort(String::compareTo);
+        File order=new File(folder,"order.csv");
+        if(order.isFile()){
+            List<List<String>> rows=table(order,new String[]{"Filename"});
+            Set<String> seen=new java.util.HashSet<>();
+            List<String> sorted=new ArrayList<>();
+            for(int i=1;i<rows.size();i++){
+                String filename=rows.get(i).get(0);
+                if(!filename.matches("PHOTO-[a-f0-9]{32}\\\\.(jpg|png|webp|heic|heif|avif|gif|bmp|tiff|dng|img)")||
+                    !seen.add(filename))
+                    throw new IOException("Invalid saved photo order");
+                if(names.contains(filename))sorted.add(filename);
+            }
+            for(String name:names)if(!seen.contains(name))sorted.add(name);
+            return sorted;
+        }
         return names;
+    }
+
+    /** Photo positions are saved in a versioned, atomic sidecar included in ZIP backups. */
+    public synchronized void movePhoto(Job job,String name,int destination)throws IOException{
+        List<String> names=photos(job);
+        if(!names.remove(name))throw new IOException("Photo not found");
+        if(destination<0||destination>names.size())
+            throw new IllegalArgumentException("Photo move target out of bounds");
+        names.add(destination,name);
+        File order=new File(new File(jobFolder(job),"photos"),"order.csv");
+        List<List<String>> rows=emptyTable(new String[]{"Filename"});
+        for(String photo:names)rows.add(row(photo));
+        writeRows(order,rows);
     }
 
     public synchronized File photoFile(Job job, String name) throws IOException {
@@ -572,6 +600,12 @@ public final class WorkspaceStore {
     public synchronized void deletePhoto(Job job, String name) throws IOException {
         File file = photoFile(job, name);
         if (!file.delete()) throw new IOException("Cannot delete photo");
+        File order=new File(file.getParentFile(),"order.csv");
+        if(order.isFile()){
+            List<List<String>> rows=emptyTable(new String[]{"Filename"});
+            for(String remaining:photos(job))rows.add(row(remaining));
+            writeRows(order,rows);
+        }
     }
 
     /** Explicit restore, never called without owner choosing a ZIP via system picker. */
