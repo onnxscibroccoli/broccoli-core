@@ -125,16 +125,30 @@ public final class LegacyContactsImportActivity extends Activity {
     private Spinner spinner(String title,boolean optional,int guess){
         label(title,17);
         List<String> options=new ArrayList<>();
-        if(optional)options.add("None · don't import this field");
+        options.add(optional?"None · don't import this field":"Choose name column");
         options.addAll(selected.headers());
-        ArrayAdapter<String> adapter=new ArrayAdapter<>(this,
-            android.R.layout.simple_spinner_item,options);
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,
+            android.R.layout.simple_spinner_item,options){
+            @Override public View getView(int position,View recycled,
+                                           android.view.ViewGroup parent){
+                TextView result=(TextView)super.getView(position,recycled,parent);
+                result.setTextColor(LIGHT);
+                result.setTextSize(17);
+                return result;
+            }
+            @Override public View getDropDownView(int position,View recycled,
+                                                   android.view.ViewGroup parent){
+                TextView result=(TextView)super.getDropDownView(position,recycled,parent);
+                result.setTextColor(Color.BLACK);
+                return result;
+            }
+        };
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         Spinner spinner=new Spinner(this);
         spinner.setContentDescription(title);
         spinner.setAdapter(adapter);spinner.setMinimumHeight(dp(55));
         content.addView(spinner,new LinearLayout.LayoutParams(-1,dp(55)));
-        if(guess>=0)spinner.setSelection(guess+(optional?1:0));
+        if(guess>=0)spinner.setSelection(guess+1);
         return spinner;
     }
     private void showColumns(){
@@ -148,7 +162,7 @@ public final class LegacyContactsImportActivity extends Activity {
         Spinner emails=spinner("Email · optional",true,selected.guess("email"));
         button("Preview contacts before import",()->{
             try{
-                pending=selected.preview(names.getSelectedItemPosition(),
+                pending=selected.preview(names.getSelectedItemPosition()-1,
                     phones.getSelectedItemPosition()-1,emails.getSelectedItemPosition()-1);
                 showPreview(names,phones,emails);
             }catch(Exception error){problem(error);}
@@ -165,7 +179,7 @@ public final class LegacyContactsImportActivity extends Activity {
         }
         Button confirm=button("Import "+snapshot.entries.size()+" into Contacts",()->{
             // A preview is bound to the exact selected columns. Changes invalidate it.
-            int name=names.getSelectedItemPosition();
+            int name=names.getSelectedItemPosition()-1;
             int phone=phones.getSelectedItemPosition()-1;
             int email=emails.getSelectedItemPosition()-1;
             try{
