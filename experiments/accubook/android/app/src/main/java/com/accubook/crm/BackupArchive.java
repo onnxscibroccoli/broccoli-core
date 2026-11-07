@@ -66,6 +66,10 @@ public final class BackupArchive {
     private static final String[] JOB_MASTER={"FieldID","Label","Kind","Required","DefaultValue","Active"};
     private static final String[] JOB_FIELD={"FieldID","Label","Kind","Required","Value","Active","Origin"};
     private static final String[] PHOTO_ORDER={"PhotoFile","Position"};
+    private static final String[] CHANGE_ORDERS={"ChangeOrderID","Title","Status",
+        "CreatedUTC","AcknowledgedUTC","SignedBy","SignatureSHA256","ContentSHA256"};
+    private static final String[] CHANGE_ORDER_LINES={"LineID","ChangeOrderID",
+        "Description","Quantity","UnitRate","Amount"};
 
 
     public static File rollback(File live) {
@@ -241,8 +245,8 @@ public final class BackupArchive {
         if(!index.isFile()&&!lineFile.isFile())return; // Older workspace.
         if(!index.isFile()||!lineFile.isFile())
             throw new IOException("Incomplete change-order tables");
-        List<List<String>> orders=rows(root,folder+"/change_orders.csv",ChangeOrders.ORDERS);
-        List<List<String>> lines=rows(root,folder+"/change_order_lines.csv",ChangeOrders.LINES);
+        List<List<String>> orders=rows(root,folder+"/change_orders.csv",CHANGE_ORDERS);
+        List<List<String>> lines=rows(root,folder+"/change_order_lines.csv",CHANGE_ORDER_LINES);
         if(orders.size()>1001||lines.size()>1001)
             throw new IOException("Too many change-order entries");
         Set<String> orderIds=new HashSet<>(),lineIds=new HashSet<>();
@@ -250,8 +254,8 @@ public final class BackupArchive {
             List<String> order=orders.get(i);
             if(!order.get(0).matches("CO-[a-f0-9]{32}")||
                 !orderIds.add(order.get(0))||order.get(1).isEmpty()||
-                !Arrays.asList(ChangeOrders.PROPOSED,ChangeOrders.ACKNOWLEDGED,
-                    ChangeOrders.INVOICED).contains(order.get(2)))
+                !Arrays.asList("Proposed","Acknowledged",
+                    "Invoiced").contains(order.get(2)))
                 throw new IOException("Invalid change order in backup");
         }
         for(int i=1;i<lines.size();i++){
@@ -271,7 +275,7 @@ public final class BackupArchive {
             List<List<String>> subset=new ArrayList<>();
             for(int k=1;k<lines.size();k++)if(id.equals(lines.get(k).get(1)))
                 subset.add(lines.get(k));
-            if(ChangeOrders.PROPOSED.equals(order.get(2))) {
+            if("Proposed".equals(order.get(2))) {
                 if(!order.get(4).isEmpty()||!order.get(5).isEmpty()||
                     !order.get(6).isEmpty()||!order.get(7).isEmpty())
                     throw new IOException("Unsigned change order has signoff metadata");
