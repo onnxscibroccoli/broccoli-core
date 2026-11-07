@@ -93,7 +93,7 @@
     private GradientDrawable box(int color) {
         GradientDrawable background = new GradientDrawable();
         background.setColor(color);
-        background.setCornerRadius(dp(16));
+        background.setCornerRadius(dp(22));
         return background;
     }
 
@@ -151,6 +151,7 @@
         result.setOrientation(LinearLayout.VERTICAL);
         result.setPadding(dp(17), dp(15), dp(17), dp(15));
         result.setBackground(box(CARD));
+        result.setElevation(dp(3));
         LinearLayout.LayoutParams margins = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         margins.setMargins(0, dp(10), 0, dp(10));
@@ -1144,6 +1145,8 @@
             email.setText(brand.email);
             EditText color=field(fields,"Brand color · #RRGGBB","#165DAB");
             color.setText(brand.accent);
+            button(fields,"Open custom brand color picker",()->
+                chooseAnyColor(color.getText().toString(),color::setText));
             EditText terms=multiline(fields,"Default payment terms",brand.terms);
             EditText footer=multiline(fields,"Footer / business information",brand.footer);
             dialog("Default estimate and invoice template",fields,()->{
@@ -1242,14 +1245,79 @@
     }
 
     private void chooseJobColor(Button button,String[] chosen) {
-        String[] labels={"Blue · standard","Green · active","Gold · follow-up",
-            "Red · urgent","Purple · special","Slate · other"};
-        new AlertDialog.Builder(this).setTitle("Color-code this job")
-            .setItems(labels,(dialog,index)->{
-                chosen[0]=CrmWorkspace.JOB_COLORS[index];
-                button.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(chosen[0])));
-                button.setText("Job color: "+labels[index]);
-            }).show();
+        chooseAnyColor(chosen[0],value->{
+            chosen[0]=value;
+            button.setText("Custom color: "+value);
+            int color=Color.parseColor(value);
+            button.setBackgroundTintList(ColorStateList.valueOf(color));
+            button.setTextColor(Color.luminance(color)>0.45?Color.BLACK:Color.WHITE);
+        });
+    }
+
+    private void chooseAnyColor(String initial,java.util.function.Consumer<String> accept) {
+        int color;
+        try{color=Color.parseColor(initial);}catch(Exception ignored){color=ACCENT;}
+        LinearLayout root=new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);
+        int pad=dp(16);
+        root.setPadding(pad,dp(12),pad,dp(12));
+        TextView preview=new TextView(this);
+        preview.setText("Custom color preview");
+        preview.setTextSize(17);
+        preview.setGravity(android.view.Gravity.CENTER);
+        preview.setMinHeight(dp(70));
+        root.addView(preview);
+        EditText hex=new EditText(this);
+        hex.setSingleLine(true);
+        hex.setTextColor(Color.BLACK);
+        hex.setHint("#RRGGBB");
+        hex.setText(String.format(Locale.ROOT,"#%06X",color&0xffffff));
+        root.addView(hex,new LinearLayout.LayoutParams(-1,dp(52)));
+        String[] channel={"Red","Green","Blue"};
+        int[] progress={Color.red(color),Color.green(color),Color.blue(color)};
+        android.widget.SeekBar[] sliders=new android.widget.SeekBar[3];
+        Runnable render=()->{
+            int value=Color.rgb(progress[0],progress[1],progress[2]);
+            preview.setBackground(box(value));
+            preview.setTextColor(Color.luminance(value)>0.45?Color.BLACK:Color.WHITE);
+            hex.setText(String.format(Locale.ROOT,"#%06X",value&0xffffff));
+        };
+        for(int i=0;i<3;i++){
+            final int index=i;
+            TextView label=new TextView(this);
+            label.setText(channel[i]+" channel");
+            label.setTextColor(Color.DKGRAY);
+            label.setTextSize(15);
+            root.addView(label);
+            android.widget.SeekBar slider=new android.widget.SeekBar(this);
+            slider.setMax(255);
+            slider.setProgress(progress[i]);
+            slider.setMinHeight(dp(44));
+            sliders[i]=slider;
+            root.addView(slider,new LinearLayout.LayoutParams(-1,dp(52)));
+            slider.setOnSeekBarChangeListener(new android.widget.SeekBar.OnSeekBarChangeListener(){
+                public void onProgressChanged(android.widget.SeekBar bar,int value,boolean user){
+                    if(user){progress[index]=value;render.run();}
+                }
+                public void onStartTrackingTouch(android.widget.SeekBar bar){}
+                public void onStopTrackingTouch(android.widget.SeekBar bar){}
+            });
+        }
+        render.run();
+        AlertDialog dlg=new AlertDialog.Builder(this).setTitle("Choose any color")
+            .setView(root).setNegativeButton("Cancel",(d,w)->{})
+            .setPositiveButton("Apply color",null).create();
+        dlg.setOnShowListener(d->dlg.getButton(AlertDialog.BUTTON_POSITIVE)
+            .setOnClickListener(v->{
+                String value=hex.getText().toString().trim().toUpperCase(Locale.ROOT);
+                if(!value.matches("#[0-9A-F]{6}")){
+                    hex.setError("Enter a six-digit hex color, e.g. #165DAB");
+                    return;
+                }
+                accept.accept(value);
+                dlg.dismiss();
+            }));
+        dlg.show();
     }
 
     private void scheduleEditor(WorkspaceStore.Job job) {
