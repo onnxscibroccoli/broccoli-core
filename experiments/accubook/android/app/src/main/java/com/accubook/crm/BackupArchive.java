@@ -47,6 +47,13 @@ public final class BackupArchive {
     private static final String[] REQUEST = {"RequestID", "Description", "Quantity", "Unit", "Status"};
     private static final String[] CATALOG = {"ItemID", "Category", "ItemName", "DefaultUnit", "DefaultRate"};
     private static final String[] EXPENSE = {"ExpenseID", "Date", "Category", "Description", "Amount"};
+    private static final String[] APPOINTMENT = {"StartTime","EndTime","Color","DaybookNote"};
+    private static final String[] PREFS = {"Call","SMS","Email","Color"};
+    private static final String[] QUOTE = {"QuoteSent","DateSent","QuoteNote"};
+    private static final String[] PAYMENT = {"PaymentID","Date","Method","Amount","Reference","Notes"};
+    private static final String[] ATTACHMENT = {"AttachmentID","DisplayName","MimeType","SizeBytes","StoredName"};
+    private static final String[] BRAND = {"BusinessName","Address","Phone","Email","AccentColor","Terms","Footer","LogoMimeType"};
+    private static final String[] MEMO = {"Greeting","Closing"};
 
     public static File rollback(File live) {
         return new File(live.getParentFile(), live.getName() + ".previous");
@@ -91,12 +98,17 @@ public final class BackupArchive {
 
     private static boolean allowedFile(String name) {
         if (name.matches("master_data/(customers|jobs|catalog|expenses)\\.csv")) return true;
+        if(name.equals("templates/branding.csv")||name.equals("templates/logo.bin"))return true;
         if (name.matches("templates/[A-Za-z0-9_./-]{1,220}\\.(html|txt|md|json)"))
             return !name.contains("..");
         String client = "customers/CUST-[a-f0-9]{32}_[A-Za-z0-9_-]{1,40}";
         if (name.matches(client + "/profile\\.md")) return true;
+        if (name.matches(client + "/contact_preferences\\.csv")) return true;
         String job = client + "/jobs/JOB-[a-f0-9]{32}_[A-Za-z0-9_-]{1,40}";
-        return name.matches(job + "/(job_items\\.csv|material_requests\\.csv|field_notes\\.md|job_details\\.json|photos/PHOTO-[a-f0-9]{32}\\.(jpg|png|webp))");
+        return name.matches(job + "/(job_items\\.csv|material_requests\\.csv|field_notes\\.md|job_details\\.json|"
+            + "appointment\\.csv|quote\\.csv|payments\\.csv|invoice_memo\\.csv|"
+            + "attachments\\.csv|attachments/ATT-[a-f0-9]{32}\\.bin|"
+            + "photos/PHOTO-[a-f0-9]{32}\\.(jpg|png|webp))");
     }
 
     private static void unpack(File destination, InputStream input) throws IOException {
@@ -127,7 +139,9 @@ public final class BackupArchive {
                 if (!parent.isDirectory() && !parent.mkdirs())
                     throw new IOException("Cannot create staged folder");
                 long written = 0;
-                long perFile = name.contains("/photos/") ? LIMIT_PHOTO : LIMIT_OTHER;
+                long perFile = name.equals("templates/logo.bin") ? 2L * 1024 * 1024
+                    : (name.contains("/photos/") || name.contains("/attachments/"))
+                        ? LIMIT_PHOTO : LIMIT_OTHER;
                 try (FileOutputStream output = new FileOutputStream(file)) {
                     int count;
                     while ((count = zip.read(buffer)) != -1) {
@@ -196,6 +210,34 @@ public final class BackupArchive {
             if (!path.isDirectory() || Files.isSymbolicLink(path.toPath()))
                 throw new IOException("Customer folder missing: " + id);
         }
+        File branding=new File(root,"templates/branding.csv");
+        if(branding.isFile()){
+            List<List<String>> rows=rows(root,"templates/branding.csv",BRAND);
+            if(rows.size()>2)throw new IOException("Multiple branding profiles");
+            if(rows.size()==2){
+                String mime=rows.get(1).get(7);
+                if(!Arrays.asList("","image/png","image/jpeg","image/webp").contains(mime))
+                    throw new IOException("Unsafe branding logo type");
+                if(!mime.isEmpty()&&!new File(root,"templates/logo.bin").isFile())
+                    throw new IOException("Branding logo missing");
+            }
+        }
+        for(Map.Entry<String,String> client:folders.entrySet()){
+            String name=client.getValue()+"/contact_preferences.csv";
+            File file=new File(root,name);
+            if(file.isFile()){
+                List<List<String>> preferences=rows(root,name,PREFS);
+                if(preferences.size()>2)throw new IOException("Repeated customer preferences");
+                if(preferences.size()==2){
+                    List<String> values=preferences.get(1);
+                    for(int n=0;n<3;n++)
+                        if(!values.get(n).equals("true")&&!values.get(n).equals("false"))
+                            throw new IOException("Invalid preferred contact method");
+                    if(!values.get(3).matches("#[0-9A-Fa-f]{6}"))
+                        throw new IOException("Invalid customer color");
+                }
+            }
+        }
         Set<String> jobIds = new HashSet<>();
         for (int i = 1; i < jobs.size(); i++) {
             List<String> r = jobs.get(i);
@@ -243,6 +285,83 @@ public final class BackupArchive {
                         .decode(java.nio.ByteBuffer.wrap(Files.readAllBytes(notes.toPath())));
                 } catch (java.nio.charset.CharacterCodingException error) {
                     throw new IOException("Job notes are invalid UTF-8", error);
+                }
+            }
+            String appointmentPath=jobFolder+"/appointment.csv";
+            if(new File(root,appointmentPath).isFile()){
+                List<List<String>> appts=rows(root,appointmentPath,APPOINTMENT);
+                if(appts.size()>2)throw new IOException("Multiple appointments for job");
+                if(appts.size()==2){
+                    List<String> detailsRow=appts.get(1);
+                    try{
+                        java.time.LocalTime from=java.time.LocalTime.parse(detailsRow.get(0));
+                        java.time.LocalTime to=java.time.LocalTime.parse(detailsRow.get(1));
+                        if(!to.isAfter(from))throw new IOException("Appointment end before start");
+                    }catch(java.time.format.DateTimeParseException e){
+                        throw new IOException("Invalid appointment time",e);
+                    }
+                    if(!detailsRow.get(2).matches("#[0-9A-Fa-f]{6}")||
+                        detailsRow.get(3).length()>2000)
+                        throw new IOException("Invalid appointment metadata");
+                }
+            }
+            String quotePath=jobFolder+"/quote.csv";
+            if(new File(root,quotePath).isFile()){
+                List<List<String>> state=rows(root,quotePath,QUOTE);
+                if(state.size()>2)throw new IOException("Repeated quote metadata");
+                if(state.size()==2){
+                    List<String> v=state.get(1);
+                    if(!v.get(0).equals("true")&&!v.get(0).equals("false"))
+                        throw new IOException("Invalid quote sent flag");
+                    if(!v.get(1).isEmpty()){
+                        try{LocalDate.parse(v.get(1));}
+                        catch(DateTimeParseException e){throw new IOException("Invalid quote date",e);}
+                    }
+                }
+            }
+            String paymentsPath=jobFolder+"/payments.csv";
+            if(new File(root,paymentsPath).isFile()){
+                List<List<String>> ledger=rows(root,paymentsPath,PAYMENT);
+                Set<String> ids=new HashSet<>();
+                for(int k=1;k<ledger.size();k++){
+                    List<String> value=ledger.get(k);
+                    if(!value.get(0).matches("PAY-[a-f0-9]{32}")||
+                        !ids.add(value.get(0))||
+                        !Arrays.asList("Cash","Check","Cash App","PayPal","Bank Transfer","Other")
+                            .contains(value.get(2)))
+                        throw new IOException("Invalid payment identifier or method");
+                    try{LocalDate.parse(value.get(1));}
+                    catch(DateTimeParseException e){throw new IOException("Invalid payment date",e);}
+                    try{
+                        BigDecimal amount=new BigDecimal(value.get(3));
+                        if(amount.signum()<=0||amount.scale()>2)
+                            throw new IOException("Invalid payment amount");
+                    }catch(NumberFormatException e){throw new IOException("Invalid payment amount",e);}
+                }
+            }
+            String memoPath=jobFolder+"/invoice_memo.csv";
+            if(new File(root,memoPath).isFile()){
+                List<List<String>> memos=rows(root,memoPath,MEMO);
+                if(memos.size()>2)throw new IOException("Invalid invoice layout metadata");
+            }
+            String attachmentsPath=jobFolder+"/attachments.csv";
+            if(new File(root,attachmentsPath).isFile()){
+                List<List<String>> att=rows(root,attachmentsPath,ATTACHMENT);
+                Set<String> ids=new HashSet<>();
+                for(int k=1;k<att.size();k++){
+                    List<String> entry=att.get(k);
+                    String identifier=entry.get(0), name=entry.get(4);
+                    if(!identifier.matches("ATT-[a-f0-9]{32}")||
+                        !name.equals(identifier+".bin")||!ids.add(identifier))
+                        throw new IOException("Unsafe or repeated attachment ID");
+                    File binary=new File(root,jobFolder+"/attachments/"+name);
+                    if(!binary.isFile()||Files.isSymbolicLink(binary.toPath()))
+                        throw new IOException("Attachment binary is missing");
+                    try{
+                        if(Long.parseLong(entry.get(3))!=binary.length()||
+                            binary.length()>LIMIT_PHOTO)
+                            throw new IOException("Attachment byte count mismatch");
+                    }catch(NumberFormatException e){throw new IOException("Invalid attachment size",e);}
                 }
             }
             BigDecimal sum = BigDecimal.ZERO;
