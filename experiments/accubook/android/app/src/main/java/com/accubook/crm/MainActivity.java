@@ -3217,22 +3217,15 @@ public final class MainActivity extends Activity {
                 +"Editing the master changes future jobs only; existing job entries "
                 +"are protected from unwanted overwrites.",15,MUTED);
             button(content,"+ Add template field",()->editMasterField(null));
-            for(JobTemplates.Field f:new JobTemplates(store).master()){
+            List<JobTemplates.Field> ordered=new JobTemplates(store).master();
+            for(int index=0;index<ordered.size();index++){
+                final int at=index;
+                JobTemplates.Field f=ordered.get(index);
                 LinearLayout entry=card();
                 label(entry,f.label,18,LIGHT);
                 label(entry,f.kind+" · "+(f.required?"Required":"Optional")+
                     (f.value.isEmpty()?"":" · Default: "+f.value),14,MUTED);
-                button(entry,"Rename / edit "+f.label,()->editMasterField(f));
-                button(entry,"− Remove from future job templates",()->
-                    new AlertDialog.Builder(this).setTitle("Remove template field?")
-                        .setMessage(f.label+" will be excluded from future jobs. "
-                            +"Existing job records are not erased.")
-                        .setNegativeButton("Keep",(d,w)->{})
-                        .setPositiveButton("Remove",(d,w)->{
-                            try{new JobTemplates(store).removeMaster(f.id);
-                                masterJobTemplateScreen();}
-                            catch(Exception e){error(e);}
-                        }).show());
+                fieldActionMenu(entry,f,null,at,ordered.size());
             }
         }catch(Exception e){error(e);}
     }
@@ -3306,7 +3299,9 @@ public final class MainActivity extends Activity {
         button(content,"+ Add any field or checklist item",()->editJobField(work,null));
         button(content,"Edit master job template (future jobs)",this::masterJobTemplateScreen);
         List<JobTemplates.Field> fields=new JobTemplates(store).forJob(work);
-        for(JobTemplates.Field f:fields){
+        for(int index=0;index<fields.size();index++){
+            int at=index;
+            JobTemplates.Field f=fields.get(index);
             LinearLayout row=card();
             if(f.kind.equals(JobTemplates.CHECK)){
                 CheckBox check=checkbox(row,f.label+
@@ -3326,16 +3321,7 @@ public final class MainActivity extends Activity {
                 label(row,f.label+(f.required?" · Required":""),17,LIGHT);
                 label(row,f.value.isEmpty()?"Not entered":f.value,15,MUTED);
             }
-            button(row,"Edit / rename "+f.label,()->editJobField(work,f));
-            button(row,"− Remove "+f.label+" from this job",()->
-                new AlertDialog.Builder(this).setTitle("Remove job field?")
-                    .setMessage("Remove '"+f.label+"' from THIS job only? "
-                        +"Your master template and other jobs remain unchanged.")
-                    .setNegativeButton("Keep",(d,w)->{})
-                    .setPositiveButton("Remove",(d,w)->{
-                        try{new JobTemplates(store).removeJob(work,f.id);job(work.id);}
-                        catch(Exception e){error(e);}
-                    }).show());
+            fieldActionMenu(row,f,work,at,fields.size());
         }
         List<String> incomplete=new JobTemplates(store).missingRequired(work);
         if(!incomplete.isEmpty())
@@ -3344,6 +3330,67 @@ public final class MainActivity extends Activity {
         button(content,"View previous-format milestone checklist",
             ()->legacyMilestonesScreen(work));
     }
+    private Button tinyAction(LinearLayout parent,String text,String description,Runnable click){
+        Button result=new Button(this);
+        result.setText(text);
+        result.setAllCaps(false);
+        result.setTextSize(20);
+        result.setMinWidth(dp(48));
+        result.setMinHeight(dp(48));
+        result.setTextColor(LIGHT);
+        result.setBackground(box(CARD));
+        result.setContentDescription(description);
+        parent.addView(result,new LinearLayout.LayoutParams(-2,dp(48)));
+        result.setOnClickListener(v->click.run());
+        return result;
+    }
+    /** Small overflow replaces the large per-field Edit/Delete buttons.
+     * Screen readers and keyboard users can invoke the same menu with a tap.
+     */
+    private void fieldActionMenu(LinearLayout parent,JobTemplates.Field f,
+                                 WorkspaceStore.Job job,int position,int count){
+        Runnable menu=()->new AlertDialog.Builder(this)
+            .setTitle(f.label)
+            .setItems(new String[]{"Edit / rename","Move up","Move down",
+                "Remove (confirm)"},(d,choice)->{
+                if(choice==0){if(job==null)editMasterField(f);else editJobField(job,f);}
+                else if(choice==1||choice==2)
+                    moveField(job,f,position+(choice==1?-1:1),count);
+                else new AlertDialog.Builder(this)
+                    .setTitle("Remove field?")
+                    .setMessage(job==null?"Remove from future jobs only? Existing "
+                        +"jobs keep their values.":"Remove only from this job? "
+                        +"The master and other jobs remain unchanged.")
+                    .setNegativeButton("Keep",(x,y)->{})
+                    .setPositiveButton("Remove",(x,y)->{
+                        try{
+                            if(job==null)new JobTemplates(store).removeMaster(f.id);
+                            else new JobTemplates(store).removeJob(job,f.id);
+                            if(job==null)masterJobTemplateScreen();else job(job.id);
+                        }catch(Exception e){error(e);}
+                    }).show();
+            }).setNegativeButton("Cancel",(d,w)->{}).show();
+        parent.setOnLongClickListener(v->{menu.run();return true;});
+        tinyAction(parent,"⋯","Options for "+f.label,menu);
+        if(new AppFeatures(this).enabled(AppFeatures.EXTRA_MOVE_CONTROLS)){
+            LinearLayout row=new LinearLayout(this);row.setOrientation(LinearLayout.HORIZONTAL);
+            parent.addView(row);
+            if(position>0)tinyAction(row,"↑","Move "+f.label+" up",
+                ()->moveField(job,f,position-1,count));
+            if(position<count-1)tinyAction(row,"↓","Move "+f.label+" down",
+                ()->moveField(job,f,position+1,count));
+        }
+    }
+    private void moveField(WorkspaceStore.Job job,JobTemplates.Field f,
+                           int newPosition,int count){
+        if(newPosition<0||newPosition>=count)return;
+        try{
+            JobTemplates template=new JobTemplates(store);
+            if(job==null){template.moveMaster(f.id,newPosition);masterJobTemplateScreen();}
+            else{template.moveJob(job,f.id,newPosition);job(job.id);}
+        }catch(Exception e){error(e);}
+    }
+
     private void legacyMilestonesScreen(WorkspaceStore.Job job){
         currentScreen="job";currentJobId=job.id;
         try{
