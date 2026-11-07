@@ -1818,7 +1818,7 @@ public final class MainActivity extends Activity {
                     received=received.add(value);
                 }
             }
-            label(content,"Draft job billing: $"+draftTotal.toPlainString(),17,LIGHT);
+            label(content,"Recorded job value: $"+draftTotal.toPlainString(),17,LIGHT);
             label(content,"Payments recorded: $"+received.toPlainString(),17,LIGHT);
             label(content,"Unreconciled difference (drafts - receipts): $"+
                 draftTotal.subtract(received).toPlainString(),16,LIGHT);
@@ -2397,7 +2397,7 @@ public final class MainActivity extends Activity {
     private void createTestBusiness() {
         new AlertDialog.Builder(this).setTitle("Load fictional test company?")
             .setMessage("Creates a fictional example contracting business, three demo customers, "
-                +"three jobs, appointment times, draft charges and sample payment-method entries. "
+                +"three jobs, appointment times, sample charges and sample payment-method entries. "
                 +"Existing records are not replaced. Never use this data for real accounting.")
             .setNegativeButton("Cancel",(d,w)->{})
             .setPositiveButton("Create sample",(d,w)->{
@@ -2489,7 +2489,7 @@ public final class MainActivity extends Activity {
             label(summary,"Today: "+todayJobs+" jobs    Upcoming: "+upcomingJobs,18,LIGHT);
             label(summary,"Customers: "+customers.size()+"    Active work: "+active,17,LIGHT);
             label(summary,"Estimates marked sent: "+sentQuotes,16,LIGHT);
-            label(summary,"Draft billing: $"+openDraft.toPlainString(),17,LIGHT);
+            label(summary,"Estimated job value: $"+openDraft.toPlainString(),17,LIGHT);
             label(summary,"Recorded receipts: $"+paid.toPlainString(),17,LIGHT);
 
             button(content, "Open daybook schedule", this::scheduleScreen);
@@ -2750,11 +2750,11 @@ public final class MainActivity extends Activity {
                 ()->openDocument(work,true));
             button(content,"Preview / edit invoice (print or Save as PDF)",
                 ()->openDocument(work,false));
-            label(content,"Draft amount: $"+work.total,22,LIGHT);
+            label(content,"Job total: $"+work.total,22,LIGHT);
             button(content,"+ Add from service / consumable catalog",
                 ()->catalogLineDialog(work));
             button(content,"Add labor, material or discount",()->lineDialog(work));
-            button(content,"Export simple HTML draft",()->{
+            button(content,"Export invoice as HTML",()->{
                 try{
                     pendingInvoice=InvoiceHtml.render(client,work,store.items(work));
                     pendingBackup=false;
@@ -2779,7 +2779,7 @@ public final class MainActivity extends Activity {
             attachmentList(work);
             section("Payment ledger");
             label(content,"Payments recorded: $"+crm.received(work).toPlainString(),17,LIGHT);
-            label(content,"Draft balance: $"+crm.balance(work).toPlainString(),17,LIGHT);
+            label(content,"Open job balance: $"+crm.balance(work).toPlainString(),17,LIGHT);
             button(content,"Record cash, check, PayPal or other payment",()->paymentDialog(work));
             for(CrmWorkspace.Payment payment:crm.payments(work)){
                 LinearLayout row=card();
