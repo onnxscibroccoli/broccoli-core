@@ -101,3 +101,8 @@ on extra accessibility UI.
 | A branded app and printed slip matter more than dashboards | Mascot launcher PNG and leaf-only document fallback for default business | No forced logo on custom brand; real PDF printed checks pending. |
 
 **Attribution:** Some competitors already offer typed custom line items, so free-text pricing is not uniquely invented here. The significant distinction being tested is local ownership, minimal taps, and no mandatory taxonomy or login. This evaluation did not involve matched-device timed usability trials; no measured superiority is claimed.
+
+
+## Simplification review — invoice actions and field notes
+
+Existing invoice rows displayed four full-width edit/quantity/delete controls on every item. This crowded the mobile job screen. The current iteration collapses those controls into an always-visible three-dot action, retains long-press as a shortcut, and allows row move up/down without changing amounts. It also provides a deliberate notes-to-billing bridge: field notes remain free text until the user explicitly reviews and saves an invoice line. The performance/interaction improvement is a design hypothesis, **not** a timed or independently measured vendor superiority claim. Physical touch-target, large-text and TalkBack checks remain open.

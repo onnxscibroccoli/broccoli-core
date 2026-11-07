@@ -3320,6 +3320,9 @@ public final class MainActivity extends Activity {
                 : (notes.length() > 800 ? notes.substring(0, 800) + "…" : notes),
                 15, MUTED);
             button(content, "Edit field notes", () -> fieldNotesDialog(work));
+            if(!notes.trim().isEmpty())
+                button(content,"Use this note in a new invoice line",
+                    ()->lineDialog(work,invoiceDescriptionFromNotes(notes)));
             }
             if("checklists".equals(currentJobSection)){
                 jobCustomFields(work);
@@ -3998,7 +4001,6 @@ public final class MainActivity extends Activity {
     }
 
 
-
     /** Optional inventory stays visible only to owners who enable the module. */
     private void inventoryScreen(){
         currentScreen="inventory";currentJobId=null;currentCustomerId=null;
@@ -4280,15 +4282,28 @@ public final class MainActivity extends Activity {
         try{
             ChangeOrders changes=new ChangeOrders(store);
             LinearLayout fields=form();
-            label(fields,"Review the change and $"+changes.total(job,order)+
-                " difference before handing over the phone.",16,LIGHT);
-            label(fields,"Customer draws below. Stored on this device with a "+
-                "timestamp and tamper-evident hash. This does not verify identity.",14,MUTED);
-            EditText signer=field(fields,"Printed name of signer","Customer or authorized person");
+            label(fields,"CHANGE ORDER · "+order.title,18,LIGHT);
+            label(fields,"Review these additional items and prices before signing. "+
+                "This amount is added to the original job, not a second quotation.",15,MUTED);
+            for(ChangeOrders.Line line:changes.lines(job,order))
+                label(fields,line.description+"\n"+line.quantity+" × $"+line.rate+
+                    " = $"+line.amount,16,LIGHT);
+            label(fields,"Additional approved amount: $"+changes.total(job,order),
+                19,LIGHT);
+            CheckBox acknowledged=checkbox(fields,
+                "I reviewed these added items and approve the additional amount",false);
+            label(fields,"A finger/stylus image, signer name and timestamp are kept "+
+                "locally with an integrity hash. The app cannot verify legal identity.",
+                13,MUTED);
+            EditText signer=field(fields,"Printed name of signer",
+                "Customer or authorized person");
             SignaturePadView pad=new SignaturePadView(this);
             fields.addView(pad,new LinearLayout.LayoutParams(-1,dp(190)));
             button(fields,"Clear signature",pad::clear);
             dialog("Acknowledge change order",fields,()->{
+                if(!acknowledged.isChecked())
+                    throw new IllegalArgumentException(
+                        "Review the work and check the acknowledgment before saving");
                 try{
                     changes.acknowledge(job,order,signer.getText().toString(),pad.png());
                     currentJobSection="costing";job(job.id);
@@ -4297,7 +4312,18 @@ public final class MainActivity extends Activity {
         }catch(Exception e){error(e);}
     }
 
-    private void lineDialog(WorkspaceStore.Job job) {
+    private static String invoiceDescriptionFromNotes(String notes){
+        for(String line:notes.split("\\R")){
+            String candidate=line.trim().replaceAll("\\s+"," ");
+            if(candidate.length()>180)candidate=candidate.substring(0,180).trim();
+            if(!candidate.isEmpty())return candidate;
+        }
+        return "Work described in field notes";
+    }
+
+    private void lineDialog(WorkspaceStore.Job job){lineDialog(job,"");}
+
+    private void lineDialog(WorkspaceStore.Job job,String preset) {
         LinearLayout fields = form();
         EditText description = field(fields, "Description (required)", "4-inch gutter cleanout");
         EditText quantity = field(fields, "Quantity", "1");
@@ -4336,6 +4362,10 @@ public final class MainActivity extends Activity {
                 }
                 public void afterTextChanged(Editable e){}
             });
+        }
+        if(!preset.isEmpty()){
+            description.setText(preset);
+            description.setSelection(description.length());
         }
         dialog("New line item", fields, () -> {
             try {

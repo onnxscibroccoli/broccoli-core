@@ -356,7 +356,7 @@ The baseline interaction is **Customer → Job → Notes/Photos → Invoice → 
 - **Brand graphics bundled:** The mascot is included as the Android launcher icon. The original leaf is bundled as a print-document fallback logo only for default Jules Gutter Cleaning branding with no custom logo. Selecting a custom logo still overrides it.
 - **Regression coverage:** New standalone JVM pricing/suggestion/proof tests, ZIP signed-order roundtrip and tamper rejection; Android build and emulator CI gates remain required at exact HEAD.
 
-**Not implemented yet:** automatic recurring job creation, automatic inventory stock reconciliation/purchasing, AR/AP/GL posting, signed change-order PDF, optional front-camera evidence, import-ready QuickBooks format, production release. No device-collected proof is claimed in advance.
+**Not implemented yet:** automatic recurring job creation, automatic inventory reconciliation/purchasing, AR/AP/GL posting, signed change-order PDF, optional front-camera evidence, import-ready QuickBooks format, production release. No device-collected proof is claimed in advance.
 
 
 ## Nov 7 — universal local lookup and manual repeat-service due lists
@@ -366,6 +366,16 @@ The baseline interaction is **Customer → Job → Notes/Photos → Invoice → 
 **Repeat-service schedules:** Business → Settings enables a local month/mileage module. Open a job → Overview to set the last completion date and interval. Home shows due-by-date counts; the due list permits pause/resume and manual reset. Due-date slips can be printed to PDF through Android’s document picker. Mileage-only rules display a target odometer reading, not an assumed due notification. No jobs or outbound customer messages are created automatically.
 
 **CSV and proof:** master_data/service_intervals.csv stores stable references, intervals and calculated due values. Backup restore checks customer/job ownership, date/mileage consistency and IDs. Pure-Java tests cover month-end and leap-year calculations, lookup matching and forged reminders. Device-based acceptance remains required.
+
+
+### Nov 7 — orderable invoice rows and notes-to-money bridge
+
+- **Job → Money:** invoice line rows now have one visible compact action menu (and long-press alternative) for move up/down, quantity change, edit and remove. Atomic stable-ID row reordering does not change prices or totals; lines posted from a signed change order cannot be edited or removed, but can be reordered visually.
+- **Job → Notes:** when a note exists, tap **Use this note in a new invoice line**. The first nonempty sentence is copied into an editable billing line, where optional on-device catalog suggestions can fill a rate. The owner reviews quantity and price before saving. Original field notes are untouched; no invisible billable charges are created.
+- Repeat services, signed change orders, and photo order are additive. All features still require precise Android 15 and backup/restore acceptance before a release claim.
+
+- **Change-order customer review:** signature screen now displays every approved line, quantity, rate, extended total, and a required explicit acknowledgment checkbox before saving the signer name and ink. This is a consent-oriented UI control, not legal identity verification; physical-device review remains pending.
+
 
 ## November 7 — optional three-layer inventory (engineering preview)
 
