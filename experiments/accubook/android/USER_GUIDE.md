@@ -137,6 +137,8 @@ To turn site notes into a line, open **Job → Notes → Use this note in a new 
 4. **Track equipment:** Business → inventory → **Add tool**. At a job, choose **Check out an available company tool** and tap the tool name. Use **Return tool to company** at the job or in Business. Available, checked-out and maintenance states are mutually exclusive.
 5. **Back up:** Business → **Create encrypted backup** before reinstalling or restoring. The stock, job-site and tool CSV files travel with the other workspace files. Imported backups reject invalid quantities, duplicate IDs and tools assigned to missing jobs.
 
+With inventory enabled, **Home → Find anything** also finds company materials, tool names/tags and job-site material descriptions. A result opens the relevant inventory or job, never an external service.
+
 These three lists are a manual record, **not automatic inventory reconciliation**. Marking something Delivered or Used does not reduce the company count, record an expense or invoice it. When you want to bill it, open that job → Money → **Add labor, material or discount**. Prices remain owner-controlled. Turning off the inventory switch hides the screens and retains all files.
 
 ### Developer map — inventory extension
