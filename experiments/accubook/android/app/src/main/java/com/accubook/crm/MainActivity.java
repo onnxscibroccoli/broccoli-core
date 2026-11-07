@@ -2411,7 +2411,7 @@ public final class MainActivity extends Activity {
                 for(int i=0;i<categories.length;i++)
                     if(categories[i].isChecked())chosenCategories.add(names[i]);
                 ExportSelection verified=new ExportSelection(selected,chosenMethods,chosenCategories);
-                pendingReportSections=verified.sections.clone();
+                pendingReportSections=verified.selectedSections();
                 pendingPaymentMethods=new LinkedHashSet<>(verified.paymentMethods);
                 pendingExpenseCategories=new LinkedHashSet<>(verified.expenseCategories);
                 pendingReportPdf=pdf;
