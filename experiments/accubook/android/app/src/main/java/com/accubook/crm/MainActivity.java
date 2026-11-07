@@ -101,6 +101,7 @@ public final class MainActivity extends Activity {
     private static final int CALENDAR_PERMISSIONS=860;
     private static final int SUPPLIER_CSV_REQUEST=861;
     private static final int PICKUP_NOTIFY_PERMISSION=862;
+    private static final int SERVICE_SLIP_PDF_REQUEST=863;
     private String pendingPickupJobId;
     private long pendingPickupWhen;
     private boolean lockRequestInProgress=false;
@@ -599,6 +600,8 @@ public final class MainActivity extends Activity {
             }
             label(content,due+" due or overdue by date · "+active+" active reminders",
                 19,LIGHT);
+            if(due>0)button(content,"Save or print due-service slips (PDF)",
+                this::exportServiceDueSlips);
             label(content,"Mileage-only reminders show a target odometer reading. "+
                 "They do not assume how far a vehicle has traveled.",14,MUTED);
             if(list.isEmpty())
@@ -637,6 +640,17 @@ public final class MainActivity extends Activity {
             label(content,"This module does not automatically notify customers, "+
                 "create appointments, read odometers or send data to the cloud.",13,MUTED);
         }catch(Exception failure){error(failure);}
+    }
+
+
+    private void exportServiceDueSlips(){
+        Intent save=new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        save.addCategory(Intent.CATEGORY_OPENABLE);
+        save.setType("application/pdf");
+        save.putExtra(Intent.EXTRA_TITLE,
+            "accubook-due-services-"+java.time.LocalDate.now()+".pdf");
+        try{startActivityForResult(save,SERVICE_SLIP_PDF_REQUEST);}
+        catch(Exception failure){error(failure);}
     }
 
     private void serviceIntervalDialog(WorkspaceStore.Job job,RecurringServices.Rule previous){
@@ -4109,6 +4123,26 @@ public final class MainActivity extends Activity {
                 notice("Supplier price sheet imported",count+" new catalog items saved. "
                     +"Review the markup before billing customers.");
             }catch(Exception e){error(e);}
+            return;
+        }
+
+        if(requestCode==SERVICE_SLIP_PDF_REQUEST){
+            if(resultCode!=RESULT_OK||data==null||data.getData()==null)return;
+            try(OutputStream out=getContentResolver().openOutputStream(data.getData(),"wt")){
+                if(out==null)throw new IOException("Cannot open selected PDF destination");
+                List<RecurringServices.Rule> due=new ArrayList<>();
+                for(RecurringServices.Rule rule:new RecurringServices(store).all())
+                    if(rule.dueToday())due.add(rule);
+                if(due.isEmpty())throw new IOException(
+                    "There are no date-due services to print. No file was generated.");
+                java.util.Map<String,WorkspaceStore.Customer> byId=
+                    new java.util.HashMap<>();
+                for(WorkspaceStore.Customer customer:store.customers())
+                    byId.put(customer.id,customer);
+                ServiceDuePdf.write(crm.branding().business,due,byId,out);
+                notice("Due slips saved","PDF written to your chosen destination. "+
+                    "No customers were contacted automatically.");
+            }catch(Exception failure){error(failure);}
             return;
         }
         if(requestCode==REPORT_EXPORT_REQUEST){
