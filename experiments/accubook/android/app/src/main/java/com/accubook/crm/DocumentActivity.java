@@ -145,8 +145,8 @@ public final class DocumentActivity extends Activity {
         setContentView(main);
 
         TextView title=new TextView(this);
-        title.setText(quote?"Estimate draft · live document editor":
-            "Invoice draft · live document editor");
+        title.setText(quote?"Estimate · live document editor":
+            "Invoice · live document editor");
         title.setTextColor(LIGHT);
         title.setTextSize(21);
         title.setPadding(dp(15),dp(12),dp(12),dp(7));
