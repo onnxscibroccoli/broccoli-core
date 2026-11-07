@@ -3,6 +3,22 @@ package com.accubook.crm;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.provider.OpenableColumns;
+import android.content.ClipData;
+import android.widget.CheckBox;
+import android.widget.Toast;
+import android.graphics.Typeface;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.HashSet;
+import java.util.Map;
+import java.math.BigDecimal;
+import java.time.LocalTime;
+import java.io.FileInputStream;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -44,6 +60,11 @@ public final class MainActivity extends Activity {
     private static final int CONTACT_REQUEST = 703;
     private static final int PHOTO_REQUEST = 704;
     private static final int RESTORE_REQUEST = 705;
+    private static final int ATTACHMENT_REQUEST = 706;
+    private static final int LOGO_REQUEST = 707;
+    private static final int ATTACHMENT_EXPORT_REQUEST = 708;
+    private static final int BULK_CONTACT_PERMISSION = 709;
+    private static final int BULK_PHOTO_REQUEST = 710;
     private static final int BACKGROUND = Color.rgb(10, 15, 29);
     private static final int CARD = Color.rgb(25, 36, 56);
     private static final int LIGHT = Color.rgb(233, 240, 252);
@@ -51,6 +72,11 @@ public final class MainActivity extends Activity {
     private static final int ACCENT = Color.rgb(26, 104, 184);
 
     private WorkspaceStore store;
+    private CrmWorkspace crm;
+    private String pendingAttachmentJobId;
+    private CrmWorkspace.Attachment pendingAttachmentExport;
+    private String pendingAttachmentExportJob;
+    private boolean bulkPhotoSelection;
     private LinearLayout content;
     private String currentJobId;
     private String currentCustomerId;
@@ -70,6 +96,8 @@ public final class MainActivity extends Activity {
             pendingInvoice = state.getString("invoice");
             pendingBackup = state.getBoolean("backup");
             pendingPhotoJobId = state.getString("photoJob");
+            pendingAttachmentJobId = state.getString("attachmentJob");
+            pendingAttachmentExportJob = state.getString("attachmentExportJob");
             scheduleMode = state.getString("scheduleMode", "Week");
             try { selectedDate = LocalDate.parse(
                 state.getString("scheduleDate", LocalDate.now().toString())); }
@@ -77,6 +105,7 @@ public final class MainActivity extends Activity {
         }
         try {
             store = new WorkspaceStore(this);
+            crm = new CrmWorkspace(store);
             if (state != null) {
                 String page = state.getString("screen", "home");
                 currentCustomerId = state.getString("customerId");
@@ -102,6 +131,8 @@ public final class MainActivity extends Activity {
         state.putString("invoice", pendingInvoice);
         state.putBoolean("backup", pendingBackup);
         state.putString("photoJob", pendingPhotoJobId);
+        state.putString("attachmentJob", pendingAttachmentJobId);
+        state.putString("attachmentExportJob", pendingAttachmentExportJob);
         state.putString("scheduleMode", scheduleMode);
         state.putString("scheduleDate", selectedDate.toString());
         state.putString("screen", currentScreen);
@@ -193,8 +224,9 @@ public final class MainActivity extends Activity {
         input.setHintTextColor(MUTED);
         input.setTextSize(17);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setMinHeight(dp(56));
         parent.addView(input, new LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT, dp(53)));
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         return input;
     }
 
@@ -242,27 +274,32 @@ public final class MainActivity extends Activity {
     }
 
 
-    /** Every top-level area is reachable through explicit labeled controls. */
+    /** Two rows avoid tiny taps and overlapping text at large font scaling. */
     private void navigation() {
-        LinearLayout nav = new LinearLayout(this);
-        nav.setOrientation(LinearLayout.HORIZONTAL);
-        String[] labels = {"Home", "Customers", "Schedule"};
-        Runnable[] actions = {this::home, this::customersScreen, this::scheduleScreen};
-        for (int i = 0; i < labels.length; i++) {
-            final Runnable action = actions[i];
-            Button tab = new Button(this);
-            tab.setText(labels[i]);
-            tab.setAllCaps(false);
-            tab.setTextColor(LIGHT);
-            tab.setTextSize(13);
-            tab.setMinHeight(dp(52));
-            tab.setContentDescription("Go to " + labels[i]);
-            tab.setBackgroundTintList(ColorStateList.valueOf(CARD));
-            nav.addView(tab, new LinearLayout.LayoutParams(0,
-                LinearLayout.LayoutParams.WRAP_CONTENT, 1));
-            tab.setOnClickListener(v -> action.run());
+        String[] labels = {"Home", "Customers", "Schedule", "Business"};
+        Runnable[] actions = {this::home, this::customersScreen,
+            this::scheduleScreen, this::businessScreen};
+        for (int row=0; row<2; row++) {
+            LinearLayout bar=new LinearLayout(this);
+            bar.setOrientation(LinearLayout.HORIZONTAL);
+            content.addView(bar,new LinearLayout.LayoutParams(-1,-2));
+            for (int column=0; column<2; column++) {
+                int index=row*2+column;
+                Button tab=new Button(this);
+                tab.setText(labels[index]);
+                tab.setAllCaps(false);
+                tab.setTextColor(LIGHT);
+                tab.setTextSize(14);
+                tab.setMinHeight(dp(52));
+                tab.setContentDescription("Go to "+labels[index]);
+                tab.setBackgroundTintList(ColorStateList.valueOf(CARD));
+                LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,-2,1);
+                lp.setMargins(dp(3),dp(3),dp(3),dp(3));
+                bar.addView(tab,lp);
+                final Runnable action=actions[index];
+                tab.setOnClickListener(v->action.run());
+            }
         }
-        content.addView(nav);
     }
 
     private void section(String name) {
@@ -270,15 +307,31 @@ public final class MainActivity extends Activity {
         if (Build.VERSION.SDK_INT >= 28) heading.setAccessibilityHeading(true);
     }
 
-    private void customerRow(WorkspaceStore.Customer customer) {
-        button(content, customer.displayName() + "\n" +
-            (customer.phone.isEmpty() ? "Open customer profile and job history" : customer.phone),
-            () -> customer(customer.id));
+    private void customerRow(WorkspaceStore.Customer client) {
+        try {
+            CrmWorkspace.ContactPreferences preference=crm.preferences(client);
+            Button entry=button(content,client.displayName()+"\n"+
+                (client.phone.isEmpty()?"Open customer profile and job history":client.phone),
+                ()->customer(client.id));
+            entry.setBackgroundTintList(ColorStateList.valueOf(
+                Color.parseColor(preference.color)));
+        } catch(Exception e){error(e);}
     }
 
     private void jobRow(WorkspaceStore.Job job) {
-        button(content, job.date + " · " + job.title + "\n" + job.status
-            + " · $" + job.total, () -> job(job.id));
+        try {
+            CrmWorkspace.Appointment appointment=crm.appointment(job);
+            WorkspaceStore.Customer customer=null;
+            for(WorkspaceStore.Customer c:store.customers())
+                if(c.id.equals(job.customerId))customer=c;
+            String person=customer==null?"Unknown customer":customer.displayName();
+            String note=appointment.notes.isEmpty()?"":("\n"+appointment.notes);
+            Button entry=button(content,job.date+" · "+appointment.start+"–"+appointment.end
+                +"\n"+job.title+" · "+person+"\n"+job.status+" · $"+job.total+note,
+                ()->job(job.id));
+            entry.setBackgroundTintList(ColorStateList.valueOf(
+                Color.parseColor(appointment.color)));
+        } catch(Exception e){error(e);}
     }
 
     private void customersScreen() {
@@ -502,6 +555,7 @@ public final class MainActivity extends Activity {
                 try {
                     BackupArchive.revertPreviousSnapshot(workspacePath());
                     store = new WorkspaceStore(this);
+                    crm = new CrmWorkspace(store);
                     home();
                     notice("Previous workspace reopened", "Review records before continuing.");
                 } catch (Exception failure) { error(failure); }
@@ -996,6 +1050,7 @@ public final class MainActivity extends Activity {
                 if (store == null) BackupArchive.restore(workspacePath(), zip);
                 else store.restoreBackup(zip);
                 store = new WorkspaceStore(this);
+                crm = new CrmWorkspace(store);
                 home();
                 notice("Restore completed", "Review all records and photo evidence. "
                     + "The previous workspace is retained until you discard it.");
