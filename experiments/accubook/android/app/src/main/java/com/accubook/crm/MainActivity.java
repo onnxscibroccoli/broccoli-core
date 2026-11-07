@@ -1175,92 +1175,146 @@ public final class MainActivity extends Activity {
     }
 
 
-    private void customerDialog() { customerDialog(null, "", ""); }
+    private void customerDialog() { customerDialog(null,"","",false); }
 
-    private void customerDialog(WorkspaceStore.Customer existing, String selectedName,
+    private void customerDialog(WorkspaceStore.Customer existing,String selectedName,
                                 String selectedPhone) {
-        LinearLayout fields = form();
-        EditText company = field(fields, "Company (optional)", "Business name");
-        EditText contact = field(fields, "Contact name (required)", "First and last name");
-        EditText phone = field(fields, "Phone", "+1...");
-        phone.setInputType(InputType.TYPE_CLASS_PHONE);
-        EditText email = field(fields, "Email", "name@example.com");
-        email.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-        EditText street = field(fields, "Billing street", "123 Main St");
-        EditText city = field(fields, "City", "Boston");
-        EditText state = field(fields, "State", "MA");
-        EditText zip = field(fields, "Postal code", "02108");
-        if (existing == null) {
-            contact.setText(selectedName);
-            phone.setText(selectedPhone);
-        } else {
-            company.setText(existing.company);
-            contact.setText(existing.contact);
-            phone.setText(existing.phone);
-            email.setText(existing.email);
-            street.setText(existing.street);
-            city.setText(existing.city);
-            state.setText(existing.state);
-            zip.setText(existing.zip);
-        }
-        dialog(existing == null ? "New customer" : "Edit customer", fields, () -> {
-            try {
-                WorkspaceStore.Customer saved = existing == null
-                    ? store.addCustomer(company.getText().toString(), contact.getText().toString(),
-                        phone.getText().toString(), email.getText().toString(),
-                        street.getText().toString(), city.getText().toString(),
-                        state.getText().toString(), zip.getText().toString())
-                    : store.updateCustomer(existing.id, company.getText().toString(),
-                        contact.getText().toString(), phone.getText().toString(),
-                        email.getText().toString(), street.getText().toString(),
-                        city.getText().toString(), state.getText().toString(),
-                        zip.getText().toString());
-                customer(saved.id);
-            } catch (IOException exception) {
-                throw new IllegalStateException(exception.getMessage(), exception);
+        customerDialog(existing,selectedName,selectedPhone,false);
+    }
+
+    private void customerDialog(WorkspaceStore.Customer existing,String selectedName,
+                                String selectedPhone,boolean createJobAfter) {
+        try {
+            CrmWorkspace.ContactPreferences prior=existing==null?
+                new CrmWorkspace.ContactPreferences(java.util.Arrays.asList("true","false",
+                    "true",CrmWorkspace.JOB_COLORS[0])):crm.preferences(existing);
+            LinearLayout fields=form();
+            EditText company=field(fields,"Company (optional)","Business name");
+            EditText contact=field(fields,"Contact name (required)","First and last name");
+            EditText phone=field(fields,"Phone","555-0000");
+            phone.setInputType(InputType.TYPE_CLASS_PHONE);
+            EditText email=field(fields,"Email","contact@example.com");
+            email.setInputType(InputType.TYPE_CLASS_TEXT |
+                InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+            EditText street=field(fields,"Billing street","123 Main Street");
+            EditText city=field(fields,"City","Boston");
+            EditText region=field(fields,"State","MA");
+            EditText zip=field(fields,"Postal code","02108");
+            if(existing==null){
+                contact.setText(selectedName);phone.setText(selectedPhone);
+            }else{
+                company.setText(existing.company);contact.setText(existing.contact);
+                phone.setText(existing.phone);email.setText(existing.email);
+                street.setText(existing.street);city.setText(existing.city);
+                region.setText(existing.state);zip.setText(existing.zip);
             }
-        });
+            label(fields,"Preferred contact methods · select any combination",16,LIGHT);
+            CheckBox call=checkbox(fields,"Phone call",prior.call);
+            CheckBox sms=checkbox(fields,"Text message (SMS)",prior.sms);
+            CheckBox mail=checkbox(fields,"Email",prior.email);
+            label(fields,"Preferences are contact choices, not marketing consent.",13,MUTED);
+            String[] tint={prior.color};
+            Button choose=button(fields,"Choose customer color",()->{});
+            choose.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(tint[0])));
+            choose.setOnClickListener(v->chooseJobColor(choose,tint));
+            dialog(existing==null?"Create customer":"Edit customer",fields,()->{
+                try{
+                    WorkspaceStore.Customer saved=existing==null?
+                        store.addCustomer(company.getText().toString(),contact.getText().toString(),
+                            phone.getText().toString(),email.getText().toString(),
+                            street.getText().toString(),city.getText().toString(),
+                            region.getText().toString(),zip.getText().toString()):
+                        store.updateCustomer(existing.id,company.getText().toString(),
+                            contact.getText().toString(),phone.getText().toString(),
+                            email.getText().toString(),street.getText().toString(),
+                            city.getText().toString(),region.getText().toString(),
+                            zip.getText().toString());
+                    crm.savePreferences(saved,call.isChecked(),sms.isChecked(),mail.isChecked(),
+                        tint[0]);
+                    if(createJobAfter)jobDialog(saved);
+                    else customer(saved.id);
+                }catch(IOException e){throw new IllegalStateException(e);}
+            });
+        }catch(Exception e){error(e);}
+    }
+
+    private CheckBox checkbox(LinearLayout parent,String name,boolean checked) {
+        CheckBox box=new CheckBox(this);
+        box.setText(name);
+        box.setTextColor(LIGHT);
+        box.setTextSize(16);
+        box.setChecked(checked);
+        box.setMinHeight(dp(48));
+        parent.addView(box,new LinearLayout.LayoutParams(-1,-2));
+        return box;
     }
 
     private void chooseCustomer() {
         try {
-            List<WorkspaceStore.Customer> customers = store.customers();
-            if (customers.isEmpty()) {
-                notice("Customer required", "Create a customer before scheduling a job.");
-                return;
-            }
-            String[] names = new String[customers.size()];
-            for (int i=0; i<customers.size(); i++) names[i] = customers.get(i).displayName();
-            new AlertDialog.Builder(this).setTitle("Select a customer")
-                .setItems(names, (dialog, index) -> jobDialog(customers.get(index)))
-                .setNegativeButton("Cancel", (d, w) -> {})
-                .show();
-        } catch (Exception exception) { error(exception); }
+            List<WorkspaceStore.Customer> customers=store.customers();
+            String[] items=new String[customers.size()+1];
+            items[0]="+ Create new customer and continue";
+            for(int i=0;i<customers.size();i++)items[i+1]=customers.get(i).displayName();
+            new AlertDialog.Builder(this).setTitle("Who is this job for?")
+                .setItems(items,(dialog,index)->{
+                    if(index==0)customerDialog(null,"","",true);
+                    else jobDialog(customers.get(index-1));
+                }).setNegativeButton("Cancel",(d,w)->{}).show();
+        }catch(Exception e){error(e);}
     }
 
     private void jobDialog(WorkspaceStore.Customer customer) {
-        LinearLayout fields = form();
-        label(fields, "For " + customer.displayName(), 14, MUTED);
-        EditText title = field(fields, "Job title (required)", "Gutter cleaning");
-        EditText street = field(fields, "Site street", "123 Main St");
-        EditText city = field(fields, "Site city", "Boston");
-        EditText state = field(fields, "Site state", "MA");
-        EditText zip = field(fields, "Site postal code", "02108");
-        EditText date = field(fields, "Scheduled date · YYYY-MM-DD", "YYYY-MM-DD");
-        date.setText(LocalDate.now().toString());
-        dialog("New job", fields, () -> {
-            try {
-                WorkspaceStore.Job newJob = store.addJob(
-                    customer, title.getText().toString(), street.getText().toString(),
-                    city.getText().toString(), state.getText().toString(),
-                    zip.getText().toString(), date.getText().toString());
-                job(newJob.id);
-            } catch (IOException exception) {
-                throw new IllegalStateException(exception.getMessage(), exception);
-            }
+        LinearLayout fields=form();
+        label(fields,"Customer: "+customer.displayName(),16,LIGHT);
+        button(fields,"Change customer",this::chooseCustomer);
+        button(fields,"Create another new customer",()->
+            customerDialog(null,"","",true));
+        EditText title=field(fields,"Job title (required)","Gutter cleaning");
+        EditText street=field(fields,"Service street", "123 Main Street");
+        street.setText(customer.street);
+        EditText city=field(fields,"Service city", "Boston");
+        city.setText(customer.city);
+        EditText region=field(fields,"Service state", "MA");
+        region.setText(customer.state);
+        EditText zip=field(fields,"Service ZIP", "02108");
+        zip.setText(customer.zip);
+        label(fields,"Set appointment date and time (calendar or type)",16,LIGHT);
+        EditText date=field(fields,"Date · YYYY-MM-DD","Tap calendar or enter a date");
+        // No default scheduled date: the user explicitly chooses one.
+        button(fields,"Choose date in calendar",()->openDate(date));
+        EditText start=field(fields,"Start · 24-hour HH:mm","09:00");
+        start.setText("09:00");
+        button(fields,"Choose start with clock",()->openClock(start));
+        EditText end=field(fields,"End · 24-hour HH:mm","10:00");
+        end.setText("10:00");
+        button(fields,"Choose end with clock",()->openClock(end));
+        String[] tint={CrmWorkspace.JOB_COLORS[0]};
+        try{tint[0]=crm.preferences(customer).color;}catch(Exception ignored){}
+        Button chooseColor=button(fields,"Choose job color",()->{});
+        chooseColor.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(tint[0])));
+        chooseColor.setOnClickListener(v->chooseJobColor(chooseColor,tint));
+        EditText notes=multiline(fields,"Appointment / daybook note","");
+        dialog("New scheduled job",fields,()->{
+            // Validate all user inputs BEFORE writing a customer-linked job.
+            String iso=date.getText().toString().trim();
+            try{LocalDate.parse(iso);}
+            catch(Exception e){throw new IllegalArgumentException("Choose a date in the calendar or type YYYY-MM-DD");}
+            LocalTime from,to;
+            try{
+                from=LocalTime.parse(start.getText().toString());
+                to=LocalTime.parse(end.getText().toString());
+            }catch(Exception e){throw new IllegalArgumentException("Choose valid start/end times");}
+            if(!to.isAfter(from))throw new IllegalArgumentException("End time must be after start");
+            try{
+                WorkspaceStore.Job created=store.addJob(customer,title.getText().toString(),
+                    street.getText().toString(),city.getText().toString(),
+                    region.getText().toString(),zip.getText().toString(),iso);
+                crm.saveAppointment(created,start.getText().toString(),end.getText().toString(),
+                    tint[0],notes.getText().toString());
+                job(created.id);
+            }catch(IOException e){throw new IllegalStateException(e);}
         });
     }
-
 
     private void job(String id) {
         currentScreen = "job";
