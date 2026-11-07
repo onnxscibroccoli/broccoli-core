@@ -66,6 +66,7 @@ public final class MainActivity extends Activity {
     private static final int ATTACHMENT_EXPORT_REQUEST = 708;
     private static final int BULK_CONTACT_PERMISSION = 709;
     private static final int BULK_PHOTO_REQUEST = 710;
+    private boolean pendingImportAllContacts=false;
     private static final int BACKGROUND = Color.rgb(10, 15, 29);
     private static final int CARD = Color.rgb(25, 36, 56);
     private static final int LIGHT = Color.rgb(233, 240, 252);
@@ -435,8 +436,8 @@ public final class MainActivity extends Activity {
             screen("Customers", "Tap a customer to see contact details and every job");
             navigation();
             button(content, "Add customer", this::customerDialog);
-            button(content, "Import selected phone contact", this::pickContact);
-            button(content, "Import multiple phone contacts", this::requestBulkContacts);
+            button(content, "Open contacts directory (separate from customers)",
+                this::contactsScreen);
             EditText search = field(content, "Find a customer", "Search name, phone, email or city");
             LinearLayout results = new LinearLayout(this);
             results.setOrientation(LinearLayout.VERTICAL);
@@ -1038,27 +1039,89 @@ public final class MainActivity extends Activity {
     }
 
 
-    /** User-approved bulk phone book browsing; never silently import the whole address book. */
+    /** Contacts are independent from customers until explicitly promoted. */
     private static final class PhoneContact {
         final String id,name,phone;
-        PhoneContact(String id,String name,String phone) {
+        PhoneContact(String id,String name,String phone){
             this.id=id;this.name=name;this.phone=phone;
         }
     }
-    private void requestBulkContacts() {
-        new AlertDialog.Builder(this).setTitle("Select contacts to import")
-            .setMessage("Accubook needs temporary access to display phone contacts so "
-                +"you can choose several customers. It does not sync your address book. "
-                +"Only checked contacts are copied into the local workspace.")
+    private void requestBulkContacts(){
+        new AlertDialog.Builder(this).setTitle("Import contacts — not customers")
+            .setMessage("Import your whole phone address book with one tap, or choose "
+                +"individual contacts. Imported people go into Contacts only. "
+                +"No customer records or jobs are created.")
             .setNegativeButton("Cancel",(d,w)->{})
-            .setPositiveButton("Continue",(d,w)->{
-                if(checkSelfPermission(Manifest.permission.READ_CONTACTS)
-                    !=PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},
-                        BULK_CONTACT_PERMISSION);
-                }else showBulkContactPicker();
-            }).show();
+            .setNeutralButton("Choose some",(d,w)->requestPhoneContacts(false))
+            .setPositiveButton("Import all",(d,w)->new AlertDialog.Builder(this)
+                .setTitle("Import all device contacts?")
+                .setMessage("Accubook will copy your visible Android contacts into "
+                    +"its PRIVATE local Contacts directory. Duplicates are skipped. "
+                    +"Nothing is uploaded or converted into customers.")
+                .setNegativeButton("Cancel",(d,w)->{})
+                .setPositiveButton("Import all contacts",(d,w)->requestPhoneContacts(true))
+                .show()).show();
     }
+    private void requestPhoneContacts(boolean all){
+        pendingImportAllContacts=all;
+        if(checkSelfPermission(Manifest.permission.READ_CONTACTS)!=
+            PackageManager.PERMISSION_GRANTED){
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},
+                BULK_CONTACT_PERMISSION);
+        }else if(all)importAllPhoneContacts();
+        else showBulkContactPicker();
+    }
+    /** Single bulk operation; all phone contacts plus contacts without phone numbers. */
+    private void importAllPhoneContacts(){
+        Toast.makeText(this,"Importing contacts locally…",Toast.LENGTH_LONG).show();
+        new Thread(()->{
+            try{
+                android.content.ContentResolver resolver=getContentResolver();
+                Map<String,String> phones=new LinkedHashMap<>(),emails=new LinkedHashMap<>();
+                try(Cursor c=resolver.query(
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                    new String[]{ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
+                        ContactsContract.CommonDataKinds.Phone.NUMBER},null,null,null)){
+                    if(c!=null)while(c.moveToNext()){
+                        String key=c.getString(0),value=c.getString(1);
+                        if(key!=null&&value!=null&&!phones.containsKey(key))
+                            phones.put(key,value);
+                    }
+                }
+                try(Cursor c=resolver.query(
+                    ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+                    new String[]{ContactsContract.CommonDataKinds.Email.CONTACT_ID,
+                        ContactsContract.CommonDataKinds.Email.ADDRESS},null,null,null)){
+                    if(c!=null)while(c.moveToNext()){
+                        String key=c.getString(0),value=c.getString(1);
+                        if(key!=null&&value!=null&&!emails.containsKey(key))
+                            emails.put(key,value);
+                    }
+                }
+                List<ContactDirectory.ImportEntry> entries=new ArrayList<>();
+                try(Cursor c=resolver.query(ContactsContract.Contacts.CONTENT_URI,
+                    new String[]{ContactsContract.Contacts._ID,
+                        ContactsContract.Contacts.DISPLAY_NAME_PRIMARY},
+                    null,null,ContactsContract.Contacts.DISPLAY_NAME_PRIMARY+" ASC")){
+                    if(c==null)throw new IOException("Android contacts unavailable");
+                    while(c.moveToNext()){
+                        String id=c.getString(0),name=c.getString(1);
+                        if(id!=null&&name!=null&&!name.trim().isEmpty())
+                            entries.add(new ContactDirectory.ImportEntry("android:"+id,
+                                name,phones.getOrDefault(id,""),emails.getOrDefault(id,"")));
+                    }
+                }
+                ContactDirectory.Result result=new ContactDirectory(store).importBatch(entries);
+                runOnUiThread(()->{
+                    contactsScreen();
+                    notice("Contact import complete",result.added+
+                        " contacts imported, "+result.skipped+" duplicates skipped. "
+                        +"Contacts are not customers until you promote them.");
+                });
+            }catch(Exception ex){runOnUiThread(()->error(ex));}
+        },"accubook-all-contact-import").start();
+    }
+
     @Override public void onRequestPermissionsResult(int code,String[] permissions,
                                                      int[] grants) {
         super.onRequestPermissionsResult(code,permissions,grants);
@@ -1093,10 +1156,12 @@ public final class MainActivity extends Activity {
             return;
         }
         if(code==BULK_CONTACT_PERMISSION) {
-            if(grants.length>0&&grants[0]==PackageManager.PERMISSION_GRANTED)
-                showBulkContactPicker();
-            else notice("Permission not granted","You can still import one contact "
-                +"using Android's contact picker, without this permission.");
+            if(grants.length>0&&grants[0]==PackageManager.PERMISSION_GRANTED){
+                if(pendingImportAllContacts)importAllPhoneContacts();
+                else showBulkContactPicker();
+            }else notice("Permission not granted","No address book access. You can "
+                +"add a contact manually or use the one-contact Android picker.");
+            pendingImportAllContacts=false;
         }
     }
 
@@ -1244,32 +1309,26 @@ public final class MainActivity extends Activity {
         String digits=number.replaceAll("[^0-9]","");
         return digits.length()>=7?digits:"";
     }
-    private void importSelectedContacts(List<PhoneContact> choices,boolean[] selected) {
-        try {
-            Set<String> phones=new HashSet<>();
-            Set<String> emails=new HashSet<>();
-            for(WorkspaceStore.Customer c:store.customers()){
-                if(!phoneKey(c.phone).isEmpty())phones.add(phoneKey(c.phone));
-                if(!c.email.isEmpty())emails.add(c.email.toLowerCase(Locale.ROOT));
-            }
-            int imported=0,skipped=0;
-            for(int i=0;i<choices.size();i++){
-                if(!selected[i])continue;
-                PhoneContact phone=choices.get(i);
-                String number=phoneKey(phone.phone),mail=emailForContact(phone.id);
-                if((!number.isEmpty()&&phones.contains(number))||
-                    (!mail.isEmpty()&&emails.contains(mail.toLowerCase(Locale.ROOT)))){
-                    skipped++;continue;
+    private void importSelectedContacts(List<PhoneContact> choices,boolean[] selected){
+        Toast.makeText(this,"Copying selected contacts…",Toast.LENGTH_SHORT).show();
+        new Thread(()->{
+            try{
+                List<ContactDirectory.ImportEntry> entries=new ArrayList<>();
+                for(int i=0;i<choices.size();i++){
+                    if(!selected[i])continue;
+                    PhoneContact c=choices.get(i);
+                    entries.add(new ContactDirectory.ImportEntry("android:"+c.id,
+                        c.name,c.phone,emailForContact(c.id)));
                 }
-                store.addCustomer("",phone.name,phone.phone,mail,"","","","");
-                if(!number.isEmpty())phones.add(number);
-                if(!mail.isEmpty())emails.add(mail.toLowerCase(Locale.ROOT));
-                imported++;
-            }
-            customersScreen();
-            notice("Contact import",imported+" customers imported; "+skipped
-                +" duplicates skipped. Imported customer information is editable.");
-        }catch(Exception e){error(e);}
+                ContactDirectory.Result result=new ContactDirectory(store).importBatch(entries);
+                runOnUiThread(()->{
+                    contactsScreen();
+                    notice("Contact import complete",result.added+
+                        " saved as contacts, "+result.skipped+
+                        " duplicates skipped. No customers created.");
+                });
+            }catch(Exception failure){runOnUiThread(()->error(failure));}
+        },"accubook-selected-contact-import").start();
     }
 
     private void pickContact() {
@@ -2226,8 +2285,7 @@ public final class MainActivity extends Activity {
             label(summary,"Recorded receipts: $"+paid.toPlainString(),17,LIGHT);
 
             button(content, "Open daybook schedule", this::scheduleScreen);
-            button(content, "Import one phone contact", this::pickContact);
-            button(content, "Import multiple phone contacts", this::requestBulkContacts);
+            button(content,"Contacts: import all or browse",this::contactsScreen);
             button(content, "Export workspace ZIP backup", () -> {
                 pendingBackup = true;
                 pendingInvoice = null;
@@ -2911,7 +2969,10 @@ public final class MainActivity extends Activity {
                     throw new IOException("Selected contact cannot be read");
                 }
                 // Scoped result URI, no full address book access.
-                customerDialog(null, cursor.getString(0), cursor.getString(1));
+                new ContactDirectory(store).add(cursor.getString(0),
+                    cursor.getString(1),"");
+                contactsScreen();
+                notice("Contact saved","This person is in Contacts, not Customers.");
             } catch (Exception failure) { error(failure); }
             return;
         }
