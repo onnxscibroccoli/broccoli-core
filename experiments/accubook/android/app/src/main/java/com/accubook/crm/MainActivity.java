@@ -1997,10 +1997,11 @@ public final class MainActivity extends Activity {
                 +"workspace and ordinary ZIP backups remain unencrypted. "
                 +"An app lock alone is not encryption at rest.",13,MUTED);
             section("Reporting and accounting export");
-            button(content,"Create selective accounting / QuickBooks CSV ZIP",
+            button(content,"Create quick PDF or custom accounting CSV ZIP",
                 this::chooseReportExport);
-            label(content,"Each category produces a separate CSV with documented columns. "
-                +"QuickBooks may require manual field mapping; this is not a live integration.",
+            label(content,"Choose exact report sections, payment methods and expense "
+                +"categories. PDF summarizes them; the ZIP contains selected CSVs "
+                +"for manual accounting import, not an automatic QuickBooks integration.",
                 14,MUTED);
             section("Workspace safety");
             button(content,"Create encrypted backup (.acbk)",this::chooseEncryptedBackup);
