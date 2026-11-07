@@ -29,6 +29,7 @@ for screenshot-informed competitor analysis, acceptance conditions and unresolve
   focus rail: Overview, Photos, Notes, Materials, Money, Checklist and Schedule;
   optional Time and Route appear only when enabled. Existing photo import,
   status, calendar editor and dumpster reminder actions remain available.
+- **Photo ordering:** stable filenames, new `photo_order.csv`, AtomicFile rewrite, backward-compatible listing, long-press or three-dot Move up/down and Delete, and strict ZIP restore validation. A thumbnail grid with drag is still pending.
 - **Smaller edit controls:** master and per-job custom fields provide a compact
   visible three-dot overflow and equivalent long-press action sheet. Move
   up/down, edit, toggle required and remove actions use stable IDs and
@@ -52,7 +53,7 @@ for screenshot-informed competitor analysis, acceptance conditions and unresolve
   have been added to debug APK CI. Compilation does not certify Android
   device UX, accounting correctness or production readiness.
 
-**Still open:** photo ordering metadata and drag gestures, full color
+**Still open:** photo-grid drag gestures, full color
 consistency, multi-property/recurring work, comprehensive report presets/date
 ranges, packaged brand assets, direct QuickBooks import, full device/TalkBack
 acceptance and data-recovery validation. Existing working features must be
