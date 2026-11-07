@@ -102,6 +102,7 @@ public final class MainActivity extends Activity {
     private static final int SUPPLIER_CSV_REQUEST=861;
     private static final int PICKUP_NOTIFY_PERMISSION=862;
     private static final int SERVICE_SLIP_PDF_REQUEST=863;
+    private static final int BUSINESS_SETUP_REQUEST=864;
     private String pendingPickupJobId;
     private long pendingPickupWhen;
     private boolean lockRequestInProgress=false;
@@ -185,7 +186,7 @@ public final class MainActivity extends Activity {
                 else if("job_template".equals(page))masterJobTemplateScreen();
                     else home();
                 } else home();
-                if(firstRunSetup)startActivity(new Intent(this,BusinessSetupActivity.class));
+                if(firstRunSetup)openBusinessSetup();
             } catch (Exception error) {
                 screen("Workspace unavailable", "Existing records were not reset.");
                 label(content, "Cannot open local storage: " + error.getMessage(), 16, LIGHT);
@@ -193,6 +194,9 @@ public final class MainActivity extends Activity {
                 button(content, "Restore from workspace ZIP backup", this::selectRestore);
                 button(content, "Revert to previous validated workspace", this::revertSnapshot);
             }
+    }
+    private void openBusinessSetup(){
+        startActivityForResult(new Intent(this,BusinessSetupActivity.class),BUSINESS_SETUP_REQUEST);
     }
     private void lockedScreen(){
         // Ensure sensitive customer widgets are not drawn while OS authentication runs.
@@ -2125,7 +2129,7 @@ public final class MainActivity extends Activity {
         screen("Settings","Keep only the tools you use. Hidden features never erase records.");
         navigation();
         button(content,"Quick setup · choose how you work",
-            ()->startActivity(new Intent(this,BusinessSetupActivity.class)));
+            ()->openBusinessSetup());
         section("Modules");
         label(content,"Feature switches change visible tools only, not customer data. "
             +"Turn any module back on to restore its screens and stored records.",15,MUTED);
@@ -2249,7 +2253,7 @@ public final class MainActivity extends Activity {
             button(content,"Choose business logo",this::pickLogo);
             button(content,"Settings · features and accessibility",this::settingsScreen);
             button(content,"Quick setup · tailor Accubook to your business",
-                ()->startActivity(new Intent(this,BusinessSetupActivity.class)));
+                ()->openBusinessSetup());
             if(FeatureSettings.enabled(this,FeatureSettings.CATALOG))
                 button(content,"Manage item and service pricebook",this::catalogScreen);
             button(content,"Customize master job fields / checklists",
@@ -4152,6 +4156,10 @@ public final class MainActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==BUSINESS_SETUP_REQUEST){
+            if(resultCode==RESULT_OK && store!=null)home();
+            return;
+        }
         if(requestCode==UNLOCK_REQUEST){
             lockRequestInProgress=false;
             if(resultCode==RESULT_OK){
