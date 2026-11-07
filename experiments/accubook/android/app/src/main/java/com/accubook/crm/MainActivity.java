@@ -1,131 +1,70 @@
-package com.accubook.crm;
-
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.provider.OpenableColumns;
-import android.content.ClipData;
-import android.widget.CheckBox;
-import android.widget.Toast;
-import android.graphics.Typeface;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Map;
-import java.math.BigDecimal;
-import java.time.LocalTime;
-import java.io.FileInputStream;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.provider.ContactsContract;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.widget.ImageView;
-import android.content.ContentResolver;
-import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.Insets;
-import android.graphics.drawable.GradientDrawable;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.text.InputType;
-import android.view.View;
-import android.view.WindowInsets;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.InputStream;
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.time.DayOfWeek;
-import java.time.temporal.TemporalAdjusters;
-import java.util.List;
-
-/** Offline debug UI. No remote permissions, services or privileged APIs. */
-public final class MainActivity extends Activity {
-    private static final int EXPORT_REQUEST = 702;
-    private static final int CONTACT_REQUEST = 703;
-    private static final int PHOTO_REQUEST = 704;
-    private static final int RESTORE_REQUEST = 705;
-    private static final int ATTACHMENT_REQUEST = 706;
-    private static final int LOGO_REQUEST = 707;
-    private static final int ATTACHMENT_EXPORT_REQUEST = 708;
-    private static final int BULK_CONTACT_PERMISSION = 709;
-    private static final int BULK_PHOTO_REQUEST = 710;
-    private static final int BACKGROUND = Color.rgb(10, 15, 29);
-    private static final int CARD = Color.rgb(25, 36, 56);
-    private static final int LIGHT = Color.rgb(233, 240, 252);
-    private static final int MUTED = Color.rgb(175, 193, 218);
-    private static final int ACCENT = Color.rgb(26, 104, 184);
-
-    private WorkspaceStore store;
-    private CrmWorkspace crm;
-    private String pendingAttachmentJobId;
-    private CrmWorkspace.Attachment pendingAttachmentExport;
-    private String pendingAttachmentExportId;
-    private String pendingAttachmentExportJob;
-    private boolean bulkPhotoSelection;
-    private LinearLayout content;
-    private String currentJobId;
-    private String currentCustomerId;
-    private String pendingPhotoJobId;
-    private String pendingInvoice;
-    private boolean pendingBackup;
-    private LocalDate selectedDate = LocalDate.now();
-    private String scheduleMode = "Week";
-    private String currentScreen = "home";
-
-    @Override
-    protected void onCreate(Bundle state) {
-        super.onCreate(state);
-        getWindow().setStatusBarColor(BACKGROUND);
-        getWindow().setNavigationBarColor(BACKGROUND);
-        if (state != null) {
-            pendingInvoice = state.getString("invoice");
-            pendingBackup = state.getBoolean("backup");
-            pendingPhotoJobId = state.getString("photoJob");
-            pendingAttachmentJobId = state.getString("attachmentJob");
-            pendingAttachmentExportJob = state.getString("attachmentExportJob");
-            pendingAttachmentExportId = state.getString("attachmentExportId");
-            scheduleMode = state.getString("scheduleMode", "Week");
-            try { selectedDate = LocalDate.parse(
-                state.getString("scheduleDate", LocalDate.now().toString())); }
-            catch (Exception ignored) { selectedDate = LocalDate.now(); }
+        if(UnlockActivity.isEnabled(this)){
+            getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE);
+            restoreAfterUnlock=state;
+            lockedScreen();
+            requestUnlock();
+        }else{
+            unlocked=true;
+            initializeWorkspace(state);
         }
-        try {
-            store = new WorkspaceStore(this);
-            crm = new CrmWorkspace(store);
-            if (state != null) {
-                String page = state.getString("screen", "home");
-                currentCustomerId = state.getString("customerId");
-                currentJobId = state.getString("jobId");
-                if ("job".equals(page) && currentJobId != null) job(currentJobId);
-                else if ("customer".equals(page) && currentCustomerId != null)
-                    customer(currentCustomerId);
-                else if ("customers".equals(page)) customersScreen();
-                else if ("schedule".equals(page)) scheduleScreen();
-                else home();
-            } else home();
-        } catch (Exception error) {
-            screen("Workspace unavailable", "Existing records were not reset.");
-            label(content, "Cannot open local storage: " + error.getMessage(), 16, LIGHT);
-            label(content, "Do not uninstall until a valid backup is secured.", 14, MUTED);
-            button(content, "Restore from workspace ZIP backup", this::selectRestore);
-            button(content, "Revert to previous validated workspace", this::revertSnapshot);
+    }
+
+    private void initializeWorkspace(Bundle state) {
+            try {
+                store = new WorkspaceStore(this);
+                crm = new CrmWorkspace(store);
+                if (state != null) {
+                    String page = state.getString("screen", "home");
+                    currentCustomerId = state.getString("customerId");
+                    currentJobId = state.getString("jobId");
+                    if ("job".equals(page) && currentJobId != null) job(currentJobId);
+                    else if ("customer".equals(page) && currentCustomerId != null)
+                        customer(currentCustomerId);
+                    else if ("customers".equals(page)) customersScreen();
+                    else if ("schedule".equals(page)) scheduleScreen();
+                    else home();
+                } else home();
+            } catch (Exception error) {
+                screen("Workspace unavailable", "Existing records were not reset.");
+                label(content, "Cannot open local storage: " + error.getMessage(), 16, LIGHT);
+                label(content, "Do not uninstall until a valid backup is secured.", 14, MUTED);
+                button(content, "Restore from workspace ZIP backup", this::selectRestore);
+                button(content, "Revert to previous validated workspace", this::revertSnapshot);
+            }
+    }
+    private void lockedScreen(){
+        // Ensure sensitive customer widgets are not drawn while OS authentication runs.
+        LinearLayout cover=new LinearLayout(this);
+        cover.setOrientation(LinearLayout.VERTICAL);
+        cover.setPadding(dp(24),dp(35),dp(24),dp(24));
+        cover.setBackgroundColor(BACKGROUND);
+        TextView heading=label(cover,"Accubook locked",27,LIGHT);
+        label(cover,"Unlock with your fingerprint or device PIN.",17,MUTED);
+        button(cover,"Unlock now",this::requestUnlock);
+        setContentView(cover);
+    }
+    private void requestUnlock(){
+        if(lockRequestInProgress)return;
+        if(!UnlockActivity.isEnabled(this)){
+            unlocked=true;
+            initializeWorkspace(restoreAfterUnlock);
+            return;
+        }
+        lockRequestInProgress=true;
+        Intent intent=new Intent(this,UnlockActivity.class);
+        startActivityForResult(intent,UNLOCK_REQUEST);
+    }
+    @Override protected void onStop(){
+        if(UnlockActivity.isEnabled(this))lastHiddenAt=android.os.SystemClock.elapsedRealtime();
+        super.onStop();
+    }
+    @Override protected void onStart(){
+        super.onStart();
+        if(store!=null&&UnlockActivity.isEnabled(this)&&!lockRequestInProgress&&
+            lastHiddenAt>0&&android.os.SystemClock.elapsedRealtime()-lastHiddenAt>30000) {
+            unlocked=false;
+            lockedScreen();
+            requestUnlock();
         }
     }
 
@@ -1731,6 +1670,19 @@ public final class MainActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==UNLOCK_REQUEST){
+            lockRequestInProgress=false;
+            if(resultCode==RESULT_OK){
+                unlocked=true;
+                if(store==null)initializeWorkspace(restoreAfterUnlock);
+                else home();
+                restoreAfterUnlock=null;
+            }else{
+                unlocked=false;
+                lockedScreen();
+            }
+            return;
+        }
         if (requestCode == RESTORE_REQUEST) {
             if (resultCode != RESULT_OK || data == null || data.getData() == null) return;
             try (InputStream zip = getContentResolver().openInputStream(data.getData())) {
