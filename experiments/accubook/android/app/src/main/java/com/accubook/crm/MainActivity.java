@@ -389,23 +389,25 @@ public final class MainActivity extends Activity {
     }
 
 
-    /** Six clear workspaces; two columns preserve 48dp touch targets at large text. */
+    /** Six primary destinations in a compact two-row, three-column grid.
+     * Labels remain textual and every target retains the Android 48dp minimum.
+     */
     private void navigation() {
         String[] labels={"Home","Jobs","Calendar","Contacts","Customers","Business"};
         Runnable[] actions={this::home,this::jobsScreen,this::calendarScreen,
             this::contactsScreen,this::customersScreen,this::businessScreen};
-        for(int row=0;row<3;row++){
+        for(int row=0;row<2;row++){
             LinearLayout bar=new LinearLayout(this);
             bar.setOrientation(LinearLayout.HORIZONTAL);
             content.addView(bar,new LinearLayout.LayoutParams(-1,-2));
-            for(int col=0;col<2;col++){
-                int index=row*2+col;
+            for(int col=0;col<3;col++){
+                int index=row*3+col;
                 Button tab=new Button(this);
                 tab.setText(labels[index]);
                 tab.setAllCaps(false);
-                tab.setTextSize(15);
+                tab.setTextSize(14);
                 tab.setTextColor(LIGHT);
-                tab.setMinHeight(dp(52));
+                tab.setMinHeight(dp(48));
                 tab.setBackground(box(CARD));
                 tab.setContentDescription("Open "+labels[index]+" workspace");
                 LinearLayout.LayoutParams cell=new LinearLayout.LayoutParams(0,-2,1);
