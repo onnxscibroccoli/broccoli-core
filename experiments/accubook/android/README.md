@@ -1,5 +1,16 @@
 # Accubook — offline-first field-service CRM (engineering preview)
 
+> **v0.5 engineering note (2026-11-07):** Report exports are opt-in and
+> format-specific: human-readable PDF or editable CSV tables packaged in ZIP.
+> The [field-UX comparison and selective reporting privacy review](UX_COMPARATIVE_REVIEW_2026-11-07.md)
+> records current source-level changes, official competitor evidence and
+> outstanding device tests. Disabled Cash/Cash App ledgers now contribute
+> nothing to derived job receipt/balance totals. The standalone
+> `ReportPrivacySmoke` JVM regression validates this aggregation invariant;
+> Android APK compilation and end-to-end export tests are separate release
+> gates. Business-logo leaf and launcher-icon artwork remain separate assets;
+> neither replaces a user's own business-brand customization.
+
 > **Security and operations increment:** Read
 > [SECURITY_ACCOUNTING_INTEGRATION.md](SECURITY_ACCOUNTING_INTEGRATION.md)
 > for verified versus unverified features, supported calendar sharing, supplier
