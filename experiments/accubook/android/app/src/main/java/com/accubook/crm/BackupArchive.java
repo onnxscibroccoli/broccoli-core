@@ -119,7 +119,8 @@ public final class BackupArchive {
 
     private static boolean allowedFile(String name) {
         if (name.matches("master_data/(customers|jobs|catalog|expenses|pricebook|calendar_links|contacts|service_intervals)\\.csv")) return true;
-        if(name.equals("templates/branding.csv")||name.equals("templates/job_fields.csv")
+        if(name.equals("templates/branding.csv")||name.equals("templates/business_setup.csv")
+            ||name.equals("templates/job_fields.csv")
             ||name.equals("templates/default_memo.csv")
             ||name.equals("templates/logo.bin"))return true;
         if (name.matches("templates/[A-Za-z0-9_./-]{1,220}\\.(html|txt|md|json)"))
@@ -335,6 +336,23 @@ public final class BackupArchive {
         List<List<String>> jobs = rows(root, "master_data/jobs.csv", JOB);
         rows(root, "master_data/catalog.csv", CATALOG);
         rows(root, "master_data/expenses.csv", EXPENSE);
+        // Portable setup preferences are optional for legacy workspaces.
+        // Reject malformed or edited switches before activating a ZIP restore.
+        File businessSetup=new File(root,"templates/business_setup.csv");
+        if(businessSetup.isFile()){
+            if(businessSetup.length()>4096)throw new IOException("Business setup too large");
+            byte[] setupBytes=Files.readAllBytes(businessSetup.toPath());
+            String setupText;
+            try{
+                setupText=StandardCharsets.UTF_8.newDecoder()
+                    .onMalformedInput(CodingErrorAction.REPORT)
+                    .onUnmappableCharacter(CodingErrorAction.REPORT)
+                    .decode(java.nio.ByteBuffer.wrap(setupBytes)).toString();
+            }catch(java.nio.charset.CharacterCodingException error){
+                throw new IOException("Setup data must be valid UTF-8",error);
+            }
+            BusinessSetupProfile.fromCsv(setupText);
+        }
         Map<String, String> folders = new HashMap<>();
         for (int i = 1; i < clients.size(); i++) {
             List<String> r = clients.get(i);

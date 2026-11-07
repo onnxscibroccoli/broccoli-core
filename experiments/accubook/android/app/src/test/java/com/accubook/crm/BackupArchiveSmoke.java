@@ -86,6 +86,10 @@ public final class BackupArchiveSmoke {
                 new String[]{"BusinessName","Address","Phone","Email","AccentColor","Terms","Footer","LogoMimeType"},
                 row("Demo LLC","Boston, MA","555-0100","demo@example.invalid",
                     "#165DAB","Pay on delivery","Thank you",""));
+            Files.writeString(new File(root,"templates/business_setup.csv").toPath(),
+                new BusinessSetupProfile("COMPLETE","SOLO","Gutters","ABC Supply",
+                    true,true,false,true,false,false,false,true).toCsv(),
+                StandardCharsets.UTF_8);
             table(root,"master_data/pricebook.csv",
                 new String[]{"CatalogID","Category","Name","Unit","BaseCost",
                     "MarkupPercent","Supplier","UpdatedUTC"},
@@ -237,6 +241,11 @@ public final class BackupArchiveSmoke {
             .contains("250.00"),"Catalog pricing not restored");
         check(Files.readString(new File(live,"master_data/calendar_links.csv").toPath())
             .contains("456"),"Calendar mapping not restored");
+        BusinessSetupProfile recovered=BusinessSetupProfile.fromCsv(
+            Files.readString(new File(live,"templates/business_setup.csv").toPath()));
+        check(recovered.status.equals("COMPLETE")&&recovered.recurring
+            &&recovered.vendors.equals("ABC Supply"),
+            "Portable business setup lost in restore");
         check(Files.readString(new File(live,"master_data/service_intervals.csv").toPath())
             .contains("58812"),"Service mileage interval lost in backup");
 
@@ -273,6 +282,16 @@ public final class BackupArchiveSmoke {
         catch(IOException expected){refusedDue=true;}
         check(refusedDue,"Altered due date accepted in backup");
 
+        File badSetup=new File(tmp,"tampered-business-setup");
+        workspace(badSetup,true);
+        File setupCsv=new File(badSetup,"templates/business_setup.csv");
+        Files.writeString(setupCsv.toPath(),
+            Files.readString(setupCsv.toPath()).replace("COMPLETE","INVALID"),
+            StandardCharsets.UTF_8);
+        boolean rejectedSetup=false;
+        try{BackupArchive.validate(badSetup);}
+        catch(IOException expected){rejectedSetup=true;}
+        check(rejectedSetup,"Malformed restored business setup was accepted");
         File badPhotos=new File(tmp,"bad-photo-order");
         workspace(badPhotos,true);
         table(badPhotos,jdir+"/photo_order.csv",

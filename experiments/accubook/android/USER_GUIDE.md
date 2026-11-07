@@ -1,5 +1,24 @@
 # Accubook — Point, tap, and get the job done
 
+## Make Accubook fit your work (development preview)
+
+When you first open an empty workspace, the **Make Accubook yours** screen
+asks a few simple questions. Choose **Just me** or **I assign work to a crew**,
+then check the tools you want. Type a trade or suppliers only if useful.
+Tap **Save setup**. To get straight to work, tap **Skip setup**.
+
+To change it later: **Business → Quick setup** or **Settings → Quick setup**.
+To change just one module: **Settings → Modules**. Hiding a tool never
+deletes your customers or jobs. Your settings are stored in a local CSV file
+after setup and go with your workspace backup. Delivery/dumpster answers are
+preferences only: edit the actual task checkboxes under **Customize master job
+fields**, then adjust any single job as needed. Supplier ordering is not
+connected; neither are remote crews or automatic customer messaging.
+
+If setup cannot be saved, do not uninstall. Check local storage and use the
+existing Workspace safety export/recovery actions.
+
+
 **State:** Engineering preview, November 7, 2026. This guide separates working features from planned ones. The active workspace is on your device. Back up before uninstalling, restoring, or testing updates.
 
 ## Only three things to remember

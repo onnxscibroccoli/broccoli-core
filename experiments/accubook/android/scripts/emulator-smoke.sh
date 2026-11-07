@@ -25,6 +25,21 @@ for attempt in range(28):
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
     xml = subprocess.check_output(['adb','exec-out','cat','/sdcard/accubook-window.xml'])
     root = ET.fromstring(xml)
+    # Hosted emulator sometimes shows an ANR for its *launcher* Quickstep
+    # during first boot. Do not hide an ANR from Accubook itself.
+    if any("Quickstep isn't responding" in node.attrib.get('text','')
+           for node in root.iter('node')):
+        waits=[node for node in root.iter('node')
+               if node.attrib.get('text','')=='Wait']
+        if waits:
+            box=re.findall(r'\\[(\\d+),(\\d+)\\]',waits[0].attrib.get('bounds',''))
+            if len(box)==2:
+                x=(int(box[0][0])+int(box[1][0]))//2
+                y=(int(box[0][1])+int(box[1][1]))//2
+                print('ANDROID_EMULATOR_LAUNCHER_RECOVERY: Wait Quickstep',x,y)
+                subprocess.run(['adb','shell','input','tap',str(x),str(y)],check=True)
+                time.sleep(3)
+                continue
     target = None
     for element in root.iter('node'):
         if label.lower() in (element.attrib.get('text','') + ' ' + element.attrib.get('content-desc','')).lower():
@@ -124,6 +139,9 @@ for attempt in range(11):
 raise SystemExit('Missing job tab: '+label)
 PY
 }
+# Fresh empty workspaces now display the offline setup before the home screen.
+# Exercise Save, then continue the existing end-to-end job workflow.
+tap_node 'Save setup'
 assert_visible 'Accubook'
 tap_node 'Try fictional sample job'
 tap_node 'Create sample'
@@ -148,7 +166,11 @@ adb shell am force-stop com.accubook.crm
 adb shell am start -n com.accubook.crm/.MainActivity
 sleep 2
 assert_visible 'In Progress'
-tap_node 'Open Home workspace'
+# Restart lands on Home; the previous long job UI may have kept its scroll
+# position. Seek top before looking for the global search button.
+for n in 1 2 3 4 5 6 7 8; do
+  adb shell input swipe 500 440 500 1520 160
+done
 tap_node 'Find anything'
 assert_visible 'Search this device'
 echo "ACCUBOOK_EMULATOR_SMOKE_PASS: launch/demo/job/changes/notes/restart/local-lookup"

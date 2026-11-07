@@ -3,6 +3,7 @@ package com.accubook.crm;
 import android.content.Context;
 import android.content.SharedPreferences;
 import java.util.Arrays;
+import java.io.IOException;
 
 /**
  * Presentation-only feature switches. Disabling a feature hides related UI
@@ -38,11 +39,27 @@ public final class FeatureSettings {
     }
     public static boolean enabled(Context context,String key){
         validate(key);
+        try{
+            BusinessSetupProfile profile=BusinessSetupStore.load(context);
+            if(profile!=null)return profile.enabled(key);
+        }catch(IOException error){
+            throw new IllegalStateException("Business setup could not be read; restore a backup",error);
+        }
+        // Legacy users keep their existing module choices until setup is saved.
         return context.getSharedPreferences(PREFS,Context.MODE_PRIVATE)
             .getBoolean(key,defaultEnabled(key));
     }
     public static void set(Context context,String key,boolean enabled){
         validate(key);
+        try{
+            BusinessSetupProfile profile=BusinessSetupStore.load(context);
+            if(profile!=null){
+                BusinessSetupStore.save(context,profile.withFeature(key,enabled));
+                return;
+            }
+        }catch(IOException error){
+            throw new IllegalStateException("Business module setting could not be saved",error);
+        }
         SharedPreferences p=context.getSharedPreferences(PREFS,Context.MODE_PRIVATE);
         if(!p.edit().putBoolean(key,enabled).commit())
             throw new IllegalStateException("Feature setting could not be saved");
