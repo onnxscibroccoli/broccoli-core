@@ -332,7 +332,9 @@ public final class CrmWorkspace {
     private File brandingFile() throws IOException {return global("templates/branding.csv");}
     public synchronized Branding branding() throws IOException {
         List<List<String>> rows=table(brandingFile(),BRANDING);
-        if(rows.size()==1)return new Branding(row("My Business","","","","#165DAB",
+        if(rows.size()==1)return new Branding(row("Jules Gutter Cleaning",
+            "15 Ward Street, Hingham, MA 02043","267-667-2321",
+            "julesguttercleaning@gmail.com","#165DAB",
             "Payment due on receipt.","Thank you for your business.",""));
         return new Branding(rows.get(1));
     }
