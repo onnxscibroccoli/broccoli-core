@@ -1,5 +1,21 @@
 # Accubook modular architecture and migration contract
 
+## Incremental migration implementation
+
+`LegacyContactsCsv` is the first standalone parser module. It has strict
+size/row/column limits and deterministic SHA-256-derived source identifiers;
+`LegacyContactsImportActivity` owns the visual mapping and approval; existing
+`ContactDirectory.importBatch` provides the single atomic contact write.
+No customer creation, job mutation, credential collection or network calls.
+The pure-JVM smoke test exercises ambiguous mapping and malformed files.
+
+This is **only contact CSV import**, not a generalized cross-CRM migration
+or a safe bulk update transaction spanning customers/jobs/invoices.
+Extending the migration architecture must preserve staging, mapping review,
+audit summaries, cancellation/rollback and per-adapter fixture validation
+before any new entity type is included.
+
+
 **Maturity:** architecture decisions plus one implemented vertical slice
 (first-run questionnaire). **Last reviewed:** 2026-11-07. **Scope:**
 `experiments/accubook/android`, not all of Broccoli Core.
