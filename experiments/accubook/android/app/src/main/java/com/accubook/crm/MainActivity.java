@@ -3123,35 +3123,96 @@ public final class MainActivity extends Activity {
             }catch(IOException e){throw new IllegalStateException(e);}
         });
     }
+    /** Compact visible overflow, with the same actions available on long-press. */
+    private void fieldMoreButton(LinearLayout parent,String label,Runnable action){
+        Button more=new Button(this);
+        more.setText("\u22ee");
+        more.setTextSize(24);
+        more.setAllCaps(false);
+        more.setContentDescription("Actions for "+label);
+        more.setTextColor(LIGHT);
+        more.setBackground(box(CARD));
+        more.setMinWidth(dp(48));
+        more.setMinHeight(dp(48));
+        LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(dp(52),dp(52));
+        parent.addView(more,params);
+        more.setOnClickListener(v->action.run());
+    }
+    private void fieldActionMenu(JobTemplates.Field selected,WorkspaceStore.Job job,
+                                 int index,int length){
+        boolean master=job==null;
+        List<String> options=new ArrayList<>();
+        options.add("Edit field");
+        if(index>0)options.add("Move up");
+        if(index<length-1)options.add("Move down");
+        options.add(selected.required?"Make optional":"Set required");
+        options.add("Remove");
+        new AlertDialog.Builder(this).setTitle(selected.label)
+            .setItems(options.toArray(new String[0]),(dialog,which)->{
+                String choice=options.get(which);
+                try{
+                    JobTemplates forms=new JobTemplates(store);
+                    if(choice.equals("Edit field")){
+                        if(master)editMasterField(selected);else editJobField(job,selected);
+                        return;
+                    }
+                    if(choice.equals("Remove")){
+                        new AlertDialog.Builder(this).setTitle("Remove field?")
+                            .setMessage(master?"Remove from future job templates? Existing "
+                                +"job values will remain.":"Remove from this job only? "
+                                +"Master template and other jobs will remain unchanged.")
+                            .setNegativeButton("Cancel",(d,w)->{})
+                            .setPositiveButton("Remove",(d,w)->{
+                                try{
+                                    if(master)forms.removeMaster(selected.id);
+                                    else forms.removeJob(job,selected.id);
+                                    if(master)masterJobTemplateScreen();else job(job.id);
+                                }catch(Exception error){error(error);}
+                            }).show();
+                        return;
+                    }
+                    if(choice.equals("Move up")||choice.equals("Move down")){
+                        int next=index+(choice.equals("Move up")?-1:1);
+                        if(master)forms.moveMaster(selected.id,next);
+                        else forms.moveJob(job,selected.id,next);
+                    }else{
+                        if(master)forms.saveMaster(selected.id,selected.label,selected.kind,
+                            !selected.required,selected.value);
+                        else forms.saveJob(job,selected.id,selected.label,selected.kind,
+                            !selected.required,selected.value);
+                    }
+                    if(master)masterJobTemplateScreen();else job(job.id);
+                }catch(Exception error){error(error);}
+            }).setNegativeButton("Cancel",(d,w)->{}).show();
+    }
     private void masterJobTemplateScreen(){
         currentScreen="job_template";currentCustomerId=null;currentJobId=null;
         try{
             screen("Master job template",
-                "Your workflow, your fields · new jobs inherit these editable defaults");
+                "Reorder and customize fields for new jobs without changing existing work");
             navigation();
-            label(content,"Add any trade-specific checklist item, text, date, or number. "
-                +"Mark a field required if a job cannot be completed without it. "
-                +"Editing the master changes future jobs only; existing job entries "
-                +"are protected from unwanted overwrites.",15,MUTED);
+            label(content,"Long-press a field or use its three-dot menu to edit, reorder, "
+                +"set required or remove it. Existing job data is never overwritten.",
+                15,MUTED);
             button(content,"+ Add template field",()->editMasterField(null));
-            for(JobTemplates.Field f:new JobTemplates(store).master()){
+            List<JobTemplates.Field> fields=new JobTemplates(store).master();
+            for(int i=0;i<fields.size();i++){
+                JobTemplates.Field field=fields.get(i);
+                final int position=i;
                 LinearLayout entry=card();
-                label(entry,f.label,18,LIGHT);
-                label(entry,f.kind+" · "+(f.required?"Required":"Optional")+
-                    (f.value.isEmpty()?"":" · Default: "+f.value),14,MUTED);
-                button(entry,"Rename / edit "+f.label,()->editMasterField(f));
-                button(entry,"− Remove from future job templates",()->
-                    new AlertDialog.Builder(this).setTitle("Remove template field?")
-                        .setMessage(f.label+" will be excluded from future jobs. "
-                            +"Existing job records are not erased.")
-                        .setNegativeButton("Keep",(d,w)->{})
-                        .setPositiveButton("Remove",(d,w)->{
-                            try{new JobTemplates(store).removeMaster(f.id);
-                                masterJobTemplateScreen();}
-                            catch(Exception e){error(e);}
-                        }).show());
+                LinearLayout header=new LinearLayout(this);
+                header.setOrientation(LinearLayout.HORIZONTAL);
+                entry.addView(header,new LinearLayout.LayoutParams(-1,-2));
+                TextView title=label(header,field.label,18,LIGHT);
+                title.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));
+                Runnable actions=()->fieldActionMenu(field,null,position,fields.size());
+                fieldMoreButton(header,field.label,actions);
+                label(entry,field.kind+" · "+(field.required?"Required":"Optional")+
+                    (field.value.isEmpty()?"":" · Default: "+field.value),14,MUTED);
+                entry.setOnLongClickListener(v->{actions.run();return true;});
+                title.setOnLongClickListener(v->{actions.run();return true;});
             }
-        }catch(Exception e){error(e);}
+        }catch(Exception error){error(error);}
     }
     /** Type-specific editor: no user must enter true/false for a checkbox. */
     private static String customFieldValue(String kind,CheckBox checked,
@@ -3219,40 +3280,42 @@ public final class MainActivity extends Activity {
     }
 
     private void jobCustomFields(WorkspaceStore.Job work)throws IOException{
-        section("Your customizable job checklist");
-        button(content,"+ Add any field or checklist item",()->editJobField(work,null));
-        button(content,"Edit master job template (future jobs)",this::masterJobTemplateScreen);
+        section("Custom checklist and fields");
+        button(content,"+ Add a field or checklist item",()->editJobField(work,null));
+        button(content,"Edit master template (future jobs)",this::masterJobTemplateScreen);
         List<JobTemplates.Field> fields=new JobTemplates(store).forJob(work);
-        for(JobTemplates.Field f:fields){
+        for(int i=0;i<fields.size();i++){
+            JobTemplates.Field f=fields.get(i);
+            final int position=i;
             LinearLayout row=card();
+            LinearLayout header=new LinearLayout(this);
+            header.setOrientation(LinearLayout.HORIZONTAL);
+            row.addView(header,new LinearLayout.LayoutParams(-1,-2));
+            Runnable actions=()->fieldActionMenu(f,work,position,fields.size());
             if(f.kind.equals(JobTemplates.CHECK)){
-                CheckBox check=checkbox(row,f.label+
+                CheckBox check=checkbox(header,f.label+
                     (f.required?" · Required":""),f.checked());
+                check.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));
                 check.setOnClickListener(v->{
-                    boolean newValue=check.isChecked();
+                    boolean next=check.isChecked();
                     try{
                         new JobTemplates(store).saveJob(work,f.id,f.label,f.kind,
-                            f.required,Boolean.toString(newValue));
+                            f.required,Boolean.toString(next));
                         Toast.makeText(this,"Saved "+f.label,Toast.LENGTH_SHORT).show();
-                    }catch(Exception e){
-                        check.setChecked(!newValue);
-                        error(e);
+                    }catch(Exception error){
+                        check.setChecked(!next);
+                        error(error);
                     }
                 });
             }else{
-                label(row,f.label+(f.required?" · Required":""),17,LIGHT);
+                TextView title=label(header,f.label+
+                    (f.required?" · Required":""),17,LIGHT);
+                title.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));
+                title.setOnLongClickListener(v->{actions.run();return true;});
                 label(row,f.value.isEmpty()?"Not entered":f.value,15,MUTED);
             }
-            button(row,"Edit / rename "+f.label,()->editJobField(work,f));
-            button(row,"− Remove "+f.label+" from this job",()->
-                new AlertDialog.Builder(this).setTitle("Remove job field?")
-                    .setMessage("Remove '"+f.label+"' from THIS job only? "
-                        +"Your master template and other jobs remain unchanged.")
-                    .setNegativeButton("Keep",(d,w)->{})
-                    .setPositiveButton("Remove",(d,w)->{
-                        try{new JobTemplates(store).removeJob(work,f.id);job(work.id);}
-                        catch(Exception e){error(e);}
-                    }).show());
+            fieldMoreButton(header,f.label,actions);
+            row.setOnLongClickListener(v->{actions.run();return true;});
         }
         List<String> incomplete=new JobTemplates(store).missingRequired(work);
         if(!incomplete.isEmpty())
