@@ -160,6 +160,10 @@ public final class MainActivity extends Activity {
             try {
                 store = new WorkspaceStore(this);
                 crm = new CrmWorkspace(store);
+                // Only an empty, not-yet-configured workspace gets the initial setup.
+                // Existing customer/job records are never modified during onboarding.
+                boolean firstRunSetup=state==null && !BusinessSetupStore.exists(this)
+                    && store.customers().isEmpty() && store.jobs().isEmpty();
                 if (state != null) {
                     String page = state.getString("screen", "home");
                     currentCustomerId = state.getString("customerId");
@@ -181,6 +185,7 @@ public final class MainActivity extends Activity {
                 else if("job_template".equals(page))masterJobTemplateScreen();
                     else home();
                 } else home();
+                if(firstRunSetup)startActivity(new Intent(this,BusinessSetupActivity.class));
             } catch (Exception error) {
                 screen("Workspace unavailable", "Existing records were not reset.");
                 label(content, "Cannot open local storage: " + error.getMessage(), 16, LIGHT);
@@ -2119,6 +2124,8 @@ public final class MainActivity extends Activity {
         currentJobId=null;
         screen("Settings","Keep only the tools you use. Hidden features never erase records.");
         navigation();
+        button(content,"Quick setup · choose how you work",
+            ()->startActivity(new Intent(this,BusinessSetupActivity.class)));
         section("Modules");
         label(content,"Feature switches change visible tools only, not customer data. "
             +"Turn any module back on to restore its screens and stored records.",15,MUTED);
@@ -2241,6 +2248,8 @@ public final class MainActivity extends Activity {
                 }).show());
             button(content,"Choose business logo",this::pickLogo);
             button(content,"Settings · features and accessibility",this::settingsScreen);
+            button(content,"Quick setup · tailor Accubook to your business",
+                ()->startActivity(new Intent(this,BusinessSetupActivity.class)));
             if(FeatureSettings.enabled(this,FeatureSettings.CATALOG))
                 button(content,"Manage item and service pricebook",this::catalogScreen);
             button(content,"Customize master job fields / checklists",
