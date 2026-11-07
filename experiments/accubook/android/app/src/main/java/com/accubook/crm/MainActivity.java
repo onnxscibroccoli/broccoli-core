@@ -80,6 +80,7 @@ public final class MainActivity extends Activity {
     private String pendingAttachmentExportId;
     private String pendingAttachmentExportJob;
     private boolean bulkPhotoSelection;
+    private int currentPhotoPage=0;
     private LinearLayout content;
     private String currentJobId;
     private String currentCustomerId;
@@ -89,6 +90,8 @@ public final class MainActivity extends Activity {
     private LocalDate selectedDate = LocalDate.now();
     private String scheduleMode = "Week";
     private String currentScreen = "home";
+    private String currentJobSection = "overview";
+    private int lookupRequestSerial=0;
     private static final int UNLOCK_REQUEST=853;
     private static final int ROUTE_LOCATION_PERMISSION=855;
     private static final int ROUTE_EXPORT_REQUEST=856;
@@ -98,6 +101,7 @@ public final class MainActivity extends Activity {
     private static final int CALENDAR_PERMISSIONS=860;
     private static final int SUPPLIER_CSV_REQUEST=861;
     private static final int PICKUP_NOTIFY_PERMISSION=862;
+    private static final int SERVICE_SLIP_PDF_REQUEST=863;
     private String pendingPickupJobId;
     private long pendingPickupWhen;
     private boolean lockRequestInProgress=false;
@@ -107,6 +111,9 @@ public final class MainActivity extends Activity {
     private String routeJobId;
     private String pendingRouteExportId;
     private boolean[] pendingReportSections;
+    private String[] pendingReportMethods;
+    private String[] pendingReportCategories;
+    private boolean pendingReportPdf;
     private android.location.LocationManager locationManager;
     private android.location.LocationListener routeListener;
     private char[] pendingBackupPassword;
@@ -125,6 +132,11 @@ public final class MainActivity extends Activity {
             pendingAttachmentExportJob = state.getString("attachmentExportJob");
             pendingAttachmentExportId = state.getString("attachmentExportId");
             pendingReportSections=state.getBooleanArray("reportSections");
+            pendingReportMethods=state.getStringArray("reportMethods");
+            pendingReportCategories=state.getStringArray("reportCategories");
+            pendingReportPdf=state.getBoolean("reportPdf",false);
+            currentJobSection=state.getString("jobSection","overview");
+            currentPhotoPage=state.getInt("photoPage",0);
             pendingRouteExportId=state.getString("routeExportId");
             pendingPickupJobId=state.getString("pickupJobId");
             pendingPickupWhen=state.getLong("pickupWhen",0);
@@ -159,6 +171,10 @@ public final class MainActivity extends Activity {
                     else if ("schedule".equals(page)) scheduleScreen();
                 else if("calendar".equals(page))calendarScreen();
                 else if("catalog".equals(page))catalogScreen();
+                else if("settings".equals(page))settingsScreen();
+                else if("help".equals(page))helpScreen();
+                else if("lookup".equals(page))universalSearchScreen();
+                else if("service_due".equals(page))serviceDueScreen();
                 else if("contacts".equals(page))contactsScreen();
                 else if("contact".equals(page))contactsScreen();
                 else if("jobs".equals(page))jobsScreen();
@@ -220,6 +236,11 @@ public final class MainActivity extends Activity {
         state.putString("attachmentExportJob", pendingAttachmentExportJob);
         state.putString("attachmentExportId", pendingAttachmentExportId);
         state.putBooleanArray("reportSections",pendingReportSections);
+        state.putStringArray("reportMethods",pendingReportMethods);
+        state.putStringArray("reportCategories",pendingReportCategories);
+        state.putBoolean("reportPdf",pendingReportPdf);
+        state.putString("jobSection",currentJobSection);
+        state.putInt("photoPage",currentPhotoPage);
         state.putString("routeExportId",pendingRouteExportId);
         state.putString("pickupJobId",pendingPickupJobId);
         state.putLong("pickupWhen",pendingPickupWhen);
@@ -472,6 +493,200 @@ public final class MainActivity extends Activity {
             });
             render.run();
         }catch(Exception e){error(e);}
+    }
+
+
+    /**
+     * A single explicit offline lookup avoids per-keystroke disk scans and
+     * does not create searchable copies of confidential customer information.
+     */
+    private void universalSearchScreen(){
+        currentScreen="lookup";currentJobId=null;currentCustomerId=null;
+        screen("Find anything","One search across customers, contacts, jobs, work and documents.");
+        navigation();
+        EditText query=field(content,"What are you looking for?",
+            "Name, phone, address, PO, invoice, VIN, material...");
+        query.setSingleLine(true);
+        query.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH);
+        LinearLayout results=new LinearLayout(this);
+        results.setOrientation(LinearLayout.VERTICAL);
+        Button search=button(content,"Search this device",()->runUniversalLookup(
+            query.getText().toString(),results));
+        query.setOnEditorActionListener((v,action,event)->{
+            if(action==android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH){
+                runUniversalLookup(query.getText().toString(),results);
+                return true;
+            }
+            return false;
+        });
+        content.addView(results,new LinearLayout.LayoutParams(-1,-2));
+        label(results,"No account, internet or special keyword required. "+
+            "Your search is never sent to a server.",14,MUTED);
+    }
+
+    private void runUniversalLookup(String query,LinearLayout results){
+        if(SearchTerms.normalize(query).length()<2){
+            results.removeAllViews();
+            label(results,"Type at least two letters or digits, then tap Search.",15,MUTED);
+            return;
+        }
+        final int request=++lookupRequestSerial;
+        results.removeAllViews();
+        label(results,"Searching this device…",16,MUTED);
+        // No customer data, queries, or matched notes are put into application logs.
+        new Thread(()->{
+            try{
+                List<UniversalLookup.Match> found=new UniversalLookup(this,store,crm)
+                    .search(query);
+                runOnUiThread(()->{
+                    if(!"lookup".equals(currentScreen)||request!=lookupRequestSerial)return;
+                    results.removeAllViews();
+                    if(found.isEmpty()){
+                        label(results,"Nothing found. Try a name, part of an address or "+
+                            "a shorter word.",16,MUTED);
+                        return;
+                    }
+                    label(results,found.size()+(found.size()==80?" or more":"")+
+                        " results · best matches first",14,MUTED);
+                    for(UniversalLookup.Match item:found){
+                        button(results,item.title+"\n"+item.detail,()->{
+                            switch(item.kind){
+                                case "CUSTOMER": customer(item.id); break;
+                                case "CONTACT": contactDetails(item.id); break;
+                                case "JOB": job(item.id); break;
+                                case "CATALOG": catalogScreen(); break;
+                                default: notice("Search result","This record cannot be opened.");
+                            }
+                        });
+                    }
+                    if(found.size()==80)label(results,"Showing the first 80 matches. "+
+                        "Use another word to narrow the results.",14,MUTED);
+                });
+            }catch(Exception failure){
+                runOnUiThread(()->{
+                    if(!"lookup".equals(currentScreen)||request!=lookupRequestSerial)return;
+                    results.removeAllViews();
+                    error(failure);
+                    label(results,"Search could not finish. No workspace records were "+
+                        "deleted or reset.",15,MUTED);
+                });
+            }
+        },"accubook-local-lookup").start();
+    }
+
+
+    /** Optional repeat-service reminders; never auto-create another job or message a customer. */
+    private void serviceDueScreen(){
+        currentScreen="service_due";currentJobId=null;currentCustomerId=null;
+        try{
+            screen("Next services due","A simple local call-back list. You choose who to contact.");
+            navigation();
+            if(!FeatureSettings.enabled(this,FeatureSettings.RECURRING)){
+                label(content,"Turn on Repeat-service due dates in Business → Settings first.",
+                    16,MUTED);
+                button(content,"Open Settings",this::settingsScreen);
+                return;
+            }
+            List<RecurringServices.Rule> list=new RecurringServices(store).all();
+            list.sort((a,b)->{
+                String ad=a.dueDate.isEmpty()?"9999-12-31":a.dueDate;
+                String bd=b.dueDate.isEmpty()?"9999-12-31":b.dueDate;
+                return ad.compareTo(bd);
+            });
+            int due=0,active=0;
+            for(RecurringServices.Rule rule:list){
+                if(rule.active)active++;
+                if(rule.dueToday())due++;
+            }
+            label(content,due+" due or overdue by date · "+active+" active reminders",
+                19,LIGHT);
+            if(due>0)button(content,"Save or print due-service slips (PDF)",
+                this::exportServiceDueSlips);
+            label(content,"Mileage-only reminders show a target odometer reading. "+
+                "They do not assume how far a vehicle has traveled.",14,MUTED);
+            if(list.isEmpty())
+                label(content,"No repeat service rules yet. Open a job → Overview → "+
+                    "Set next service due.",16,MUTED);
+            int rendered=0;
+            for(RecurringServices.Rule rule:list){
+                if(++rendered>120)break;
+                WorkspaceStore.Customer person=null;
+                for(WorkspaceStore.Customer c:store.customers())
+                    if(c.id.equals(rule.customerId)){person=c;break;}
+                LinearLayout row=card();
+                label(row,rule.label+" · "+
+                    (person==null?"Unknown customer":person.displayName()),18,LIGHT);
+                label(row,rule.active?(rule.dueToday()?"DUE NOW":
+                    "Scheduled"):"Paused",15,rule.dueToday()?0xFFFFCD86:MUTED);
+                label(row,(rule.dueDate.isEmpty()?"No calendar due date":
+                    "Next due: "+rule.dueDate)+
+                    (rule.dueMiles.isEmpty()?"":" · Next odometer: "+rule.dueMiles)+
+                    (rule.site.isEmpty()?"":"\nSite/asset: "+rule.site),15,MUTED);
+                final RecurringServices.Rule entry=rule;
+                button(row,"Open original job",()->job(entry.jobId));
+                button(row,"Update after service / edit interval",()->{
+                    try{serviceIntervalDialog(jobById(entry.jobId),entry);}
+                    catch(Exception e){error(e);}
+                });
+                button(row,rule.active?"Pause reminder":"Resume reminder",()->{
+                    try{
+                        new RecurringServices(store).setActive(entry.id,!entry.active);
+                        serviceDueScreen();
+                    }catch(Exception e){error(e);}
+                });
+            }
+            if(list.size()>120)label(content,
+                "Showing the first 120 services. Smaller filtered lists are planned.",14,MUTED);
+            label(content,"This module does not automatically notify customers, "+
+                "create appointments, read odometers or send data to the cloud.",13,MUTED);
+        }catch(Exception failure){error(failure);}
+    }
+
+
+    private void exportServiceDueSlips(){
+        Intent save=new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        save.addCategory(Intent.CATEGORY_OPENABLE);
+        save.setType("application/pdf");
+        save.putExtra(Intent.EXTRA_TITLE,
+            "accubook-due-services-"+java.time.LocalDate.now()+".pdf");
+        try{startActivityForResult(save,SERVICE_SLIP_PDF_REQUEST);}
+        catch(Exception failure){error(failure);}
+    }
+
+    private void serviceIntervalDialog(WorkspaceStore.Job job,RecurringServices.Rule previous){
+        LinearLayout fields=form();
+        label(fields,"When was this service actually finished? "+
+            "Choose how often it is needed. Nothing is sent automatically.",14,MUTED);
+        EditText label=field(fields,"Service","Gutter cleaning / oil change");
+        label.setText(previous==null?job.title:previous.label);
+        EditText site=field(fields,"Site, vehicle or equipment (optional)","Property, VIN or vehicle name");
+        site.setText(previous==null?job.street:previous.site);
+        EditText last=field(fields,"Last completed on · YYYY-MM-DD",
+            java.time.LocalDate.now().toString());
+        last.setText(previous==null?java.time.LocalDate.now().toString():previous.lastDate);
+        button(fields,"Choose completion date",()->openDate(last));
+        EditText month=field(fields,"Every how many months? (0 if mileage only)","6");
+        month.setText(previous==null?"6":previous.months);
+        month.setInputType(InputType.TYPE_CLASS_NUMBER);
+        EditText miles=field(fields,"Last odometer reading (optional)","55812");
+        miles.setText(previous==null?"":previous.lastMiles);
+        miles.setInputType(InputType.TYPE_CLASS_NUMBER);
+        EditText interval=field(fields,"Every how many miles? (0 if date only)","3000");
+        interval.setText(previous==null?"0":previous.miles);
+        interval.setInputType(InputType.TYPE_CLASS_NUMBER);
+        dialog(previous==null?"Set next service":"Update next service",fields,()->{
+            try{
+                RecurringServices.Rule saved=new RecurringServices(store).save(job,
+                    previous==null?null:previous.id,label.getText().toString(),
+                    site.getText().toString(),last.getText().toString(),
+                    month.getText().toString(),miles.getText().toString(),
+                    interval.getText().toString());
+                notice("Next service saved",(saved.dueDate.isEmpty()?"Mileage-only reminder":
+                    "Due "+saved.dueDate)+
+                    (saved.dueMiles.isEmpty()?"":" · "+saved.dueMiles+" miles")+
+                    ". Open Home → due services to review.");
+            }catch(IOException e){throw new IllegalStateException(e);}
+        });
     }
 
     /** Independent contact directory. No automatic customer creation. */
@@ -983,25 +1198,28 @@ public final class MainActivity extends Activity {
      * Advanced one-way reconciliation remains available but is never automatic.
      */
     private void calendarSettings(){
-        String[] options={
+        boolean advanced=FeatureSettings.enabled(this,FeatureSettings.ADVANCED_CALENDAR);
+        String[] options=advanced?new String[]{
             "Add a job to Calendar app (recommended)",
             "Advanced account sync (experimental)",
             CalendarBridge.enabled(this)?"Disable automatic calendar sync":
                 "Calendar sharing privacy explanation"
+        }:new String[]{
+            "Add a job to Calendar app (recommended)",
+            "Calendar sharing privacy explanation"
         };
         new AlertDialog.Builder(this).setTitle("Calendar options")
             .setMessage("For reliable Google Calendar scheduling, choose a job, "
                 +"review its event, and save it in your installed Calendar app. "
-                +"The app chooses which Google or device account receives it. "
-                +"No background syncing or hidden sharing.")
+                +"No background syncing or hidden sharing occurs by default.")
             .setItems(options,(d,index)->{
                 if(index==0)chooseJobForCalendar();
-                else if(index==1)advancedCalendarSettings();
-                else if(CalendarBridge.enabled(this)){
+                else if(advanced&&index==1)advancedCalendarSettings();
+                else if(advanced&&CalendarBridge.enabled(this)){
                     CalendarBridge.setEnabled(this,-1,false);businessScreen();
                 }else notice("Calendar privacy","Only explicitly exported events go "
-                    +"to your selected Calendar app. The optional advanced sync "
-                    +"requires separate permission and may share jobs through Google.");
+                    +"to your selected Calendar app. Advanced sync must be enabled "
+                    +"separately under Settings > Modules.");
             }).setNegativeButton("Close",(d,w)->{}).show();
     }
     private void chooseJobForCalendar(){
@@ -1773,60 +1991,225 @@ public final class MainActivity extends Activity {
         throw new IOException("Job no longer exists");
     }
 
-    private void photoCard(WorkspaceStore.Job job, String name, int number) {
-        LinearLayout panel = card();
-        label(panel, "Job photo " + number, 16, LIGHT);
-        try {
-            File imageFile = store.photoFile(job, name);
-            Bitmap bitmap;
-            if(Build.VERSION.SDK_INT>=28){
-                android.graphics.ImageDecoder.Source source=
-                    android.graphics.ImageDecoder.createSource(imageFile);
-                bitmap=android.graphics.ImageDecoder.decodeBitmap(source,(decoder,info,sourceInfo)->{
-                    android.util.Size size=info.getSize();
-                    int width=size.getWidth(),height=size.getHeight();
-                    if(width<=0||height<=0)throw new IllegalArgumentException("Invalid image dimensions");
-                    double divisor=Math.max(1.0,Math.max(width,height)/1200.0);
-                    decoder.setTargetSize(Math.max(1,(int)(width/divisor)),
-                        Math.max(1,(int)(height/divisor)));
-                    decoder.setAllocator(android.graphics.ImageDecoder.ALLOCATOR_SOFTWARE);
-                });
-            }else{
-                BitmapFactory.Options options=new BitmapFactory.Options();
-                options.inJustDecodeBounds=true;
-                BitmapFactory.decodeFile(imageFile.getAbsolutePath(),options);
-                if(options.outWidth<=0||options.outHeight<=0)
-                    throw new IOException("Image codec not supported on this Android version");
-                options.inJustDecodeBounds=false;
-                options.inSampleSize=1;
-                while(options.outWidth/options.inSampleSize>1200||
-                    options.outHeight/options.inSampleSize>1200)
-                    options.inSampleSize*=2;
-                bitmap=BitmapFactory.decodeFile(imageFile.getAbsolutePath(),options);
-            }
-            if(bitmap==null)throw new IOException("Cannot preview this image codec");
-            ImageView preview = new ImageView(this);
-            preview.setImageBitmap(bitmap);
-            preview.setAdjustViewBounds(true);
-            preview.setMaxHeight(dp(210));
-            preview.setContentDescription("Attached photo " + number + " for " + job.title);
-            panel.addView(preview, new LinearLayout.LayoutParams(-1, -2));
-        } catch (Exception exception) {
-            label(panel, "Photo preview unavailable: " + exception.getMessage(), 13, MUTED);
+    private void photoActionMenu(WorkspaceStore.Job job,String name,int index,int count,View source){
+        List<String> actions=new ArrayList<>();
+        if(index>0)actions.add("Move up");
+        if(index<count-1)actions.add("Move down");
+        if(count>1)actions.add("Drag to reorder");
+        actions.add("Delete photo");
+        new AlertDialog.Builder(this).setTitle("Photo "+(index+1))
+            .setItems(actions.toArray(new String[0]),(d,which)->{
+                String choice=actions.get(which);
+                if(choice.equals("Drag to reorder")){
+                    ClipData dragData=ClipData.newPlainText("AccubookPhoto",name);
+                    source.startDragAndDrop(dragData,new View.DragShadowBuilder(source),null,0);
+                }else if(choice.equals("Delete photo")){
+                    new AlertDialog.Builder(this).setTitle("Delete this photo?")
+                        .setMessage("This cannot be undone. Export a backup first.")
+                        .setNegativeButton("Keep",(dialog,w)->{})
+                        .setPositiveButton("Delete",(dialog,w)->{
+                            try{store.deletePhoto(job,name);job(job.id);}
+                            catch(Exception error){error(error);}
+                        }).show();
+                }else{
+                    try{
+                        store.movePhoto(job,name,index+(choice.equals("Move up")?-1:1));
+                        job(job.id);
+                    }catch(Exception error){error(error);}
+                }
+            }).setNegativeButton("Cancel",(d,w)->{}).show();
+    }
+    private Bitmap photoBitmap(File file,int maxDimension)throws IOException{
+        if(Build.VERSION.SDK_INT>=28){
+            android.graphics.ImageDecoder.Source source=
+                android.graphics.ImageDecoder.createSource(file);
+            return android.graphics.ImageDecoder.decodeBitmap(source,(decoder,info,sourceInfo)->{
+                android.util.Size dimensions=info.getSize();
+                int w=dimensions.getWidth(),h=dimensions.getHeight();
+                if(w<=0||h<=0)throw new IllegalArgumentException("Invalid photo dimensions");
+                double divisor=Math.max(1.0,Math.max(w,h)/(double)maxDimension);
+                decoder.setTargetSize(Math.max(1,(int)(w/divisor)),
+                    Math.max(1,(int)(h/divisor)));
+                decoder.setAllocator(android.graphics.ImageDecoder.ALLOCATOR_SOFTWARE);
+            });
         }
-        button(panel, "Remove photo " + number, () -> new AlertDialog.Builder(this)
-            .setTitle("Delete this photo?")
-            .setMessage("This action cannot be undone. Export a backup first.")
-            .setNegativeButton("Keep", (d, w) -> {})
-            .setPositiveButton("Delete", (d, w) -> {
-                try {
-                    store.deletePhoto(job, name);
-                    job(job.id);
-                } catch (Exception failure) { error(failure); }
-            }).show());
+        BitmapFactory.Options opts=new BitmapFactory.Options();
+        opts.inJustDecodeBounds=true;
+        BitmapFactory.decodeFile(file.getAbsolutePath(),opts);
+        if(opts.outWidth<=0||opts.outHeight<=0)throw new IOException("Unsupported photo codec");
+        opts.inJustDecodeBounds=false;
+        opts.inSampleSize=1;
+        while(opts.outWidth/opts.inSampleSize>maxDimension||
+              opts.outHeight/opts.inSampleSize>maxDimension)opts.inSampleSize*=2;
+        Bitmap image=BitmapFactory.decodeFile(file.getAbsolutePath(),opts);
+        if(image==null)throw new IOException("Photo decoder returned no image");
+        return image;
+    }
+
+    private void showPhotoPreview(WorkspaceStore.Job job,String name){
+        try{
+            Bitmap image=photoBitmap(store.photoFile(job,name),1600);
+            ImageView preview=new ImageView(this);
+            preview.setImageBitmap(image);
+            preview.setAdjustViewBounds(true);
+            preview.setContentDescription("Large preview of job photo");
+            new AlertDialog.Builder(this).setTitle("Job photo")
+                .setView(preview).setPositiveButton("Close",(d,w)->{}).show();
+        }catch(Exception e){error(e);}
+    }
+
+    private void photoTile(LinearLayout row,WorkspaceStore.Job job,String name,
+            int number,int count){
+        LinearLayout panel=new LinearLayout(this);
+        panel.setOrientation(LinearLayout.VERTICAL);
+        panel.setPadding(dp(9),dp(8),dp(9),dp(12));
+        panel.setBackground(box(CARD));
+        LinearLayout.LayoutParams margins=new LinearLayout.LayoutParams(0,-2,1);
+        margins.setMargins(dp(3),dp(5),dp(3),dp(5));
+        row.addView(panel,margins);
+        LinearLayout heading=new LinearLayout(this);
+        heading.setOrientation(LinearLayout.HORIZONTAL);
+        panel.addView(heading);
+        TextView label=label(heading,"Photo "+number,15,LIGHT);
+        label.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));
+        Runnable actions=()->photoActionMenu(job,name,number-1,count,panel);
+        fieldMoreButton(heading,"photo "+number,actions);
+        panel.setOnLongClickListener(v->{actions.run();return true;});
+        label.setOnLongClickListener(v->{actions.run();return true;});
+        panel.setOnDragListener((target,event)->{
+            switch(event.getAction()){
+                case android.view.DragEvent.ACTION_DRAG_STARTED:
+                    return event.getClipDescription()!=null &&
+                        "AccubookPhoto".equals(String.valueOf(event.getClipDescription().getLabel()));
+                case android.view.DragEvent.ACTION_DRAG_ENTERED:
+                    panel.setAlpha(0.65f);return true;
+                case android.view.DragEvent.ACTION_DRAG_EXITED:
+                case android.view.DragEvent.ACTION_DRAG_ENDED:
+                    panel.setAlpha(1f);return true;
+                case android.view.DragEvent.ACTION_DROP:
+                    panel.setAlpha(1f);
+                    try{
+                        String dragged=event.getClipData().getItemAt(0).coerceToText(this).toString();
+                        store.movePhoto(job,dragged,number-1);
+                        job(job.id);
+                    }catch(Exception e){error(e);}
+                    return true;
+                default:return true;
+            }
+        });
+        try{
+            Bitmap thumb=photoBitmap(store.photoFile(job,name),420);
+            ImageView thumbnail=new ImageView(this);
+            thumbnail.setImageBitmap(thumb);
+            thumbnail.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            thumbnail.setContentDescription("Open photo "+number+" of "+count);
+            panel.addView(thumbnail,new LinearLayout.LayoutParams(-1,dp(150)));
+            thumbnail.setOnClickListener(v->showPhotoPreview(job,name));
+            thumbnail.setOnLongClickListener(v->{actions.run();return true;});
+        }catch(Exception exception){
+            label(panel,"Preview unavailable. Use ⋮ to reorder or delete.",13,MUTED);
+        }
     }
 
 
+    /** User-controlled visual modules; TalkBack itself is controlled by Android. */
+    private void settingsScreen(){
+        currentScreen="settings";
+        currentCustomerId=null;
+        currentJobId=null;
+        screen("Settings","Keep only the tools you use. Hidden features never erase records.");
+        navigation();
+        section("Modules");
+        label(content,"Feature switches change visible tools only, not customer data. "
+            +"Turn any module back on to restore its screens and stored records.",15,MUTED);
+        for(int i=0;i<FeatureSettings.KEYS.length;i++){
+            final String key=FeatureSettings.KEYS[i];
+            android.widget.Switch toggle=new android.widget.Switch(this);
+            toggle.setText(FeatureSettings.LABELS[i]);
+            toggle.setTextColor(LIGHT);
+            toggle.setTextSize(16);
+            toggle.setMinHeight(dp(56));
+            toggle.setChecked(FeatureSettings.enabled(this,key));
+            content.addView(toggle,new LinearLayout.LayoutParams(-1,-2));
+            toggle.setOnCheckedChangeListener((button,enabled)->{
+                try{
+                    FeatureSettings.set(this,key,enabled);
+                    if(key.equals(FeatureSettings.ADVANCED_CALENDAR)&&!enabled)
+                        CalendarBridge.setEnabled(this,-1,false);
+                    Toast.makeText(this,(enabled?"Enabled: ":"Hidden: ")+
+                        toggle.getText(),Toast.LENGTH_SHORT).show();
+                }catch(Exception error){
+                    settingsScreen(); // Re-read the persisted value; avoid recursive switch callbacks.
+                    error(error);
+                }
+            });
+        }
+        button(content,"? Help · simple steps and searchable answers",this::helpScreen);
+        section("Accessibility");
+        label(content,"Accubook uses labeled actions and optional gesture shortcuts. "
+            +"The three-dot field menu supports touch and screen readers without "
+            +"cluttering normal screens. TalkBack is an Android system service; "
+            +"this app cannot turn it on by itself.",15,MUTED);
+        button(content,"Open Android TalkBack / accessibility settings",()->{
+            try{startActivity(new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS));}
+            catch(Exception error){error(error);}
+        });
+        section("Planned modules");
+        label(content,"Automatic repeat-job creation, customer outreach, multi-property "
+            +"history, route-density optimization and full accounts payable/general "
+            +"ledger controls remain unimplemented. Due-date lists are local and manual.",14,MUTED);
+    }
+
+
+    /** Searchable, permission-free help. Show the basics first, not a wall of text. */
+    private void helpScreen(){
+        currentScreen="help";
+        currentJobId=null;currentCustomerId=null;
+        screen("Help · get it done","Point, tap and work. Search only if you need an answer.");
+        navigation();
+        section("Three things to do first");
+        label(content,"1. Add a customer.  2. Create a job.  3. Work → Invoice.",17,LIGHT);
+        button(content,"＋ Add a customer",this::customerDialog);
+        button(content,"＋ Create a job",this::chooseCustomer);
+        EditText query=field(content,"Find help","photos, cash, invoice, reorder...");
+        LinearLayout results=new LinearLayout(this);
+        results.setOrientation(LinearLayout.VERTICAL);
+        content.addView(results);
+        final boolean[] expanded={false};
+        Runnable refresh=()->{
+            results.removeAllViews();
+            List<HelpTopics.Topic> found=HelpTopics.search(query.getText().toString());
+            int limit=query.length()==0 && !expanded[0]?5:found.size();
+            int count=0;
+            for(HelpTopics.Topic article:found){
+                if(count++>=limit)break;
+                Button item=button(results,article.title+"  ›",()->
+                    new AlertDialog.Builder(this).setTitle(article.title)
+                        .setMessage(article.full())
+                        .setPositiveButton("Got it",(whichDialog,which)->{})
+                        .show());
+                item.setBackgroundTintList(ColorStateList.valueOf(CARD));
+            }
+            if(found.isEmpty())label(results,"No help found. Try a shorter word.",15,MUTED);
+            if(found.size()>limit){
+                button(results,"Show all "+found.size()+" help topics",()->{
+                    expanded[0]=true;
+                    results.removeAllViews();
+                    for(HelpTopics.Topic article:found)
+                        button(results,article.title+"  ›",()->
+                            notice(article.title,article.full()));
+                });
+            }
+        };
+        query.addTextChangedListener(new TextWatcher(){
+            public void beforeTextChanged(CharSequence s,int start,int count,int after){}
+            public void onTextChanged(CharSequence s,int start,int before,int count){
+                refresh.run();
+            }
+            public void afterTextChanged(Editable value){}
+        });
+        refresh.run();
+    }
 
     /** All business settings are local. Company identity merges into every document. */
     private void businessScreen() {
@@ -1857,7 +2240,9 @@ public final class MainActivity extends Activity {
                     }catch(Exception e){error(e);}
                 }).show());
             button(content,"Choose business logo",this::pickLogo);
-            button(content,"Manage item and service pricebook",this::catalogScreen);
+            button(content,"Settings · features and accessibility",this::settingsScreen);
+            if(FeatureSettings.enabled(this,FeatureSettings.CATALOG))
+                button(content,"Manage item and service pricebook",this::catalogScreen);
             button(content,"Customize master job fields / checklists",
                 this::masterJobTemplateScreen);
             section("Expenses and costs");
@@ -1920,10 +2305,11 @@ public final class MainActivity extends Activity {
                 +"workspace and ordinary ZIP backups remain unencrypted. "
                 +"An app lock alone is not encryption at rest.",13,MUTED);
             section("Reporting and accounting export");
-            button(content,"Create selective accounting / QuickBooks CSV ZIP",
-                this::chooseReportExport);
-            label(content,"Each category produces a separate CSV with documented columns. "
-                +"QuickBooks may require manual field mapping; this is not a live integration.",
+            button(content,"Quick PDF financial report",()->chooseReportExport(true));
+            button(content,"Custom accounting CSV ZIP",()->chooseReportExport(false));
+            label(content,"Choose exactly which sections, payment methods and expense "
+                +"categories leave Accubook. A PDF is a quick summary; a ZIP contains "
+                +"selected editable CSV records. No direct QuickBooks connection exists.",
                 14,MUTED);
             section("Workspace safety");
             button(content,"Create encrypted backup (.acbk)",this::chooseEncryptedBackup);
@@ -2309,31 +2695,94 @@ public final class MainActivity extends Activity {
             }).show();
     }
 
-    private void chooseReportExport(){
-        LinearLayout fields=form();
-        label(fields,"Only checked categories will be included in your report ZIP. "
-            +"No records are sent online. The destination ZIP may contain private data.",
-            16,LIGHT);
-        CheckBox[] sections=new CheckBox[BusinessReports.SECTIONS.length];
-        for(int i=0;i<sections.length;i++){
-            sections[i]=checkbox(fields,BusinessReports.SECTIONS[i],i==4);
-        }
-        dialog("Choose accounting report sections",fields,()->{
-            boolean[] selected=new boolean[sections.length];
-            boolean any=false;
-            for(int i=0;i<sections.length;i++){
-                selected[i]=sections[i].isChecked();
-                any|=selected[i];
+    private void chooseReportExport(boolean pdf){
+        try{
+            LinearLayout fields=form();
+            label(fields,pdf?
+                "Quick PDF totals only. Choose what to summarize. No customer names, "
+                    +"payment references, or itemized expenses appear in a quick PDF.":
+                "Export ONLY checked sections and selected payment methods and expense "
+                    +"categories into local CSV files. QuickBooks mapping is manual.",
+                16,LIGHT);
+            CheckBox[] sections=new CheckBox[BusinessReports.SECTIONS.length];
+            for(int i=0;i<sections.length;i++)
+                sections[i]=checkbox(fields,BusinessReports.SECTIONS[i],i==1);
+
+            LinearLayout methodGroup=new LinearLayout(this);
+            methodGroup.setOrientation(LinearLayout.VERTICAL);
+            fields.addView(methodGroup);
+            label(methodGroup,"Payment methods to include (none chosen by default)",16,LIGHT);
+            CheckBox[] methods=new CheckBox[ReportSelection.PAYMENT_METHODS.length];
+            for(int i=0;i<methods.length;i++)
+                methods[i]=checkbox(methodGroup,ReportSelection.PAYMENT_METHODS[i],false);
+            button(methodGroup,"Select every payment method",()->{
+                for(CheckBox check:methods)check.setChecked(true);
+            });
+            button(methodGroup,"Clear payment selection",()->{
+                for(CheckBox check:methods)check.setChecked(false);
+            });
+            methodGroup.setVisibility(View.GONE);
+            sections[3].setOnCheckedChangeListener((view,checked)->
+                methodGroup.setVisibility(checked?View.VISIBLE:View.GONE));
+
+            LinearLayout expenseGroup=new LinearLayout(this);
+            expenseGroup.setOrientation(LinearLayout.VERTICAL);
+            fields.addView(expenseGroup);
+            label(expenseGroup,"Expense categories to include (none chosen by default)",
+                16,LIGHT);
+            java.util.TreeSet<String> labels=new java.util.TreeSet<>();
+            for(CrmWorkspace.Expense expense:crm.expenses())
+                if(!expense.category.trim().isEmpty())labels.add(expense.category);
+            String[] categories=labels.toArray(new String[0]);
+            CheckBox[] categoryChecks=new CheckBox[categories.length];
+            for(int i=0;i<categories.length;i++)
+                categoryChecks[i]=checkbox(expenseGroup,categories[i],false);
+            if(categories.length==0)
+                label(expenseGroup,"No expense categories recorded. "
+                    +"Record an expense before exporting this section.",14,MUTED);
+            else{
+                button(expenseGroup,"Select every expense category",()->{
+                    for(CheckBox check:categoryChecks)check.setChecked(true);
+                });
+                button(expenseGroup,"Clear expense selection",()->{
+                    for(CheckBox check:categoryChecks)check.setChecked(false);
+                });
             }
-            if(!any)throw new IllegalArgumentException("Choose at least one report section");
-            pendingReportSections=selected;
-            Intent destination=new Intent(Intent.ACTION_CREATE_DOCUMENT);
-            destination.addCategory(Intent.CATEGORY_OPENABLE);
-            destination.setType("application/zip");
-            destination.putExtra(Intent.EXTRA_TITLE,"accubook-accounting-report.zip");
-            try{startActivityForResult(destination,REPORT_EXPORT_REQUEST);}
-            catch(Exception e){pendingReportSections=null;error(e);}
-        });
+            expenseGroup.setVisibility(View.GONE);
+            sections[4].setOnCheckedChangeListener((view,checked)->
+                expenseGroup.setVisibility(checked?View.VISIBLE:View.GONE));
+            label(fields,"Nothing is uploaded. Generated documents are saved to the "
+                +"location you explicitly choose. Never use a CSV ZIP as a workspace backup.",
+                14,MUTED);
+            dialog(pdf?"Configure quick PDF report":"Configure accounting CSV ZIP",fields,()->{
+                boolean[] chosen=new boolean[sections.length];
+                for(int i=0;i<sections.length;i++)chosen[i]=sections[i].isChecked();
+                java.util.Set<String> chosenMethods=new java.util.LinkedHashSet<>();
+                for(int i=0;i<methods.length;i++)
+                    if(chosen[3]&&methods[i].isChecked())chosenMethods.add(ReportSelection.PAYMENT_METHODS[i]);
+                java.util.Set<String> chosenCategories=new java.util.LinkedHashSet<>();
+                for(int i=0;i<categories.length;i++)
+                    if(chosen[4]&&categoryChecks[i].isChecked())chosenCategories.add(categories[i]);
+                ReportSelection selection=new ReportSelection(
+                    chosen,chosenMethods,chosenCategories);
+                pendingReportSections=selection.sections();
+                pendingReportMethods=selection.methods().toArray(new String[0]);
+                pendingReportCategories=selection.categories().toArray(new String[0]);
+                pendingReportPdf=pdf;
+                Intent destination=new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                destination.addCategory(Intent.CATEGORY_OPENABLE);
+                destination.setType(pdf?"application/pdf":"application/zip");
+                destination.putExtra(Intent.EXTRA_TITLE,
+                    pdf?"accubook-financial-summary.pdf":"accubook-selected-accounting.zip");
+                try{startActivityForResult(destination,REPORT_EXPORT_REQUEST);}
+                catch(Exception failure){
+                    pendingReportSections=null;
+                    pendingReportMethods=null;
+                    pendingReportCategories=null;
+                    error(failure);
+                }
+            });
+        }catch(Exception error){error(error);}
     }
 
     private void expenseDialog(){
@@ -2550,6 +2999,7 @@ public final class MainActivity extends Activity {
             screen("Accubook · Dashboard",greeting+
                 "  |  PRIVATE • OFFLINE • YOUR DATA");
             navigation();
+            button(content,"Find anything · name, phone, address, job, invoice",this::universalSearchScreen);
             section("Today · live overview");
             int todayJobs=0,upcomingJobs=0,sentQuotes=0,active=0;
             BigDecimal openDraft=BigDecimal.ZERO,paid=BigDecimal.ZERO;
@@ -2586,6 +3036,15 @@ public final class MainActivity extends Activity {
                 label(upcoming,next.date+"  ·  "+time.start+"–"+time.end,17,LIGHT);
                 final String nextJob=next.id;
                 button(upcoming,"Open next job →",()->job(nextJob));
+            }
+            button(content,"? How to use Accubook",this::helpScreen);
+            if(FeatureSettings.enabled(this,FeatureSettings.RECURRING)){
+                int due=0;
+                for(RecurringServices.Rule reminder:new RecurringServices(store).all())
+                    if(reminder.dueToday())due++;
+                Button reminders=button(content,
+                    due+" repeat services due by date · Open due list",this::serviceDueScreen);
+                reminders.setBackgroundTintList(ColorStateList.valueOf(due>0?0xFF9A6825:CARD));
             }
             section("Quick actions");
             button(content,"＋ New scheduled job",this::chooseCustomer);
@@ -2769,7 +3228,57 @@ public final class MainActivity extends Activity {
         });
     }
 
+    /**
+     * One horizontally scrollable focus rail replaces the former multi-screen-
+     * length job page. State stays attached to this job on section switches.
+     */
+    private void jobFocusTabs(WorkspaceStore.Job selected){
+        List<String> ids=new ArrayList<>(java.util.Arrays.asList(
+            "overview","photos","notes","materials","costing","checklists","schedule"));
+        List<String> labels=new ArrayList<>(java.util.Arrays.asList(
+            "Overview","Photos","Notes","Materials","Money","Checklist","Schedule"));
+        if(FeatureSettings.enabled(this,FeatureSettings.WORKER_TIME)){
+            ids.add("time");labels.add("Time");
+        }
+        if(FeatureSettings.enabled(this,FeatureSettings.GPS)){
+            ids.add("route");labels.add("Route");
+        }
+        if(!ids.contains(currentJobSection))currentJobSection="overview";
+        android.widget.HorizontalScrollView scroll=new android.widget.HorizontalScrollView(this);
+        scroll.setHorizontalScrollBarEnabled(false);
+        LinearLayout row=new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        scroll.addView(row);
+        for(int i=0;i<ids.size();i++){
+            final String id=ids.get(i);
+            final String name=labels.get(i);
+            boolean active=id.equals(currentJobSection);
+            Button tab=new Button(this);
+            tab.setText(name);
+            tab.setAllCaps(false);
+            tab.setTextSize(14);
+            tab.setTextColor(LIGHT);
+            tab.setMinHeight(dp(48));
+            tab.setContentDescription(name+" job section"+
+                (active?", selected":""));
+            tab.setBackgroundTintList(ColorStateList.valueOf(active?ACCENT:CARD));
+            LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(-2,dp(48));
+            params.setMargins(dp(3),dp(5),dp(3),dp(8));
+            row.addView(tab,params);
+            tab.setOnClickListener(v->{
+                if(!id.equals(currentJobSection)){
+                    currentJobSection=id;
+                    job(selected.id);
+                }
+            });
+        }
+        content.addView(scroll,new LinearLayout.LayoutParams(-1,-2));
+    }
+
     private void job(String id) {
+        if(!id.equals(currentJobId)){
+            currentJobSection="overview";currentPhotoPage=0;
+        }
         currentScreen = "job";
         currentJobId = id;
         try {
@@ -2783,6 +3292,8 @@ public final class MainActivity extends Activity {
             final WorkspaceStore.Customer client = customer;
             screen(work.title, client.displayName() + " · " + work.date + " · " + work.status);
             navigation();
+            jobFocusTabs(work);
+            if("overview".equals(currentJobSection)){
             button(content, "Customer: " + client.displayName(), () -> customer(client.id));
             section("Job details");
             CrmWorkspace.Appointment appt=crm.appointment(work);
@@ -2796,19 +3307,34 @@ public final class MainActivity extends Activity {
                 () -> scheduleEditor(work));
             button(content,"Add this job to Calendar app",()->addJobToCalendar(work));
             button(content, "Change job status", () -> statusPicker(work));
+            if(FeatureSettings.enabled(this,FeatureSettings.RECURRING))
+                button(content,"Set or update next service due date / mileage",
+                    ()->serviceIntervalDialog(work,null));
+            }
+            if("notes".equals(currentJobSection)){
             section("Field notes and site instructions");
             String notes = store.fieldNotes(work);
             label(content, notes.isEmpty() ? "No field notes yet."
                 : (notes.length() > 800 ? notes.substring(0, 800) + "…" : notes),
                 15, MUTED);
             button(content, "Edit field notes", () -> fieldNotesDialog(work));
-            jobCustomFields(work);
-            section("Vendors, crew and deliveries");
-            button(content,"Edit vendor / material delivery / crew",()->jobLogisticsDialog(work));
+            if(!notes.trim().isEmpty())
+                button(content,"Use this note in a new invoice line",
+                    ()->lineDialog(work,invoiceDescriptionFromNotes(notes)));
+            }
+            if("checklists".equals(currentJobSection)){
+                jobCustomFields(work);
+            }
+            if("materials".equals(currentJobSection)){
+            section("Vendors and deliveries");
+            button(content,FeatureSettings.enabled(this,FeatureSettings.CREW)?
+                "Edit vendors, materials and crew":"Edit vendor / material delivery",
+                ()->jobLogisticsDialog(work));
             TradeModules operations=new TradeModules(store);
             TradeModules.Logistics details=operations.logistics(work);
             label(content,"Vendor: "+details.vendor+" · Delivery: "+details.delivery,15,MUTED);
-            label(content,"Crew: "+details.crew,15,MUTED);
+            if(FeatureSettings.enabled(this,FeatureSettings.CREW))
+                label(content,"Crew: "+details.crew,15,MUTED);
             if(!details.notes.isEmpty())label(content,details.notes,15,LIGHT);
             button(content,"Create dumpster pickup calendar reminder",
                 ()->createPickupReminder(work));
@@ -2830,6 +3356,8 @@ public final class MainActivity extends Activity {
                 button(entry, "Update material status", () -> materialStatusPicker(work, request));
                 button(entry, "Remove request", () -> removeMaterial(work, request));
             }
+            }
+            if("costing".equals(currentJobSection)){
             section("Estimate and invoice");
             CrmWorkspace.Quote quoteState=crm.quote(work);
             CheckBox sent=checkbox(content,"Estimate sent (manually confirmed)",quoteState.sent);
@@ -2854,9 +3382,20 @@ public final class MainActivity extends Activity {
             button(content,"Preview / edit invoice (print or Save as PDF)",
                 ()->openDocument(work,false));
             label(content,"Job total: $"+work.total,22,LIGHT);
-            button(content,"+ Add from service / consumable catalog",
-                ()->catalogLineDialog(work));
+            if(FeatureSettings.enabled(this,FeatureSettings.CATALOG))
+                button(content,"+ Add from service / consumable catalog",
+                    ()->catalogLineDialog(work));
             button(content,"Add labor, material or discount",()->lineDialog(work));
+            section("Linked change orders");
+            button(content,"＋ New change order",()->changeOrderCreateDialog(work));
+            for(ChangeOrders.Order change:new ChangeOrders(store).orders(work)){
+                LinearLayout changeCard=card();
+                label(changeCard,change.title+" · "+change.status,17,LIGHT);
+                label(changeCard,"Amount change: $"+
+                    new ChangeOrders(store).total(work,change),15,MUTED);
+                button(changeCard,"View / manage change order",()->
+                    changeOrderActions(work,change));
+            }
             button(content,"Export invoice as HTML",()->{
                 try{
                     pendingInvoice=InvoiceHtml.render(client,work,store.items(work));
@@ -2864,22 +3403,65 @@ public final class MainActivity extends Activity {
                     document(DocumentNumbers.reference(work.id,work.date,false)+".html","text/html");
                 }catch(Exception failure){error(failure);}
             });
-            for (WorkspaceStore.LineItem item : store.items(work)) {
-                LinearLayout row = card();
-                label(row, item.description, 17, LIGHT);
-                label(row, item.quantity + " × $" + item.unitRate + " = $" + item.amount, 14, MUTED);
-                button(row,"+ Increase quantity by 1",()->changeLineQuantity(work,item,1));
-                button(row,"− Decrease quantity by 1",()->changeLineQuantity(work,item,-1));
-                button(row, "Edit " + item.description, () -> editLineDialog(work, item));
-                button(row, "Remove " + item.description, () -> deleteLine(work, item));
+            List<WorkspaceStore.LineItem> billLines=store.items(work);
+            for(int i=0;i<billLines.size();i++){
+                WorkspaceStore.LineItem item=billLines.get(i);
+                LinearLayout row=card();
+                LinearLayout header=new LinearLayout(this);
+                header.setOrientation(LinearLayout.HORIZONTAL);
+                row.addView(header);
+                TextView title=label(header,item.description,17,LIGHT);
+                title.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));
+                final int lineIndex=i;
+                Runnable actions=()->invoiceLineActionMenu(work,item,lineIndex,
+                    billLines.size());
+                fieldMoreButton(header,"invoice line "+item.description,actions);
+                label(row,item.quantity+" × $"+item.unitRate+" = $"+item.amount,14,MUTED);
+                row.setOnLongClickListener(v->{actions.run();return true;});
+                title.setOnLongClickListener(v->{actions.run();return true;});
             }
+            }
+            if("photos".equals(currentJobSection)){
             section("Job photos");
             button(content, "Add photo from device", () -> pickPhoto(work));
             button(content, "Import multiple photos",()->pickAttachments(work,true));
-            int index = 0;
-            for (String name : store.photos(work)) photoCard(work, name, ++index);
-            if (index == 0) label(content, "No photos attached to this job.", 15, MUTED);
+            List<String> photoNames=store.photos(work);
+            final int pageSize=16;
+            int pageCount=Math.max(1,(photoNames.size()+pageSize-1)/pageSize);
+            currentPhotoPage=Math.min(Math.max(currentPhotoPage,0),pageCount-1);
+            int start=currentPhotoPage*pageSize;
+            int end=Math.min(photoNames.size(),start+pageSize);
+            if(photoNames.isEmpty())
+                label(content,"No photos attached. Tap Import multiple photos.",15,MUTED);
+            else{
+                label(content,"Photos "+(start+1)+"–"+end+" of "+photoNames.size()+
+                    " · tap to view, ⋮ for actions or drag",14,MUTED);
+                for(int n=start;n<end;n+=2){
+                    LinearLayout row=new LinearLayout(this);
+                    row.setOrientation(LinearLayout.HORIZONTAL);
+                    content.addView(row,new LinearLayout.LayoutParams(-1,-2));
+                    photoTile(row,work,photoNames.get(n),n+1,photoNames.size());
+                    if(n+1<end)photoTile(row,work,photoNames.get(n+1),n+2,
+                        photoNames.size());
+                    else{
+                        View spacer=new View(this);
+                        row.addView(spacer,new LinearLayout.LayoutParams(0,dp(1),1));
+                    }
+                }
+                if(pageCount>1){
+                    label(content,"Page "+(currentPhotoPage+1)+" of "+pageCount,14,MUTED);
+                    if(currentPhotoPage>0)button(content,"← Previous 16 photos",()->{
+                        currentPhotoPage--;job(work.id);
+                    });
+                    if(currentPhotoPage<pageCount-1)
+                        button(content,"Next 16 photos →",()->{
+                            currentPhotoPage++;job(work.id);
+                        });
+                }
+            }
             attachmentList(work);
+            }
+            if("costing".equals(currentJobSection)){
             section("Payment ledger");
             label(content,"Payments recorded: $"+crm.received(work).toPlainString(),17,LIGHT);
             label(content,"Open job balance: $"+crm.balance(work).toPlainString(),17,LIGHT);
@@ -2889,6 +3471,9 @@ public final class MainActivity extends Activity {
                 label(row,payment.date+" · "+payment.method+" · $"+payment.amount,16,LIGHT);
                 label(row,"Reference: "+payment.reference+" · "+payment.note,14,MUTED);
             }
+            }
+            if("time".equals(currentJobSection) &&
+                    FeatureSettings.enabled(this,FeatureSettings.WORKER_TIME)){
             section("Worker time tracking");
             label(content,"Recorded hours: "+crm.totalHours(work).toPlainString(),18,LIGHT);
             button(content,"Clock in a worker",()->clockInDialog(work));
@@ -2900,6 +3485,9 @@ public final class MainActivity extends Activity {
                 if(entry.active())button(clock,"Clock out "+entry.worker,
                     ()->clockOutConfirm(work,entry));
             }
+            }
+            if("route".equals(currentJobSection) &&
+                    FeatureSettings.enabled(this,FeatureSettings.GPS)){
             section("Private route / geolocation");
             List<CrmWorkspace.RoutePoint> route=crm.routePoints(work);
             label(content,route.size()+" GPS points stored locally. Tracking stops when "
@@ -2911,9 +3499,53 @@ public final class MainActivity extends Activity {
                 button(content,"Open last point in OpenStreetMap (shares coordinates)",
                     ()->openRouteInOSM(work));
             }
-            label(content,"Offline manual records only. No payment collection, tax calculation "
-                +"or settlement verification occurs. An invoice is not a payment receipt.",13,MUTED);
+            }
+            if("schedule".equals(currentJobSection)){
+                section("Calendar and scheduling");
+                CrmWorkspace.Appointment schedule=crm.appointment(work);
+                label(content,work.date+" · "+schedule.start+"–"+schedule.end,18,LIGHT);
+                label(content,schedule.notes.isEmpty()?"No daybook notes":schedule.notes,15,MUTED);
+                button(content,"Reschedule / adjust job color or time",
+                    ()->scheduleEditor(work));
+                button(content,"Add this job to Calendar app",()->addJobToCalendar(work));
+            }
+            if("costing".equals(currentJobSection))
+                label(content,"Offline manual records only. No payment collection, tax "
+                    +"calculation or settlement verification occurs.",13,MUTED);
         } catch (Exception failure) { error(failure); }
+    }
+
+
+    private void invoiceLineActionMenu(WorkspaceStore.Job job,
+            WorkspaceStore.LineItem line,int index,int count){
+        boolean approved=line.description.matches("(?s).*\\[CO:COL-[a-f0-9]{32}\\]$");
+        List<String> actions=new ArrayList<>();
+        if(index>0)actions.add("Move up");
+        if(index<count-1)actions.add("Move down");
+        if(!approved){
+            actions.add("Change quantity +1");
+            actions.add("Change quantity -1");
+            actions.add("Edit line");
+            actions.add("Remove line");
+        }else actions.add("Approved change-order lines are locked");
+        new AlertDialog.Builder(this).setTitle(line.description)
+            .setItems(actions.toArray(new String[0]),(d,which)->{
+                String selected=actions.get(which);
+                try{
+                    switch(selected){
+                        case "Move up":
+                            store.moveLine(job,line.id,index-1);job(job.id);break;
+                        case "Move down":
+                            store.moveLine(job,line.id,index+1);job(job.id);break;
+                        case "Change quantity +1":changeLineQuantity(job,line,1);break;
+                        case "Change quantity -1":changeLineQuantity(job,line,-1);break;
+                        case "Edit line":editLineDialog(job,line);break;
+                        case "Remove line":deleteLine(job,line);break;
+                        default:notice("Change-order protection",
+                            "Approved work is immutable. Create a correcting change order.");
+                    }
+                }catch(Exception e){error(e);}
+            }).setNegativeButton("Cancel",(d,w)->{}).show();
     }
 
     private void changeLineQuantity(WorkspaceStore.Job job,WorkspaceStore.LineItem line,int change){
@@ -3050,35 +3682,96 @@ public final class MainActivity extends Activity {
             }catch(IOException e){throw new IllegalStateException(e);}
         });
     }
+    /** Compact visible overflow, with the same actions available on long-press. */
+    private void fieldMoreButton(LinearLayout parent,String label,Runnable action){
+        Button more=new Button(this);
+        more.setText("\u22ee");
+        more.setTextSize(24);
+        more.setAllCaps(false);
+        more.setContentDescription("Actions for "+label);
+        more.setTextColor(LIGHT);
+        more.setBackground(box(CARD));
+        more.setMinWidth(dp(48));
+        more.setMinHeight(dp(48));
+        LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(dp(52),dp(52));
+        parent.addView(more,params);
+        more.setOnClickListener(v->action.run());
+    }
+    private void fieldActionMenu(JobTemplates.Field selected,WorkspaceStore.Job job,
+                                 int index,int length){
+        boolean master=job==null;
+        List<String> options=new ArrayList<>();
+        options.add("Edit field");
+        if(index>0)options.add("Move up");
+        if(index<length-1)options.add("Move down");
+        options.add(selected.required?"Make optional":"Set required");
+        options.add("Remove");
+        new AlertDialog.Builder(this).setTitle(selected.label)
+            .setItems(options.toArray(new String[0]),(dialog,which)->{
+                String choice=options.get(which);
+                try{
+                    JobTemplates forms=new JobTemplates(store);
+                    if(choice.equals("Edit field")){
+                        if(master)editMasterField(selected);else editJobField(job,selected);
+                        return;
+                    }
+                    if(choice.equals("Remove")){
+                        new AlertDialog.Builder(this).setTitle("Remove field?")
+                            .setMessage(master?"Remove from future job templates? Existing "
+                                +"job values will remain.":"Remove from this job only? "
+                                +"Master template and other jobs will remain unchanged.")
+                            .setNegativeButton("Cancel",(d,w)->{})
+                            .setPositiveButton("Remove",(d,w)->{
+                                try{
+                                    if(master)forms.removeMaster(selected.id);
+                                    else forms.removeJob(job,selected.id);
+                                    if(master)masterJobTemplateScreen();else job(job.id);
+                                }catch(Exception error){error(error);}
+                            }).show();
+                        return;
+                    }
+                    if(choice.equals("Move up")||choice.equals("Move down")){
+                        int next=index+(choice.equals("Move up")?-1:1);
+                        if(master)forms.moveMaster(selected.id,next);
+                        else forms.moveJob(job,selected.id,next);
+                    }else{
+                        if(master)forms.saveMaster(selected.id,selected.label,selected.kind,
+                            !selected.required,selected.value);
+                        else forms.saveJob(job,selected.id,selected.label,selected.kind,
+                            !selected.required,selected.value);
+                    }
+                    if(master)masterJobTemplateScreen();else job(job.id);
+                }catch(Exception error){error(error);}
+            }).setNegativeButton("Cancel",(d,w)->{}).show();
+    }
     private void masterJobTemplateScreen(){
         currentScreen="job_template";currentCustomerId=null;currentJobId=null;
         try{
             screen("Master job template",
-                "Your workflow, your fields · new jobs inherit these editable defaults");
+                "Reorder and customize fields for new jobs without changing existing work");
             navigation();
-            label(content,"Add any trade-specific checklist item, text, date, or number. "
-                +"Mark a field required if a job cannot be completed without it. "
-                +"Editing the master changes future jobs only; existing job entries "
-                +"are protected from unwanted overwrites.",15,MUTED);
+            label(content,"Long-press a field or use its three-dot menu to edit, reorder, "
+                +"set required or remove it. Existing job data is never overwritten.",
+                15,MUTED);
             button(content,"+ Add template field",()->editMasterField(null));
-            for(JobTemplates.Field f:new JobTemplates(store).master()){
+            List<JobTemplates.Field> fields=new JobTemplates(store).master();
+            for(int i=0;i<fields.size();i++){
+                JobTemplates.Field field=fields.get(i);
+                final int position=i;
                 LinearLayout entry=card();
-                label(entry,f.label,18,LIGHT);
-                label(entry,f.kind+" · "+(f.required?"Required":"Optional")+
-                    (f.value.isEmpty()?"":" · Default: "+f.value),14,MUTED);
-                button(entry,"Rename / edit "+f.label,()->editMasterField(f));
-                button(entry,"− Remove from future job templates",()->
-                    new AlertDialog.Builder(this).setTitle("Remove template field?")
-                        .setMessage(f.label+" will be excluded from future jobs. "
-                            +"Existing job records are not erased.")
-                        .setNegativeButton("Keep",(d,w)->{})
-                        .setPositiveButton("Remove",(d,w)->{
-                            try{new JobTemplates(store).removeMaster(f.id);
-                                masterJobTemplateScreen();}
-                            catch(Exception e){error(e);}
-                        }).show());
+                LinearLayout header=new LinearLayout(this);
+                header.setOrientation(LinearLayout.HORIZONTAL);
+                entry.addView(header,new LinearLayout.LayoutParams(-1,-2));
+                TextView title=label(header,field.label,18,LIGHT);
+                title.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));
+                Runnable actions=()->fieldActionMenu(field,null,position,fields.size());
+                fieldMoreButton(header,field.label,actions);
+                label(entry,field.kind+" · "+(field.required?"Required":"Optional")+
+                    (field.value.isEmpty()?"":" · Default: "+field.value),14,MUTED);
+                entry.setOnLongClickListener(v->{actions.run();return true;});
+                title.setOnLongClickListener(v->{actions.run();return true;});
             }
-        }catch(Exception e){error(e);}
+        }catch(Exception error){error(error);}
     }
     /** Type-specific editor: no user must enter true/false for a checkbox. */
     private static String customFieldValue(String kind,CheckBox checked,
@@ -3146,40 +3839,42 @@ public final class MainActivity extends Activity {
     }
 
     private void jobCustomFields(WorkspaceStore.Job work)throws IOException{
-        section("Your customizable job checklist");
-        button(content,"+ Add any field or checklist item",()->editJobField(work,null));
-        button(content,"Edit master job template (future jobs)",this::masterJobTemplateScreen);
+        section("Custom checklist and fields");
+        button(content,"+ Add a field or checklist item",()->editJobField(work,null));
+        button(content,"Edit master template (future jobs)",this::masterJobTemplateScreen);
         List<JobTemplates.Field> fields=new JobTemplates(store).forJob(work);
-        for(JobTemplates.Field f:fields){
+        for(int i=0;i<fields.size();i++){
+            JobTemplates.Field f=fields.get(i);
+            final int position=i;
             LinearLayout row=card();
+            LinearLayout header=new LinearLayout(this);
+            header.setOrientation(LinearLayout.HORIZONTAL);
+            row.addView(header,new LinearLayout.LayoutParams(-1,-2));
+            Runnable actions=()->fieldActionMenu(f,work,position,fields.size());
             if(f.kind.equals(JobTemplates.CHECK)){
-                CheckBox check=checkbox(row,f.label+
+                CheckBox check=checkbox(header,f.label+
                     (f.required?" · Required":""),f.checked());
+                check.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));
                 check.setOnClickListener(v->{
-                    boolean newValue=check.isChecked();
+                    boolean next=check.isChecked();
                     try{
                         new JobTemplates(store).saveJob(work,f.id,f.label,f.kind,
-                            f.required,Boolean.toString(newValue));
+                            f.required,Boolean.toString(next));
                         Toast.makeText(this,"Saved "+f.label,Toast.LENGTH_SHORT).show();
-                    }catch(Exception e){
-                        check.setChecked(!newValue);
-                        error(e);
+                    }catch(Exception error){
+                        check.setChecked(!next);
+                        error(error);
                     }
                 });
             }else{
-                label(row,f.label+(f.required?" · Required":""),17,LIGHT);
+                TextView title=label(header,f.label+
+                    (f.required?" · Required":""),17,LIGHT);
+                title.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));
+                title.setOnLongClickListener(v->{actions.run();return true;});
                 label(row,f.value.isEmpty()?"Not entered":f.value,15,MUTED);
             }
-            button(row,"Edit / rename "+f.label,()->editJobField(work,f));
-            button(row,"− Remove "+f.label+" from this job",()->
-                new AlertDialog.Builder(this).setTitle("Remove job field?")
-                    .setMessage("Remove '"+f.label+"' from THIS job only? "
-                        +"Your master template and other jobs remain unchanged.")
-                    .setNegativeButton("Keep",(d,w)->{})
-                    .setPositiveButton("Remove",(d,w)->{
-                        try{new JobTemplates(store).removeJob(work,f.id);job(work.id);}
-                        catch(Exception e){error(e);}
-                    }).show());
+            fieldMoreButton(header,f.label,actions);
+            row.setOnLongClickListener(v->{actions.run();return true;});
         }
         List<String> incomplete=new JobTemplates(store).missingRequired(work);
         if(!incomplete.isEmpty())
@@ -3216,15 +3911,19 @@ public final class MainActivity extends Activity {
             EditText delivery=field(fields,"Material delivery contact",
                 "Supplier driver / manager");
             delivery.setText(current.delivery);
-            EditText crew=field(fields,"Assigned crew or personnel",
-                "Crew names");
-            crew.setText(current.crew);
+            EditText crew=null;
+            if(FeatureSettings.enabled(this,FeatureSettings.CREW)){
+                crew=field(fields,"Assigned crew or personnel","Crew names");
+                crew.setText(current.crew);
+            }
+            final EditText chosenCrew=crew;
             EditText notes=multiline(fields,"Operations notes / site instructions",
                 current.notes);
             dialog("Job vendors and logistics",fields,()->{
                 try{
                     new TradeModules(store).saveLogistics(job,vendor.getText().toString(),
-                        delivery.getText().toString(),crew.getText().toString(),
+                        delivery.getText().toString(),
+                        chosenCrew==null?current.crew:chosenCrew.getText().toString(),
                         notes.getText().toString());
                     job(job.id);
                 }catch(IOException e){throw new IllegalStateException(e);}
@@ -3257,7 +3956,121 @@ public final class MainActivity extends Activity {
             }).show();
     }
 
-    private void lineDialog(WorkspaceStore.Job job) {
+
+    private void changeOrderCreateDialog(WorkspaceStore.Job job){
+        LinearLayout fields=form();
+        EditText title=field(fields,"What changed?","Extra downspout, repair, added labor");
+        label(fields,"Linked to this job. A change order is not a separate quote.",14,MUTED);
+        dialog("New change order",fields,()->{
+            try{
+                ChangeOrders.Order made=new ChangeOrders(store).create(job,
+                    title.getText().toString());
+                changeOrderActions(job,made);
+            }catch(IOException e){throw new IllegalStateException(e);}
+        });
+    }
+
+    private void changeOrderActions(WorkspaceStore.Job job,ChangeOrders.Order order){
+        try{
+            ChangeOrders changes=new ChangeOrders(store);
+            List<ChangeOrders.Line> entries=changes.lines(job,order);
+            StringBuilder description=new StringBuilder();
+            for(ChangeOrders.Line entry:entries)description.append("\n")
+                .append(entry.description).append(" · ")
+                .append(entry.quantity).append(" × $").append(entry.rate);
+            String message="Status: "+order.status+"\nDelta: $"+changes.total(job,order)+
+                "\n"+(order.signed()?"Acknowledged by "+order.signedBy+" on "+order.acknowledged+
+                    "\nLocal SHA-256 proof verified.":"Customer has not signed.")+
+                "\n\n"+(description.length()==0?"No lines yet.":description.toString());
+            AlertDialog.Builder menu=new AlertDialog.Builder(this)
+                .setTitle(order.title).setMessage(message)
+                .setNegativeButton("Close",(d,w)->{
+                    currentJobSection="costing";job(job.id);
+                });
+            if(ChangeOrders.PROPOSED.equals(order.status)){
+                menu.setNeutralButton("＋ Add work",(d,w)->changeOrderLineDialog(job,order));
+                if(!entries.isEmpty())menu.setPositiveButton("Sign / acknowledge",
+                    (d,w)->changeOrderSignDialog(job,order));
+            }else if(ChangeOrders.ACKNOWLEDGED.equals(order.status)){
+                menu.setPositiveButton("Add to invoice",(d,w)->
+                    new AlertDialog.Builder(this).setTitle("Confirm billing")
+                        .setMessage("Add these approved work lines to the original job invoice? "+
+                            "Each line is linked and added only once.")
+                        .setNegativeButton("Cancel",(confirmDialog,which)->{})
+                        .setPositiveButton("Add",(confirmDialog,which)->{
+                            try{
+                                changes.addToInvoice(job,order);
+                                currentJobSection="costing";job(job.id);
+                            }catch(Exception e){error(e);}
+                        }).show());
+            }
+            menu.show();
+        }catch(Exception e){error(e);}
+    }
+
+    private void changeOrderLineDialog(WorkspaceStore.Job job,ChangeOrders.Order order){
+        LinearLayout fields=form();
+        EditText desc=field(fields,"Work to add","Install additional downspout");
+        EditText qty=field(fields,"Quantity","1");qty.setText("1");
+        qty.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        EditText rate=field(fields,"Unit rate","85.00");
+        rate.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL|
+            InputType.TYPE_NUMBER_FLAG_SIGNED);
+        dialog("Add change-order work",fields,()->{
+            try{
+                new ChangeOrders(store).addLine(job,order,desc.getText().toString(),
+                    qty.getText().toString(),rate.getText().toString());
+                currentJobSection="costing";job(job.id);
+            }catch(IOException e){throw new IllegalStateException(e);}
+        });
+    }
+
+    private void changeOrderSignDialog(WorkspaceStore.Job job,ChangeOrders.Order order){
+        try{
+            ChangeOrders changes=new ChangeOrders(store);
+            LinearLayout fields=form();
+            label(fields,"CHANGE ORDER · "+order.title,18,LIGHT);
+            label(fields,"Review these additional items and prices before signing. "+
+                "This amount is added to the original job, not a second quotation.",15,MUTED);
+            for(ChangeOrders.Line line:changes.lines(job,order))
+                label(fields,line.description+"\n"+line.quantity+" × $"+line.rate+
+                    " = $"+line.amount,16,LIGHT);
+            label(fields,"Additional approved amount: $"+changes.total(job,order),
+                19,LIGHT);
+            CheckBox acknowledged=checkbox(fields,
+                "I reviewed these added items and approve the additional amount",false);
+            label(fields,"A finger/stylus image, signer name and timestamp are kept "+
+                "locally with an integrity hash. The app cannot verify legal identity.",
+                13,MUTED);
+            EditText signer=field(fields,"Printed name of signer",
+                "Customer or authorized person");
+            SignaturePadView pad=new SignaturePadView(this);
+            fields.addView(pad,new LinearLayout.LayoutParams(-1,dp(190)));
+            button(fields,"Clear signature",pad::clear);
+            dialog("Acknowledge change order",fields,()->{
+                if(!acknowledged.isChecked())
+                    throw new IllegalArgumentException(
+                        "Review the work and check the acknowledgment before saving");
+                try{
+                    changes.acknowledge(job,order,signer.getText().toString(),pad.png());
+                    currentJobSection="costing";job(job.id);
+                }catch(IOException e){throw new IllegalStateException(e);}
+            });
+        }catch(Exception e){error(e);}
+    }
+
+    private static String invoiceDescriptionFromNotes(String notes){
+        for(String line:notes.split("\\R")){
+            String candidate=line.trim().replaceAll("\\s+"," ");
+            if(candidate.length()>180)candidate=candidate.substring(0,180).trim();
+            if(!candidate.isEmpty())return candidate;
+        }
+        return "Work described in field notes";
+    }
+
+    private void lineDialog(WorkspaceStore.Job job){lineDialog(job,"");}
+
+    private void lineDialog(WorkspaceStore.Job job,String preset) {
         LinearLayout fields = form();
         EditText description = field(fields, "Description (required)", "4-inch gutter cleanout");
         EditText quantity = field(fields, "Quantity", "1");
@@ -3266,6 +4079,41 @@ public final class MainActivity extends Activity {
         EditText rate = field(fields, "Unit rate · negative only for discount", "85.00");
         rate.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED |
             InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        if(FeatureSettings.enabled(this,FeatureSettings.CATALOG)){
+            LinearLayout suggestions=new LinearLayout(this);
+            suggestions.setOrientation(LinearLayout.VERTICAL);
+            fields.addView(suggestions);
+            label(fields,"Suggestions are optional. Your own wording and prices always work.",
+                13,MUTED);
+            description.addTextChangedListener(new TextWatcher(){
+                public void beforeTextChanged(CharSequence s,int st,int count,int after){}
+                public void onTextChanged(CharSequence s,int st,int before,int count){
+                    suggestions.removeAllViews();
+                    try{
+                        List<TradeModules.CatalogItem> catalog=new TradeModules(store).catalog();
+                        catalog.sort((a,b)->Integer.compare(
+                            CatalogSuggestions.score(s.toString(),b.name,b.category),
+                            CatalogSuggestions.score(s.toString(),a.name,a.category)));
+                        int shown=0;
+                        for(TradeModules.CatalogItem item:catalog){
+                            if(CatalogSuggestions.score(s.toString(),item.name,item.category)<=0)
+                                continue;
+                            button(suggestions,"Use "+item.name+" · $"+item.price(),()->{
+                                description.setText(item.name);
+                                description.setSelection(description.length());
+                                rate.setText(item.price());
+                            });
+                            if(++shown>=3)break;
+                        }
+                    }catch(Exception ignored){} // Free text must remain usable.
+                }
+                public void afterTextChanged(Editable e){}
+            });
+        }
+        if(!preset.isEmpty()){
+            description.setText(preset);
+            description.setSelection(description.length());
+        }
         dialog("New line item", fields, () -> {
             try {
                 store.addLine(job, description.getText().toString(),
@@ -3349,16 +4197,48 @@ public final class MainActivity extends Activity {
             }catch(Exception e){error(e);}
             return;
         }
+
+        if(requestCode==SERVICE_SLIP_PDF_REQUEST){
+            if(resultCode!=RESULT_OK||data==null||data.getData()==null)return;
+            try(OutputStream out=getContentResolver().openOutputStream(data.getData(),"wt")){
+                if(out==null)throw new IOException("Cannot open selected PDF destination");
+                List<RecurringServices.Rule> due=new ArrayList<>();
+                for(RecurringServices.Rule rule:new RecurringServices(store).all())
+                    if(rule.dueToday())due.add(rule);
+                if(due.isEmpty())throw new IOException(
+                    "There are no date-due services to print. No file was generated.");
+                java.util.Map<String,WorkspaceStore.Customer> byId=
+                    new java.util.HashMap<>();
+                for(WorkspaceStore.Customer customer:store.customers())
+                    byId.put(customer.id,customer);
+                ServiceDuePdf.write(crm.branding().business,due,byId,out);
+                notice("Due slips saved","PDF written to your chosen destination. "+
+                    "No customers were contacted automatically.");
+            }catch(Exception failure){error(failure);}
+            return;
+        }
         if(requestCode==REPORT_EXPORT_REQUEST){
             boolean[] sections=pendingReportSections;
+            String[] methods=pendingReportMethods,categories=pendingReportCategories;
+            boolean pdf=pendingReportPdf;
             pendingReportSections=null;
+            pendingReportMethods=null;
+            pendingReportCategories=null;
+            pendingReportPdf=false;
             if(resultCode!=RESULT_OK||data==null||data.getData()==null)return;
-            if(sections==null){error(new IOException("Report selection expired"));return;}
+            if(sections==null||methods==null||categories==null){
+                error(new IOException("Report selection expired; please try again"));return;
+            }
             try(OutputStream out=getContentResolver().openOutputStream(data.getData(),"wt")){
                 if(out==null)throw new IOException("Cannot open report destination");
-                BusinessReports.export(store,crm,sections,out);
-                notice("Report exported","Your selected CSV sections were saved locally. "
-                    +"Review the README file before importing into accounting software.");
+                ReportSelection selection=new ReportSelection(sections,
+                    new java.util.LinkedHashSet<>(java.util.Arrays.asList(methods)),
+                    new java.util.LinkedHashSet<>(java.util.Arrays.asList(categories)));
+                if(pdf)QuickReportPdf.write(BusinessReports.summary(store,crm,selection),out);
+                else BusinessReports.export(store,crm,selection,out);
+                notice("Report saved",pdf?"Local PDF summary saved to your chosen file.":
+                    "Selected CSV ZIP saved. Review its README before importing into "
+                        +"accounting software.");
             }catch(Exception e){error(e);}
             return;
         }

@@ -196,6 +196,29 @@ public final class JobTemplates {
         if(!found)throw new IOException("Job field not found");
         write(jobFile(job),rows);
     }
+    /**
+     * Reorders only active fields while retaining inactive rows (tombstones)
+     * in their original slots. Stable field IDs, values, and job overrides
+     * remain intact. AtomicFile commits the complete reordered CSV.
+     */
+    private static boolean moveActive(List<List<String>> rows,String fieldId,int newIndex)
+        throws IOException {
+        return FieldOrdering.moveActive(rows,fieldId,newIndex,5);
+    }
+
+    /** Move a master field; new jobs inherit the new sequence. */
+    public synchronized void moveMaster(String id,int newIndex)throws IOException {
+        List<List<String>> rows=masterRows();
+        if(moveActive(rows,id,newIndex))write(masterFile(),rows);
+    }
+
+    /** Move this job's own fields, without changing any other job or master. */
+    public synchronized void moveJob(WorkspaceStore.Job job,String id,int newIndex)
+        throws IOException {
+        List<List<String>> rows=jobRows(job);
+        if(moveActive(rows,id,newIndex))write(jobFile(job),rows);
+    }
+
     public synchronized List<String> missingRequired(WorkspaceStore.Job job)throws IOException{
         List<String> missing=new ArrayList<>();
         for(Field f:forJob(job))if(f.required){

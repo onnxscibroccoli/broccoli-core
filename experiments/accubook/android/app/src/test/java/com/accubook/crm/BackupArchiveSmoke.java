@@ -58,6 +58,9 @@ public final class BackupArchiveSmoke {
             File photo = new File(root, jdir + "/photos/PHOTO-" + "c".repeat(32) + ".jpg");
             Files.createDirectories(photo.getParentFile().toPath());
             Files.write(photo.toPath(), new byte[]{(byte)255,(byte)216,(byte)255,0,1,2});
+            table(root,jdir+"/photo_order.csv",
+                new String[]{"PhotoFile","Position"},
+                row("PHOTO-"+"c".repeat(32)+".jpg","0"));
             table(root,directory+"/contact_preferences.csv",
                 new String[]{"Call","SMS","Email","Color"},
                 row("true","false","true","#165DAB"));
@@ -88,6 +91,13 @@ public final class BackupArchiveSmoke {
                     "MarkupPercent","Supplier","UpdatedUTC"},
                 row("CAT-"+"a".repeat(32),"Gutter Cleaning","Standard gutter cleaning",
                     "service","250.00","0","Manual","2026-11-07T00:00:00Z"));
+            table(root,"master_data/service_intervals.csv",
+                new String[]{"ScheduleID","CustomerID","SourceJobID","ServiceLabel","SiteName",
+                    "LastServiceDate","IntervalMonths","LastMileage","IntervalMiles",
+                    "DueDate","DueMileage","Active"},
+                row("SERVICE-"+"5".repeat(32),cid,jid,
+                    "Oil service","Truck 1","2026-05-07","6","55812","3000",
+                    "2026-11-07","58812","true"));
             table(root,"master_data/calendar_links.csv",
                 new String[]{"JobID","CalendarID","EventID"},
                 row(jid,"123","456"));
@@ -217,6 +227,8 @@ public final class BackupArchiveSmoke {
             .contains("On-site estimate visit"),"Master job template not restored");
         check(Files.readString(new File(live,jdir+"/custom_fields.csv").toPath())
             .contains("Use rear gate"),"Per-job custom field not restored");
+        check(Files.readString(new File(live,jdir+"/photo_order.csv").toPath())
+            .contains("PHOTO-"),"Photo display order not restored");
         check(Files.readString(new File(live,jdir+"/job_logistics.csv").toPath())
             .contains("Sample Dumpster"),"Vendor logistics not restored");
         check(Files.readString(new File(live,jdir+"/pickup_reminder.csv").toPath())
@@ -225,6 +237,8 @@ public final class BackupArchiveSmoke {
             .contains("250.00"),"Catalog pricing not restored");
         check(Files.readString(new File(live,"master_data/calendar_links.csv").toPath())
             .contains("456"),"Calendar mapping not restored");
+        check(Files.readString(new File(live,"master_data/service_intervals.csv").toPath())
+            .contains("58812"),"Service mileage interval lost in backup");
 
         check(Files.readAllBytes(new File(live,jdir+"/attachments/ATT-"+
             "f".repeat(32)+".bin").toPath()).length==5,"Attachment missing");
@@ -245,6 +259,29 @@ public final class BackupArchiveSmoke {
         try{BackupArchive.validate(invalid);}
         catch(IOException expected){rejectedFields=true;}
         check(rejectedFields,"Malformed required job field was accepted");
+        File wrongDue=new File(tmp,"invalid-service-due");
+        workspace(wrongDue,true);
+        table(wrongDue,"master_data/service_intervals.csv",
+            new String[]{"ScheduleID","CustomerID","SourceJobID","ServiceLabel","SiteName",
+                "LastServiceDate","IntervalMonths","LastMileage","IntervalMiles",
+                "DueDate","DueMileage","Active"},
+            row("SERVICE-"+"5".repeat(32),"CUST-"+"a".repeat(32),
+                "JOB-"+"b".repeat(32),"Oil service","Truck 1","2026-05-07",
+                "6","55812","3000","2026-12-07","58812","true"));
+        boolean refusedDue=false;
+        try{BackupArchive.validate(wrongDue);}
+        catch(IOException expected){refusedDue=true;}
+        check(refusedDue,"Altered due date accepted in backup");
+
+        File badPhotos=new File(tmp,"bad-photo-order");
+        workspace(badPhotos,true);
+        table(badPhotos,jdir+"/photo_order.csv",
+            new String[]{"PhotoFile","Position"},
+            row("PHOTO-"+"c".repeat(32)+".jpg","4"));
+        boolean rejectedPhotoIndex=false;
+        try{BackupArchive.validate(badPhotos);}
+        catch(IOException expected){rejectedPhotoIndex=true;}
+        check(rejectedPhotoIndex,"Malformed photo sort index accepted");
         boolean refused = false;
         try { BackupArchive.restore(live, new ByteArrayInputStream(good)); }
         catch (IOException expected) { refused = true; }
@@ -268,6 +305,75 @@ public final class BackupArchiveSmoke {
         BackupArchive.recover(live);
         check(live.isDirectory(), "Crash recovery failed to reopen previous");
         BackupArchive.validate(live);
+
+        // Signed change orders must survive ZIP export and reject altered evidence.
+        File signed=new File(tmp,"signed-workspace");
+        workspace(signed,true);
+        String coId="CO-"+"6".repeat(32),coLineId="COL-"+"7".repeat(32);
+        byte[] png=new byte[128];
+        byte[] magic={(byte)137,80,78,71,13,10,26,10};
+        System.arraycopy(magic,0,png,0,magic.length);
+        String signedName=jdir+"/change_order_signatures/"+coId+".png";
+        File signature=new File(signed,signedName);
+        Files.createDirectories(signature.getParentFile().toPath());
+        Files.write(signature.toPath(),png);
+        List<List<String>> signedLines=new ArrayList<>();
+        signedLines.add(row(coLineId,coId,"Extra downspout","2","25.00","50.00"));
+        table(signed,jdir+"/change_order_lines.csv",
+            new String[]{"LineID","ChangeOrderID","Description","Quantity","UnitRate","Amount"},
+            signedLines.get(0));
+        String at="2026-11-07T19:20:00Z",sigHash=ChangeOrderProof.sha256(png);
+        String contentHash=ChangeOrderProof.contentHash("JOB-"+"b".repeat(32),coId,
+            "Customer-approved work",at,"Sample Signer",sigHash,signedLines);
+        table(signed,jdir+"/change_orders.csv",
+            new String[]{"ChangeOrderID","Title","Status","CreatedUTC","AcknowledgedUTC",
+                "SignedBy","SignatureSHA256","ContentSHA256"},
+            row(coId,"Customer-approved work","Acknowledged",
+                "2026-11-07T19:00:00Z",at,"Sample Signer",sigHash,contentHash));
+        BackupArchive.validate(signed);
+        File restoredSigned=new File(tmp,"restored-signed-workspace");
+        BackupArchive.restore(restoredSigned,new ByteArrayInputStream(zip(signed)));
+        BackupArchive.validate(restoredSigned);
+        check(Files.isRegularFile(new File(restoredSigned,signedName).toPath()),
+            "Acknowledgement PNG lost in restore");
+        table(signed,jdir+"/change_order_lines.csv",
+            new String[]{"LineID","ChangeOrderID","Description","Quantity","UnitRate","Amount"},
+            row(coLineId,coId,"Different unauthorized work","2","25.00","50.00"));
+        boolean rejectedSigned=false;
+        try{BackupArchive.validate(signed);}catch(IOException expected){rejectedSigned=true;}
+        check(rejectedSigned,"Tampered signed change order was accepted");
+        // An invoiced order must preserve each signed line and the cached total.
+        table(signed,jdir+"/change_order_lines.csv",
+            new String[]{"LineID","ChangeOrderID","Description","Quantity","UnitRate","Amount"},
+            row(coLineId,coId,"Extra downspout","2","25.00","50.00"));
+        table(signed,jdir+"/change_orders.csv",
+            new String[]{"ChangeOrderID","Title","Status","CreatedUTC","AcknowledgedUTC",
+                "SignedBy","SignatureSHA256","ContentSHA256"},
+            row(coId,"Customer-approved work","Invoiced",
+                "2026-11-07T19:00:00Z",at,"Sample Signer",sigHash,contentHash));
+        table(signed,jdir+"/job_items.csv",ITEM,
+            row("CUSTOM-1","Labor","2","10.00","20.00"),
+            row("CUSTOM-2","Extra downspout [CO:"+coLineId+"]","2","25.00","50.00"));
+        table(signed,"master_data/jobs.csv",JOB,
+            row("JOB-"+"b".repeat(32),"CUST-"+"a".repeat(32),
+                "Gutter","","Boston","MA","02108","Scheduled","2026-11-07","70.00"));
+        BackupArchive.validate(signed);
+        table(signed,jdir+"/job_items.csv",ITEM,
+            row("CUSTOM-1","Labor","2","10.00","20.00"),
+            row("CUSTOM-2","Unauthorized description [CO:"+coLineId+"]",
+                "2","25.00","50.00"));
+        boolean refusedChangedInvoice=false;
+        try{BackupArchive.validate(signed);}
+        catch(IOException expected){refusedChangedInvoice=true;}
+        check(refusedChangedInvoice,"Altered billed description was accepted");
+        table(signed,jdir+"/job_items.csv",ITEM,
+            row("CUSTOM-1","Labor","2","10.00","20.00"));
+        boolean refusedMissingInvoice=false;
+        try{BackupArchive.validate(signed);}
+        catch(IOException expected){refusedMissingInvoice=true;}
+        check(refusedMissingInvoice,"Missing invoiced change-order line was accepted");
+
+
         System.out.println("BackupArchiveSmoke: PASS (validation, traversal, rollback, crash)");
     }
 }

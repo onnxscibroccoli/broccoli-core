@@ -47,16 +47,16 @@ All records must be reachable in at most a few obvious taps without memorizing I
 | Properties | Multiple service sites per customer, property/equipment history, site photos | Not implemented; job site fields exist |
 | Leads / requests | Lead intake, stage, notes, follow-ups and quote conversion | **Partial:** customer/active jobs/quote/payment method dashboard, no full A/R/profit reports |
 | Estimates | Templates, grouped labor/material, alternatives, taxes, approval, revision log | Not implemented |
-| Jobs | Prospect→Quoted→Approved→Scheduled→In Progress→Completed→Invoiced→Paid (payment-backed), field notes/gate codes/material requests, assignable and recurring work, change orders, attachments | **Partial:** add job, status/date change, field notes, materials requests, photo import and basic line items |
+| Jobs | Prospect→Quoted→Approved→Scheduled→In Progress→Completed→Invoiced→Paid (payment-backed), field notes/gate codes/material requests, assignable and recurring work, change orders, attachments | **Partial:** focused tabs, notes/photos/material requests, child change orders with proposed→acknowledged→invoiced and local signature; broader lifecycle and recurring work incomplete |
 | Scheduler | Day/week/month calendar, date and time slots, timezone, crews, capacity/conflicts, drag or accessible reschedule | **Partial:** day/week/month daybook, native calendar/clock and typed date/time, notes/colors, basic drag-to-date plus accessible alternative; no crew or conflict detection |
 | Crew operations | Personnel, assignments, check-in/out, on-site tracking, work orders | Not implemented |
-| Photo evidence | Camera, gallery, metadata, annotation, before/after, album, export, deletion | **Partial:** private JPEG/PNG/WebP attachment, bulk photo selection, preview, remove; no camera/annotation |
-| Pricebook | Searchable service/material catalog, units, rates, templates | Initial CSV container only |
+| Photo evidence | Camera, gallery, metadata, annotation, before/after, album, export, deletion | **Partial:** bulk import, local paginated thumbnail gallery, preview, move-up/down, optional drag, remove and atomic ordering; no camera/annotation; device acceptance pending |
+| Pricebook | Searchable service/material catalog, units, rates, templates | **Partial:** editable CSV catalog, price/markup calculator, supplier sheet import and optional local type-ahead suggestions in free-text Money line entry |
 | Costs | Expenses, purchase orders, receipts, labor cost and profitability | Initial CSV container only |
 | Invoices | Numbering, estimates->invoices, adjustments, tax, print-ready HTML and PDF with optional evidence photos, email, balance, due dates | **Partial:** editable lines, offline WYSIWYG message/footer, reusable default template, brand/logo, HTML preview, native Print/Save as PDF; no tax/settlement |
 | Payments | Offline cash/check ledger, deposits, partial payments, refunds, reconciliation, audit | **Partial:** user-entered per-job cash/check/Cash App/PayPal/Bank Transfer/Other receipts, derived method totals; no card processing, refund/reconciliation |
 | Communications | Explicit dial/SMS/email via installed apps, notes and logged activity | **Partial:** dial/text/email handoff, share quote text, manual Quote sent checkbox, no delivery receipts/history |
-| Reporting | A/R aging, pipeline, jobs by status, revenue/cost/profit, CSV exports | Not implemented |
+| Reporting | A/R aging, pipeline, jobs by status, revenue/cost/profit, CSV exports | **Partial:** native quick PDF summary and selective ZIP CSV by report section, payment method and expense category; no GL reconciliation, QuickBooks import certification or AR aging |
 | Backup/restore | Verified, safe, versioned backup AND restore; migration and corruption tests | **Partial / not accepted:** staged ZIP restore, structural validation, retained rollback, JVM fault/abuse smoke. Real-device and power-loss testing pending |
 | Desktop/iOS | Portable domain, parity and user-controlled interoperability | Not implemented |
 | Accessibility | Automated and manual testing with TalkBack, Switch Access and font scaling | **Unverified** |
@@ -147,3 +147,29 @@ Only after G1–G8 pass may the next APK be called **complete**. Until then use
 - This branch: integrated navigation/domain edits awaiting fresh CI and device validation.
 - Reference patterns: Jobber and Housecall Pro service workflows, interpreted as functional
   requirements, not permission to copy proprietary UI/brand/assets.
+
+
+## November 7, 2026 — field-first acceptance addendum
+
+The minimal profitable path is **Customer → Job → free-text work → optional suggested selling rate → invoice PDF → separately recorded payment**. Optional module controls cannot delete user data. Onboarding is designed for ordinary point-and-tap use; complex help is accessible when needed, not mandatory to continue.
+
+| Increment | Status | Exit criteria |
+| --- | --- | --- |
+| Free-text pricebook suggestions | Implemented, JVM regression | User can enter unmatched work, keep their description, dismiss every suggestion, and save the intended rate. Verify keyboard/IME on device. |
+| Change-order child entities | Implemented, JVM proof tests | Create, add lines, sign, lock, bill exactly once, survive interrupted billing, restore with hash verification. Validate complete flow on Android device. |
+| On-device signature | Implemented, *not* identity verification | Finger/stylus capture, clear/redraw, signer's name, orientation, rotation/cancellation tests, PNG/CSV tamper failure, consent language. |
+| Two-column photo gallery | Implemented; physical interaction pending | 16/page, preview, gallery drag target, visible move up/down, TalkBack alternatives, memory stability and restore. |
+| Company leaf and mascot logo | Bundled in Android drawable resources | Verify launcher, print preview, Save PDF, custom-logo override and high/low density. |
+| Plain-language help | Implemented; review pending | Can finish a new job without reading help; offline questions can answer editing, export, pricing, change-order and template extension. |
+| Recurring service due / mileage | **Partial:** opt-in monthly/mileage rules, local due list, pause/resume, explicit reset and PDF due slips | Physical-device dates, mileage-only scenarios, restore, retention and printed slips. No auto-created jobs or customer messages. |
+| Inventory layers | Planned | Company/job-site/tools separate ledgers, reconciliation, no supplier lock-in. |
+| Universal search | **Partial:** single explicit offline scan over contacts/customers/jobs/invoice references/notes/custom fields/materials/payment refs/catalog | Verify scale, Unicode, keyboard search, failure recovery and navigation. No persistent full-text index; 80-result cap. |
+
+**Release rule:** CI validation is not manual device acceptance. No general-ledger, reconciled receivables, payables, tax compliance, supplier account integration or QuickBooks connector is implied by the implemented quick PDF and selective CSV exports.
+
+
+## Next field-to-office acceptance: search and repeat service
+
+- **Lookup:** test at least 250 fictional contacts and 100 jobs; search by partial phone, street, multiword name, invoice reference, work description, custom VIN, purchase-order text and pricebook unit. Confirm no payment or note data leaves the device and that search never creates customers.
+- **Recurring:** test real month-end/leap-year service dates, zero-month mileage-only rules, incorrect odometer input, opt-in and pause/resume persistence, due PDF pagination, external-provider cancellation and ZIP restore rejection for a forged due date or orphan customer/job reference.
+- **Visual friction:** the primary sequence must remain Create customer → Job → notes/photos/line → print invoice. Advanced modules must not add mandatory fields or administrators to this path.

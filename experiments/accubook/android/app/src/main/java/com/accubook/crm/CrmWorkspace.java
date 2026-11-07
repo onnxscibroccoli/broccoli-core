@@ -100,6 +100,10 @@ public final class CrmWorkspace {
             business=r.get(0);address=r.get(1);phone=r.get(2);email=r.get(3);
             accent=r.get(4);terms=r.get(5);footer=r.get(6);logoMime=r.get(7);
         }
+        Branding withLogoMime(String mime) {
+            return new Branding(java.util.Arrays.asList(business,address,phone,email,
+                accent,terms,footer,mime));
+        }
     }
     public static final class Memo {
         public final String greeting, closing;

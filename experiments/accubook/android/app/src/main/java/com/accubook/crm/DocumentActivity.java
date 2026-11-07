@@ -212,8 +212,24 @@ public final class DocumentActivity extends Activity {
         // Reload replaces any unsaved visual edits; this is an explicit action.
         if(preview==null)return;
         job=findJob();
-        String html=InvoiceHtml.renderDocument(customer,job,store.items(job),crm.branding(),
-            crm.memo(job),crm.logo(),quote,true);
+
+        CrmWorkspace.Branding brand=crm.branding();
+        byte[] logo=crm.logo();
+        // New Jules Gutter Cleaning workspaces show the user-provided leaf, without
+        // overwriting custom logos or setting a permanent preference.
+        if(logo.length==0 && brand.logoMime.isEmpty() &&
+                "Jules Gutter Cleaning".equals(brand.business)){
+            try(java.io.InputStream in=getResources().openRawResource(
+                    R.drawable.accubook_business_leaf);
+                java.io.ByteArrayOutputStream bytes=new java.io.ByteArrayOutputStream()){
+                byte[] block=new byte[4096];int count;
+                while((count=in.read(block))!=-1)bytes.write(block,0,count);
+                logo=bytes.toByteArray();
+                brand=brand.withLogoMime("image/png");
+            }
+        }
+        String html=InvoiceHtml.renderDocument(customer,job,store.items(job),brand,
+            crm.memo(job),logo,quote,true);
         preview.loadDataWithBaseURL(null,html,"text/html","UTF-8",null);
     }
     private WorkspaceStore.Job findJob() throws IOException {

@@ -80,6 +80,50 @@ raise SystemExit('Expected UI text missing: '+label)
 PY
 }
 
+
+# Focused job rail is horizontally scrollable; choose a tab by visible label.
+tap_job_tab() {
+  local label="$1"
+  LABEL="$label" python3 - <<'PY'
+import os,re,subprocess,time,xml.etree.ElementTree as ET
+label=os.environ['LABEL']
+for attempt in range(11):
+    subprocess.run(['adb','shell','uiautomator','dump','/sdcard/accubook-window.xml'],
+        stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,check=True)
+    root=ET.fromstring(subprocess.check_output(['adb','exec-out','cat','/sdcard/accubook-window.xml']))
+    rows=[x for x in root.iter('node') if 'HorizontalScrollView' in x.attrib.get('class','')]
+    if not rows:
+        # Long content sections can scroll the fixed top rail out of the
+        # accessibility tree. Return toward the top before deciding it is missing.
+        subprocess.run(['adb','shell','input','swipe','500','540','500','1510','350'],
+            check=True)
+        time.sleep(.7)
+        continue
+    rail=rows[0]
+    points=re.findall(r'\[(-?\d+),(-?\d+)\]',rail.attrib.get('bounds',''))
+    if len(points)!=2: raise SystemExit('No rail bounds')
+    left,top=map(int,points[0]);right,bottom=map(int,points[1])
+    center=(top+bottom)//2
+    for node in root.iter('node'):
+        if label.lower() not in (node.attrib.get('text','')+' '+node.attrib.get('content-desc','')).lower(): continue
+        bounds=re.findall(r'\[(-?\d+),(-?\d+)\]',node.attrib.get('bounds',''))
+        if len(bounds)!=2: continue
+        x1,y1=map(int,bounds[0]);x2,y2=map(int,bounds[1])
+        x=(x1+x2)//2;y=(y1+y2)//2
+        if left+20<x<right-20 and top<y<bottom:
+            print('TAB',label,x,y)
+            subprocess.run(['adb','shell','input','tap',str(x),str(y)],check=True)
+            exit(0)
+    # Attempt both directions so the test is deterministic even after a prior tab switch.
+    forward=attempt<6
+    xfrom=right-35 if forward else left+35
+    xto=left+35 if forward else right-35
+    subprocess.run(['adb','shell','input','swipe',str(xfrom),str(center),
+       str(xto),str(center),'330'],check=True)
+    time.sleep(.7)
+raise SystemExit('Missing job tab: '+label)
+PY
+}
 assert_visible 'Accubook'
 tap_node 'Try fictional sample job'
 tap_node 'Create sample'
@@ -87,15 +131,24 @@ assert_visible 'Sample Customer'
 assert_visible 'Job history'
 tap_node 'DEMO - Gutter'
 assert_visible 'Reschedule / change time'
-assert_visible 'Your customizable job checklist'
 assert_visible 'Change job status'
 tap_node 'Change job status'
 tap_node 'In Progress'
 assert_visible 'In Progress'
-assert_visible 'Estimate and invoice'
+tap_job_tab 'Photos'
 assert_visible 'Add photo from device'
+tap_job_tab 'Money'
+assert_visible 'Estimate and invoice'
+assert_visible 'New change order'
+tap_job_tab 'Notes'
+assert_visible 'Edit field notes'
+tap_job_tab 'Checklist'
+assert_visible 'Custom checklist and fields'
 adb shell am force-stop com.accubook.crm
 adb shell am start -n com.accubook.crm/.MainActivity
 sleep 2
 assert_visible 'In Progress'
-echo "ACCUBOOK_EMULATOR_SMOKE_PASS: launch/demo/customer/job/status/restart"
+tap_node 'Open Home workspace'
+tap_node 'Find anything'
+assert_visible 'Search this device'
+echo "ACCUBOOK_EMULATOR_SMOKE_PASS: launch/demo/job/changes/notes/restart/local-lookup"

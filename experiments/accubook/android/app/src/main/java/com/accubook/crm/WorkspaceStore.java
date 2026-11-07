@@ -436,6 +436,8 @@ public final class WorkspaceStore {
         List<List<String>> rows = table(new File(jobFolder(job), "job_items.csv"), ITEM_HEADER);
         for (int i = 1; i < rows.size(); i++) {
             if (rows.get(i).get(0).equals(lineId)) {
+                if (isChangeOrderLine(rows.get(i)))
+                    throw new IOException("Approved change-order lines cannot be edited. Create another change order.");
                 BigDecimal q, rate;
                 try {
                     q = new BigDecimal(text(quantity, true));
@@ -462,9 +464,23 @@ public final class WorkspaceStore {
         throw new IOException("Line item not found");
     }
 
+    /** Persist line position without rewriting rates, amounts, or stable identifiers. */
+    public synchronized void moveLine(Job job,String lineId,int index)throws IOException{
+        File file=new File(jobFolder(job),"job_items.csv");
+        List<List<String>> rows=table(file,ITEM_HEADER);
+        if(InvoiceLineOrdering.move(rows,lineId,index))writeRows(file,rows);
+    }
+
+    private static boolean isChangeOrderLine(List<String> row) {
+        return row.size()>=2 && row.get(1).matches("(?s).*\\[CO:COL-[a-f0-9]{32}\\]$");
+    }
+
     public synchronized void deleteLine(Job job, String lineId) throws IOException {
         File file = new File(jobFolder(job), "job_items.csv");
         List<List<String>> rows = table(file, ITEM_HEADER);
+        for(int i=1;i<rows.size();i++)
+            if(rows.get(i).get(0).equals(lineId) && isChangeOrderLine(rows.get(i)))
+                throw new IOException("Approved change-order lines cannot be removed. Create a correcting change order.");
         boolean removed = rows.removeIf(r -> r.size() > 0 && r.get(0).equals(lineId));
         if (!removed) throw new IOException("Line item not found");
         writeRows(file, rows);
@@ -480,6 +496,7 @@ public final class WorkspaceStore {
         if(source==null)throw new IOException("Photo cannot be opened");
         if(mime==null||!mime.toLowerCase(Locale.ROOT).startsWith("image/"))
             throw new IOException("Choose an image from the Android picker");
+        List<String> previousOrder=photos(job); // Preserve intentional order on append.
         BufferedInputStream input=new BufferedInputStream(source);
         input.mark(24);
         byte[] magic=new byte[16];
@@ -540,7 +557,22 @@ public final class WorkspaceStore {
             if(dest!=null)atomic.failWrite(dest);
             throw e;
         }
+        previousOrder.add(name);
+        writePhotoOrder(job,previousOrder);
         return name;
+    }
+
+    private File photoOrderFile(Job job)throws IOException{
+        return new File(jobFolder(job),"photo_order.csv");
+    }
+    private void writePhotoOrder(Job job,List<String> order)throws IOException{
+        List<List<String>> rows=emptyTable(new String[]{"PhotoFile","Position"});
+        for(int i=0;i<order.size();i++){
+            String name=order.get(i);
+            if(!PhotoOrdering.valid(name))throw new IOException("Invalid photo reference");
+            rows.add(row(name,Integer.toString(i)));
+        }
+        writeRows(photoOrderFile(job),rows);
     }
 
     public synchronized List<String> photos(Job job) throws IOException {
@@ -555,7 +587,27 @@ public final class WorkspaceStore {
             }
         }
         names.sort(String::compareTo);
-        return names;
+        File index=photoOrderFile(job);
+        if(!index.isFile()&&!new File(index.getPath()+".bak").isFile())
+            return names; // Legacy jobs retain deterministic filename order.
+        List<List<String>> rows=CsvCodec.read(new String(
+            readBytes(new AtomicFile(index)),StandardCharsets.UTF_8));
+        if(rows.isEmpty()||!rows.get(0).equals(row("PhotoFile","Position")))
+            throw new IOException("Unknown photo order CSV schema");
+        List<String> stored=new ArrayList<>();
+        for(int i=1;i<rows.size();i++){
+            List<String> current=rows.get(i);
+            if(current.size()!=2||!current.get(1).equals(Integer.toString(i-1)))
+                throw new IOException("Invalid photo position");
+            stored.add(current.get(0));
+        }
+        List<String> ordered=PhotoOrdering.merge(names,stored);
+        if(!ordered.equals(stored))writePhotoOrder(job,ordered);
+        return ordered;
+    }
+
+    public synchronized void movePhoto(Job job,String name,int newPosition)throws IOException{
+        writePhotoOrder(job,PhotoOrdering.move(photos(job),name,newPosition));
     }
 
     public synchronized File photoFile(Job job, String name) throws IOException {
@@ -570,8 +622,13 @@ public final class WorkspaceStore {
     }
 
     public synchronized void deletePhoto(Job job, String name) throws IOException {
-        File file = photoFile(job, name);
-        if (!file.delete()) throw new IOException("Cannot delete photo");
+        File file=photoFile(job,name);
+        List<String> remaining=photos(job);
+        if(!remaining.remove(name))throw new IOException("Photo not indexed");
+        // Save the new list first. If deletion fails, the existing image will be
+        // rediscovered rather than remaining a dangling reference in the index.
+        writePhotoOrder(job,remaining);
+        if(!file.delete())throw new IOException("Cannot delete photo");
     }
 
     /** Explicit restore, never called without owner choosing a ZIP via system picker. */

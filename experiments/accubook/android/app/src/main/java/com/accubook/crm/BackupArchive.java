@@ -65,6 +65,15 @@ public final class BackupArchive {
     private static final String[] CONTACTS={"ContactID","Name","Phone","Email","SourceID","CustomerID"};
     private static final String[] JOB_MASTER={"FieldID","Label","Kind","Required","DefaultValue","Active"};
     private static final String[] JOB_FIELD={"FieldID","Label","Kind","Required","Value","Active","Origin"};
+    private static final String[] PHOTO_ORDER={"PhotoFile","Position"};
+    private static final String[] CHANGE_ORDERS={"ChangeOrderID","Title","Status",
+        "CreatedUTC","AcknowledgedUTC","SignedBy","SignatureSHA256","ContentSHA256"};
+    private static final String[] CHANGE_ORDER_LINES={"LineID","ChangeOrderID",
+        "Description","Quantity","UnitRate","Amount"};
+    private static final String[] SERVICE_INTERVALS={
+        "ScheduleID","CustomerID","SourceJobID","ServiceLabel","SiteName",
+        "LastServiceDate","IntervalMonths","LastMileage","IntervalMiles",
+        "DueDate","DueMileage","Active"};
 
 
     public static File rollback(File live) {
@@ -109,7 +118,7 @@ public final class BackupArchive {
     }
 
     private static boolean allowedFile(String name) {
-        if (name.matches("master_data/(customers|jobs|catalog|expenses|pricebook|calendar_links|contacts)\\.csv")) return true;
+        if (name.matches("master_data/(customers|jobs|catalog|expenses|pricebook|calendar_links|contacts|service_intervals)\\.csv")) return true;
         if(name.equals("templates/branding.csv")||name.equals("templates/job_fields.csv")
             ||name.equals("templates/default_memo.csv")
             ||name.equals("templates/logo.bin"))return true;
@@ -122,7 +131,9 @@ public final class BackupArchive {
         return name.matches(job + "/(job_items\\.csv|material_requests\\.csv|field_notes\\.md|job_details\\.json|"
             + "appointment\\.csv|quote\\.csv|payments\\.csv|invoice_memo\\.csv|"
             + "time_entries\\.csv|route_points\\.csv|job_milestones\\.csv|"
-            + "job_logistics\\.csv|pickup_reminder\\.csv|custom_fields\\.csv|"
+            + "job_logistics\\.csv|pickup_reminder\\.csv|custom_fields\\.csv|photo_order\\.csv|"
+            + "change_orders\\.csv|change_order_lines\\.csv|"
+            + "change_order_signatures/CO-[a-f0-9]{32}\\.png|"
             + "attachments\\.csv|attachments/ATT-[a-f0-9]{32}\\.bin|"
             + "photos/PHOTO-[a-f0-9]{32}\\.(jpg|png|webp|heic|heif|avif|gif|bmp|tiff|dng|img))");
     }
@@ -227,6 +238,92 @@ public final class BackupArchive {
             if(r.get(2).equals("Number")&&!r.get(4).isEmpty())
                 try{new BigDecimal(r.get(4));}
                 catch(NumberFormatException e){throw new IOException("Invalid custom number",e);}
+        }
+    }
+
+
+    private static void validateChangeOrders(File root,String folder,String jobId)
+        throws IOException {
+        File index=new File(root,folder+"/change_orders.csv");
+        File lineFile=new File(root,folder+"/change_order_lines.csv");
+        if(!index.isFile()&&!lineFile.isFile())return; // Older workspace.
+        if(!index.isFile()||!lineFile.isFile())
+            throw new IOException("Incomplete change-order tables");
+        List<List<String>> orders=rows(root,folder+"/change_orders.csv",CHANGE_ORDERS);
+        List<List<String>> lines=rows(root,folder+"/change_order_lines.csv",CHANGE_ORDER_LINES);
+        if(orders.size()>1001||lines.size()>1001)
+            throw new IOException("Too many change-order entries");
+        Set<String> orderIds=new HashSet<>(),lineIds=new HashSet<>();
+        for(int i=1;i<orders.size();i++) {
+            List<String> order=orders.get(i);
+            if(!order.get(0).matches("CO-[a-f0-9]{32}")||
+                !orderIds.add(order.get(0))||order.get(1).isEmpty()||
+                !Arrays.asList("Proposed","Acknowledged",
+                    "Invoiced").contains(order.get(2)))
+                throw new IOException("Invalid change order in backup");
+        }
+        for(int i=1;i<lines.size();i++){
+            List<String> line=lines.get(i);
+            if(!line.get(0).matches("COL-[a-f0-9]{32}")||
+                !lineIds.add(line.get(0))||!orderIds.contains(line.get(1))||
+                line.get(2).trim().isEmpty())
+                throw new IOException("Invalid change-order line in backup");
+            try{ChangeOrderProof.total(java.util.Collections.singletonList(line));}
+            catch(IllegalArgumentException e){
+                throw new IOException("Invalid change-order amount in backup",e);
+            }
+        }
+        for(int i=1;i<orders.size();i++){
+            List<String> order=orders.get(i);
+            String id=order.get(0);
+            List<List<String>> subset=new ArrayList<>();
+            for(int k=1;k<lines.size();k++)if(id.equals(lines.get(k).get(1)))
+                subset.add(lines.get(k));
+            if("Proposed".equals(order.get(2))) {
+                if(!order.get(4).isEmpty()||!order.get(5).isEmpty()||
+                    !order.get(6).isEmpty()||!order.get(7).isEmpty())
+                    throw new IOException("Unsigned change order has signoff metadata");
+                continue;
+            }
+            if(subset.isEmpty()||order.get(4).isEmpty()||order.get(5).isEmpty())
+                throw new IOException("Acknowledged change order has no evidence");
+            File sig=new File(root,folder+"/change_order_signatures/"+id+".png");
+            if(!sig.isFile()||Files.isSymbolicLink(sig.toPath())||
+                sig.length()<100||sig.length()>256*1024)
+                throw new IOException("Change-order signature missing or oversized");
+            byte[] png=Files.readAllBytes(sig.toPath());
+            byte[] magic={(byte)137,80,78,71,13,10,26,10};
+            for(int k=0;k<magic.length;k++)if(png[k]!=magic[k])
+                throw new IOException("Invalid change-order PNG");
+            if(!ChangeOrderProof.sha256(png).equals(order.get(6))||
+                !ChangeOrderProof.contentHash(jobId,id,order.get(1),order.get(4),
+                    order.get(5),order.get(6),subset).equals(order.get(7)))
+                throw new IOException("Change-order integrity check failed");
+            List<List<String>> billed=rows(root,folder+"/job_items.csv",ITEM);
+            for(List<String> signedLine:subset){
+                String expectedDescription=signedLine.get(2)+" [CO:"+signedLine.get(0)+"]";
+                int found=0;
+                for(int n=1;n<billed.size();n++){
+                    List<String> posted=billed.get(n);
+                    if(posted.get(1).endsWith("[CO:"+signedLine.get(0)+"]")){
+                        found++;
+                        try{
+                            if(!posted.get(1).equals(expectedDescription)||
+                                new BigDecimal(posted.get(2)).compareTo(
+                                    new BigDecimal(signedLine.get(3)))!=0||
+                                new BigDecimal(posted.get(3)).compareTo(
+                                    new BigDecimal(signedLine.get(4)))!=0||
+                                new BigDecimal(posted.get(4)).compareTo(
+                                    new BigDecimal(signedLine.get(5)))!=0)
+                                throw new IOException("Billed change-order line differs from approval");
+                        }catch(NumberFormatException e){
+                            throw new IOException("Invalid billed change-order amount",e);
+                        }
+                    }
+                }
+                if(found>1 || ("Invoiced".equals(order.get(2))&&found!=1))
+                    throw new IOException("Duplicate or missing billed change-order line");
+            }
         }
     }
 
@@ -375,6 +472,20 @@ public final class BackupArchive {
                         .decode(java.nio.ByteBuffer.wrap(Files.readAllBytes(notes.toPath())));
                 } catch (java.nio.charset.CharacterCodingException error) {
                     throw new IOException("Job notes are invalid UTF-8", error);
+                }
+            }
+            String photoIndex=jobFolder+"/photo_order.csv";
+            if(new File(root,photoIndex).isFile()){
+                List<List<String>> ordered=rows(root,photoIndex,PHOTO_ORDER);
+                Set<String> seenPhotos=new HashSet<>();
+                if(ordered.size()>2001)throw new IOException("Too many indexed photos");
+                for(int n=1;n<ordered.size();n++){
+                    List<String> row=ordered.get(n);
+                    String photo=row.get(0);
+                    if(!PhotoOrdering.valid(photo)||!seenPhotos.add(photo)||
+                        !row.get(1).equals(Integer.toString(n-1))||
+                        !new File(root,jobFolder+"/photos/"+photo).isFile())
+                        throw new IOException("Corrupt photo order index");
                 }
             }
             String custom=jobFolder+"/custom_fields.csv";
@@ -538,6 +649,7 @@ public final class BackupArchive {
                     }catch(NumberFormatException e){throw new IOException("Invalid attachment size",e);}
                 }
             }
+            validateChangeOrders(root,jobFolder,id);
             BigDecimal sum = BigDecimal.ZERO;
             for (int n = 1; n < details.size(); n++) {
                 List<String> line = details.get(n);
@@ -557,6 +669,43 @@ public final class BackupArchive {
                     throw new IOException("Job total disagrees with canonical lines: " + id);
             } catch (NumberFormatException error) {
                 throw new IOException("Invalid cached job total", error);
+            }
+        }
+        File scheduleFile=new File(root,"master_data/service_intervals.csv");
+        if(scheduleFile.isFile()){
+            List<List<String>> schedules=rows(root,"master_data/service_intervals.csv",
+                SERVICE_INTERVALS);
+            if(schedules.size()>2001)throw new IOException("Too many service intervals");
+            Map<String,String> customerOfJob=new HashMap<>();
+            for(int i=1;i<jobs.size();i++)
+                customerOfJob.put(jobs.get(i).get(0),jobs.get(i).get(1));
+            Set<String> scheduleIds=new HashSet<>();
+            for(int i=1;i<schedules.size();i++){
+                List<String> rule=schedules.get(i);
+                if(!rule.get(0).matches("SERVICE-[a-f0-9]{32}") ||
+                    !scheduleIds.add(rule.get(0))||
+                    !rule.get(1).equals(customerOfJob.get(rule.get(2)))||
+                    rule.get(3).trim().isEmpty()||rule.get(3).length()>180||
+                    rule.get(4).length()>180||
+                    !Arrays.asList("true","false").contains(rule.get(11)))
+                    throw new IOException("Invalid or orphaned recurring service schedule");
+                try{
+                    int months=Integer.parseInt(rule.get(6));
+                    if(months<0||months>120)throw new IllegalArgumentException();
+                    int miles=Integer.parseInt(rule.get(8));
+                    if(miles<0||miles>1000000)throw new IllegalArgumentException();
+                    if(!rule.get(7).isEmpty()){
+                        long reading=Long.parseLong(rule.get(7));
+                        if(reading<0||reading>9999999)throw new IllegalArgumentException();
+                    }
+                    String dueDate=ServiceIntervals.dueDate(rule.get(5),months);
+                    String dueMiles=ServiceIntervals.dueMileage(rule.get(7),rule.get(8));
+                    if(months==0&&miles==0||!rule.get(9).equals(dueDate)||
+                        !rule.get(10).equals(dueMiles))
+                        throw new IOException("Recurring schedule due values were altered");
+                }catch(IllegalArgumentException error){
+                    throw new IOException("Invalid service months/mileage in backup",error);
+                }
             }
         }
     }
