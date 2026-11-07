@@ -1905,6 +1905,23 @@ public final class MainActivity extends Activity {
                     }catch(Exception e){error(e);}
                 }).show());
             button(content,"Choose business logo",this::pickLogo);
+            button(content,"Use Jules Gutter Cleaning leaf as business logo",()->{
+                new AlertDialog.Builder(this)
+                    .setTitle("Apply Jules Gutter Cleaning leaf?")
+                    .setMessage("Use the teal leaf on new estimates and invoices? "
+                        +"This replaces the current business-document logo, if any. "
+                        +"The Accubook launcher icon will stay unchanged.")
+                    .setNegativeButton("Cancel",(d,w)->{})
+                    .setPositiveButton("Apply leaf",(d,w)->{
+                        try(InputStream source=getResources().openRawResource(
+                            R.drawable.jules_gutter_leaf)){
+                            crm.saveLogo(source,"image/png");
+                            businessScreen();
+                            notice("Business logo applied",
+                                "The teal leaf is ready for document previews.");
+                        }catch(Exception e){error(e);}
+                    }).show();
+            });
             if(new AppFeatures(this).enabled(AppFeatures.PRICEBOOK))
                 button(content,"Manage item and service pricebook",this::catalogScreen);
             button(content,"Customize visible features / solo or crew mode",
