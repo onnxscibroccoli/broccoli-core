@@ -42,6 +42,7 @@ public final class SignaturePadView extends View {
         float y=Math.max(0,Math.min(getHeight(),event.getY()));
         switch(event.getActionMasked()){
             case MotionEvent.ACTION_DOWN:
+                getParent().requestDisallowInterceptTouchEvent(true);
                 path.moveTo(x,y); drawn=true;invalidate();return true;
             case MotionEvent.ACTION_MOVE:
                 path.lineTo(x,y);invalidate();return true;
