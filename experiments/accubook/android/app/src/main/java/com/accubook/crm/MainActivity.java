@@ -165,6 +165,7 @@ public final class MainActivity extends Activity {
                     else if ("schedule".equals(page)) scheduleScreen();
                 else if("calendar".equals(page))calendarScreen();
                 else if("catalog".equals(page))catalogScreen();
+                else if("settings".equals(page))settingsScreen();
                 else if("contacts".equals(page))contactsScreen();
                 else if("contact".equals(page))contactsScreen();
                 else if("jobs".equals(page))jobsScreen();
@@ -1837,6 +1838,53 @@ public final class MainActivity extends Activity {
 
 
 
+    /** User-controlled visual modules; TalkBack itself is controlled by Android. */
+    private void settingsScreen(){
+        currentScreen="settings";
+        currentCustomerId=null;
+        currentJobId=null;
+        screen("Settings","Keep only the tools you use. Hidden features never erase records.");
+        navigation();
+        section("Modules");
+        label(content,"Feature switches change visible tools only, not customer data. "
+            +"Turn any module back on to restore its screens and stored records.",15,MUTED);
+        for(int i=0;i<FeatureSettings.KEYS.length;i++){
+            final String key=FeatureSettings.KEYS[i];
+            android.widget.Switch toggle=new android.widget.Switch(this);
+            toggle.setText(FeatureSettings.LABELS[i]);
+            toggle.setTextColor(LIGHT);
+            toggle.setTextSize(16);
+            toggle.setMinHeight(dp(56));
+            toggle.setChecked(FeatureSettings.enabled(this,key));
+            content.addView(toggle,new LinearLayout.LayoutParams(-1,-2));
+            toggle.setOnCheckedChangeListener((button,enabled)->{
+                try{
+                    FeatureSettings.set(this,key,enabled);
+                    if(key.equals(FeatureSettings.ADVANCED_CALENDAR)&&!enabled)
+                        CalendarBridge.setEnabled(this,-1,false);
+                    Toast.makeText(this,(enabled?"Enabled: ":"Hidden: ")+
+                        toggle.getText(),Toast.LENGTH_SHORT).show();
+                }catch(Exception error){
+                    toggle.setChecked(!enabled);
+                    error(error);
+                }
+            });
+        }
+        section("Accessibility");
+        label(content,"Accubook uses labeled actions and optional gesture shortcuts. "
+            +"The three-dot field menu supports touch and screen readers without "
+            +"cluttering normal screens. TalkBack is an Android system service; "
+            +"this app cannot turn it on by itself.",15,MUTED);
+        button(content,"Open Android TalkBack / accessibility settings",()->{
+            try{startActivity(new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS));}
+            catch(Exception error){error(error);}
+        });
+        section("Planned modules");
+        label(content,"Multi-property history, recurring job scheduling, route-density "
+            +"optimization and full accounts payable/general ledger controls are "
+            +"not implemented yet, so they do not have misleading switches.",14,MUTED);
+    }
+
     /** All business settings are local. Company identity merges into every document. */
     private void businessScreen() {
         currentScreen="business";
@@ -1866,7 +1914,9 @@ public final class MainActivity extends Activity {
                     }catch(Exception e){error(e);}
                 }).show());
             button(content,"Choose business logo",this::pickLogo);
-            button(content,"Manage item and service pricebook",this::catalogScreen);
+            button(content,"Settings · features and accessibility",this::settingsScreen);
+            if(FeatureSettings.enabled(this,FeatureSettings.CATALOG))
+                button(content,"Manage item and service pricebook",this::catalogScreen);
             button(content,"Customize master job fields / checklists",
                 this::masterJobTemplateScreen);
             section("Expenses and costs");
