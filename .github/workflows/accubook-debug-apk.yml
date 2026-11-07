@@ -40,15 +40,18 @@ jobs:
           mkdir -p build/csv-test
           javac -d build/csv-test \
             app/src/main/java/com/accubook/crm/CsvCodec.java \
+            app/src/main/java/com/accubook/crm/ExportSelection.java \
             app/src/main/java/com/accubook/crm/BackupArchive.java \
             app/src/main/java/com/accubook/crm/DocumentNumbers.java \
             app/src/main/java/com/accubook/crm/PricingEngine.java \
             app/src/main/java/com/accubook/crm/SecureArchive.java \
             app/src/test/java/com/accubook/crm/CsvCodecSmoke.java \
+            app/src/test/java/com/accubook/crm/ExportSelectionSmoke.java \
             app/src/test/java/com/accubook/crm/BackupArchiveSmoke.java \
             app/src/test/java/com/accubook/crm/SecureArchiveSmoke.java \
             app/src/test/java/com/accubook/crm/PricingEngineSmoke.java
           java -cp build/csv-test com.accubook.crm.CsvCodecSmoke
+          java -cp build/csv-test com.accubook.crm.ExportSelectionSmoke
           java -cp build/csv-test com.accubook.crm.BackupArchiveSmoke
           java -cp build/csv-test com.accubook.crm.SecureArchiveSmoke
           java -cp build/csv-test com.accubook.crm.PricingEngineSmoke
