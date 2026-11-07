@@ -43,6 +43,8 @@ jobs:
             app/src/main/java/com/accubook/crm/BackupArchive.java \
             app/src/main/java/com/accubook/crm/DocumentNumbers.java \
             app/src/main/java/com/accubook/crm/PricingEngine.java \
+            app/src/main/java/com/accubook/crm/ChangeOrderProof.java \
+            app/src/main/java/com/accubook/crm/CatalogSuggestions.java \
             app/src/main/java/com/accubook/crm/ReportSelection.java \
             app/src/main/java/com/accubook/crm/FieldOrdering.java \
             app/src/main/java/com/accubook/crm/PhotoOrdering.java \
@@ -53,7 +55,9 @@ jobs:
             app/src/test/java/com/accubook/crm/PricingEngineSmoke.java \
             app/src/test/java/com/accubook/crm/ReportSelectionSmoke.java \
             app/src/test/java/com/accubook/crm/FieldOrderingSmoke.java \
-            app/src/test/java/com/accubook/crm/PhotoOrderingSmoke.java
+            app/src/test/java/com/accubook/crm/PhotoOrderingSmoke.java \
+            app/src/test/java/com/accubook/crm/ChangeOrderProofSmoke.java \
+            app/src/test/java/com/accubook/crm/CatalogSuggestionsSmoke.java
           java -cp build/csv-test com.accubook.crm.CsvCodecSmoke
           java -cp build/csv-test com.accubook.crm.BackupArchiveSmoke
           java -cp build/csv-test com.accubook.crm.SecureArchiveSmoke
@@ -61,6 +65,8 @@ jobs:
           java -cp build/csv-test com.accubook.crm.ReportSelectionSmoke
           java -cp build/csv-test com.accubook.crm.FieldOrderingSmoke
           java -cp build/csv-test com.accubook.crm.PhotoOrderingSmoke
+          java -cp build/csv-test com.accubook.crm.ChangeOrderProofSmoke
+          java -cp build/csv-test com.accubook.crm.CatalogSuggestionsSmoke
       # GitHub-hosted Ubuntu runners already include command-line Android SDK
       # tools. The setup-android@v3 action attempts a removed legacy 'tools'
       # package on newer runners; use the preinstalled SDK directly.
