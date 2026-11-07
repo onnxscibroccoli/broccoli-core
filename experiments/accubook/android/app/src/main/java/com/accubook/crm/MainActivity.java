@@ -80,6 +80,7 @@ public final class MainActivity extends Activity {
     private String pendingAttachmentExportId;
     private String pendingAttachmentExportJob;
     private boolean bulkPhotoSelection;
+    private int currentPhotoPage=0;
     private LinearLayout content;
     private String currentJobId;
     private String currentCustomerId;
@@ -133,6 +134,7 @@ public final class MainActivity extends Activity {
             pendingReportCategories=state.getStringArray("reportCategories");
             pendingReportPdf=state.getBoolean("reportPdf",false);
             currentJobSection=state.getString("jobSection","overview");
+            currentPhotoPage=state.getInt("photoPage",0);
             pendingRouteExportId=state.getString("routeExportId");
             pendingPickupJobId=state.getString("pickupJobId");
             pendingPickupWhen=state.getLong("pickupWhen",0);
@@ -234,6 +236,7 @@ public final class MainActivity extends Activity {
         state.putStringArray("reportCategories",pendingReportCategories);
         state.putBoolean("reportPdf",pendingReportPdf);
         state.putString("jobSection",currentJobSection);
+        state.putInt("photoPage",currentPhotoPage);
         state.putString("routeExportId",pendingRouteExportId);
         state.putString("pickupJobId",pendingPickupJobId);
         state.putLong("pickupWhen",pendingPickupWhen);
@@ -1790,15 +1793,19 @@ public final class MainActivity extends Activity {
         throw new IOException("Job no longer exists");
     }
 
-    private void photoActionMenu(WorkspaceStore.Job job,String name,int index,int count){
+    private void photoActionMenu(WorkspaceStore.Job job,String name,int index,int count,View source){
         List<String> actions=new ArrayList<>();
         if(index>0)actions.add("Move up");
         if(index<count-1)actions.add("Move down");
+        if(count>1)actions.add("Drag to reorder");
         actions.add("Delete photo");
         new AlertDialog.Builder(this).setTitle("Photo "+(index+1))
             .setItems(actions.toArray(new String[0]),(d,which)->{
                 String choice=actions.get(which);
-                if(choice.equals("Delete photo")){
+                if(choice.equals("Drag to reorder")){
+                    ClipData dragData=ClipData.newPlainText("AccubookPhoto",name);
+                    source.startDragAndDrop(dragData,new View.DragShadowBuilder(source),null,0);
+                }else if(choice.equals("Delete photo")){
                     new AlertDialog.Builder(this).setTitle("Delete this photo?")
                         .setMessage("This cannot be undone. Export a backup first.")
                         .setNegativeButton("Keep",(dialog,w)->{})
@@ -1814,58 +1821,97 @@ public final class MainActivity extends Activity {
                 }
             }).setNegativeButton("Cancel",(d,w)->{}).show();
     }
-    private void photoCard(WorkspaceStore.Job job, String name, int number,int count) {
-        LinearLayout panel = card();
-        LinearLayout header=new LinearLayout(this);
-        header.setOrientation(LinearLayout.HORIZONTAL);
-        panel.addView(header,new LinearLayout.LayoutParams(-1,-2));
-        TextView title=label(header,"Photo "+number,16,LIGHT);
-        title.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));
-        Runnable actions=()->photoActionMenu(job,name,number-1,count);
-        fieldMoreButton(header,"photo "+number,actions);
-        panel.setOnLongClickListener(v->{actions.run();return true;});
-        title.setOnLongClickListener(v->{actions.run();return true;});
-        try {
-            File imageFile = store.photoFile(job, name);
-            Bitmap bitmap;
-            if(Build.VERSION.SDK_INT>=28){
-                android.graphics.ImageDecoder.Source source=
-                    android.graphics.ImageDecoder.createSource(imageFile);
-                bitmap=android.graphics.ImageDecoder.decodeBitmap(source,(decoder,info,sourceInfo)->{
-                    android.util.Size size=info.getSize();
-                    int width=size.getWidth(),height=size.getHeight();
-                    if(width<=0||height<=0)throw new IllegalArgumentException("Invalid image dimensions");
-                    double divisor=Math.max(1.0,Math.max(width,height)/1200.0);
-                    decoder.setTargetSize(Math.max(1,(int)(width/divisor)),
-                        Math.max(1,(int)(height/divisor)));
-                    decoder.setAllocator(android.graphics.ImageDecoder.ALLOCATOR_SOFTWARE);
-                });
-            }else{
-                BitmapFactory.Options options=new BitmapFactory.Options();
-                options.inJustDecodeBounds=true;
-                BitmapFactory.decodeFile(imageFile.getAbsolutePath(),options);
-                if(options.outWidth<=0||options.outHeight<=0)
-                    throw new IOException("Image codec not supported on this Android version");
-                options.inJustDecodeBounds=false;
-                options.inSampleSize=1;
-                while(options.outWidth/options.inSampleSize>1200||
-                    options.outHeight/options.inSampleSize>1200)
-                    options.inSampleSize*=2;
-                bitmap=BitmapFactory.decodeFile(imageFile.getAbsolutePath(),options);
-            }
-            if(bitmap==null)throw new IOException("Cannot preview this image codec");
-            ImageView preview = new ImageView(this);
-            preview.setImageBitmap(bitmap);
-            preview.setAdjustViewBounds(true);
-            preview.setMaxHeight(dp(210));
-            preview.setContentDescription("Attached photo " + number + " for " + job.title);
-            panel.addView(preview, new LinearLayout.LayoutParams(-1, -2));
-        } catch (Exception exception) {
-            label(panel, "Photo preview unavailable: " + exception.getMessage(), 13, MUTED);
+    private Bitmap photoBitmap(File file,int maxDimension)throws IOException{
+        if(Build.VERSION.SDK_INT>=28){
+            android.graphics.ImageDecoder.Source source=
+                android.graphics.ImageDecoder.createSource(file);
+            return android.graphics.ImageDecoder.decodeBitmap(source,(decoder,info,sourceInfo)->{
+                android.util.Size dimensions=info.getSize();
+                int w=dimensions.getWidth(),h=dimensions.getHeight();
+                if(w<=0||h<=0)throw new IOException("Invalid photo dimensions");
+                double divisor=Math.max(1.0,Math.max(w,h)/(double)maxDimension);
+                decoder.setTargetSize(Math.max(1,(int)(w/divisor)),
+                    Math.max(1,(int)(h/divisor)));
+                decoder.setAllocator(android.graphics.ImageDecoder.ALLOCATOR_SOFTWARE);
+            });
         }
-
+        BitmapFactory.Options opts=new BitmapFactory.Options();
+        opts.inJustDecodeBounds=true;
+        BitmapFactory.decodeFile(file.getAbsolutePath(),opts);
+        if(opts.outWidth<=0||opts.outHeight<=0)throw new IOException("Unsupported photo codec");
+        opts.inJustDecodeBounds=false;
+        opts.inSampleSize=1;
+        while(opts.outWidth/opts.inSampleSize>maxDimension||
+              opts.outHeight/opts.inSampleSize>maxDimension)opts.inSampleSize*=2;
+        Bitmap image=BitmapFactory.decodeFile(file.getAbsolutePath(),opts);
+        if(image==null)throw new IOException("Photo decoder returned no image");
+        return image;
     }
 
+    private void showPhotoPreview(WorkspaceStore.Job job,String name){
+        try{
+            Bitmap image=photoBitmap(store.photoFile(job,name),1600);
+            ImageView preview=new ImageView(this);
+            preview.setImageBitmap(image);
+            preview.setAdjustViewBounds(true);
+            preview.setContentDescription("Large preview of job photo");
+            new AlertDialog.Builder(this).setTitle("Job photo")
+                .setView(preview).setPositiveButton("Close",(d,w)->{}).show();
+        }catch(Exception e){error(e);}
+    }
+
+    private void photoTile(LinearLayout row,WorkspaceStore.Job job,String name,
+            int number,int count){
+        LinearLayout panel=new LinearLayout(this);
+        panel.setOrientation(LinearLayout.VERTICAL);
+        panel.setPadding(dp(9),dp(8),dp(9),dp(12));
+        panel.setBackground(box(CARD));
+        LinearLayout.LayoutParams margins=new LinearLayout.LayoutParams(0,-2,1);
+        margins.setMargins(dp(3),dp(5),dp(3),dp(5));
+        row.addView(panel,margins);
+        LinearLayout heading=new LinearLayout(this);
+        heading.setOrientation(LinearLayout.HORIZONTAL);
+        panel.addView(heading);
+        TextView label=label(heading,"Photo "+number,15,LIGHT);
+        label.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));
+        Runnable actions=()->photoActionMenu(job,name,number-1,count,panel);
+        fieldMoreButton(heading,"photo "+number,actions);
+        panel.setOnLongClickListener(v->{actions.run();return true;});
+        label.setOnLongClickListener(v->{actions.run();return true;});
+        panel.setOnDragListener((target,event)->{
+            switch(event.getAction()){
+                case android.view.DragEvent.ACTION_DRAG_STARTED:
+                    return event.getClipDescription()!=null &&
+                        "AccubookPhoto".contentEquals(event.getClipDescription().getLabel());
+                case android.view.DragEvent.ACTION_DRAG_ENTERED:
+                    panel.setAlpha(0.65f);return true;
+                case android.view.DragEvent.ACTION_DRAG_EXITED:
+                case android.view.DragEvent.ACTION_DRAG_ENDED:
+                    panel.setAlpha(1f);return true;
+                case android.view.DragEvent.ACTION_DROP:
+                    panel.setAlpha(1f);
+                    try{
+                        String dragged=event.getClipData().getItemAt(0).coerceToText(this).toString();
+                        store.movePhoto(job,dragged,number-1);
+                        job(job.id);
+                    }catch(Exception e){error(e);}
+                    return true;
+                default:return true;
+            }
+        });
+        try{
+            Bitmap thumb=photoBitmap(store.photoFile(job,name),420);
+            ImageView thumbnail=new ImageView(this);
+            thumbnail.setImageBitmap(thumb);
+            thumbnail.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            thumbnail.setContentDescription("Open photo "+number+" of "+count);
+            panel.addView(thumbnail,new LinearLayout.LayoutParams(-1,dp(150)));
+            thumbnail.setOnClickListener(v->showPhotoPreview(job,name));
+            thumbnail.setOnLongClickListener(v->{actions.run();return true;});
+        }catch(Exception exception){
+            label(panel,"Preview unavailable. Use ⋮ to reorder or delete.",13,MUTED);
+        }
+    }
 
 
     /** User-controlled visual modules; TalkBack itself is controlled by Android. */
@@ -3023,7 +3069,9 @@ public final class MainActivity extends Activity {
     }
 
     private void job(String id) {
-        if(!id.equals(currentJobId))currentJobSection="overview";
+        if(!id.equals(currentJobId)){
+            currentJobSection="overview";currentPhotoPage=0;
+        }
         currentScreen = "job";
         currentJobId = id;
         try {
@@ -3156,10 +3204,40 @@ public final class MainActivity extends Activity {
             section("Job photos");
             button(content, "Add photo from device", () -> pickPhoto(work));
             button(content, "Import multiple photos",()->pickAttachments(work,true));
-            int index = 0;
             List<String> photoNames=store.photos(work);
-            for(String name:photoNames)photoCard(work,name,++index,photoNames.size());
-            if (index == 0) label(content, "No photos attached to this job.", 15, MUTED);
+            final int pageSize=16;
+            int pageCount=Math.max(1,(photoNames.size()+pageSize-1)/pageSize);
+            currentPhotoPage=Math.min(Math.max(currentPhotoPage,0),pageCount-1);
+            int start=currentPhotoPage*pageSize;
+            int end=Math.min(photoNames.size(),start+pageSize);
+            if(photoNames.isEmpty())
+                label(content,"No photos attached. Tap Import multiple photos.",15,MUTED);
+            else{
+                label(content,"Photos "+(start+1)+"–"+end+" of "+photoNames.size()+
+                    " · tap to view, ⋮ for actions or drag",14,MUTED);
+                for(int n=start;n<end;n+=2){
+                    LinearLayout row=new LinearLayout(this);
+                    row.setOrientation(LinearLayout.HORIZONTAL);
+                    content.addView(row,new LinearLayout.LayoutParams(-1,-2));
+                    photoTile(row,work,photoNames.get(n),n+1,photoNames.size());
+                    if(n+1<end)photoTile(row,work,photoNames.get(n+1),n+2,
+                        photoNames.size());
+                    else{
+                        View spacer=new View(this);
+                        row.addView(spacer,new LinearLayout.LayoutParams(0,dp(1),1));
+                    }
+                }
+                if(pageCount>1){
+                    label(content,"Page "+(currentPhotoPage+1)+" of "+pageCount,14,MUTED);
+                    if(currentPhotoPage>0)button(content,"← Previous 16 photos",()->{
+                        currentPhotoPage--;job(work.id);
+                    });
+                    if(currentPhotoPage<pageCount-1)
+                        button(content,"Next 16 photos →",()->{
+                            currentPhotoPage++;job(work.id);
+                        });
+                }
+            }
             attachmentList(work);
             }
             if("costing".equals(currentJobSection)){
