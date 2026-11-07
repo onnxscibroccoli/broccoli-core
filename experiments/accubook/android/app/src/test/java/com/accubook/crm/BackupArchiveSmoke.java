@@ -108,6 +108,22 @@ public final class BackupArchiveSmoke {
             table(root,jdir+"/pickup_reminder.csv",
                 new String[]{"DueAtUTC","ConfiguredAtUTC","State"},
                 row("2026-11-08T12:00:00Z","2026-11-07T12:00:00Z","Scheduled"));
+            table(root,"master_data/contacts.csv",
+                new String[]{"ContactID","Name","Phone","Email","SourceID","CustomerID"},
+                row("CONT-"+"1".repeat(32),"Example Contact","555-0188",
+                    "contact@example.invalid","android:23",""));
+            table(root,"templates/job_fields.csv",
+                new String[]{"FieldID","Label","Kind","Required","DefaultValue","Active"},
+                row("FIELD-"+"2".repeat(32),"On-site estimate visit",
+                    "Checkbox","true","false","true"),
+                row("FIELD-"+"3".repeat(32),"Equipment delivered",
+                    "Checkbox","false","false","true"));
+            table(root,jdir+"/custom_fields.csv",
+                new String[]{"FieldID","Label","Kind","Required","Value","Active","Origin"},
+                row("FIELD-"+"2".repeat(32),"Site inspection completed",
+                    "Checkbox","true","true","true","Master"),
+                row("FIELD-"+"4".repeat(32),"Special access instructions",
+                    "Text","false","Use rear gate","true","Job"));
             File profile = new File(root, directory + "/profile.md");
             Files.createDirectories(profile.getParentFile().toPath());
             Files.writeString(profile.toPath(), "# notes\n", StandardCharsets.UTF_8);
@@ -195,6 +211,12 @@ public final class BackupArchiveSmoke {
             .contains("1.5000"),"Work time not restored");
         check(Files.readString(new File(live,jdir+"/job_milestones.csv").toPath())
             .contains("Dumpster delivered"),"Milestones not restored");
+        check(Files.readString(new File(live,"master_data/contacts.csv").toPath())
+            .contains("Example Contact"),"Imported contact directory not preserved");
+        check(Files.readString(new File(live,"templates/job_fields.csv").toPath())
+            .contains("On-site estimate visit"),"Master job template not restored");
+        check(Files.readString(new File(live,jdir+"/custom_fields.csv").toPath())
+            .contains("Use rear gate"),"Per-job custom field not restored");
         check(Files.readString(new File(live,jdir+"/job_logistics.csv").toPath())
             .contains("Sample Dumpster"),"Vendor logistics not restored");
         check(Files.readString(new File(live,jdir+"/pickup_reminder.csv").toPath())
@@ -215,6 +237,14 @@ public final class BackupArchiveSmoke {
         try{BackupArchive.validate(invalid);}
         catch(IOException expected){rejectedLedger=true;}
         check(rejectedLedger,"Corrupt payment ledger was accepted");
+        table(invalid,jdir+"/custom_fields.csv",
+            new String[]{"FieldID","Label","Kind","Required","Value","Active","Origin"},
+            row("FIELD-"+"2".repeat(32),"Broken required flag","Checkbox",
+                "maybe","true","true","Master"));
+        boolean rejectedFields=false;
+        try{BackupArchive.validate(invalid);}
+        catch(IOException expected){rejectedFields=true;}
+        check(rejectedFields,"Malformed required job field was accepted");
         boolean refused = false;
         try { BackupArchive.restore(live, new ByteArrayInputStream(good)); }
         catch (IOException expected) { refused = true; }
