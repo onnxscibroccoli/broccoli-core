@@ -1,5 +1,39 @@
 # Accubook — offline-first field-service CRM (engineering preview)
 
+## November 7, 2026 — private annotations and touch-first photo reordering (draft)
+
+In **debug builds only**, long-press ordinary UI text or controls to record a
+private testing annotation. Existing long-press actions are never overwritten:
+photo, invoice-line and editable-field action menus now include **Add annotation**
+alongside the previous actions. Text editing/selection and job scheduling
+drag gestures remain intact. Notes use a deterministic screen/element path
+plus stable record IDs when available; re-opening the same element edits its note.
+
+Each note is stored atomically in the app's private
+`files/accubook-test-annotations.csv`, **outside the customer workspace**.
+It is never uploaded, logged, included in the normal ZIP backup, or shared
+automatically. From **Home** or **Business**, choose **Development notes · Copy /
+export JSON**, inspect the preview, then explicitly **Copy JSON** to paste
+into ChatGPT or **Save JSON file** using Android's document picker. The JSON
+can contain names or other sensitive text entered by the tester or shown in
+labels. Clipboard content can be read by other applications after copying;
+review/redact before sharing. Uninstalling erases any unexported annotations.
+
+For job photos: open **Photos → ⋮ → Drag to reorder**. The photos jiggle
+persistently; **touch and drag once** to the destination and release. No second
+long-press is necessary. A successful drop saves the new order and stops
+jiggling. **Done rearranging photos** exits without moving a photo. Move
+up/down actions remain available as accessible alternatives. Reordering is
+still local and existing workspace photo ordering persists in backup.
+
+**Limitations / testing:** Native leaf controls are automatically annotated;
+controls with built-in long-press behaviors retain their native gesture.
+WebView document DOM nodes and Android text-selection internals are not
+individual Android views. For dynamic rows, semantic bindings are used where
+available and structural paths may shift after UI layout changes. Android
+15 physical-device touch/TalkBack/rotation/large-text and data-upgrade
+acceptance remain required; this is NOT a production release.
+
 ## November 7, 2026 — independent inventory movement module (draft)
 
 **Branch:** `feat/accubook-inventory-ledger-20261107` stacked on contact
