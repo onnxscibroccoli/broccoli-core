@@ -29,7 +29,7 @@ for screenshot-informed competitor analysis, acceptance conditions and unresolve
   focus rail: Overview, Photos, Notes, Materials, Money, Checklist and Schedule;
   optional Time and Route appear only when enabled. Existing photo import,
   status, calendar editor and dumpster reminder actions remain available.
-- **Photo ordering:** stable filenames, new `photo_order.csv`, AtomicFile rewrite, backward-compatible listing, long-press or three-dot Move up/down and Delete, and strict ZIP restore validation. A thumbnail grid with drag is still pending.
+- **Photo ordering:** stable filenames, new `photo_order.csv`, AtomicFile rewrite, backward-compatible listing, long-press or three-dot Move up/down and Delete, and strict ZIP restore validation. A two-column, 16-per-page thumbnail gallery now supports tap-to-preview, optional drag-to-drop on another photo, and accessible move up/down through the visible action menu. Physical-device gesture acceptance remains outstanding.
 - **Smaller edit controls:** master and per-job custom fields provide a compact
   visible three-dot overflow and equivalent long-press action sheet. Move
   up/down, edit, toggle required and remove actions use stable IDs and
@@ -53,10 +53,7 @@ for screenshot-informed competitor analysis, acceptance conditions and unresolve
   have been added to debug APK CI. Compilation does not certify Android
   device UX, accounting correctness or production readiness.
 
-**Still open:** photo-grid drag gestures, full color
-consistency, multi-property/recurring work, comprehensive report presets/date
-ranges, packaged brand assets, direct QuickBooks import, full device/TalkBack
-acceptance and data-recovery validation. Existing working features must be
+**Still open:** physical validation of photo-grid drag, color consistency on every surface, multi-property/recurring work, report presets/date ranges, direct QuickBooks import, full device/TalkBack acceptance and data-recovery validation. Bundled logo resources are implemented but their invoice rendering and launcher appearance need device acceptance. Existing working features must be
 regression-tested before merging this branch.
 
 ### Try the report workflow with synthetic data
@@ -347,3 +344,16 @@ Accubook's customer data stays separate from the Broccoli Core governor/event-bu
 Grasshopper/Helix and privileged rish transports. Future adapters must be
 provider-agnostic, opt-in and explicitly permissioned. Synchronization to an
 unconfirmed Google Drive folder is not performed.
+
+
+## AccuLube-derived field-to-office workflow — November 7 v0.5 increment
+
+The baseline interaction is **Customer → Job → Notes/Photos → Invoice → Paid flag/payment ledger**. Owners may customize the job, but the first visit should remain simple enough to use without training. [The standalone point-and-tap guide](USER_GUIDE.md) covers field work, accounting exports, trade extension, accessibility, and troubleshooting. Searchable help is available from Home and Settings without INTERNET.
+
+- **Free-text first billing:** Type any work description under Job → Money → Add labor/material/discount. Up to three nonbinding local catalog suggestions can fill the selling rate; there is no enforced pricebook match or cloud AI.
+- **Linked change orders:** Job → Money → New change order → Add work → Sign on this device → Add to invoice. Order and lines have stable IDs and independent local CSV records. The acknowledgment PNG is captured only on explicit user action; SHA-256 integrity is checked on display, billing and backup restore. This is not cryptographic identity verification or legal certification. The signed order becomes immutable and interrupted invoice line postings are designed to retry without duplicate line IDs.
+- **Photo gallery:** Two-column thumbnails, tap preview, 16-photo pages, optional drag-to another thumbnail, long-press/visible overflow and move up/down. Photo sorting is persisted through stable filenames and verified ZIP backup/restore.
+- **Brand graphics bundled:** The mascot is included as the Android launcher icon. The original leaf is bundled as a print-document fallback logo only for default Jules Gutter Cleaning branding with no custom logo. Selecting a custom logo still overrides it.
+- **Regression coverage:** New standalone JVM pricing/suggestion/proof tests, ZIP signed-order roundtrip and tamper rejection; Android build and emulator CI gates remain required at exact HEAD.
+
+**Not implemented yet:** recurring service intervals, fully indexed universal lookup, multi-layer inventory, AR/AP/GL posting, signed change-order PDF, optional front-camera evidence, import-ready QuickBooks format, production release. No device-collected proof is claimed in advance.
