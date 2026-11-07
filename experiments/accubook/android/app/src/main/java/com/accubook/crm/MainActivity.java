@@ -996,25 +996,28 @@ public final class MainActivity extends Activity {
      * Advanced one-way reconciliation remains available but is never automatic.
      */
     private void calendarSettings(){
-        String[] options={
+        boolean advanced=FeatureSettings.enabled(this,FeatureSettings.ADVANCED_CALENDAR);
+        String[] options=advanced?new String[]{
             "Add a job to Calendar app (recommended)",
             "Advanced account sync (experimental)",
             CalendarBridge.enabled(this)?"Disable automatic calendar sync":
                 "Calendar sharing privacy explanation"
+        }:new String[]{
+            "Add a job to Calendar app (recommended)",
+            "Calendar sharing privacy explanation"
         };
         new AlertDialog.Builder(this).setTitle("Calendar options")
             .setMessage("For reliable Google Calendar scheduling, choose a job, "
                 +"review its event, and save it in your installed Calendar app. "
-                +"The app chooses which Google or device account receives it. "
-                +"No background syncing or hidden sharing.")
+                +"No background syncing or hidden sharing occurs by default.")
             .setItems(options,(d,index)->{
                 if(index==0)chooseJobForCalendar();
-                else if(index==1)advancedCalendarSettings();
-                else if(CalendarBridge.enabled(this)){
+                else if(advanced&&index==1)advancedCalendarSettings();
+                else if(advanced&&CalendarBridge.enabled(this)){
                     CalendarBridge.setEnabled(this,-1,false);businessScreen();
                 }else notice("Calendar privacy","Only explicitly exported events go "
-                    +"to your selected Calendar app. The optional advanced sync "
-                    +"requires separate permission and may share jobs through Google.");
+                    +"to your selected Calendar app. Advanced sync must be enabled "
+                    +"separately under Settings > Modules.");
             }).setNegativeButton("Close",(d,w)->{}).show();
     }
     private void chooseJobForCalendar(){
@@ -3488,15 +3491,19 @@ public final class MainActivity extends Activity {
             EditText delivery=field(fields,"Material delivery contact",
                 "Supplier driver / manager");
             delivery.setText(current.delivery);
-            EditText crew=field(fields,"Assigned crew or personnel",
-                "Crew names");
-            crew.setText(current.crew);
+            EditText crew=null;
+            if(FeatureSettings.enabled(this,FeatureSettings.CREW)){
+                crew=field(fields,"Assigned crew or personnel","Crew names");
+                crew.setText(current.crew);
+            }
+            final EditText chosenCrew=crew;
             EditText notes=multiline(fields,"Operations notes / site instructions",
                 current.notes);
             dialog("Job vendors and logistics",fields,()->{
                 try{
                     new TradeModules(store).saveLogistics(job,vendor.getText().toString(),
-                        delivery.getText().toString(),crew.getText().toString(),
+                        delivery.getText().toString(),
+                        chosenCrew==null?current.crew:chosenCrew.getText().toString(),
                         notes.getText().toString());
                     job(job.id);
                 }catch(IOException e){throw new IllegalStateException(e);}
