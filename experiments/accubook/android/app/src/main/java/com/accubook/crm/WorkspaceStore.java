@@ -466,48 +466,73 @@ public final class WorkspaceStore {
         jobs();
     }
 
-    /** Explicit user-selected image import; bounded copy; no media/storage permissions. */
-    public synchronized String addPhoto(Job job, InputStream source) throws IOException {
-        if (source == null) throw new IOException("Photo selection cannot be opened");
-        BufferedInputStream input = new BufferedInputStream(source);
-        input.mark(16);
-        byte[] magic = new byte[12];
-        int count = 0;
-        while (count < magic.length) {
-            int got = input.read(magic, count, magic.length - count);
-            if (got < 0) break;
-            count += got;
+    /** Import any Android-selected camera image without converting it or decoding it.
+     * Unknown image codecs are retained as .img rather than rejected or mislabeled. */
+    public synchronized String addPhoto(Job job,InputStream source) throws IOException {
+        return addPhoto(job,source,"image/*");
+    }
+    public synchronized String addPhoto(Job job,InputStream source,String mime) throws IOException {
+        if(source==null)throw new IOException("Photo cannot be opened");
+        if(mime==null||!mime.toLowerCase(Locale.ROOT).startsWith("image/"))
+            throw new IOException("Choose an image from the Android picker");
+        BufferedInputStream input=new BufferedInputStream(source);
+        input.mark(24);
+        byte[] magic=new byte[16];
+        int got=0;
+        while(got<magic.length){
+            int n=input.read(magic,got,magic.length-got);
+            if(n<0)break;
+            got+=n;
         }
         input.reset();
-        String ext;
-        if (count >= 3 && (magic[0] & 255) == 0xff
-            && (magic[1] & 255) == 0xd8 && (magic[2] & 255) == 0xff) ext = ".jpg";
-        else if (count >= 8 && (magic[0] & 255) == 137 && magic[1] == 80
-            && magic[2] == 78 && magic[3] == 71) ext = ".png";
-        else if (count >= 12 && magic[0] == 'R' && magic[1] == 'I'
-            && magic[2] == 'F' && magic[3] == 'F'
-            && magic[8] == 'W' && magic[9] == 'E'
-            && magic[10] == 'B' && magic[11] == 'P') ext = ".webp";
-        else throw new IOException("Select a JPEG, PNG or WebP photo");
-        File photos = new File(jobFolder(job), "photos");
+        String ext=".img";
+        if(got>=3&&(magic[0]&255)==255&&(magic[1]&255)==216&&(magic[2]&255)==255)
+            ext=".jpg";
+        else if(got>=8&&(magic[0]&255)==137&&magic[1]==80&&magic[2]==78&&magic[3]==71)
+            ext=".png";
+        else if(got>=12&&magic[0]=='R'&&magic[1]=='I'&&magic[2]=='F'&&
+            magic[3]=='F'&&magic[8]=='W'&&magic[9]=='E'&&magic[10]=='B'&&magic[11]=='P')
+            ext=".webp";
+        else if(got>=4&&magic[0]=='G'&&magic[1]=='I'&&magic[2]=='F'&&magic[3]=='8')
+            ext=".gif";
+        else if(got>=2&&magic[0]=='B'&&magic[1]=='M')ext=".bmp";
+        else if(got>=12&&magic[4]=='f'&&magic[5]=='t'&&magic[6]=='y'&&magic[7]=='p'){
+            String box=new String(magic,8,4,StandardCharsets.US_ASCII);
+            if(box.equals("avif")||box.equals("avis"))ext=".avif";
+            else if(box.equals("heic")||box.equals("heix")||box.equals("hevc")
+                ||box.equals("mif1")||box.equals("msf1"))ext=".heic";
+            else if(box.equals("heif"))ext=".heif";
+        } else if(got>=4&&((magic[0]=='I'&&magic[1]=='I')||
+            (magic[0]=='M'&&magic[1]=='M')))ext=".tiff";
+        String type=mime.toLowerCase(Locale.ROOT);
+        if(ext.equals(".img")){
+            if(type.equals("image/heic")||type.equals("image/heif"))ext=".heic";
+            else if(type.equals("image/avif"))ext=".avif";
+            else if(type.contains("dng")||type.contains("raw"))ext=".dng";
+            else if(type.equals("image/tiff"))ext=".tiff";
+            else if(type.equals("image/gif"))ext=".gif";
+            else if(type.equals("image/bmp"))ext=".bmp";
+        }
+        File photos=new File(jobFolder(job),"photos");
         directory(photos);
-        String name = id("PHOTO-") + ext;
-        File output = new File(photos, name);
-        AtomicFile atomic = new AtomicFile(output);
-        FileOutputStream dest = null;
-        try {
-            dest = atomic.startWrite();
-            int total = 0;
-            byte[] buffer = new byte[8192];
-            int size;
-            while ((size = input.read(buffer)) != -1) {
-                total += size;
-                if (total > 25 * 1024 * 1024) throw new IOException("Photo exceeds 25 MB");
-                dest.write(buffer, 0, size);
+        String name=id("PHOTO-")+ext;
+        File output=new File(photos,name);
+        AtomicFile atomic=new AtomicFile(output);
+        FileOutputStream dest=null;
+        try{
+            dest=atomic.startWrite();
+            long total=0;
+            byte[] buf=new byte[8192];int n;
+            while((n=input.read(buf))!=-1){
+                total+=n;
+                if(total>25L*1024*1024)
+                    throw new IOException("Photo exceeds 25 MB; use a smaller image");
+                dest.write(buf,0,n);
             }
+            if(total==0)throw new IOException("Selected image is empty");
             atomic.finishWrite(dest);
-        } catch (IOException | RuntimeException e) {
-            if (dest != null) atomic.failWrite(dest);
+        }catch(IOException|RuntimeException e){
+            if(dest!=null)atomic.failWrite(dest);
             throw e;
         }
         return name;
@@ -520,7 +545,7 @@ public final class WorkspaceStore {
         if (files == null) throw new IOException("Photo directory unreadable");
         List<String> names = new ArrayList<>();
         for (File f : files) {
-            if (f.isFile() && f.getName().matches("PHOTO-[a-f0-9]{32}\\.(jpg|png|webp)")) {
+            if (f.isFile() && f.getName().matches("PHOTO-[a-f0-9]{32}\\.(jpg|png|webp|heic|heif|avif|gif|bmp|tiff|dng|img)")) {
                 names.add(f.getName());
             }
         }
@@ -529,7 +554,7 @@ public final class WorkspaceStore {
     }
 
     public synchronized File photoFile(Job job, String name) throws IOException {
-        if (!name.matches("PHOTO-[a-f0-9]{32}\\.(jpg|png|webp)")) {
+        if (!name.matches("PHOTO-[a-f0-9]{32}\\.(jpg|png|webp|heic|heif|avif|gif|bmp|tiff|dng|img)")) {
             throw new IOException("Invalid photo reference");
         }
         File file = new File(new File(jobFolder(job), "photos"), name);
