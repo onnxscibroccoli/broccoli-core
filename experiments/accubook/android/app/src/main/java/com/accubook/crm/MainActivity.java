@@ -123,6 +123,10 @@ public final class MainActivity extends Activity {
             pendingAttachmentJobId = state.getString("attachmentJob");
             pendingAttachmentExportJob = state.getString("attachmentExportJob");
             pendingAttachmentExportId = state.getString("attachmentExportId");
+            pendingReportSections=state.getBooleanArray("reportSections");
+            pendingRouteExportId=state.getString("routeExportId");
+            pendingPickupJobId=state.getString("pickupJobId");
+            pendingPickupWhen=state.getLong("pickupWhen",0);
             scheduleMode = state.getString("scheduleMode", "Week");
             try { selectedDate = LocalDate.parse(
                 state.getString("scheduleDate", LocalDate.now().toString())); }
