@@ -1386,7 +1386,7 @@ public final class MainActivity extends Activity {
                 bitmap=android.graphics.ImageDecoder.decodeBitmap(source,(decoder,info,sourceInfo)->{
                     android.util.Size size=info.getSize();
                     int width=size.getWidth(),height=size.getHeight();
-                    if(width<=0||height<=0)throw new IOException("Invalid image dimensions");
+                    if(width<=0||height<=0)throw new IllegalArgumentException("Invalid image dimensions");
                     double divisor=Math.max(1.0,Math.max(width,height)/1200.0);
                     decoder.setTargetSize(Math.max(1,(int)(width/divisor)),
                         Math.max(1,(int)(height/divisor)));
