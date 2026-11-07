@@ -89,6 +89,7 @@ public final class MainActivity extends Activity {
     private LocalDate selectedDate = LocalDate.now();
     private String scheduleMode = "Week";
     private String currentScreen = "home";
+    private String currentJobSection = "overview";
     private static final int UNLOCK_REQUEST=853;
     private static final int ROUTE_LOCATION_PERMISSION=855;
     private static final int ROUTE_EXPORT_REQUEST=856;
@@ -131,6 +132,7 @@ public final class MainActivity extends Activity {
             pendingReportMethods=state.getStringArray("reportMethods");
             pendingReportCategories=state.getStringArray("reportCategories");
             pendingReportPdf=state.getBoolean("reportPdf",false);
+            currentJobSection=state.getString("jobSection","overview");
             pendingRouteExportId=state.getString("routeExportId");
             pendingPickupJobId=state.getString("pickupJobId");
             pendingPickupWhen=state.getLong("pickupWhen",0);
@@ -230,6 +232,7 @@ public final class MainActivity extends Activity {
         state.putStringArray("reportMethods",pendingReportMethods);
         state.putStringArray("reportCategories",pendingReportCategories);
         state.putBoolean("reportPdf",pendingReportPdf);
+        state.putString("jobSection",currentJobSection);
         state.putString("routeExportId",pendingRouteExportId);
         state.putString("pickupJobId",pendingPickupJobId);
         state.putLong("pickupWhen",pendingPickupWhen);
@@ -2892,7 +2895,55 @@ public final class MainActivity extends Activity {
         });
     }
 
+    /**
+     * One horizontally scrollable focus rail replaces the former multi-screen-
+     * length job page. State stays attached to this job on section switches.
+     */
+    private void jobFocusTabs(WorkspaceStore.Job selected){
+        List<String> ids=new ArrayList<>(java.util.Arrays.asList(
+            "overview","photos","notes","materials","costing","checklists","schedule"));
+        List<String> labels=new ArrayList<>(java.util.Arrays.asList(
+            "Overview","Photos","Notes","Materials","Money","Checklist","Schedule"));
+        if(FeatureSettings.enabled(this,FeatureSettings.WORKER_TIME)){
+            ids.add("time");labels.add("Time");
+        }
+        if(FeatureSettings.enabled(this,FeatureSettings.GPS)){
+            ids.add("route");labels.add("Route");
+        }
+        if(!ids.contains(currentJobSection))currentJobSection="overview";
+        android.widget.HorizontalScrollView scroll=new android.widget.HorizontalScrollView(this);
+        scroll.setHorizontalScrollBarEnabled(false);
+        LinearLayout row=new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        scroll.addView(row);
+        for(int i=0;i<ids.size();i++){
+            final String id=ids.get(i);
+            final String name=labels.get(i);
+            boolean active=id.equals(currentJobSection);
+            Button tab=new Button(this);
+            tab.setText(name);
+            tab.setAllCaps(false);
+            tab.setTextSize(14);
+            tab.setTextColor(LIGHT);
+            tab.setMinHeight(dp(48));
+            tab.setContentDescription(name+" job section"+
+                (active?", selected":""));
+            tab.setBackgroundTintList(ColorStateList.valueOf(active?ACCENT:CARD));
+            LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(-2,dp(48));
+            params.setMargins(dp(3),dp(5),dp(3),dp(8));
+            row.addView(tab,params);
+            tab.setOnClickListener(v->{
+                if(!id.equals(currentJobSection)){
+                    currentJobSection=id;
+                    job(selected.id);
+                }
+            });
+        }
+        content.addView(scroll,new LinearLayout.LayoutParams(-1,-2));
+    }
+
     private void job(String id) {
+        if(!id.equals(currentJobId))currentJobSection="overview";
         currentScreen = "job";
         currentJobId = id;
         try {
@@ -2906,6 +2957,8 @@ public final class MainActivity extends Activity {
             final WorkspaceStore.Customer client = customer;
             screen(work.title, client.displayName() + " · " + work.date + " · " + work.status);
             navigation();
+            jobFocusTabs(work);
+            if("overview".equals(currentJobSection)){
             button(content, "Customer: " + client.displayName(), () -> customer(client.id));
             section("Job details");
             CrmWorkspace.Appointment appt=crm.appointment(work);
@@ -2919,19 +2972,28 @@ public final class MainActivity extends Activity {
                 () -> scheduleEditor(work));
             button(content,"Add this job to Calendar app",()->addJobToCalendar(work));
             button(content, "Change job status", () -> statusPicker(work));
+            }
+            if("notes".equals(currentJobSection)){
             section("Field notes and site instructions");
             String notes = store.fieldNotes(work);
             label(content, notes.isEmpty() ? "No field notes yet."
                 : (notes.length() > 800 ? notes.substring(0, 800) + "…" : notes),
                 15, MUTED);
             button(content, "Edit field notes", () -> fieldNotesDialog(work));
-            jobCustomFields(work);
-            section("Vendors, crew and deliveries");
-            button(content,"Edit vendor / material delivery / crew",()->jobLogisticsDialog(work));
+            }
+            if("checklists".equals(currentJobSection)){
+                jobCustomFields(work);
+            }
+            if("materials".equals(currentJobSection)){
+            section("Vendors and deliveries");
+            button(content,FeatureSettings.enabled(this,FeatureSettings.CREW)?
+                "Edit vendors, materials and crew":"Edit vendor / material delivery",
+                ()->jobLogisticsDialog(work));
             TradeModules operations=new TradeModules(store);
             TradeModules.Logistics details=operations.logistics(work);
             label(content,"Vendor: "+details.vendor+" · Delivery: "+details.delivery,15,MUTED);
-            label(content,"Crew: "+details.crew,15,MUTED);
+            if(FeatureSettings.enabled(this,FeatureSettings.CREW))
+                label(content,"Crew: "+details.crew,15,MUTED);
             if(!details.notes.isEmpty())label(content,details.notes,15,LIGHT);
             button(content,"Create dumpster pickup calendar reminder",
                 ()->createPickupReminder(work));
@@ -2953,6 +3015,8 @@ public final class MainActivity extends Activity {
                 button(entry, "Update material status", () -> materialStatusPicker(work, request));
                 button(entry, "Remove request", () -> removeMaterial(work, request));
             }
+            }
+            if("costing".equals(currentJobSection)){
             section("Estimate and invoice");
             CrmWorkspace.Quote quoteState=crm.quote(work);
             CheckBox sent=checkbox(content,"Estimate sent (manually confirmed)",quoteState.sent);
@@ -2977,8 +3041,9 @@ public final class MainActivity extends Activity {
             button(content,"Preview / edit invoice (print or Save as PDF)",
                 ()->openDocument(work,false));
             label(content,"Job total: $"+work.total,22,LIGHT);
-            button(content,"+ Add from service / consumable catalog",
-                ()->catalogLineDialog(work));
+            if(FeatureSettings.enabled(this,FeatureSettings.CATALOG))
+                button(content,"+ Add from service / consumable catalog",
+                    ()->catalogLineDialog(work));
             button(content,"Add labor, material or discount",()->lineDialog(work));
             button(content,"Export invoice as HTML",()->{
                 try{
@@ -2996,6 +3061,8 @@ public final class MainActivity extends Activity {
                 button(row, "Edit " + item.description, () -> editLineDialog(work, item));
                 button(row, "Remove " + item.description, () -> deleteLine(work, item));
             }
+            }
+            if("photos".equals(currentJobSection)){
             section("Job photos");
             button(content, "Add photo from device", () -> pickPhoto(work));
             button(content, "Import multiple photos",()->pickAttachments(work,true));
@@ -3003,6 +3070,8 @@ public final class MainActivity extends Activity {
             for (String name : store.photos(work)) photoCard(work, name, ++index);
             if (index == 0) label(content, "No photos attached to this job.", 15, MUTED);
             attachmentList(work);
+            }
+            if("costing".equals(currentJobSection)){
             section("Payment ledger");
             label(content,"Payments recorded: $"+crm.received(work).toPlainString(),17,LIGHT);
             label(content,"Open job balance: $"+crm.balance(work).toPlainString(),17,LIGHT);
@@ -3012,6 +3081,9 @@ public final class MainActivity extends Activity {
                 label(row,payment.date+" · "+payment.method+" · $"+payment.amount,16,LIGHT);
                 label(row,"Reference: "+payment.reference+" · "+payment.note,14,MUTED);
             }
+            }
+            if("time".equals(currentJobSection) &&
+                    FeatureSettings.enabled(this,FeatureSettings.WORKER_TIME)){
             section("Worker time tracking");
             label(content,"Recorded hours: "+crm.totalHours(work).toPlainString(),18,LIGHT);
             button(content,"Clock in a worker",()->clockInDialog(work));
@@ -3023,6 +3095,9 @@ public final class MainActivity extends Activity {
                 if(entry.active())button(clock,"Clock out "+entry.worker,
                     ()->clockOutConfirm(work,entry));
             }
+            }
+            if("route".equals(currentJobSection) &&
+                    FeatureSettings.enabled(this,FeatureSettings.GPS)){
             section("Private route / geolocation");
             List<CrmWorkspace.RoutePoint> route=crm.routePoints(work);
             label(content,route.size()+" GPS points stored locally. Tracking stops when "
@@ -3034,8 +3109,19 @@ public final class MainActivity extends Activity {
                 button(content,"Open last point in OpenStreetMap (shares coordinates)",
                     ()->openRouteInOSM(work));
             }
-            label(content,"Offline manual records only. No payment collection, tax calculation "
-                +"or settlement verification occurs. An invoice is not a payment receipt.",13,MUTED);
+            }
+            if("schedule".equals(currentJobSection)){
+                section("Calendar and scheduling");
+                CrmWorkspace.Appointment schedule=crm.appointment(work);
+                label(content,work.date+" · "+schedule.start+"–"+schedule.end,18,LIGHT);
+                label(content,schedule.notes.isEmpty()?"No daybook notes":schedule.notes,15,MUTED);
+                button(content,"Reschedule / adjust job color or time",
+                    ()->scheduleEditor(work));
+                button(content,"Add this job to Calendar app",()->addJobToCalendar(work));
+            }
+            if("costing".equals(currentJobSection))
+                label(content,"Offline manual records only. No payment collection, tax "
+                    +"calculation or settlement verification occurs.",13,MUTED);
         } catch (Exception failure) { error(failure); }
     }
 
