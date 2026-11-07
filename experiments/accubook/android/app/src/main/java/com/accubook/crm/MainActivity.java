@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.Map;
 import java.math.BigDecimal;
 import java.time.LocalTime;
@@ -734,7 +735,7 @@ public final class MainActivity extends Activity {
                     (!mail.isEmpty()&&emails.contains(mail.toLowerCase(Locale.ROOT)))){
                     skipped++;continue;
                 }
-                store.addCustomer("",phone.name,phone.phone,mail,"","","","","");
+                store.addCustomer("",phone.name,phone.phone,mail,"","","","");
                 if(!number.isEmpty())phones.add(number);
                 if(!mail.isEmpty())emails.add(mail.toLowerCase(Locale.ROOT));
                 imported++;
