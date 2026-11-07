@@ -356,6 +356,9 @@ public final class BackupArchive {
         File invItems=new File(root,"master_data/inventory_items.csv");
         File invMoves=new File(root,"master_data/inventory_movements.csv");
         if(invItems.isFile()||invMoves.isFile()){
+            // Match InventoryStore's 4 MiB open limit; never restore an unreadable ledger.
+            if(invItems.length()>4L*1024*1024||invMoves.length()>4L*1024*1024)
+                throw new IOException("Inventory workspace data exceeds open limit");
             List<List<String>> itemRows=invItems.isFile()
                 ?rows(root,"master_data/inventory_items.csv",StockLedger.ITEMS)
                 :java.util.Collections.singletonList(Arrays.asList(StockLedger.ITEMS));
