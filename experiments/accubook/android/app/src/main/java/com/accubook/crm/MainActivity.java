@@ -79,6 +79,8 @@
         state.putString("attachmentJob", pendingAttachmentJobId);
         state.putString("attachmentExportJob", pendingAttachmentExportJob);
         state.putString("attachmentExportId", pendingAttachmentExportId);
+        state.putBooleanArray("reportSections",pendingReportSections);
+        state.putString("routeExportId",pendingRouteExportId);
         state.putString("scheduleMode", scheduleMode);
         state.putString("scheduleDate", selectedDate.toString());
         state.putString("screen", currentScreen);
@@ -1181,6 +1183,12 @@
             label(content,"Android authentication protects the app UI. The portable "
                 +"workspace and ordinary ZIP backups remain unencrypted. "
                 +"An app lock alone is not encryption at rest.",13,MUTED);
+            section("Reporting and accounting export");
+            button(content,"Create selective accounting / QuickBooks CSV ZIP",
+                this::chooseReportExport);
+            label(content,"Each category produces a separate CSV with documented columns. "
+                +"QuickBooks may require manual field mapping; this is not a live integration.",
+                14,MUTED);
             section("Workspace safety");
             button(content,"Restore workspace from ZIP",this::selectRestore);
             if(store.hasRollbackSnapshot()){
@@ -1555,6 +1563,33 @@
                     job(job.id);
                 }catch(Exception e){error(e);}
             }).show();
+    }
+
+    private void chooseReportExport(){
+        LinearLayout fields=form();
+        label(fields,"Only checked categories will be included in your report ZIP. "
+            +"No records are sent online. The destination ZIP may contain private data.",
+            16,LIGHT);
+        CheckBox[] sections=new CheckBox[BusinessReports.SECTIONS.length];
+        for(int i=0;i<sections.length;i++){
+            sections[i]=checkbox(fields,BusinessReports.SECTIONS[i],i==4);
+        }
+        dialog("Choose accounting report sections",fields,()->{
+            boolean[] selected=new boolean[sections.length];
+            boolean any=false;
+            for(int i=0;i<sections.length;i++){
+                selected[i]=sections[i].isChecked();
+                any|=selected[i];
+            }
+            if(!any)throw new IllegalArgumentException("Choose at least one report section");
+            pendingReportSections=selected;
+            Intent destination=new Intent(Intent.ACTION_CREATE_DOCUMENT);
+            destination.addCategory(Intent.CATEGORY_OPENABLE);
+            destination.setType("application/zip");
+            destination.putExtra(Intent.EXTRA_TITLE,"accubook-accounting-report.zip");
+            try{startActivityForResult(destination,REPORT_EXPORT_REQUEST);}
+            catch(Exception e){pendingReportSections=null;error(e);}
+        });
     }
 
     private void expenseDialog(){
@@ -2177,6 +2212,19 @@
             } catch (Exception failure) {
                 error(failure);
             }
+            return;
+        }
+        if(requestCode==REPORT_EXPORT_REQUEST){
+            boolean[] sections=pendingReportSections;
+            pendingReportSections=null;
+            if(resultCode!=RESULT_OK||data==null||data.getData()==null)return;
+            if(sections==null){error(new IOException("Report selection expired"));return;}
+            try(OutputStream out=getContentResolver().openOutputStream(data.getData(),"wt")){
+                if(out==null)throw new IOException("Cannot open report destination");
+                BusinessReports.export(store,crm,sections,out);
+                notice("Report exported","Your selected CSV sections were saved locally. "
+                    +"Review the README file before importing into accounting software.");
+            }catch(Exception e){error(e);}
             return;
         }
         if(requestCode==ROUTE_EXPORT_REQUEST){
