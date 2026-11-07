@@ -361,30 +361,30 @@ public final class MainActivity extends Activity {
     }
 
 
-    /** Two rows avoid tiny taps and overlapping text at large font scaling. */
+    /** Six clear workspaces; two columns preserve 48dp touch targets at large text. */
     private void navigation() {
-        String[] labels = {"Home", "Customers", "Schedule", "Business"};
-        Runnable[] actions = {this::home, this::customersScreen,
-            this::scheduleScreen, this::businessScreen};
-        for (int row=0; row<2; row++) {
+        String[] labels={"Home","Jobs","Calendar","Contacts","Customers","Business"};
+        Runnable[] actions={this::home,this::jobsScreen,this::calendarScreen,
+            this::contactsScreen,this::customersScreen,this::businessScreen};
+        for(int row=0;row<3;row++){
             LinearLayout bar=new LinearLayout(this);
             bar.setOrientation(LinearLayout.HORIZONTAL);
             content.addView(bar,new LinearLayout.LayoutParams(-1,-2));
-            for (int column=0; column<2; column++) {
-                int index=row*2+column;
+            for(int col=0;col<2;col++){
+                int index=row*2+col;
                 Button tab=new Button(this);
                 tab.setText(labels[index]);
                 tab.setAllCaps(false);
+                tab.setTextSize(15);
                 tab.setTextColor(LIGHT);
-                tab.setTextSize(14);
                 tab.setMinHeight(dp(52));
-                tab.setContentDescription("Go to "+labels[index]);
-                tab.setBackgroundTintList(ColorStateList.valueOf(CARD));
-                LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,-2,1);
-                lp.setMargins(dp(3),dp(3),dp(3),dp(3));
-                bar.addView(tab,lp);
-                final Runnable action=actions[index];
-                tab.setOnClickListener(v->action.run());
+                tab.setBackground(box(CARD));
+                tab.setContentDescription("Open "+labels[index]+" workspace");
+                LinearLayout.LayoutParams cell=new LinearLayout.LayoutParams(0,-2,1);
+                cell.setMargins(dp(3),dp(3),dp(3),dp(3));
+                bar.addView(tab,cell);
+                final Runnable click=actions[index];
+                tab.setOnClickListener(v->click.run());
             }
         }
     }
@@ -425,6 +425,191 @@ public final class MainActivity extends Activity {
                 return v.startDragAndDrop(data,new View.DragShadowBuilder(v),null,0);
             });
         } catch(Exception e){error(e);}
+    }
+
+    private void jobsScreen(){
+        currentScreen="jobs";currentJobId=null;currentCustomerId=null;
+        try{
+            List<WorkspaceStore.Job> jobs=store.jobs();
+            jobs.sort((a,b)->a.date.compareTo(b.date));
+            screen("Jobs","Search all work · open a job to manage fields, billing and visits");
+            navigation();
+            button(content,"+ New job",this::chooseCustomer);
+            button(content,"Open daybook",this::scheduleScreen);
+            EditText search=field(content,"Search jobs","Name, status or address");
+            LinearLayout results=new LinearLayout(this);
+            results.setOrientation(LinearLayout.VERTICAL);
+            content.addView(results);
+            Runnable render=()->{
+                results.removeAllViews();
+                String needle=search.getText().toString().toLowerCase(Locale.ROOT).trim();
+                int shown=0;
+                for(WorkspaceStore.Job j:jobs){
+                    String searchable=(j.title+" "+j.status+" "+j.street+" "+j.date)
+                        .toLowerCase(Locale.ROOT);
+                    if(!searchable.contains(needle))continue;
+                    if(shown++>=120)continue;
+                    Button row=button(results,j.date+" · "+j.title+"\n"+j.status+
+                        " · $"+j.total,()->job(j.id));
+                    row.setContentDescription("Open job "+j.title+" on "+j.date);
+                }
+                if(shown>120)label(results,"Showing 120 of "+shown+
+                    " matches. Type to refine your search.",14,MUTED);
+                if(shown==0)label(results,"No matching jobs.",16,MUTED);
+            };
+            search.addTextChangedListener(new TextWatcher(){
+                public void beforeTextChanged(CharSequence value,int st,int ct,int after){}
+                public void onTextChanged(CharSequence value,int st,int before,int count){
+                    render.run();
+                }
+                public void afterTextChanged(Editable e){}
+            });
+            render.run();
+        }catch(Exception e){error(e);}
+    }
+
+    /** Independent contact directory. No automatic customer creation. */
+    private void contactsScreen(){
+        currentScreen="contacts";currentCustomerId=null;currentJobId=null;
+        try{
+            List<ContactDirectory.Contact> all=new ContactDirectory(store).all();
+            screen("Contacts",all.size()+" people · customers are a separate list");
+            navigation();
+            button(content,"Import ALL phone contacts",()->requestPhoneContacts(true));
+            button(content,"Choose contacts to import",()->requestPhoneContacts(false));
+            button(content,"Pick one Android contact",this::pickContact);
+            button(content,"+ Add contact manually",()->contactEdit(null));
+            label(content,"Importing contacts does not create customers or change jobs. "
+                +"Promote only the people you decide to work with.",14,MUTED);
+            EditText search=field(content,"Find any contact","Search name, phone or email");
+            LinearLayout results=new LinearLayout(this);
+            results.setOrientation(LinearLayout.VERTICAL);
+            content.addView(results);
+            final int[] page={0};
+            final int size=55;
+            Runnable render=()->{
+                results.removeAllViews();
+                String needle=search.getText().toString().trim().toLowerCase(Locale.ROOT);
+                List<ContactDirectory.Contact> matching=new ArrayList<>();
+                for(ContactDirectory.Contact c:all)
+                    if((c.name+" "+c.phone+" "+c.email).toLowerCase(Locale.ROOT)
+                        .contains(needle))matching.add(c);
+                int pages=Math.max(1,(matching.size()+size-1)/size);
+                page[0]=Math.max(0,Math.min(page[0],pages-1));
+                label(results,matching.size()+" contacts · page "+(page[0]+1)+
+                    " of "+pages,14,MUTED);
+                int start=page[0]*size;
+                for(int i=start;i<Math.min(start+size,matching.size());i++){
+                    ContactDirectory.Contact item=matching.get(i);
+                    button(results,item.name+"\n"+item.phone+
+                        (item.customerId.isEmpty()?" · Contact":" · Customer linked"),
+                        ()->contactDetails(item.id));
+                }
+                LinearLayout bar=new LinearLayout(this);
+                bar.setOrientation(LinearLayout.HORIZONTAL);
+                results.addView(bar);
+                Button previous=button(bar,"← Previous",()->{page[0]--;renderContactsRefresh[0].run();});
+                Button next=button(bar,"Next →",()->{page[0]++;renderContactsRefresh[0].run();});
+                previous.setEnabled(page[0]>0);
+                next.setEnabled(page[0]+1<pages);
+            };
+            // Pass a stable callback via a one-element holder to avoid recursing
+            // inside its own lambda initializer.
+            renderContactsRefresh[0]=render;
+            search.addTextChangedListener(new TextWatcher(){
+                public void beforeTextChanged(CharSequence value,int st,int ct,int after){}
+                public void onTextChanged(CharSequence value,int st,int before,int ct){
+                    page[0]=0;render.run();
+                }
+                public void afterTextChanged(Editable value){}
+            });
+            render.run();
+        }catch(Exception e){error(e);}
+    }
+    private final Runnable[] renderContactsRefresh=new Runnable[1];
+
+    private void contactDetails(String identifier){
+        try{
+            ContactDirectory.Contact c=null;
+            for(ContactDirectory.Contact x:new ContactDirectory(store).all())
+                if(x.id.equals(identifier))c=x;
+            if(c==null)throw new IOException("Contact no longer available");
+            final ContactDirectory.Contact selected=c;
+            currentScreen="contact";
+            screen(c.name,"Private contact · independent from customers");
+            navigation();
+            label(content,"Phone: "+(c.phone.isEmpty()?"Not provided":c.phone),17,LIGHT);
+            label(content,"Email: "+(c.email.isEmpty()?"Not provided":c.email),16,LIGHT);
+            button(content,"Edit contact",()->contactEdit(selected));
+            if(c.customerId.isEmpty())
+                button(content,"+ Make this contact a customer",
+                    ()->promoteContact(selected));
+            else{
+                final String customerId=c.customerId;
+                button(content,"Open linked customer",()->customer(customerId));
+            }
+            button(content,"Remove contact from Contacts",()->new AlertDialog.Builder(this)
+                .setTitle("Delete contact?")
+                .setMessage("Only this local directory record is deleted. "
+                    +"Any already-created customer remains untouched.")
+                .setNegativeButton("Cancel",(d,w)->{})
+                .setPositiveButton("Delete",(d,w)->{
+                    try{new ContactDirectory(store).delete(selected.id);contactsScreen();}
+                    catch(Exception e){error(e);}
+                }).show());
+        }catch(Exception e){error(e);}
+    }
+    private void contactEdit(ContactDirectory.Contact existing){
+        LinearLayout fields=form();
+        EditText name=field(fields,"Contact name","Name");
+        EditText phone=field(fields,"Telephone","Phone");
+        phone.setInputType(InputType.TYPE_CLASS_PHONE);
+        EditText email=field(fields,"Email address","Email");
+        email.setInputType(InputType.TYPE_CLASS_TEXT|
+            InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        if(existing!=null){
+            name.setText(existing.name);phone.setText(existing.phone);
+            email.setText(existing.email);
+        }
+        dialog(existing==null?"New contact":"Edit contact",fields,()->{
+            try{
+                ContactDirectory directory=new ContactDirectory(store);
+                if(existing==null){
+                    directory.add(name.getText().toString(),phone.getText().toString(),
+                        email.getText().toString());
+                    contactsScreen();
+                }else{
+                    directory.update(existing.id,name.getText().toString(),
+                        phone.getText().toString(),email.getText().toString());
+                    contactDetails(existing.id);
+                }
+            }catch(IOException e){throw new IllegalStateException(e);}
+        });
+    }
+    private void promoteContact(ContactDirectory.Contact contact){
+        new AlertDialog.Builder(this).setTitle("Create customer from this contact?")
+            .setMessage("Promote "+contact.name+" to Customers? This is a separate action. "
+                +"The original Contacts entry remains available.")
+            .setNegativeButton("Not yet",(d,w)->{})
+            .setPositiveButton("Create customer",(d,w)->{
+                try{
+                    for(WorkspaceStore.Customer existing:store.customers()){
+                        if((!contact.phone.isEmpty()&&contact.phone.equals(existing.phone))||
+                            (!contact.email.isEmpty()&&
+                                contact.email.equalsIgnoreCase(existing.email))){
+                            new ContactDirectory(store).linkCustomer(contact.id,existing.id);
+                            customer(existing.id);
+                            notice("Linked existing customer",
+                                "Matching customer already exists; no duplicate created.");
+                            return;
+                        }
+                    }
+                    WorkspaceStore.Customer created=store.addCustomer("",contact.name,
+                        contact.phone,contact.email,"","","","");
+                    new ContactDirectory(store).linkCustomer(contact.id,created.id);
+                    customer(created.id);
+                }catch(Exception e){error(e);}
+            }).show();
     }
 
     private void customersScreen() {
