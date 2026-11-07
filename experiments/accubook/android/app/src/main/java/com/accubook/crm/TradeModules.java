@@ -150,6 +150,64 @@ public final class TradeModules {
         write(file,rows);
         return new CatalogItem(value);
     }
+    /**
+     * Portable adapter for approved supplier price sheets.
+     * Explicit file import only. This is NOT a live supplier API.
+     * Entire sheet is validated before one AtomicFile commit.
+     */
+    public synchronized int importSupplierCsv(InputStream source) throws IOException{
+        if(source==null)throw new IOException("No supplier CSV selected");
+        ByteArrayOutputStream bytes=new ByteArrayOutputStream();
+        byte[] block=new byte[8192];int n;
+        while((n=source.read(block))!=-1){
+            if(bytes.size()+n>1024*1024)throw new IOException("Supplier price sheet exceeds 1 MB");
+            bytes.write(block,0,n);
+        }
+        List<List<String>> incoming=CsvCodec.read(bytes.toString("UTF-8"));
+        List<String> header=r("Supplier","SKU","Name","Unit","BaseCost","MarkupPercent","AsOfUTC");
+        if(incoming.isEmpty()||!incoming.get(0).equals(header))
+            throw new IOException("CSV header must be Supplier,SKU,Name,Unit,BaseCost,"
+                +"MarkupPercent,AsOfUTC");
+        if(incoming.size()>2001)throw new IOException("Limit import to 2,000 items");
+        File file=priceFile();
+        List<List<String>> merged=read(file,PRICE_HEADER);
+        Set<String> keys=new HashSet<>();
+        for(int i=1;i<merged.size();i++)
+            keys.add(merged.get(i).get(6)+"|"+merged.get(i).get(2));
+        List<List<String>> prepared=new ArrayList<>();
+        for(int i=1;i<incoming.size();i++){
+            List<String> row=incoming.get(i);
+            if(row.size()!=header.size())throw new IOException("Bad supplier row "+i);
+            String supplier=txt(row.get(0),80,true);
+            if(!(supplier.equals("Lansing")||supplier.equals("QXO")||
+                supplier.equals("SRS Distribution")||supplier.equals("Manual")))
+                throw new IOException("Unknown supplier on row "+i);
+            String sku=txt(row.get(1),50,true);
+            String name=txt(row.get(2),100,true);
+            String unit=txt(row.get(3),40,true);
+            String cost=txt(row.get(4),30,true);
+            String markup=txt(row.get(5),30,true);
+            String asOf=txt(row.get(6),45,true);
+            try{
+                java.time.Instant.parse(asOf);
+                BigDecimal basis=CrmWorkspace.money(cost,false);
+                if(basis.signum()<0)throw new IOException("Negative material cost");
+                PricingEngine.price(basis,new BigDecimal(markup));
+            }catch(IllegalArgumentException error){throw new IOException(
+                "Invalid supplier price or date on row "+i,error);}
+            String display=sku+" · "+name;
+            if(display.length()>180)throw new IOException("SKU / name too long");
+            String key=supplier+"|"+display;
+            if(keys.contains(key))continue; // Non-destructive; owner edits existing item.
+            keys.add(key);
+            prepared.add(r("CAT-"+uuid(),"Supplier material",display,unit,cost,markup,
+                supplier,asOf));
+        }
+        merged.addAll(prepared);
+        if(!prepared.isEmpty())write(file,merged);
+        return prepared.size();
+    }
+
     public synchronized List<Milestone> milestones(WorkspaceStore.Job job)throws IOException{
         File file=milestonesFile(job);
         List<List<String>> rows=read(file,MILESTONE_HEADER);
