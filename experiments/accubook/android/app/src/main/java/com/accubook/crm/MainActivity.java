@@ -96,6 +96,9 @@ public final class MainActivity extends Activity {
     private static final int ENCRYPTED_BACKUP_IMPORT=859;
     private static final int CALENDAR_PERMISSIONS=860;
     private static final int SUPPLIER_CSV_REQUEST=861;
+    private static final int PICKUP_NOTIFY_PERMISSION=862;
+    private String pendingPickupJobId;
+    private long pendingPickupWhen;
     private boolean lockRequestInProgress=false;
     private boolean unlocked=false;
     private long lastHiddenAt=0;
@@ -209,6 +212,8 @@ public final class MainActivity extends Activity {
         state.putString("attachmentExportId", pendingAttachmentExportId);
         state.putBooleanArray("reportSections",pendingReportSections);
         state.putString("routeExportId",pendingRouteExportId);
+        state.putString("pickupJobId",pendingPickupJobId);
+        state.putLong("pickupWhen",pendingPickupWhen);
         state.putString("scheduleMode", scheduleMode);
         state.putString("scheduleDate", selectedDate.toString());
         state.putString("screen", currentScreen);
@@ -845,6 +850,45 @@ public final class MainActivity extends Activity {
             }catch(Exception e){runOnUiThread(()->error(e));}
         },"accubook-optin-calendar-sync").start();
     }
+    private void localPickupReminder(WorkspaceStore.Job job){
+        LinearLayout fields=form();
+        EditText date=field(fields,"Dumpster pickup date · YYYY-MM-DD","Date");
+        date.setText(job.date);
+        button(fields,"Choose pickup date",()->openDate(date));
+        EditText time=field(fields,"Pickup notification time · HH:mm","09:00");
+        time.setText("09:00");
+        button(fields,"Choose notification time",()->openClock(time));
+        dialog("Local dumpster pickup notification",fields,()->{
+            java.time.LocalDateTime when=java.time.LocalDateTime.parse(
+                date.getText().toString()+"T"+time.getText().toString());
+            long epoch=when.atZone(java.time.ZoneId.systemDefault())
+                .toInstant().toEpochMilli();
+            if(epoch<System.currentTimeMillis()+30_000)
+                throw new IllegalArgumentException("Choose a future pickup time");
+            new AlertDialog.Builder(this).setTitle("Confirm local pickup reminder")
+                .setMessage("Notify this device around "+date.getText()+" at "+time.getText()+
+                    " for dumpster pickup? Android may delay the notification. "
+                    +"No data is sent to a remote server.")
+                .setNegativeButton("Cancel",(d,w)->{})
+                .setPositiveButton("Schedule",(d,w)->{
+                    try{
+                        if(Build.VERSION.SDK_INT>=33&&
+                            checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)!=
+                                PackageManager.PERMISSION_GRANTED){
+                            pendingPickupJobId=job.id;pendingPickupWhen=epoch;
+                            requestPermissions(new String[]{
+                                Manifest.permission.POST_NOTIFICATIONS},PICKUP_NOTIFY_PERMISSION);
+                            return;
+                        }
+                        PickupReminders.schedule(this,store,job,epoch);
+                        job(job.id);
+                        notice("Pickup reminder scheduled",
+                            "A local reminder was saved. Timing may be delayed by Android.");
+                    }catch(Exception e){error(e);}
+                }).show();
+        });
+    }
+
     private void createPickupReminder(WorkspaceStore.Job job){
         LinearLayout fields=form();
         EditText date=field(fields,"Pickup date · YYYY-MM-DD","Choose calendar date");
@@ -1014,6 +1058,21 @@ public final class MainActivity extends Activity {
     @Override public void onRequestPermissionsResult(int code,String[] permissions,
                                                      int[] grants) {
         super.onRequestPermissionsResult(code,permissions,grants);
+        if(code==PICKUP_NOTIFY_PERMISSION){
+            String target=pendingPickupJobId;
+            long due=pendingPickupWhen;
+            pendingPickupJobId=null;
+            pendingPickupWhen=0;
+            if(grants.length>0&&grants[0]==PackageManager.PERMISSION_GRANTED&&target!=null){
+                try{
+                    PickupReminders.schedule(this,store,jobById(target),due);
+                    notice("Pickup reminder scheduled","An Android local notification is "
+                        +"scheduled. Battery optimization may delay delivery.");
+                }catch(Exception e){error(e);}
+            }else notice("Reminder not scheduled","Notifications were not permitted. "
+                +"Enable Accubook notifications and set the pickup time again.");
+            return;
+        }
         if(code==CALENDAR_PERMISSIONS){
             if(grants.length>=2 &&
                 grants[0]==PackageManager.PERMISSION_GRANTED &&
@@ -2381,6 +2440,12 @@ public final class MainActivity extends Activity {
             button(content,"+ Add custom milestone",()->addJobMilestone(work));
             button(content,"Create dumpster pickup calendar reminder",
                 ()->createPickupReminder(work));
+            button(content,"Schedule device-only dumpster pickup alert",
+                ()->localPickupReminder(work));
+            long pickupDue=PickupReminders.due(store,work);
+            if(pickupDue>0)label(content,"Local pickup reminder: "+
+                java.time.Instant.ofEpochMilli(pickupDue).atZone(
+                    java.time.ZoneId.systemDefault()),14,MUTED);
             for(TradeModules.Milestone step:operations.milestones(work)){
                 LinearLayout stepCard=card();
                 label(stepCard,(step.complete()?"✓ ":"□ ")+step.name,17,LIGHT);
