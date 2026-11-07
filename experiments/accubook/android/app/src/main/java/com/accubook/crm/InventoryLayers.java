@@ -133,9 +133,8 @@ public final class InventoryLayers {
 
     public synchronized List<Material> companyMaterials()throws IOException{
         List<Material> result=new ArrayList<>();
-        for(List<String> entry:read(companyFile(),InventoryRules.COMPANY,0).subList(1,
-            read(companyFile(),InventoryRules.COMPANY,0).size()))
-            result.add(new Material(entry));
+        List<List<String>> rows=read(companyFile(),InventoryRules.COMPANY,0);
+        for(int i=1;i<rows.size();i++)result.add(new Material(rows.get(i)));
         return result;
     }
     public synchronized Material saveMaterial(String existingId,String name,String unit,
