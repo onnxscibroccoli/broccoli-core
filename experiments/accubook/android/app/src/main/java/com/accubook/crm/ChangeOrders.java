@@ -245,8 +245,17 @@ public final class ChangeOrders {
         for(List<String> line:lines) {
             String tag="[CO:"+line.get(0)+"]";
             boolean present=false;
-            for(WorkspaceStore.LineItem existing:store.items(job))
-                if(existing.description.endsWith(tag))present=true;
+            for(WorkspaceStore.LineItem existing:store.items(job)){
+                if(existing.description.endsWith(tag)){
+                    // Do not silently treat a modified posted line as successfully billed.
+                    if(present || !existing.description.equals(line.get(2)+" "+tag) ||
+                            new BigDecimal(existing.quantity).compareTo(new BigDecimal(line.get(3)))!=0 ||
+                            new BigDecimal(existing.unitRate).compareTo(new BigDecimal(line.get(4)))!=0 ||
+                            new BigDecimal(existing.amount).compareTo(new BigDecimal(line.get(5)))!=0)
+                        throw new IOException("Previously posted change-order line differs from signed work");
+                    present=true;
+                }
+            }
             if(!present) store.addLine(job,line.get(2)+" "+tag,line.get(3),line.get(4));
         }
         current.set(2,INVOICED);
