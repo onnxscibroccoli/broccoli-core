@@ -356,7 +356,7 @@ The baseline interaction is **Customer → Job → Notes/Photos → Invoice → 
 - **Brand graphics bundled:** The mascot is included as the Android launcher icon. The original leaf is bundled as a print-document fallback logo only for default Jules Gutter Cleaning branding with no custom logo. Selecting a custom logo still overrides it.
 - **Regression coverage:** New standalone JVM pricing/suggestion/proof tests, ZIP signed-order roundtrip and tamper rejection; Android build and emulator CI gates remain required at exact HEAD.
 
-**Not implemented yet:** automatic recurring job creation, multi-layer inventory, AR/AP/GL posting, signed change-order PDF, optional front-camera evidence, import-ready QuickBooks format, production release. No device-collected proof is claimed in advance.
+**Not implemented yet:** automatic recurring job creation, automatic inventory stock reconciliation/purchasing, AR/AP/GL posting, signed change-order PDF, optional front-camera evidence, import-ready QuickBooks format, production release. No device-collected proof is claimed in advance.
 
 
 ## Nov 7 — universal local lookup and manual repeat-service due lists
@@ -366,3 +366,13 @@ The baseline interaction is **Customer → Job → Notes/Photos → Invoice → 
 **Repeat-service schedules:** Business → Settings enables a local month/mileage module. Open a job → Overview to set the last completion date and interval. Home shows due-by-date counts; the due list permits pause/resume and manual reset. Due-date slips can be printed to PDF through Android’s document picker. Mileage-only rules display a target odometer reading, not an assumed due notification. No jobs or outbound customer messages are created automatically.
 
 **CSV and proof:** master_data/service_intervals.csv stores stable references, intervals and calculated due values. Backup restore checks customer/job ownership, date/mileage consistency and IDs. Pure-Java tests cover month-end and leap-year calculations, lookup matching and forged reminders. Device-based acceptance remains required.
+
+## November 7 — optional three-layer inventory (engineering preview)
+
+**Point-and-tap:** Business → Settings → enable **Company materials, job-site stock and tools**. Go to Business → Company materials + tool inventory to add or edit company materials (count, unit, cost, optional pricebook reference) and equipment (name, tag, Available/Checked Out/Maintenance). Open a job → Materials to record **Delivered**, **Used**, or **Returned** quantities and check out or return a tool. The core job and invoice screens remain unchanged when the switch is off; disabling the switch never deletes stored data.
+
+**Data ownership:** Three independent CSV tables: `master_data/inventory_materials.csv`, `master_data/inventory_tools.csv`, and `job_site_materials.csv` under the job folder. Stable IDs, four-decimal quantity bounds, two-decimal cost bounds, Android AtomicFile writes, optional pricebook IDs and job-linked tool assignments. Restore checks schema, duplicate IDs, tool job references and quantity/state consistency. Both normal ZIP and encrypted `.acbk` backup use the same allowlisted archive path.
+
+**Deliberate non-automation:** A delivered site quantity is an observation, not automatically a billable line or a decrement in company stock. Owners explicitly update counts and add invoice lines. This prevents duplicate accounting and stock mutations during offline retries. A future reconciled stock ledger must add explicit immutable movements, cross-file recovery and reconciliation tests before any automatic decrement. Supplier APIs remain opt-in adapters, not an app dependency.
+
+**Verification state:** Portable validation and archive regression tests are in CI; physical Android touch/large-font/TalkBack workflows, inventory export/restore on a device and simultaneous-editor contention are not yet accepted. No production readiness is asserted.
