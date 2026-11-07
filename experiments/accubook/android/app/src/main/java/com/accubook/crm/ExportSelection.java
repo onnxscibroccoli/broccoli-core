@@ -1,18 +1,18 @@
 package com.accubook.crm;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 /** Explicit, immutable export allow-list. Nothing is exported by implicit default. */
 public final class ExportSelection {
+    public static final int SECTION_COUNT=6;
     public final boolean[] sections;
     public final Set<String> paymentMethods;
     public final Set<String> expenseCategories;
     public ExportSelection(boolean[] sections,Set<String> paymentMethods,
                            Set<String> expenseCategories){
-        if(sections==null || sections.length!=BusinessReports.SECTIONS.length)
+        if(sections==null || sections.length!=SECTION_COUNT)
             throw new IllegalArgumentException("Invalid section selection");
         this.sections=sections.clone();
         boolean any=false; for(boolean selected:sections)any|=selected;
@@ -40,9 +40,5 @@ public final class ExportSelection {
     public boolean includesExpense(String category){
         return sections[4]&&expenseCategories.contains(category);
     }
-    /** Compatibility for callers that intentionally request a complete legacy export. */
-    public static ExportSelection legacy(boolean[] sections,Set<String> categories){
-        return new ExportSelection(sections,new LinkedHashSet<>(Arrays.asList(
-            CrmWorkspace.PAYMENT_METHODS)),categories);
-    }
+
 }
