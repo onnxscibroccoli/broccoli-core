@@ -299,6 +299,31 @@ public final class BackupArchive {
                 !ChangeOrderProof.contentHash(jobId,id,order.get(1),order.get(4),
                     order.get(5),order.get(6),subset).equals(order.get(7)))
                 throw new IOException("Change-order integrity check failed");
+            List<List<String>> billed=rows(root,folder+"/job_items.csv",ITEM);
+            for(List<String> signedLine:subset){
+                String expectedDescription=signedLine.get(2)+" [CO:"+signedLine.get(0)+"]";
+                int found=0;
+                for(int n=1;n<billed.size();n++){
+                    List<String> posted=billed.get(n);
+                    if(posted.get(1).endsWith("[CO:"+signedLine.get(0)+"]")){
+                        found++;
+                        try{
+                            if(!posted.get(1).equals(expectedDescription)||
+                                new BigDecimal(posted.get(2)).compareTo(
+                                    new BigDecimal(signedLine.get(3)))!=0||
+                                new BigDecimal(posted.get(3)).compareTo(
+                                    new BigDecimal(signedLine.get(4)))!=0||
+                                new BigDecimal(posted.get(4)).compareTo(
+                                    new BigDecimal(signedLine.get(5)))!=0)
+                                throw new IOException("Billed change-order line differs from approval");
+                        }catch(NumberFormatException e){
+                            throw new IOException("Invalid billed change-order amount",e);
+                        }
+                    }
+                }
+                if(found>1 || ("Invoiced".equals(order.get(2))&&found!=1))
+                    throw new IOException("Duplicate or missing billed change-order line");
+            }
         }
     }
 
