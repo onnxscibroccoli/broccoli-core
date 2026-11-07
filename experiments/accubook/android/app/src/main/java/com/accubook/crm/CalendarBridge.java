@@ -130,6 +130,17 @@ public final class CalendarBridge {
         }
         return -1;
     }
+    /** Prevent stale restored ID mappings from editing unrelated calendar events. */
+    private boolean isOwnedEvent(ContentResolver resolver,long eventId,long calendarId,
+                                 String marker){
+        Uri uri=ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI,eventId);
+        try(Cursor c=resolver.query(uri,new String[]{
+                CalendarContract.Events.CALENDAR_ID,CalendarContract.Events.DESCRIPTION},
+                null,null,null)){
+            return c!=null&&c.moveToFirst()&&c.getLong(0)==calendarId&&
+                c.getString(1)!=null&&c.getString(1).contains(marker);
+        }catch(Exception ignored){return false;}
+    }
     private long resolveExisting(ContentResolver resolver,String marker,long calendarId) {
         String[] projection={CalendarContract.Events._ID};
         try(Cursor c=resolver.query(CalendarContract.Events.CONTENT_URI,projection,
@@ -185,6 +196,7 @@ public final class CalendarBridge {
             long id=previouslyLinked(saved,job.id,calendarId);
             ContentValues values=details(job,calendarId);
             String marker="ACCUBOOK-UID:"+job.id;
+            if(id>=0&&!isOwnedEvent(resolver,id,calendarId,marker))id=-1;
             if(id<0)id=resolveExisting(resolver,marker,calendarId);
             if(id>=0){
                 Uri uri=ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI,id);
