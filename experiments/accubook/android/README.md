@@ -53,7 +53,7 @@ for screenshot-informed competitor analysis, acceptance conditions and unresolve
   have been added to debug APK CI. Compilation does not certify Android
   device UX, accounting correctness or production readiness.
 
-**Still open:** physical validation of photo-grid drag, color consistency on every surface, multi-property/recurring work, report presets/date ranges, direct QuickBooks import, full device/TalkBack acceptance and data-recovery validation. Bundled logo resources are implemented but their invoice rendering and launcher appearance need device acceptance. Existing working features must be
+**Still open:** physical validation of photo-grid drag, color consistency on every surface, multi-property workflows and automatic recurring job creation, report presets/date ranges, direct QuickBooks import, full device/TalkBack acceptance and data-recovery validation. Bundled logo resources are implemented but their invoice rendering and launcher appearance need device acceptance. Existing working features must be
 regression-tested before merging this branch.
 
 ### Try the report workflow with synthetic data
@@ -356,4 +356,13 @@ The baseline interaction is **Customer → Job → Notes/Photos → Invoice → 
 - **Brand graphics bundled:** The mascot is included as the Android launcher icon. The original leaf is bundled as a print-document fallback logo only for default Jules Gutter Cleaning branding with no custom logo. Selecting a custom logo still overrides it.
 - **Regression coverage:** New standalone JVM pricing/suggestion/proof tests, ZIP signed-order roundtrip and tamper rejection; Android build and emulator CI gates remain required at exact HEAD.
 
-**Not implemented yet:** recurring service intervals, fully indexed universal lookup, multi-layer inventory, AR/AP/GL posting, signed change-order PDF, optional front-camera evidence, import-ready QuickBooks format, production release. No device-collected proof is claimed in advance.
+**Not implemented yet:** automatic recurring job creation, multi-layer inventory, AR/AP/GL posting, signed change-order PDF, optional front-camera evidence, import-ready QuickBooks format, production release. No device-collected proof is claimed in advance.
+
+
+## Nov 7 — universal local lookup and manual repeat-service due lists
+
+**One search box:** Home → Find anything. Explicit search scans customer/contact records, job addresses, invoice references, line descriptions, field notes, custom fields (including VIN/PO values), materials, payment references and the optional pricebook. Results open existing records. No INTERNET, account, search telemetry or cloud indexing. Searches use a worker thread and return up to 80 matches. This is not yet an incremental full-text index.
+
+**Repeat-service schedules:** Business → Settings enables a local month/mileage module. Open a job → Overview to set the last completion date and interval. Home shows due-by-date counts; the due list permits pause/resume and manual reset. Due-date slips can be printed to PDF through Android’s document picker. Mileage-only rules display a target odometer reading, not an assumed due notification. No jobs or outbound customer messages are created automatically.
+
+**CSV and proof:** master_data/service_intervals.csv stores stable references, intervals and calculated due values. Backup restore checks customer/job ownership, date/mileage consistency and IDs. Pure-Java tests cover month-end and leap-year calculations, lookup matching and forged reminders. Device-based acceptance remains required.
