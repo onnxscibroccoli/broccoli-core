@@ -334,6 +334,12 @@ public final class MainActivity extends Activity {
                 ()->job(job.id));
             entry.setBackgroundTintList(ColorStateList.valueOf(
                 Color.parseColor(appointment.color)));
+            entry.setContentDescription("Open job "+job.title+", "+job.date+" at "+
+                appointment.start+". Long-press to drag onto another date in Schedule.");
+            entry.setOnLongClickListener(v->{
+                ClipData data=ClipData.newPlainText("Accubook Job",job.id);
+                return v.startDragAndDrop(data,new View.DragShadowBuilder(v),null,0);
+            });
         } catch(Exception e){error(e);}
     }
 
@@ -440,24 +446,64 @@ public final class MainActivity extends Activity {
                 () -> moveSchedule(1));
             button(content, "Schedule new job", this::chooseCustomer);
             int matches = 0;
-            String day = "";
-            for (WorkspaceStore.Job j : jobs) {
-                LocalDate scheduled = LocalDate.parse(j.date);
-                if (scheduled.isBefore(first) || scheduled.isAfter(last)) continue;
-                if (!j.date.equals(day)) {
-                    day = j.date;
-                    section(day.equals(LocalDate.now().toString()) ? "Today · " + day : day);
+            for(LocalDate cursor=first;!cursor.isAfter(last);cursor=cursor.plusDays(1)){
+                String day=cursor.toString();
+                TextView drop=label(content,
+                    (day.equals(LocalDate.now().toString())?"Today · ":"")
+                    +cursor.getDayOfWeek()+" · "+day+"\nDrop a job here to reschedule",
+                    16,LIGHT);
+                if(Build.VERSION.SDK_INT>=28)drop.setAccessibilityHeading(true);
+                drop.setBackground(box(CARD));
+                drop.setPadding(dp(14),dp(10),dp(12),dp(10));
+                drop.setMinHeight(dp(55));
+                drop.setContentDescription("Date "+day+". Drop a job here. "
+                    +"For accessible rescheduling, open a job and choose Reschedule.");
+                final String destination=day;
+                drop.setOnDragListener((view,event)->{
+                    switch(event.getAction()){
+                        case android.view.DragEvent.ACTION_DRAG_STARTED:
+                            return event.getClipDescription()!=null &&
+                                "Accubook Job".contentEquals(event.getClipDescription().getLabel());
+                        case android.view.DragEvent.ACTION_DRAG_ENTERED:
+                            view.setBackgroundColor(ACCENT);
+                            return true;
+                        case android.view.DragEvent.ACTION_DRAG_EXITED:
+                            view.setBackground(box(CARD));
+                            return true;
+                        case android.view.DragEvent.ACTION_DROP:
+                            view.setBackground(box(CARD));
+                            try{
+                                if(event.getClipData()==null ||
+                                    event.getClipData().getItemCount()!=1)
+                                    throw new IOException("Missing job drag payload");
+                                String id=event.getClipData().getItemAt(0).getText().toString();
+                                WorkspaceStore.Job moving=jobById(id);
+                                store.updateJob(id,destination,moving.status);
+                                selectedDate=LocalDate.parse(destination);
+                                scheduleScreen();
+                                Toast.makeText(this,"Job moved to "+destination,Toast.LENGTH_LONG).show();
+                                return true;
+                            }catch(Exception error){error(error);return false;}
+                        case android.view.DragEvent.ACTION_DRAG_ENDED:
+                            view.setBackground(box(CARD));
+                            return true;
+                        default:return true;
+                    }
+                });
+                int daily=0;
+                for(WorkspaceStore.Job j:jobs) {
+                    if(!j.date.equals(day))continue;
+                    jobRow(j);
+                    daily++;matches++;
                 }
-                jobRow(j);
-                matches++;
+                if(daily==0)label(content,"No work scheduled.",14,MUTED);
             }
-            if (matches == 0) {
-                label(content, "No jobs in this " + scheduleMode.toLowerCase(
-                    java.util.Locale.ROOT) + ". Use Schedule new job.", 17, MUTED);
-            }
-            label(content, "Day/week/month dates are available. Appointment times, "
-                + "crew assignment, recurrence and conflict detection remain to be built.",
-                13, MUTED);
+            if(matches==0)
+                label(content,"No jobs in this range. Schedule a job to begin.",16,MUTED);
+            label(content,"Long-press a job and drag it onto another date, or open a job "
+                +"and use the accessible Reschedule calendar/clock. "
+                +"Time conflicts and crew capacity are not yet calculated.",13,MUTED);
+
         } catch (Exception error) { error(error); }
     }
 
