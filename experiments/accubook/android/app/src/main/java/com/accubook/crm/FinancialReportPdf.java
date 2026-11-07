@@ -87,19 +87,19 @@ public final class FinancialReportPdf {
         w.newPage();
         w.writeLine("REPORT SCOPE (explicitly selected)",11,NAVY,true);
         for(int i=0;i<BusinessReports.SECTIONS.length;i++)
-            if(selection.sections[i])
+            if(selection.included(i])
                 w.writeLine("Included: "+BusinessReports.SECTIONS[i],9,GRAY,false);
-        if(selection.sections[3])
+        if(selection.included(3))
             w.writeLine("Payment methods: "+selection.paymentMethods,9,GRAY,false);
-        if(selection.sections[4])
+        if(selection.included(4))
             w.writeLine("Expense categories: "+selection.expenseCategories,9,GRAY,false);
         List<WorkspaceStore.Job> jobs=store.jobs();
-        if(selection.sections[0]){
+        if(selection.included(0)){
             w.header("Customers");
             for(WorkspaceStore.Customer customer:store.customers())
                 w.item(customer.displayName(),customer.city+" "+customer.state);
         }
-        if(selection.sections[1]){
+        if(selection.included(1)){
             w.header("Jobs and recorded invoice totals");
             BigDecimal total=BigDecimal.ZERO,received=BigDecimal.ZERO;
             for(WorkspaceStore.Job job:jobs){
@@ -113,14 +113,14 @@ public final class FinancialReportPdf {
             w.item("Open balance (not a bank balance)",
                 "$"+total.subtract(received).toPlainString());
         }
-        if(selection.sections[2]){
+        if(selection.included(2)){
             w.header("Estimate / invoice line items");
             for(WorkspaceStore.Job job:jobs)
                 for(WorkspaceStore.LineItem item:store.items(job))
                     w.item(job.title+" / "+item.description,
                         item.quantity+" x $"+item.unitRate+" = $"+item.amount);
         }
-        if(selection.sections[3]){
+        if(selection.included(3)){
             w.header("Selected payment-method ledgers");
             Map<String,BigDecimal> totals=new LinkedHashMap<>();
             for(String method:selection.paymentMethods)totals.put(method,BigDecimal.ZERO);
@@ -132,7 +132,7 @@ public final class FinancialReportPdf {
             for(Map.Entry<String,BigDecimal> row:totals.entrySet())
                 w.item(row.getKey(),"$"+row.getValue().toPlainString());
         }
-        if(selection.sections[4]){
+        if(selection.included(4)){
             w.header("Selected expense categories");
             Map<String,BigDecimal> expenses=new LinkedHashMap<>();
             for(String category:selection.expenseCategories)
@@ -144,7 +144,7 @@ public final class FinancialReportPdf {
             for(Map.Entry<String,BigDecimal> entry:expenses.entrySet())
                 w.item(entry.getKey(),"$"+entry.getValue().toPlainString());
         }
-        if(selection.sections[5]){
+        if(selection.included(5)){
             w.header("Worker hours recorded");
             for(WorkspaceStore.Job job:jobs)
                 for(CrmWorkspace.TimeEntry entry:crm.timeEntries(job))
