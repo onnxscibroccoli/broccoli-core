@@ -75,6 +75,7 @@ public final class MainActivity extends Activity {
     private CrmWorkspace crm;
     private String pendingAttachmentJobId;
     private CrmWorkspace.Attachment pendingAttachmentExport;
+    private String pendingAttachmentExportId;
     private String pendingAttachmentExportJob;
     private boolean bulkPhotoSelection;
     private LinearLayout content;
@@ -98,6 +99,7 @@ public final class MainActivity extends Activity {
             pendingPhotoJobId = state.getString("photoJob");
             pendingAttachmentJobId = state.getString("attachmentJob");
             pendingAttachmentExportJob = state.getString("attachmentExportJob");
+            pendingAttachmentExportId = state.getString("attachmentExportId");
             scheduleMode = state.getString("scheduleMode", "Week");
             try { selectedDate = LocalDate.parse(
                 state.getString("scheduleDate", LocalDate.now().toString())); }
@@ -133,6 +135,7 @@ public final class MainActivity extends Activity {
         state.putString("photoJob", pendingPhotoJobId);
         state.putString("attachmentJob", pendingAttachmentJobId);
         state.putString("attachmentExportJob", pendingAttachmentExportJob);
+        state.putString("attachmentExportId", pendingAttachmentExportId);
         state.putString("scheduleMode", scheduleMode);
         state.putString("scheduleDate", selectedDate.toString());
         state.putString("screen", currentScreen);
@@ -344,6 +347,7 @@ public final class MainActivity extends Activity {
             navigation();
             button(content, "Add customer", this::customerDialog);
             button(content, "Import selected phone contact", this::pickContact);
+            button(content, "Import multiple phone contacts", this::requestBulkContacts);
             EditText search = field(content, "Find a customer", "Search name, phone, email or city");
             LinearLayout results = new LinearLayout(this);
             results.setOrientation(LinearLayout.VERTICAL);
@@ -577,6 +581,122 @@ public final class MainActivity extends Activity {
                     home();
                 } catch (Exception failure) { error(failure); }
             }).show();
+    }
+
+
+    /** User-approved bulk phone book browsing; never silently import the whole address book. */
+    private static final class PhoneContact {
+        final String id,name,phone;
+        PhoneContact(String id,String name,String phone) {
+            this.id=id;this.name=name;this.phone=phone;
+        }
+    }
+    private void requestBulkContacts() {
+        new AlertDialog.Builder(this).setTitle("Select contacts to import")
+            .setMessage("Accubook needs temporary access to display phone contacts so "
+                +"you can choose several customers. It does not sync your address book. "
+                +"Only checked contacts are copied into the local workspace.")
+            .setNegativeButton("Cancel",(d,w)->{})
+            .setPositiveButton("Continue",(d,w)->{
+                if(checkSelfPermission(Manifest.permission.READ_CONTACTS)
+                    !=PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},
+                        BULK_CONTACT_PERMISSION);
+                }else showBulkContactPicker();
+            }).show();
+    }
+    @Override public void onRequestPermissionsResult(int code,String[] permissions,
+                                                     int[] grants) {
+        super.onRequestPermissionsResult(code,permissions,grants);
+        if(code==BULK_CONTACT_PERMISSION) {
+            if(grants.length>0&&grants[0]==PackageManager.PERMISSION_GRANTED)
+                showBulkContactPicker();
+            else notice("Permission not granted","You can still import one contact "
+                +"using Android's contact picker, without this permission.");
+        }
+    }
+
+    private void showBulkContactPicker() {
+        try {
+            LinkedHashMap<String,PhoneContact> contacts=new LinkedHashMap<>();
+            String[] projection={
+                ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                ContactsContract.CommonDataKinds.Phone.NUMBER
+            };
+            try(Cursor cursor=getContentResolver().query(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                projection,null,null,ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME+" ASC")){
+                if(cursor==null)throw new IOException("Cannot browse phone contacts");
+                while(cursor.moveToNext()&&contacts.size()<250){
+                    String id=cursor.getString(0), name=cursor.getString(1), phone=cursor.getString(2);
+                    if(id!=null&&name!=null&&!name.trim().isEmpty()&&!contacts.containsKey(id))
+                        contacts.put(id,new PhoneContact(id,name,phone==null?"":phone));
+                }
+            }
+            List<PhoneContact> values=new ArrayList<>(contacts.values());
+            if(values.isEmpty()){notice("No contacts found","No phone contacts are available.");return;}
+            String[] labels=new String[values.size()];
+            boolean[] selected=new boolean[values.size()];
+            for(int i=0;i<values.size();i++)
+                labels[i]=values.get(i).name+" · "+values.get(i).phone;
+            AlertDialog dlg=new AlertDialog.Builder(this)
+                .setTitle("Select customers ("+values.size()+" shown)")
+                .setMultiChoiceItems(labels,selected,(dialog,index,checked)->selected[index]=checked)
+                .setNegativeButton("Cancel",(dialog,index)->{})
+                .setNeutralButton("Select all shown",null)
+                .setPositiveButton("Import selected",(dialog,index)->importSelectedContacts(values,selected))
+                .create();
+            dlg.setOnShowListener(d->dlg.getButton(AlertDialog.BUTTON_NEUTRAL)
+                .setOnClickListener(v->{
+                    for(int i=0;i<selected.length;i++){
+                        selected[i]=true;dlg.getListView().setItemChecked(i,true);
+                    }
+                }));
+            dlg.show();
+        }catch(Exception e){error(e);}
+    }
+    private String emailForContact(String id) {
+        try(Cursor c=getContentResolver().query(
+            ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+            new String[]{ContactsContract.CommonDataKinds.Email.ADDRESS},
+            ContactsContract.CommonDataKinds.Email.CONTACT_ID+"=?",
+            new String[]{id},null)){
+            if(c!=null&&c.moveToFirst())return c.getString(0)==null?"":c.getString(0);
+        }catch(Exception ignored){}
+        return "";
+    }
+    private static String phoneKey(String number) {
+        if(number==null)return "";
+        String digits=number.replaceAll("[^0-9]","");
+        return digits.length()>=7?digits:"";
+    }
+    private void importSelectedContacts(List<PhoneContact> choices,boolean[] selected) {
+        try {
+            Set<String> phones=new HashSet<>();
+            Set<String> emails=new HashSet<>();
+            for(WorkspaceStore.Customer c:store.customers()){
+                if(!phoneKey(c.phone).isEmpty())phones.add(phoneKey(c.phone));
+                if(!c.email.isEmpty())emails.add(c.email.toLowerCase(Locale.ROOT));
+            }
+            int imported=0,skipped=0;
+            for(int i=0;i<choices.size();i++){
+                if(!selected[i])continue;
+                PhoneContact phone=choices.get(i);
+                String number=phoneKey(phone.phone),mail=emailForContact(phone.id);
+                if((!number.isEmpty()&&phones.contains(number))||
+                    (!mail.isEmpty()&&emails.contains(mail.toLowerCase(Locale.ROOT)))){
+                    skipped++;continue;
+                }
+                store.addCustomer("",phone.name,phone.phone,mail,"","","","","");
+                if(!number.isEmpty())phones.add(number);
+                if(!mail.isEmpty())emails.add(mail.toLowerCase(Locale.ROOT));
+                imported++;
+            }
+            customersScreen();
+            notice("Contact import",imported+" customers imported; "+skipped
+                +" duplicates skipped. Imported customer information is editable.");
+        }catch(Exception e){error(e);}
     }
 
     private void pickContact() {
@@ -1038,8 +1158,14 @@ public final class MainActivity extends Activity {
 
     private void exportAttachment(WorkspaceStore.Job job,CrmWorkspace.Attachment attachment) {
         pendingAttachmentExport=attachment;
+        pendingAttachmentExportId=attachment.id;
         pendingAttachmentExportJob=job.id;
-        document(attachment.name,attachment.mime);
+        Intent save=new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        save.addCategory(Intent.CATEGORY_OPENABLE);
+        save.setType(attachment.mime.isEmpty()?"application/octet-stream":attachment.mime);
+        save.putExtra(Intent.EXTRA_TITLE,attachment.name);
+        try{startActivityForResult(save,ATTACHMENT_EXPORT_REQUEST);}
+        catch(Exception e){error(e);}
     }
 
     private void attachmentList(WorkspaceStore.Job job) throws IOException {
@@ -1147,7 +1273,8 @@ public final class MainActivity extends Activity {
             button(content, "New customer", this::customerDialog);
             button(content, "Try with a sample customer and job", this::createDemoWorkspace);
             button(content, "Schedule job", this::chooseCustomer);
-            button(content, "Import phone contact", this::pickContact);
+            button(content, "Import one phone contact", this::pickContact);
+            button(content, "Import multiple phone contacts", this::requestBulkContacts);
             button(content, "Export workspace ZIP backup", () -> {
                 pendingBackup = true;
                 pendingInvoice = null;
@@ -1462,6 +1589,51 @@ public final class MainActivity extends Activity {
                     + "The previous workspace is retained until you discard it.");
             } catch (Exception failure) {
                 error(failure);
+            }
+            return;
+        }
+        if (requestCode == LOGO_REQUEST) {
+            if(resultCode!=RESULT_OK||data==null||data.getData()==null)return;
+            try(InputStream in=getContentResolver().openInputStream(data.getData())) {
+                String type=getContentResolver().getType(data.getData());
+                crm.saveLogo(in,type);
+                businessScreen();
+                notice("Logo saved","New quotes and invoices will include this logo.");
+            }catch(Exception e){error(e);}
+            return;
+        }
+        if(requestCode==ATTACHMENT_REQUEST||requestCode==BULK_PHOTO_REQUEST){
+            if(resultCode==RESULT_OK && data!=null)saveSelectedAttachments(
+                data,requestCode==BULK_PHOTO_REQUEST);
+            else pendingAttachmentJobId=null;
+            return;
+        }
+        if(requestCode==ATTACHMENT_EXPORT_REQUEST){
+            if(resultCode!=RESULT_OK||data==null||data.getData()==null)return;
+            try {
+                CrmWorkspace.Attachment selected=pendingAttachmentExport;
+                if(selected==null && pendingAttachmentExportId!=null &&
+                    pendingAttachmentExportJob!=null){
+                    for(CrmWorkspace.Attachment item:crm.attachments(
+                        jobById(pendingAttachmentExportJob)))
+                        if(item.id.equals(pendingAttachmentExportId))selected=item;
+                }
+                if(selected==null||pendingAttachmentExportJob==null)
+                    throw new IOException("Attachment export expired");
+                try(InputStream in=new FileInputStream(crm.fileFor(
+                        jobById(pendingAttachmentExportJob),selected));
+                    OutputStream out=getContentResolver().openOutputStream(data.getData(),"wt")) {
+                    if(out==null)throw new IOException("Cannot open export destination");
+                    byte[] bytes=new byte[8192];int got;
+                    while((got=in.read(bytes))!=-1)out.write(bytes,0,got);
+                    out.flush();
+                }
+                notice("File copied","Saved attachment to selected location.");
+            }catch(Exception e){error(e);}
+            finally {
+                pendingAttachmentExport=null;
+                pendingAttachmentExportId=null;
+                pendingAttachmentExportJob=null;
             }
             return;
         }
