@@ -1,5 +1,74 @@
 # Accubook — offline-first field-service CRM (engineering preview)
 
+## November 7, 2026 — modular field workflow and private reporting increment
+
+**Implementation:** `feat/accubook-modular-reporting-20261107`. **Acceptance:** not
+production-verified; follow the CI and on-device checks below. See
+[UX_COMPETITIVE_REVIEW.md](UX_COMPETITIVE_REVIEW.md) for the source-grounded
+Jobber / Housecall Pro / JobNimbus comparison and decision record, and
+[UX_VISUAL_AUDIT.md](UX_VISUAL_AUDIT.md) for screenshots of the **compiled**
+emulator UI and the subsequent reduction in job-level navigation clutter.
+
+- **Six focused sections on every job:** Overview, Notes, Materials, Billing,
+  Photos, and optional Time & route. The current job is preserved during tab
+  switches and field edits. Optional time and GPS modules are hidden by default.
+  Actual emulator screenshots exposed redundant workspace navigation; job detail
+  now uses one compact contextual row (Jobs / Home / More), and the oversized
+  customer link appears only in Overview. Dashboard quick actions include
+  immediate entry into the explicitly scoped PDF/CSV report chooser.
+- **Settings > Features:** local presentation switches for crews, advanced
+  scheduling, pricebook, material requests, properties (preview), recurrence
+  (preview), worker time, GPS tracking, and extra reorder controls. A disabled
+  module's records are never erased. Switching off a feature does not assert
+  it is implemented; multiple properties and recurring jobs remain previews.
+  Settings are currently Android SharedPreferences; unlike CSV workspace
+  records, these UI preferences are **not yet included in backup ZIPs**.
+- **Reordering:** master and per-job fields use atomic row-position updates
+  with stable field IDs and preserved inactive records; long-press or compact
+  `⋯` menu offers Edit, Move up/down and confirmed Delete. Per-job photos
+  have a small `⋯` menu; their order is persisted atomically to
+  `photos/order.csv`, which is now allow-listed, checked and carried through
+  workspace backup/restore. Photo order is independent per job.
+- **Quick local PDF or selective ZIP:** Business > Create report lets the
+  user choose PDF summary or CSV ZIP, then check the exact tables, payment
+  methods, and expense categories. **Nothing is selected by default.**
+  Deselecting Cash App, cash or any other ledger excludes its entries.
+  Job-total reporting deliberately does not include indirect aggregate
+  payment fields that could reveal an excluded ledger. ZIP includes
+  `EXPORT_SCOPE.txt` plus manual import guidance.
+- **Privacy:** nothing is uploaded or connected to QuickBooks; PDF is generated
+  with Android's local `PdfDocument`, ZIP uses standard CSV files. Financial
+  records are manual and are **not** a balanced double-entry general ledger,
+  payroll system, bank reconciliation, vendor-bill subsystem, audited revenue
+  measure, or automatically compatible QuickBooks import format.
+- **Distinct brand assets:** the dog-with-hardhat image supplied by the owner
+  is now the native Android launcher icon (`res/drawable/accubook_launcher.webp`).
+  The turquoise Jules Gutter Cleaning leaf is embedded separately as a
+  transparent PNG (`res/drawable/jules_gutter_leaf.png`). Business >
+  **Use Jules Gutter Cleaning leaf as business logo** explicitly applies it
+  to future document previews without silently replacing a different company's
+  branding or touching the Accubook launcher icon.
+- **Accessibility:** visual controls remain compact; a discoverable
+  accessibility-labeled `⋯` button is provided alongside long-press,
+  with optional extra arrow buttons. Accubook cannot and should not toggle
+  Android TalkBack; the user can open Android Accessibility settings from
+  Features. Physical TalkBack and keyboard acceptance is still pending.
+
+**Immediate acceptance commands (from `experiments/accubook/android`):**
+
+```bash
+gradle :app:assembleDebug --no-daemon
+# Regression checks are defined in .github/workflows/accubook-debug-apk.yml
+# Device smoke is defined in .github/workflows/accubook-emulator-smoke.yml
+```
+
+**Still open:** physical
+device tests; PDF pagination visual QA; expense/ledger export differential
+tests; richer accounting models and production signing. Passing CI must not
+be labeled a successful customer accounting deployment.
+
+---
+
 > **Security and operations increment:** Read
 > [SECURITY_ACCOUNTING_INTEGRATION.md](SECURITY_ACCOUNTING_INTEGRATION.md)
 > for verified versus unverified features, supported calendar sharing, supplier

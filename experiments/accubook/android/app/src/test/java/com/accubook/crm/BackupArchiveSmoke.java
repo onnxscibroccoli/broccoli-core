@@ -58,6 +58,8 @@ public final class BackupArchiveSmoke {
             File photo = new File(root, jdir + "/photos/PHOTO-" + "c".repeat(32) + ".jpg");
             Files.createDirectories(photo.getParentFile().toPath());
             Files.write(photo.toPath(), new byte[]{(byte)255,(byte)216,(byte)255,0,1,2});
+            table(root,jdir+"/photos/order.csv",new String[]{"Filename"},
+                row("PHOTO-"+"c".repeat(32)+".jpg"));
             table(root,directory+"/contact_preferences.csv",
                 new String[]{"Call","SMS","Email","Color"},
                 row("true","false","true","#165DAB"));
@@ -221,6 +223,9 @@ public final class BackupArchiveSmoke {
             .contains("Sample Dumpster"),"Vendor logistics not restored");
         check(Files.readString(new File(live,jdir+"/pickup_reminder.csv").toPath())
             .contains("Scheduled"),"Pickup alarm metadata not restored");
+        check(Files.readString(new File(live,jdir+"/photos/order.csv").toPath())
+            .contains("PHOTO-"+"c".repeat(32)+".jpg"),
+            "Ordered photo index not backed up and restored");
         check(Files.readString(new File(live,"master_data/pricebook.csv").toPath())
             .contains("250.00"),"Catalog pricing not restored");
         check(Files.readString(new File(live,"master_data/calendar_links.csv").toPath())
@@ -245,6 +250,14 @@ public final class BackupArchiveSmoke {
         try{BackupArchive.validate(invalid);}
         catch(IOException expected){rejectedFields=true;}
         check(rejectedFields,"Malformed required job field was accepted");
+        File badPhoto=new File(tmp,"bad-photo-order");
+        workspace(badPhoto,true);
+        table(badPhoto,jdir+"/photos/order.csv",new String[]{"Filename"},
+            row("PHOTO-"+"9".repeat(32)+".jpg"));
+        boolean rejectedPhoto=false;
+        try{BackupArchive.validate(badPhoto);}
+        catch(IOException expected){rejectedPhoto=true;}
+        check(rejectedPhoto,"Photo index referencing a missing file passed validation");
         boolean refused = false;
         try { BackupArchive.restore(live, new ByteArrayInputStream(good)); }
         catch (IOException expected) { refused = true; }

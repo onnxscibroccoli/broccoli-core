@@ -124,7 +124,7 @@ public final class BackupArchive {
             + "time_entries\\.csv|route_points\\.csv|job_milestones\\.csv|"
             + "job_logistics\\.csv|pickup_reminder\\.csv|custom_fields\\.csv|"
             + "attachments\\.csv|attachments/ATT-[a-f0-9]{32}\\.bin|"
-            + "photos/PHOTO-[a-f0-9]{32}\\.(jpg|png|webp|heic|heif|avif|gif|bmp|tiff|dng|img))");
+            + "photos/order\\.csv|photos/PHOTO-[a-f0-9]{32}\\.(jpg|png|webp|heic|heif|avif|gif|bmp|tiff|dng|img))");
     }
 
     private static void unpack(File destination, InputStream input) throws IOException {
@@ -375,6 +375,19 @@ public final class BackupArchive {
                         .decode(java.nio.ByteBuffer.wrap(Files.readAllBytes(notes.toPath())));
                 } catch (java.nio.charset.CharacterCodingException error) {
                     throw new IOException("Job notes are invalid UTF-8", error);
+                }
+            }
+            String photoOrder=jobFolder+"/photos/order.csv";
+            if(new File(root,photoOrder).isFile()){
+                List<List<String>> ordered=rows(root,photoOrder,
+                    new String[]{"Filename"});
+                Set<String> seenPhotos=new HashSet<>();
+                for(int p=1;p<ordered.size();p++){
+                    String photo=ordered.get(p).get(0);
+                    if(!photo.matches("PHOTO-[a-f0-9]{32}\\.(jpg|png|webp|heic|heif|avif|gif|bmp|tiff|dng|img)")||
+                        !seenPhotos.add(photo)||
+                        !new File(root,jobFolder+"/photos/"+photo).isFile())
+                        throw new IOException("Invalid or missing photo in saved order");
                 }
             }
             String custom=jobFolder+"/custom_fields.csv";

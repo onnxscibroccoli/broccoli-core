@@ -16,6 +16,8 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.LinkedHashSet;
+import java.util.TreeSet;
 import java.util.Map;
 import java.math.BigDecimal;
 import java.time.LocalTime;
@@ -82,6 +84,8 @@ public final class MainActivity extends Activity {
     private boolean bulkPhotoSelection;
     private LinearLayout content;
     private String currentJobId;
+    private String selectedJobSection="Overview";
+    private String lastJobSectionId;
     private String currentCustomerId;
     private String pendingPhotoJobId;
     private String pendingInvoice;
@@ -107,6 +111,9 @@ public final class MainActivity extends Activity {
     private String routeJobId;
     private String pendingRouteExportId;
     private boolean[] pendingReportSections;
+    private Set<String> pendingPaymentMethods;
+    private Set<String> pendingExpenseCategories;
+    private boolean pendingReportPdf=false;
     private android.location.LocationManager locationManager;
     private android.location.LocationListener routeListener;
     private char[] pendingBackupPassword;
@@ -125,7 +132,14 @@ public final class MainActivity extends Activity {
             pendingAttachmentExportJob = state.getString("attachmentExportJob");
             pendingAttachmentExportId = state.getString("attachmentExportId");
             pendingReportSections=state.getBooleanArray("reportSections");
+            pendingPaymentMethods=new LinkedHashSet<>(state.getStringArrayList("reportMethods")==null?
+                java.util.Collections.emptyList():state.getStringArrayList("reportMethods"));
+            pendingExpenseCategories=new LinkedHashSet<>(state.getStringArrayList("reportCategories")==null?
+                java.util.Collections.emptyList():state.getStringArrayList("reportCategories"));
+            pendingReportPdf=state.getBoolean("reportPdf",false);
             pendingRouteExportId=state.getString("routeExportId");
+            selectedJobSection=state.getString("jobSection","Overview");
+            lastJobSectionId=state.getString("lastSectionJobId");
             pendingPickupJobId=state.getString("pickupJobId");
             pendingPickupWhen=state.getLong("pickupWhen",0);
             scheduleMode = state.getString("scheduleMode", "Week");
@@ -163,6 +177,7 @@ public final class MainActivity extends Activity {
                 else if("contact".equals(page))contactsScreen();
                 else if("jobs".equals(page))jobsScreen();
                 else if("job_template".equals(page))masterJobTemplateScreen();
+                else if("features".equals(page))featuresScreen();
                     else home();
                 } else home();
             } catch (Exception error) {
@@ -220,7 +235,14 @@ public final class MainActivity extends Activity {
         state.putString("attachmentExportJob", pendingAttachmentExportJob);
         state.putString("attachmentExportId", pendingAttachmentExportId);
         state.putBooleanArray("reportSections",pendingReportSections);
+        state.putStringArrayList("reportMethods",pendingPaymentMethods==null?null:
+            new ArrayList<>(pendingPaymentMethods));
+        state.putStringArrayList("reportCategories",pendingExpenseCategories==null?null:
+            new ArrayList<>(pendingExpenseCategories));
+        state.putBoolean("reportPdf",pendingReportPdf);
         state.putString("routeExportId",pendingRouteExportId);
+        state.putString("jobSection",selectedJobSection);
+        state.putString("lastSectionJobId",lastJobSectionId);
         state.putString("pickupJobId",pendingPickupJobId);
         state.putLong("pickupWhen",pendingPickupWhen);
         state.putString("scheduleMode", scheduleMode);
@@ -367,23 +389,25 @@ public final class MainActivity extends Activity {
     }
 
 
-    /** Six clear workspaces; two columns preserve 48dp touch targets at large text. */
+    /** Six primary destinations in a compact two-row, three-column grid.
+     * Labels remain textual and every target retains the Android 48dp minimum.
+     */
     private void navigation() {
         String[] labels={"Home","Jobs","Calendar","Contacts","Customers","Business"};
         Runnable[] actions={this::home,this::jobsScreen,this::calendarScreen,
             this::contactsScreen,this::customersScreen,this::businessScreen};
-        for(int row=0;row<3;row++){
+        for(int row=0;row<2;row++){
             LinearLayout bar=new LinearLayout(this);
             bar.setOrientation(LinearLayout.HORIZONTAL);
             content.addView(bar,new LinearLayout.LayoutParams(-1,-2));
-            for(int col=0;col<2;col++){
-                int index=row*2+col;
+            for(int col=0;col<3;col++){
+                int index=row*3+col;
                 Button tab=new Button(this);
                 tab.setText(labels[index]);
                 tab.setAllCaps(false);
-                tab.setTextSize(15);
+                tab.setTextSize(14);
                 tab.setTextColor(LIGHT);
-                tab.setMinHeight(dp(52));
+                tab.setMinHeight(dp(48));
                 tab.setBackground(box(CARD));
                 tab.setContentDescription("Open "+labels[index]+" workspace");
                 LinearLayout.LayoutParams cell=new LinearLayout.LayoutParams(0,-2,1);
@@ -1814,19 +1838,52 @@ public final class MainActivity extends Activity {
         } catch (Exception exception) {
             label(panel, "Photo preview unavailable: " + exception.getMessage(), 13, MUTED);
         }
-        button(panel, "Remove photo " + number, () -> new AlertDialog.Builder(this)
-            .setTitle("Delete this photo?")
-            .setMessage("This action cannot be undone. Export a backup first.")
-            .setNegativeButton("Keep", (d, w) -> {})
-            .setPositiveButton("Delete", (d, w) -> {
-                try {
-                    store.deletePhoto(job, name);
-                    job(job.id);
-                } catch (Exception failure) { error(failure); }
-            }).show());
+        Runnable actions=()->photoActions(job,name,number);
+        panel.setOnLongClickListener(v->{actions.run();return true;});
+        tinyAction(panel,"⋯","Options for photo "+number,actions);
+        if(new AppFeatures(this).enabled(AppFeatures.EXTRA_MOVE_CONTROLS)){
+            LinearLayout row=new LinearLayout(this);
+            row.setOrientation(LinearLayout.HORIZONTAL);
+            panel.addView(row);
+            try{
+                int count=store.photos(job).size();
+                if(number>1)tinyAction(row,"↑","Move photo "+number+" up",
+                    ()->movePhoto(job,name,number-2));
+                if(number<count)tinyAction(row,"↓","Move photo "+number+" down",
+                    ()->movePhoto(job,name,number));
+            }catch(Exception e){error(e);}
+        }
     }
 
 
+
+    private void movePhoto(WorkspaceStore.Job job,String name,int position){
+        try{store.movePhoto(job,name,position);job(job.id);}
+        catch(Exception e){error(e);}
+    }
+    private void photoActions(WorkspaceStore.Job job,String name,int oneBased){
+        try{
+            int count=store.photos(job).size();
+            List<String> options=new ArrayList<>();
+            if(oneBased>1)options.add("Move up");
+            if(oneBased<count)options.add("Move down");
+            options.add("Delete (confirm)");
+            new AlertDialog.Builder(this).setTitle("Photo "+oneBased)
+                .setItems(options.toArray(new String[0]),(d,index)->{
+                    String chosen=options.get(index);
+                    if(chosen.equals("Move up"))movePhoto(job,name,oneBased-2);
+                    else if(chosen.equals("Move down"))movePhoto(job,name,oneBased);
+                    else new AlertDialog.Builder(this)
+                        .setTitle("Delete photo?").setMessage(
+                            "This cannot be undone. Export a backup first.")
+                        .setNegativeButton("Keep",(a,b)->{})
+                        .setPositiveButton("Delete",(a,b)->{
+                            try{store.deletePhoto(job,name);job(job.id);}
+                            catch(Exception e){error(e);}
+                        }).show();
+                }).setNegativeButton("Cancel",(d,w)->{}).show();
+        }catch(Exception e){error(e);}
+    }
 
     /** All business settings are local. Company identity merges into every document. */
     private void businessScreen() {
@@ -1857,7 +1914,27 @@ public final class MainActivity extends Activity {
                     }catch(Exception e){error(e);}
                 }).show());
             button(content,"Choose business logo",this::pickLogo);
-            button(content,"Manage item and service pricebook",this::catalogScreen);
+            button(content,"Use Jules Gutter Cleaning leaf as business logo",()->{
+                new AlertDialog.Builder(this)
+                    .setTitle("Apply Jules Gutter Cleaning leaf?")
+                    .setMessage("Use the teal leaf on new estimates and invoices? "
+                        +"This replaces the current business-document logo, if any. "
+                        +"The Accubook launcher icon will stay unchanged.")
+                    .setNegativeButton("Cancel",(d,w)->{})
+                    .setPositiveButton("Apply leaf",(d,w)->{
+                        try(InputStream source=getResources().openRawResource(
+                            R.drawable.jules_gutter_leaf)){
+                            crm.saveLogo(source,"image/png");
+                            businessScreen();
+                            notice("Business logo applied",
+                                "The teal leaf is ready for document previews.");
+                        }catch(Exception e){error(e);}
+                    }).show();
+            });
+            if(new AppFeatures(this).enabled(AppFeatures.PRICEBOOK))
+                button(content,"Manage item and service pricebook",this::catalogScreen);
+            button(content,"Customize visible features / solo or crew mode",
+                this::featuresScreen);
             button(content,"Customize master job fields / checklists",
                 this::masterJobTemplateScreen);
             section("Expenses and costs");
@@ -1920,10 +1997,11 @@ public final class MainActivity extends Activity {
                 +"workspace and ordinary ZIP backups remain unencrypted. "
                 +"An app lock alone is not encryption at rest.",13,MUTED);
             section("Reporting and accounting export");
-            button(content,"Create selective accounting / QuickBooks CSV ZIP",
+            button(content,"Create quick PDF or custom accounting CSV ZIP",
                 this::chooseReportExport);
-            label(content,"Each category produces a separate CSV with documented columns. "
-                +"QuickBooks may require manual field mapping; this is not a live integration.",
+            label(content,"Choose exact report sections, payment methods and expense "
+                +"categories. PDF summarizes them; the ZIP contains selected CSVs "
+                +"for manual accounting import, not an automatic QuickBooks integration.",
                 14,MUTED);
             section("Workspace safety");
             button(content,"Create encrypted backup (.acbk)",this::chooseEncryptedBackup);
@@ -1970,6 +2048,40 @@ public final class MainActivity extends Activity {
                 getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE);
                 businessScreen();
             }).show();
+    }
+
+    private void featuresScreen(){
+        currentScreen="features";
+        currentJobId=null;currentCustomerId=null;
+        screen("Choose your features","Only use what your business needs");
+        navigation();
+        label(content,"Switches change the interface, not your stored records. "
+            +"Re-enable a feature to see the same data again. "
+            +"Contacts, customers, basic jobs, billing, backups, and app security "
+            +"are always available.",15,MUTED);
+        AppFeatures features=new AppFeatures(this);
+        for(int i=0;i<AppFeatures.KEYS.length;i++){
+            String key=AppFeatures.KEYS[i];
+            String name=AppFeatures.LABELS[i];
+            CheckBox toggle=checkbox(content,name,features.enabled(key));
+            toggle.setOnClickListener(v->{
+                boolean desired=toggle.isChecked();
+                try{features.set(key,desired);}
+                catch(Exception e){toggle.setChecked(!desired);error(e);}
+            });
+        }
+        section("Accessibility and navigation");
+        label(content,"TalkBack is an Android system accessibility service. "
+            +"Accubook automatically exposes controls when Android's screen reader "
+            +"is enabled; it cannot switch TalkBack on or off for you. "
+            +"Long-press and small options menus are paired with accessible buttons "
+            +"and labels. The optional extra move controls above are a visual preference.",
+            15,MUTED);
+        button(content,"Open Android accessibility settings",()->{
+            try{startActivity(new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS));}
+            catch(Exception e){error(e);}
+        });
+        button(content,"Return to Business",this::businessScreen);
     }
 
     private void brandingDialog() {
@@ -2309,31 +2421,81 @@ public final class MainActivity extends Activity {
             }).show();
     }
 
+    /** The user selects both output format and an explicit record allow-list. */
     private void chooseReportExport(){
-        LinearLayout fields=form();
-        label(fields,"Only checked categories will be included in your report ZIP. "
-            +"No records are sent online. The destination ZIP may contain private data.",
-            16,LIGHT);
-        CheckBox[] sections=new CheckBox[BusinessReports.SECTIONS.length];
-        for(int i=0;i<sections.length;i++){
-            sections[i]=checkbox(fields,BusinessReports.SECTIONS[i],i==4);
-        }
-        dialog("Choose accounting report sections",fields,()->{
-            boolean[] selected=new boolean[sections.length];
-            boolean any=false;
-            for(int i=0;i<sections.length;i++){
-                selected[i]=sections[i].isChecked();
-                any|=selected[i];
-            }
-            if(!any)throw new IllegalArgumentException("Choose at least one report section");
-            pendingReportSections=selected;
-            Intent destination=new Intent(Intent.ACTION_CREATE_DOCUMENT);
-            destination.addCategory(Intent.CATEGORY_OPENABLE);
-            destination.setType("application/zip");
-            destination.putExtra(Intent.EXTRA_TITLE,"accubook-accounting-report.zip");
-            try{startActivityForResult(destination,REPORT_EXPORT_REQUEST);}
-            catch(Exception e){pendingReportSections=null;error(e);}
-        });
+        new AlertDialog.Builder(this).setTitle("Create an offline business report")
+            .setItems(new String[]{"Quick PDF summary","Detailed CSV ZIP for accounting"},
+                (d,index)->chooseReportExport(index==0))
+            .setNegativeButton("Cancel",(d,w)->{}).show();
+    }
+    private void chooseReportExport(boolean pdf){
+        try{
+            LinearLayout fields=form();
+            label(fields,"Nothing is exported until you select it. PDF summarizes the chosen "
+                +"categories; ZIP includes only the chosen CSV tables. Both stay on this "
+                +"device unless you deliberately share the resulting file.",16,LIGHT);
+            CheckBox[] sections=new CheckBox[BusinessReports.SECTIONS.length];
+            sectionIn(fields,"Include report sections");
+            for(int i=0;i<sections.length;i++)
+                sections[i]=checkbox(fields,BusinessReports.SECTIONS[i],false);
+            sectionIn(fields,"Only these payment-method ledgers");
+            label(fields,"To exclude Cash App, cash or another ledger, leave it unchecked. "
+                +"If Payments is enabled, choose at least one.",13,MUTED);
+            CheckBox[] methods=new CheckBox[CrmWorkspace.PAYMENT_METHODS.length];
+            for(int i=0;i<methods.length;i++)
+                methods[i]=checkbox(fields,CrmWorkspace.PAYMENT_METHODS[i],false);
+            sectionIn(fields,"Only these expense categories");
+            label(fields,"Select exact categories. A category not checked is omitted "
+                +"even if it exists in your local records.",13,MUTED);
+            Set<String> available=new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+            for(CrmWorkspace.Expense e:crm.expenses())available.add(e.category);
+            final String[] names=available.toArray(new String[0]);
+            CheckBox[] categories=new CheckBox[names.length];
+            for(int i=0;i<categories.length;i++)
+                categories[i]=checkbox(fields,names[i],false);
+            if(names.length==0)label(fields,"No expenses recorded yet.",13,MUTED);
+            dialog(pdf?"Choose PDF report data":"Choose CSV ZIP export data",fields,()->{
+                boolean[] selected=new boolean[sections.length];
+                for(int i=0;i<sections.length;i++)selected[i]=sections[i].isChecked();
+                Set<String> chosenMethods=new LinkedHashSet<>();
+                Set<String> chosenCategories=new LinkedHashSet<>();
+                for(int i=0;i<methods.length;i++)
+                    if(methods[i].isChecked())chosenMethods.add(CrmWorkspace.PAYMENT_METHODS[i]);
+                for(int i=0;i<categories.length;i++)
+                    if(categories[i].isChecked())chosenCategories.add(names[i]);
+                ExportSelection verified=new ExportSelection(selected,chosenMethods,chosenCategories);
+                StringBuilder scope=new StringBuilder("Selected report data:\n");
+                for(int i=0;i<selected.length;i++)
+                    if(verified.included(i))
+                        scope.append("• ").append(BusinessReports.SECTIONS[i]).append('\n');
+                if(verified.included(3))scope.append("\nPayment ledgers: ")
+                    .append(verified.paymentMethods).append('\n');
+                if(verified.included(4))scope.append("\nExpense categories: ")
+                    .append(verified.expenseCategories).append('\n');
+                scope.append("\nOnly this data is included. The saved file remains "
+                    +"on your device unless you choose to share it.");
+                new AlertDialog.Builder(this)
+                    .setTitle("Confirm private "+(pdf?"PDF report":"CSV ZIP")+" scope")
+                    .setMessage(scope.toString())
+                    .setNegativeButton("Go back",(d,w)->{})
+                    .setPositiveButton("Choose save location",(d,w)->{
+                        pendingReportSections=verified.selectedSections();
+                        pendingPaymentMethods=new LinkedHashSet<>(verified.paymentMethods);
+                        pendingExpenseCategories=new LinkedHashSet<>(verified.expenseCategories);
+                        pendingReportPdf=pdf;
+                        Intent destination=new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                        destination.addCategory(Intent.CATEGORY_OPENABLE);
+                        destination.setType(pdf?"application/pdf":"application/zip");
+                        destination.putExtra(Intent.EXTRA_TITLE,
+                            pdf?"accubook-financial-report.pdf":"accubook-accounting-report.zip");
+                        try{startActivityForResult(destination,REPORT_EXPORT_REQUEST);}
+                        catch(Exception e){pendingReportSections=null;error(e);}
+                    }).show();
+            });
+        }catch(Exception e){error(e);}
+    }
+    private void sectionIn(LinearLayout parent,String heading){
+        label(parent,heading,18,LIGHT);
     }
 
     private void expenseDialog(){
@@ -2589,13 +2751,15 @@ public final class MainActivity extends Activity {
             }
             section("Quick actions");
             button(content,"＋ New scheduled job",this::chooseCustomer);
+            button(content,"Quick PDF / selective accounting report",this::chooseReportExport);
             button(content,"Calendar · look ahead",this::calendarScreen);
             button(content,"Contacts · import all or browse",this::contactsScreen);
             button(content,"＋ New customer",this::customerDialog);
             button(content,"Customize job checklist",this::masterJobTemplateScreen);
             button(content,"Try fictional sample job",this::createDemoWorkspace);
 
-            button(content,"Open daybook schedule",this::scheduleScreen);
+            if(new AppFeatures(this).enabled(AppFeatures.ADVANCED_SCHEDULING))
+                button(content,"Open daybook schedule",this::scheduleScreen);
             button(content, "Export workspace ZIP backup", () -> {
                 pendingBackup = true;
                 pendingInvoice = null;
@@ -2772,6 +2936,10 @@ public final class MainActivity extends Activity {
     private void job(String id) {
         currentScreen = "job";
         currentJobId = id;
+        if(!id.equals(lastJobSectionId)){
+            selectedJobSection="Overview";
+            lastJobSectionId=id;
+        }
         try {
             WorkspaceStore.Job selected = jobById(id);
             WorkspaceStore.Customer customer = null;
@@ -2782,8 +2950,11 @@ public final class MainActivity extends Activity {
             final WorkspaceStore.Job work = selected;
             final WorkspaceStore.Customer client = customer;
             screen(work.title, client.displayName() + " · " + work.date + " · " + work.status);
-            navigation();
+            jobQuickNav();
+            jobSectionTabs(id);
+            if("Overview".equals(selectedJobSection)){
             button(content, "Customer: " + client.displayName(), () -> customer(client.id));
+            jobQuickActions(work,client);
             section("Job details");
             CrmWorkspace.Appointment appt=crm.appointment(work);
             label(content, "Scheduled: " + work.date + " · "+appt.start+"–"+appt.end,
@@ -2796,6 +2967,8 @@ public final class MainActivity extends Activity {
                 () -> scheduleEditor(work));
             button(content,"Add this job to Calendar app",()->addJobToCalendar(work));
             button(content, "Change job status", () -> statusPicker(work));
+            }
+            if("Notes".equals(selectedJobSection)){
             section("Field notes and site instructions");
             String notes = store.fieldNotes(work);
             label(content, notes.isEmpty() ? "No field notes yet."
@@ -2803,12 +2976,17 @@ public final class MainActivity extends Activity {
                 15, MUTED);
             button(content, "Edit field notes", () -> fieldNotesDialog(work));
             jobCustomFields(work);
+            }
+            if("Materials".equals(selectedJobSection)){
             section("Vendors, crew and deliveries");
-            button(content,"Edit vendor / material delivery / crew",()->jobLogisticsDialog(work));
+            button(content,new AppFeatures(this).enabled(AppFeatures.CREWS)?
+                "Edit vendor / material delivery / crew":
+                "Edit vendor and delivery details",()->jobLogisticsDialog(work));
             TradeModules operations=new TradeModules(store);
             TradeModules.Logistics details=operations.logistics(work);
             label(content,"Vendor: "+details.vendor+" · Delivery: "+details.delivery,15,MUTED);
-            label(content,"Crew: "+details.crew,15,MUTED);
+            if(new AppFeatures(this).enabled(AppFeatures.CREWS))
+                label(content,"Crew: "+details.crew,15,MUTED);
             if(!details.notes.isEmpty())label(content,details.notes,15,LIGHT);
             button(content,"Create dumpster pickup calendar reminder",
                 ()->createPickupReminder(work));
@@ -2819,6 +2997,7 @@ public final class MainActivity extends Activity {
                 label(content,"Local pickup reminder: "+
                     java.time.Instant.ofEpochMilli(pickupDue).atZone(
                         java.time.ZoneId.systemDefault()),14,MUTED);
+            if(new AppFeatures(this).enabled(AppFeatures.MATERIALS)){
             section("Material requests");
             button(content, "Request materials", () -> materialDialog(work, null));
             for (WorkspaceStore.MaterialRequest request : store.materialRequests(work)) {
@@ -2830,6 +3009,9 @@ public final class MainActivity extends Activity {
                 button(entry, "Update material status", () -> materialStatusPicker(work, request));
                 button(entry, "Remove request", () -> removeMaterial(work, request));
             }
+            }
+            }
+            if("Billing".equals(selectedJobSection)){
             section("Estimate and invoice");
             CrmWorkspace.Quote quoteState=crm.quote(work);
             CheckBox sent=checkbox(content,"Estimate sent (manually confirmed)",quoteState.sent);
@@ -2854,8 +3036,9 @@ public final class MainActivity extends Activity {
             button(content,"Preview / edit invoice (print or Save as PDF)",
                 ()->openDocument(work,false));
             label(content,"Job total: $"+work.total,22,LIGHT);
-            button(content,"+ Add from service / consumable catalog",
-                ()->catalogLineDialog(work));
+            if(new AppFeatures(this).enabled(AppFeatures.PRICEBOOK))
+                button(content,"+ Add from service / consumable catalog",
+                    ()->catalogLineDialog(work));
             button(content,"Add labor, material or discount",()->lineDialog(work));
             button(content,"Export invoice as HTML",()->{
                 try{
@@ -2873,6 +3056,8 @@ public final class MainActivity extends Activity {
                 button(row, "Edit " + item.description, () -> editLineDialog(work, item));
                 button(row, "Remove " + item.description, () -> deleteLine(work, item));
             }
+            }
+            if("Photos".equals(selectedJobSection)){
             section("Job photos");
             button(content, "Add photo from device", () -> pickPhoto(work));
             button(content, "Import multiple photos",()->pickAttachments(work,true));
@@ -2880,6 +3065,8 @@ public final class MainActivity extends Activity {
             for (String name : store.photos(work)) photoCard(work, name, ++index);
             if (index == 0) label(content, "No photos attached to this job.", 15, MUTED);
             attachmentList(work);
+            }
+            if("Billing".equals(selectedJobSection)){
             section("Payment ledger");
             label(content,"Payments recorded: $"+crm.received(work).toPlainString(),17,LIGHT);
             label(content,"Open job balance: $"+crm.balance(work).toPlainString(),17,LIGHT);
@@ -2889,6 +3076,9 @@ public final class MainActivity extends Activity {
                 label(row,payment.date+" · "+payment.method+" · $"+payment.amount,16,LIGHT);
                 label(row,"Reference: "+payment.reference+" · "+payment.note,14,MUTED);
             }
+            }
+            if("Time & route".equals(selectedJobSection)){
+            if(new AppFeatures(this).enabled(AppFeatures.WORKER_TIME)){
             section("Worker time tracking");
             label(content,"Recorded hours: "+crm.totalHours(work).toPlainString(),18,LIGHT);
             button(content,"Clock in a worker",()->clockInDialog(work));
@@ -2900,6 +3090,8 @@ public final class MainActivity extends Activity {
                 if(entry.active())button(clock,"Clock out "+entry.worker,
                     ()->clockOutConfirm(work,entry));
             }
+            }
+            if(new AppFeatures(this).enabled(AppFeatures.GPS_ROUTES)){
             section("Private route / geolocation");
             List<CrmWorkspace.RoutePoint> route=crm.routePoints(work);
             label(content,route.size()+" GPS points stored locally. Tracking stops when "
@@ -2911,9 +3103,99 @@ public final class MainActivity extends Activity {
                 button(content,"Open last point in OpenStreetMap (shares coordinates)",
                     ()->openRouteInOSM(work));
             }
+            }
+            }
+            if("Billing".equals(selectedJobSection))
             label(content,"Offline manual records only. No payment collection, tax calculation "
                 +"or settlement verification occurs. An invoice is not a payment receipt.",13,MUTED);
         } catch (Exception failure) { error(failure); }
+    }
+
+    /** Fast job-specific navigation; section switching never loses the selected job. */
+    /** Adopt only high-value ServiceTitan-like field actions, without any SDK,
+     * contacts permission, location tracking, or hidden information sharing.
+     */
+    /** Evidence-led field navigation: a single row instead of six global
+     * workspaces above every job action. Every other workspace stays accessible
+     * from More, and Android Back still preserves the current job context.
+     */
+    private void jobQuickNav(){
+        LinearLayout row=new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        content.addView(row,new LinearLayout.LayoutParams(-1,-2));
+        jobActionButton(row,"← Jobs","Back to all jobs",this::jobsScreen);
+        jobActionButton(row,"Home","Open dashboard",this::home);
+        jobActionButton(row,"⋯ More","Other workspaces",()->{
+            String[] destinations={"Calendar","Contacts","Customers","Business"};
+            new AlertDialog.Builder(this).setTitle("Go to workspace")
+                .setItems(destinations,(d,selection)->{
+                    if(selection==0)calendarScreen();
+                    else if(selection==1)contactsScreen();
+                    else if(selection==2)customersScreen();
+                    else businessScreen();
+                }).setNegativeButton("Stay in job",(d,w)->{}).show();
+        });
+    }
+
+    private void jobQuickActions(WorkspaceStore.Job work,WorkspaceStore.Customer client){
+        String location=(work.street+" "+work.city+" "+work.state+" "+work.zip).trim();
+        boolean canCall=client.phone!=null&&!client.phone.trim().isEmpty();
+        boolean canRoute=!location.isEmpty();
+        if(!canCall&&!canRoute)return;
+        LinearLayout row=new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        content.addView(row,new LinearLayout.LayoutParams(-1,-2));
+        if(canCall)jobActionButton(row,"Call customer",
+            "Open phone dialer for "+client.displayName(),
+            ()->external(Intent.ACTION_DIAL,Uri.fromParts("tel",client.phone,null)));
+        if(canRoute)jobActionButton(row,"Directions","Open mapping app to job site",
+            ()->external(Intent.ACTION_VIEW,
+                Uri.parse("geo:0,0?q="+Uri.encode(location))));
+    }
+    private void jobActionButton(LinearLayout row,String title,String accessibility,Runnable run){
+        Button action=new Button(this);
+        action.setAllCaps(false);
+        action.setText(title);
+        action.setTextColor(LIGHT);
+        action.setTextSize(15);
+        action.setContentDescription(accessibility);
+        action.setMinHeight(dp(48));
+        action.setBackground(box(CARD));
+        LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(0,-2,1);
+        params.setMargins(dp(3),dp(4),dp(3),dp(4));
+        row.addView(action,params);
+        action.setOnClickListener(v->run.run());
+    }
+
+    private void jobSectionTabs(String jobId){
+        String[] names={"Overview","Notes","Materials","Billing","Photos","Time & route"};
+        LinearLayout row=null;int visible=0;
+        AppFeatures features=new AppFeatures(this);
+        for(String name:names){
+            if("Time & route".equals(name)&&
+                !features.enabled(AppFeatures.WORKER_TIME)&&
+                !features.enabled(AppFeatures.GPS_ROUTES))continue;
+            if(visible%3==0){
+                row=new LinearLayout(this);
+                row.setOrientation(LinearLayout.HORIZONTAL);
+                content.addView(row,new LinearLayout.LayoutParams(-1,-2));
+            }
+            final String target=name;
+            Button tab=new Button(this);
+            tab.setText(name);
+            tab.setTextSize(13);
+            tab.setAllCaps(false);
+            tab.setTextColor(LIGHT);
+            tab.setMinHeight(dp(48));
+            tab.setContentDescription("Job section "+name+
+                (name.equals(selectedJobSection)?", selected":""));
+            tab.setBackground(box(name.equals(selectedJobSection)?ACCENT:CARD));
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,-2,1);
+            lp.setMargins(dp(2),dp(3),dp(2),dp(3));
+            row.addView(tab,lp);
+            tab.setOnClickListener(v->{selectedJobSection=target;job(jobId);});
+            visible++;
+        }
     }
 
     private void changeLineQuantity(WorkspaceStore.Job job,WorkspaceStore.LineItem line,int change){
@@ -3061,22 +3343,15 @@ public final class MainActivity extends Activity {
                 +"Editing the master changes future jobs only; existing job entries "
                 +"are protected from unwanted overwrites.",15,MUTED);
             button(content,"+ Add template field",()->editMasterField(null));
-            for(JobTemplates.Field f:new JobTemplates(store).master()){
+            List<JobTemplates.Field> ordered=new JobTemplates(store).master();
+            for(int index=0;index<ordered.size();index++){
+                final int at=index;
+                JobTemplates.Field f=ordered.get(index);
                 LinearLayout entry=card();
                 label(entry,f.label,18,LIGHT);
                 label(entry,f.kind+" · "+(f.required?"Required":"Optional")+
                     (f.value.isEmpty()?"":" · Default: "+f.value),14,MUTED);
-                button(entry,"Rename / edit "+f.label,()->editMasterField(f));
-                button(entry,"− Remove from future job templates",()->
-                    new AlertDialog.Builder(this).setTitle("Remove template field?")
-                        .setMessage(f.label+" will be excluded from future jobs. "
-                            +"Existing job records are not erased.")
-                        .setNegativeButton("Keep",(d,w)->{})
-                        .setPositiveButton("Remove",(d,w)->{
-                            try{new JobTemplates(store).removeMaster(f.id);
-                                masterJobTemplateScreen();}
-                            catch(Exception e){error(e);}
-                        }).show());
+                fieldActionMenu(entry,f,null,at,ordered.size());
             }
         }catch(Exception e){error(e);}
     }
@@ -3150,7 +3425,9 @@ public final class MainActivity extends Activity {
         button(content,"+ Add any field or checklist item",()->editJobField(work,null));
         button(content,"Edit master job template (future jobs)",this::masterJobTemplateScreen);
         List<JobTemplates.Field> fields=new JobTemplates(store).forJob(work);
-        for(JobTemplates.Field f:fields){
+        for(int index=0;index<fields.size();index++){
+            int at=index;
+            JobTemplates.Field f=fields.get(index);
             LinearLayout row=card();
             if(f.kind.equals(JobTemplates.CHECK)){
                 CheckBox check=checkbox(row,f.label+
@@ -3170,16 +3447,7 @@ public final class MainActivity extends Activity {
                 label(row,f.label+(f.required?" · Required":""),17,LIGHT);
                 label(row,f.value.isEmpty()?"Not entered":f.value,15,MUTED);
             }
-            button(row,"Edit / rename "+f.label,()->editJobField(work,f));
-            button(row,"− Remove "+f.label+" from this job",()->
-                new AlertDialog.Builder(this).setTitle("Remove job field?")
-                    .setMessage("Remove '"+f.label+"' from THIS job only? "
-                        +"Your master template and other jobs remain unchanged.")
-                    .setNegativeButton("Keep",(d,w)->{})
-                    .setPositiveButton("Remove",(d,w)->{
-                        try{new JobTemplates(store).removeJob(work,f.id);job(work.id);}
-                        catch(Exception e){error(e);}
-                    }).show());
+            fieldActionMenu(row,f,work,at,fields.size());
         }
         List<String> incomplete=new JobTemplates(store).missingRequired(work);
         if(!incomplete.isEmpty())
@@ -3188,6 +3456,67 @@ public final class MainActivity extends Activity {
         button(content,"View previous-format milestone checklist",
             ()->legacyMilestonesScreen(work));
     }
+    private Button tinyAction(LinearLayout parent,String text,String description,Runnable click){
+        Button result=new Button(this);
+        result.setText(text);
+        result.setAllCaps(false);
+        result.setTextSize(20);
+        result.setMinWidth(dp(48));
+        result.setMinHeight(dp(48));
+        result.setTextColor(LIGHT);
+        result.setBackground(box(CARD));
+        result.setContentDescription(description);
+        parent.addView(result,new LinearLayout.LayoutParams(-2,dp(48)));
+        result.setOnClickListener(v->click.run());
+        return result;
+    }
+    /** Small overflow replaces the large per-field Edit/Delete buttons.
+     * Screen readers and keyboard users can invoke the same menu with a tap.
+     */
+    private void fieldActionMenu(LinearLayout parent,JobTemplates.Field f,
+                                 WorkspaceStore.Job job,int position,int count){
+        Runnable menu=()->new AlertDialog.Builder(this)
+            .setTitle(f.label)
+            .setItems(new String[]{"Edit / rename","Move up","Move down",
+                "Remove (confirm)"},(d,choice)->{
+                if(choice==0){if(job==null)editMasterField(f);else editJobField(job,f);}
+                else if(choice==1||choice==2)
+                    moveField(job,f,position+(choice==1?-1:1),count);
+                else new AlertDialog.Builder(this)
+                    .setTitle("Remove field?")
+                    .setMessage(job==null?"Remove from future jobs only? Existing "
+                        +"jobs keep their values.":"Remove only from this job? "
+                        +"The master and other jobs remain unchanged.")
+                    .setNegativeButton("Keep",(x,y)->{})
+                    .setPositiveButton("Remove",(x,y)->{
+                        try{
+                            if(job==null)new JobTemplates(store).removeMaster(f.id);
+                            else new JobTemplates(store).removeJob(job,f.id);
+                            if(job==null)masterJobTemplateScreen();else job(job.id);
+                        }catch(Exception e){error(e);}
+                    }).show();
+            }).setNegativeButton("Cancel",(d,w)->{}).show();
+        parent.setOnLongClickListener(v->{menu.run();return true;});
+        tinyAction(parent,"⋯","Options for "+f.label,menu);
+        if(new AppFeatures(this).enabled(AppFeatures.EXTRA_MOVE_CONTROLS)){
+            LinearLayout row=new LinearLayout(this);row.setOrientation(LinearLayout.HORIZONTAL);
+            parent.addView(row);
+            if(position>0)tinyAction(row,"↑","Move "+f.label+" up",
+                ()->moveField(job,f,position-1,count));
+            if(position<count-1)tinyAction(row,"↓","Move "+f.label+" down",
+                ()->moveField(job,f,position+1,count));
+        }
+    }
+    private void moveField(WorkspaceStore.Job job,JobTemplates.Field f,
+                           int newPosition,int count){
+        if(newPosition<0||newPosition>=count)return;
+        try{
+            JobTemplates template=new JobTemplates(store);
+            if(job==null){template.moveMaster(f.id,newPosition);masterJobTemplateScreen();}
+            else{template.moveJob(job,f.id,newPosition);job(job.id);}
+        }catch(Exception e){error(e);}
+    }
+
     private void legacyMilestonesScreen(WorkspaceStore.Job job){
         currentScreen="job";currentJobId=job.id;
         try{
@@ -3219,6 +3548,8 @@ public final class MainActivity extends Activity {
             EditText crew=field(fields,"Assigned crew or personnel",
                 "Crew names");
             crew.setText(current.crew);
+        crew.setVisibility(new AppFeatures(this).enabled(AppFeatures.CREWS)?
+            View.VISIBLE:View.GONE);
             EditText notes=multiline(fields,"Operations notes / site instructions",
                 current.notes);
             dialog("Job vendors and logistics",fields,()->{
@@ -3351,14 +3682,25 @@ public final class MainActivity extends Activity {
         }
         if(requestCode==REPORT_EXPORT_REQUEST){
             boolean[] sections=pendingReportSections;
+            Set<String> methods=pendingPaymentMethods;
+            Set<String> categories=pendingExpenseCategories;
+            boolean pdf=pendingReportPdf;
             pendingReportSections=null;
+            pendingPaymentMethods=null;
+            pendingExpenseCategories=null;
+            pendingReportPdf=false;
             if(resultCode!=RESULT_OK||data==null||data.getData()==null)return;
-            if(sections==null){error(new IOException("Report selection expired"));return;}
+            if(sections==null||methods==null||categories==null){
+                error(new IOException("Report selection expired"));return;
+            }
             try(OutputStream out=getContentResolver().openOutputStream(data.getData(),"wt")){
                 if(out==null)throw new IOException("Cannot open report destination");
-                BusinessReports.export(store,crm,sections,out);
-                notice("Report exported","Your selected CSV sections were saved locally. "
-                    +"Review the README file before importing into accounting software.");
+                ExportSelection chosen=new ExportSelection(sections,methods,categories);
+                if(pdf)FinancialReportPdf.export(store,crm,chosen,out);
+                else BusinessReports.export(store,crm,chosen,out);
+                notice("Report exported","Your explicitly selected data was saved as "
+                    +(pdf?"a local PDF.":"a local CSV ZIP. Review EXPORT_SCOPE.txt "
+                    +"before importing into accounting software."));
             }catch(Exception e){error(e);}
             return;
         }
@@ -3474,7 +3816,8 @@ public final class MainActivity extends Activity {
     @Override
     public void onBackPressed() {
         if("contact".equals(currentScreen)){contactsScreen();return;}
-        if("job_template".equals(currentScreen)||"catalog".equals(currentScreen)){
+        if("job_template".equals(currentScreen)||"catalog".equals(currentScreen)||
+           "features".equals(currentScreen)){
             businessScreen();return;
         }
         if(currentJobId!=null){

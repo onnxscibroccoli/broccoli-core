@@ -38,6 +38,22 @@ All records must be reachable in at most a few obvious taps without memorizing I
 - Always show current status, last edit and meaningful next action. Empty states provide
   a primary action and explain why the page is empty.
 
+## Current product priority — November 7, 2026
+
+The **daily driver** is a single-owner local-first application. Six focused job sections
+and feature switches reduce screen density. Accessibility must remain functional
+without introducing separate large Edit buttons for people who do not use TalkBack.
+The app shall expose the same actions to screen-reader/keyboard users via one
+compact overflow menu, even when visual arrow buttons are hidden.
+
+Export of private financial data is always opt-in. Users choose report format, datasets,
+payment ledgers and expense categories. Hiding a payment method must also suppress
+its aggregate contributions from any other selected table. A PDF summary must be
+usable without extracting a ZIP, and the CSV ZIP must state its included data.
+
+See [UX_COMPETITIVE_REVIEW.md](UX_COMPETITIVE_REVIEW.md) for acceptance evidence,
+competitor comparisons, rejected complexity, and future accounting boundaries.
+
 ## Functional acceptance matrix
 
 | Area | Complete behavior expected | State on this development branch |
@@ -50,13 +66,13 @@ All records must be reachable in at most a few obvious taps without memorizing I
 | Jobs | Prospect→Quoted→Approved→Scheduled→In Progress→Completed→Invoiced→Paid (payment-backed), field notes/gate codes/material requests, assignable and recurring work, change orders, attachments | **Partial:** add job, status/date change, field notes, materials requests, photo import and basic line items |
 | Scheduler | Day/week/month calendar, date and time slots, timezone, crews, capacity/conflicts, drag or accessible reschedule | **Partial:** day/week/month daybook, native calendar/clock and typed date/time, notes/colors, basic drag-to-date plus accessible alternative; no crew or conflict detection |
 | Crew operations | Personnel, assignments, check-in/out, on-site tracking, work orders | Not implemented |
-| Photo evidence | Camera, gallery, metadata, annotation, before/after, album, export, deletion | **Partial:** private JPEG/PNG/WebP attachment, bulk photo selection, preview, remove; no camera/annotation |
+| Photo evidence | Camera, gallery, metadata, annotation, before/after, album, export, deletion | **Partial:** bulk photo import/preview/removal and per-job persisted order (atomic `photos/order.csv`), pending device and ZIP round-trip verification; no camera/annotation |
 | Pricebook | Searchable service/material catalog, units, rates, templates | Initial CSV container only |
 | Costs | Expenses, purchase orders, receipts, labor cost and profitability | Initial CSV container only |
 | Invoices | Numbering, estimates->invoices, adjustments, tax, print-ready HTML and PDF with optional evidence photos, email, balance, due dates | **Partial:** editable lines, offline WYSIWYG message/footer, reusable default template, brand/logo, HTML preview, native Print/Save as PDF; no tax/settlement |
 | Payments | Offline cash/check ledger, deposits, partial payments, refunds, reconciliation, audit | **Partial:** user-entered per-job cash/check/Cash App/PayPal/Bank Transfer/Other receipts, derived method totals; no card processing, refund/reconciliation |
 | Communications | Explicit dial/SMS/email via installed apps, notes and logged activity | **Partial:** dial/text/email handoff, share quote text, manual Quote sent checkbox, no delivery receipts/history |
-| Reporting | A/R aging, pipeline, jobs by status, revenue/cost/profit, CSV exports | Not implemented |
+| Reporting | User-selected PDF summary; user-selected CSV ZIP tables, exact payment methods and expense categories; A/R aging and full GL still required | **Implemented in engineering branch, CI/device acceptance pending:** local `PdfDocument` and scoped CSV ZIP; no direct QuickBooks API, audited GL, reconciliation, or tax automation |
 | Backup/restore | Verified, safe, versioned backup AND restore; migration and corruption tests | **Partial / not accepted:** staged ZIP restore, structural validation, retained rollback, JVM fault/abuse smoke. Real-device and power-loss testing pending |
 | Desktop/iOS | Portable domain, parity and user-controlled interoperability | Not implemented |
 | Accessibility | Automated and manual testing with TalkBack, Switch Access and font scaling | **Unverified** |

@@ -196,6 +196,43 @@ public final class JobTemplates {
         if(!found)throw new IOException("Job field not found");
         write(jobFile(job),rows);
     }
+    /** Reorder rows atomically using their existing stable list positions.
+     * We intentionally preserve the v1 CSV schema and original field IDs/values.
+     * Inactive records are retained after active records for safe restore.
+     */
+    private static void moved(List<List<String>> rows,String fieldId,int destination)
+        throws IOException {
+        if(fieldId==null)throw new IOException("Missing field ID");
+        List<List<String>> active=new ArrayList<>(),inactive=new ArrayList<>();
+        List<String> matched=null;
+        for(int i=1;i<rows.size();i++){
+            List<String> line=rows.get(i);
+            if(Boolean.parseBoolean(line.get(5))){
+                active.add(line);
+                if(fieldId.equals(line.get(0)))matched=line;
+            }else inactive.add(line);
+        }
+        if(matched==null)throw new IOException("Active field not found");
+        if(destination<0||destination>=active.size())
+            throw new IllegalArgumentException("Move destination outside field list");
+        active.remove(matched);
+        active.add(destination,matched);
+        rows.subList(1,rows.size()).clear();
+        rows.addAll(active);
+        rows.addAll(inactive);
+    }
+    public synchronized void moveMaster(String fieldId,int newIndex)throws IOException{
+        List<List<String>> rows=masterRows();
+        moved(rows,fieldId,newIndex);
+        write(masterFile(),rows);
+    }
+    public synchronized void moveJob(WorkspaceStore.Job job,String fieldId,int newIndex)
+        throws IOException {
+        List<List<String>> rows=jobRows(job);
+        moved(rows,fieldId,newIndex);
+        write(jobFile(job),rows);
+    }
+
     public synchronized List<String> missingRequired(WorkspaceStore.Job job)throws IOException{
         List<String> missing=new ArrayList<>();
         for(Field f:forJob(job))if(f.required){
