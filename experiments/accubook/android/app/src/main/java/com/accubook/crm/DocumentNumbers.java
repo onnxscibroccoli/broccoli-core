@@ -1,24 +1,36 @@
 package com.accubook.crm;
 
-import java.math.BigInteger;
-import java.time.LocalDate;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
-/**
- * Customer-facing, portable deterministic reference. Never leaks a raw internal UUID.
- * Not a substitute for a jurisdiction-specific sequential tax invoice numbering system.
- */
+/** Stable customer-facing reference that never exposes the raw internal job UUID. */
 public final class DocumentNumbers {
-    private DocumentNumbers() {}
-
-    public static String reference(String jobId, String date, boolean estimate) {
-        if (jobId == null || !jobId.matches("JOB-[0-9a-f]{32}"))
-            throw new IllegalArgumentException("Invalid job reference");
-        int year = LocalDate.parse(date).getYear();
-        // 10 decimal digits, stable across backups without another side table.
-        // Collision detection/sequential issued numbers remain a release requirement.
-        long suffix = new BigInteger(jobId.substring(4), 16)
-            .mod(BigInteger.valueOf(10_000_000_000L)).longValue();
-        return (estimate ? "EST-" : "INV-") + year + "-" +
-            String.format(java.util.Locale.ROOT, "%010d", suffix);
+    private static final String ALPHABET="0123456789ABCDEFGHJKMNPQRSTVWXYZ";
+    private DocumentNumbers(){}
+    public static String reference(String jobId,String scheduledDate,boolean estimate){
+        if(jobId==null||!jobId.matches("JOB-[0-9a-f]{32}"))
+            throw new IllegalArgumentException("Invalid internal job reference");
+        // Rescheduling must never change a customer-facing document reference.
+        byte[] digest;
+        try{
+            digest=MessageDigest.getInstance("SHA-256")
+                .digest(jobId.getBytes(StandardCharsets.US_ASCII));
+        }catch(NoSuchAlgorithmException impossible){
+            throw new IllegalStateException("SHA-256 missing",impossible);
+        }
+        StringBuilder code=new StringBuilder(12);
+        int buffer=0,bits=0;
+        for(byte b:digest){
+            buffer=(buffer<<8)|(b&0xff);
+            bits+=8;
+            while(bits>=5&&code.length()<12){
+                bits-=5;
+                code.append(ALPHABET.charAt((buffer>>bits)&31));
+            }
+            if(code.length()==12)break;
+        }
+        return (estimate?"EST-":"INV-")+code.substring(0,4)+"-"+
+            code.substring(4,8)+"-"+code.substring(8,12);
     }
 }
