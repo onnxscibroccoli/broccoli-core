@@ -436,6 +436,8 @@ public final class WorkspaceStore {
         List<List<String>> rows = table(new File(jobFolder(job), "job_items.csv"), ITEM_HEADER);
         for (int i = 1; i < rows.size(); i++) {
             if (rows.get(i).get(0).equals(lineId)) {
+                if (isChangeOrderLine(rows.get(i)))
+                    throw new IOException("Approved change-order lines cannot be edited. Create another change order.");
                 BigDecimal q, rate;
                 try {
                     q = new BigDecimal(text(quantity, true));
@@ -462,9 +464,16 @@ public final class WorkspaceStore {
         throw new IOException("Line item not found");
     }
 
+    private static boolean isChangeOrderLine(List<String> row) {
+        return row.size()>=2 && row.get(1).matches("(?s).*\\[CO:COL-[a-f0-9]{32}\\]$");
+    }
+
     public synchronized void deleteLine(Job job, String lineId) throws IOException {
         File file = new File(jobFolder(job), "job_items.csv");
         List<List<String>> rows = table(file, ITEM_HEADER);
+        for(int i=1;i<rows.size();i++)
+            if(rows.get(i).get(0).equals(lineId) && isChangeOrderLine(rows.get(i)))
+                throw new IOException("Approved change-order lines cannot be removed. Create a correcting change order.");
         boolean removed = rows.removeIf(r -> r.size() > 0 && r.get(0).equals(lineId));
         if (!removed) throw new IOException("Line item not found");
         writeRows(file, rows);
