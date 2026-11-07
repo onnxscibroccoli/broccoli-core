@@ -101,17 +101,26 @@ public final class FinancialReportPdf {
         }
         if(selection.sections[1]){
             w.header("Jobs and recorded invoice totals");
-            BigDecimal total=BigDecimal.ZERO,received=BigDecimal.ZERO;
+            BigDecimal total=BigDecimal.ZERO,selectedReceipts=BigDecimal.ZERO;
             for(WorkspaceStore.Job job:jobs){
                 w.item(job.date+" / "+job.title, "$"+job.total+"  ["+job.status+"]");
                 total=total.add(new BigDecimal(job.total));
-                received=received.add(crm.received(job));
+                if(selection.sections[3]){
+                    selectedReceipts=selectedReceipts.add(
+                        ReportPrivacy.selectedReceipts(crm.payments(job),
+                            selection.paymentMethods,p->p.method,p->p.amount));
+                }
             }
             w.item("Total job value","$"+total.toPlainString());
-            w.item("All recorded receipts (not filtered by method)",
-                "$"+received.toPlainString());
-            w.item("Open balance (not a bank balance)",
-                "$"+total.subtract(received).toPlainString());
+            if(selection.sections[3]){
+                w.item("Receipts from selected methods only",
+                    "$"+selectedReceipts.toPlainString());
+                w.item("Balance after selected receipts (not bank balance)",
+                    "$"+total.subtract(selectedReceipts).toPlainString());
+            }else{
+                w.writeLine("Payment totals and related balances omitted because "
+                    +"payment reporting was not selected.",9,GRAY,false);
+            }
         }
         if(selection.sections[2]){
             w.header("Estimate / invoice line items");
