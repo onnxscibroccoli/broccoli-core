@@ -815,7 +815,13 @@ public final class MainActivity extends Activity {
     private void decryptWorkspace(Uri selected,char[] pass){
         new Thread(()->{
             try(InputStream input=getContentResolver().openInputStream(selected)){
-                SecureArchive.restore(store,input,getCacheDir(),pass);
+                File plaintext=SecureArchive.decryptToTemp(input,getCacheDir(),pass);
+                try(InputStream zip=new FileInputStream(plaintext)){
+                    store.restoreBackup(zip);
+                }finally{
+                    if(plaintext.exists()&&!plaintext.delete())
+                        android.util.Log.e("Accubook","Cannot delete sensitive decrypted temp file");
+                }
                 runOnUiThread(()->{
                     try{
                         store=new WorkspaceStore(this);
