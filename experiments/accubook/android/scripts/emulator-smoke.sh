@@ -35,7 +35,7 @@ for attempt in range(8):
         if len(bounds) == 2:
             x = (int(bounds[0][0]) + int(bounds[1][0])) // 2
             y = (int(bounds[0][1]) + int(bounds[1][1])) // 2
-            height=int(re.search(r'(?:Physical|Override) size: \\d+x(\\d+)',
+            height=int(re.search(r'(?:Physical|Override) size: \d+x(\d+)',
                 subprocess.check_output(['adb','shell','wm','size']).decode()).group(1))
             if 95 < y < height-170:
                 print('TAP',label,x,y)
