@@ -66,12 +66,26 @@ public final class BusinessReports {
             }
             if(sections[1]){
                 List<List<String>> rows=new ArrayList<>();
-                rows.add(r("DocumentReference","CustomerID","ServiceDate","JobTitle",
-                    "JobStatus","DraftAmount","RecordedPayments","DraftBalance"));
-                for(WorkspaceStore.Job j:jobs)
-                    rows.add(r(DocumentNumbers.reference(j.id,j.date,false),j.customerId,
-                        j.date,j.title,j.status,j.total,crm.received(j).toPlainString(),
-                        crm.balance(j).toPlainString()));
+                List<String> header=r("DocumentReference","CustomerID","ServiceDate",
+                    "JobTitle","JobStatus","DraftAmount");
+                if(sections[3]){
+                    header.add("SelectedPaymentReceipts");
+                    header.add("BalanceAfterSelectedPayments");
+                }
+                rows.add(header);
+                for(WorkspaceStore.Job j:jobs){
+                    List<String> record=r(DocumentNumbers.reference(j.id,j.date,false),
+                        j.customerId,j.date,j.title,j.status,j.total);
+                    // Excluded payment methods must not leak via job-level rollups.
+                    if(sections[3]){
+                        BigDecimal selected=ReportPrivacy.selectedReceipts(
+                            crm.payments(j),selection.paymentMethods,
+                            p->p.method,p->p.amount);
+                        record.add(selected.toPlainString());
+                        record.add(new BigDecimal(j.total).subtract(selected).toPlainString());
+                    }
+                    rows.add(record);
+                }
                 put(zip,"jobs_and_invoices.csv",rows);
             }
             if(sections[2]){
