@@ -24,6 +24,7 @@
         <activity android:name=".DocumentActivity" android:exported="false"/>
         <activity android:name=".BusinessSetupActivity" android:exported="false"/>
         <activity android:name=".LegacyContactsImportActivity" android:exported="false"/>
+        <activity android:name=".InventoryActivity" android:exported="false"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">

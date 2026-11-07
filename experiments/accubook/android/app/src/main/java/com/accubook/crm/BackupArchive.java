@@ -118,7 +118,7 @@ public final class BackupArchive {
     }
 
     private static boolean allowedFile(String name) {
-        if (name.matches("master_data/(customers|jobs|catalog|expenses|pricebook|calendar_links|contacts|service_intervals)\\.csv")) return true;
+        if (name.matches("master_data/(customers|jobs|catalog|expenses|pricebook|calendar_links|contacts|service_intervals|inventory_items|inventory_movements)\\.csv")) return true;
         if(name.equals("templates/branding.csv")||name.equals("templates/business_setup.csv")
             ||name.equals("templates/job_fields.csv")
             ||name.equals("templates/default_memo.csv")
@@ -352,6 +352,22 @@ public final class BackupArchive {
                 throw new IOException("Setup data must be valid UTF-8",error);
             }
             BusinessSetupProfile.fromCsv(setupText);
+        }
+        File invItems=new File(root,"master_data/inventory_items.csv");
+        File invMoves=new File(root,"master_data/inventory_movements.csv");
+        if(invItems.isFile()||invMoves.isFile()){
+            // Match InventoryStore's 4 MiB open limit; never restore an unreadable ledger.
+            if(invItems.length()>4L*1024*1024||invMoves.length()>4L*1024*1024)
+                throw new IOException("Inventory workspace data exceeds open limit");
+            List<List<String>> itemRows=invItems.isFile()
+                ?rows(root,"master_data/inventory_items.csv",StockLedger.ITEMS)
+                :java.util.Collections.singletonList(Arrays.asList(StockLedger.ITEMS));
+            List<List<String>> moveRows=invMoves.isFile()
+                ?rows(root,"master_data/inventory_movements.csv",StockLedger.MOVES)
+                :java.util.Collections.singletonList(Arrays.asList(StockLedger.MOVES));
+            Set<String> knownJobIds=new HashSet<>();
+            for(int k=1;k<jobs.size();k++)knownJobIds.add(jobs.get(k).get(0));
+            StockLedger.validate(itemRows,moveRows,knownJobIds);
         }
         Map<String, String> folders = new HashMap<>();
         for (int i = 1; i < clients.size(); i++) {

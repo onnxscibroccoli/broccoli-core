@@ -1,5 +1,29 @@
 # Accubook — Point, tap, and get the job done
 
+## Materials and tools in stock (development preview)
+
+If you want inventory, open **Business → Settings → Modules** and enable
+**Company materials, job-site stock and tools** (or select it in Quick setup).
+Then use **Business → Inventory**.
+
+1. Tap **New material or tool**. Give it a name and unit (for example,
+   Shingle bundles · bundle; Extension ladder · each).
+2. Tap **Receive stock** and enter the quantity delivered to your company.
+3. Tap **Send to job** and choose the job site and quantity. The company's
+   stock decreases, and that job's stock increases.
+4. For materials, tap **Mark used on job** when used. Tap **Return from job**
+   to bring unused materials or tools back. A tool must be moved in whole
+   units; the app does not allow marking tools as consumed.
+5. If a physical stock count differs, choose **Correct company count** and
+   write a reason. No old event is silently erased.
+
+The screen will reject negative stock and invalid quantities. Every
+successful move remains in the local inventory history and the workspace
+backup. If you're only requesting delivery, continue using the existing
+job Material Requests tool. Requests **do not automatically change stock**.
+There is no supplier ordering, barcoding, team sync or cost accounting yet.
+
+
 ## Move your contacts from another CRM (CSV — development preview)
 
 1. In your old CRM, **export contacts** as a UTF-8 CSV file. Save the file on

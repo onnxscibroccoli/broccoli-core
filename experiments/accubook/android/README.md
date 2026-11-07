@@ -1,5 +1,35 @@
 # Accubook — offline-first field-service CRM (engineering preview)
 
+## November 7, 2026 — independent inventory movement module (draft)
+
+**Branch:** `feat/accubook-inventory-ledger-20261107` stacked on contact
+migration PR #94 and setup PR #93. **Engineering preview, not field-accepted.**
+
+Owners can opt in to **Company materials, job-site stock and tools** during
+setup or under **Settings → Modules**. With it enabled, open **Business →
+Inventory** or a job's **Materials → Stock on this job**. This small separate
+screen supports creating material/tool items, receiving at Company, transferring
+to a named existing job, returning from a job, marking *materials* used, and
+explained company-count corrections. Tool quantities must be whole numbers.
+
+Unlike three disconnected spreadsheets, company stock, job stock, and tool
+checkout are calculated from **one append-only movement CSV**. No move can
+create negative stock; a transfer debits and credits in the same atomic event.
+`master_data/inventory_items.csv` stores items, and
+`master_data/inventory_movements.csv` stores events. Data is private and
+included in workspace backup/restore validation. This is **not** a supplier
+order integration, warehouse optimization engine, purchase ledger or
+cross-device sync. Material *requests* are a separate pre-existing workflow
+and currently do not automatically post inventory movements.
+
+**Offline verification:** `StockLedgerSmoke` checks receipt/transfer/use/
+return, tool checkout, duplicate and malformed movements, negative stock,
+invalid jobs and mandatory adjustment reasons. The backup regression checks
+company/job stock recovery and rejects invalid event history. CI must be
+green at exact SHA and actual Android 15 touch/TalkBack/backup tests must
+pass before production.
+
+
 ## November 7, 2026 — first legacy-CRM migration slice (draft)
 
 **Branch:** `feat/accubook-csv-contact-migration-20261107` (stacked on PR #93).

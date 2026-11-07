@@ -19,12 +19,23 @@ public final class BusinessSetupProfile {
         "Version","Status","Team","Trade","Vendors","MaterialDeliveries","Dumpsters",
         "Crew","Catalog","WorkerTime","GPS","AdvancedCalendar","Recurring");
 
+    private static final List<String> HEADER_V2=Arrays.asList(
+        "Version","Status","Team","Trade","Vendors","MaterialDeliveries","Dumpsters",
+        "Crew","Catalog","WorkerTime","GPS","AdvancedCalendar","Recurring","Inventory");
     public final String status,team,trade,vendors;
-    public final boolean materialDeliveries,dumpsters,crew,catalog,workerTime,gps,advancedCalendar,recurring;
+    public final boolean materialDeliveries,dumpsters,crew,catalog,workerTime,gps,
+        advancedCalendar,recurring,inventory;
 
     public BusinessSetupProfile(String status,String team,String trade,String vendors,
           boolean materialDeliveries,boolean dumpsters,boolean crew,boolean catalog,
           boolean workerTime,boolean gps,boolean advancedCalendar,boolean recurring) {
+        this(status,team,trade,vendors,materialDeliveries,dumpsters,crew,catalog,
+            workerTime,gps,advancedCalendar,recurring,false);
+    }
+    public BusinessSetupProfile(String status,String team,String trade,String vendors,
+          boolean materialDeliveries,boolean dumpsters,boolean crew,boolean catalog,
+          boolean workerTime,boolean gps,boolean advancedCalendar,boolean recurring,
+          boolean inventory) {
         if (!Arrays.asList(NOT_STARTED,COMPLETE,SKIPPED).contains(status))
             throw new IllegalArgumentException("Unknown setup state");
         if (!Arrays.asList(SOLO,TEAM).contains(team))
@@ -41,6 +52,7 @@ public final class BusinessSetupProfile {
         this.gps=gps;
         this.advancedCalendar=advancedCalendar;
         this.recurring=recurring;
+        this.inventory=inventory;
     }
     private static String checked(String value,int max) {
         String trimmed=value==null?"":value.trim();
@@ -62,6 +74,7 @@ public final class BusinessSetupProfile {
             case "gps": return gps;
             case "advanced_calendar": return advancedCalendar;
             case "recurring_services": return recurring;
+            case "inventory": return inventory;
             default: throw new IllegalArgumentException("Unknown module key");
         }
     }
@@ -73,33 +86,39 @@ public final class BusinessSetupProfile {
             key.equals("crew")?value:crew,key.equals("catalog")?value:catalog,
             key.equals("worker_time")?value:workerTime,key.equals("gps")?value:gps,
             key.equals("advanced_calendar")?value:advancedCalendar,
-            key.equals("recurring_services")?value:recurring);
+            key.equals("recurring_services")?value:recurring,
+            key.equals("inventory")?value:inventory);
     }
     public String toCsv(){
         List<List<String>> rows=new ArrayList<>();
-        rows.add(HEADER);
-        rows.add(Arrays.asList("1",status,team,trade,vendors,
+        rows.add(HEADER_V2);
+        rows.add(Arrays.asList("2",status,team,trade,vendors,
             Boolean.toString(materialDeliveries),Boolean.toString(dumpsters),
             Boolean.toString(crew),Boolean.toString(catalog),
             Boolean.toString(workerTime),Boolean.toString(gps),
-            Boolean.toString(advancedCalendar),Boolean.toString(recurring)));
+            Boolean.toString(advancedCalendar),Boolean.toString(recurring),
+            Boolean.toString(inventory)));
         return CsvCodec.write(rows);
     }
     public static BusinessSetupProfile fromCsv(String csv) throws IOException {
         List<List<String>> rows=CsvCodec.read(csv);
-        if(rows.size()!=2||!HEADER.equals(rows.get(0))||
-            rows.get(1).size()!=HEADER.size()||!"1".equals(rows.get(1).get(0)))
-            throw new IOException("Unexpected business setup schema/version");
+        if(rows.size()!=2)throw new IOException("Unknown business setup format");
+        boolean v1=rows.get(0).equals(HEADER)&&rows.get(1).size()==HEADER.size()
+            &&"1".equals(rows.get(1).get(0));
+        boolean v2=rows.get(0).equals(HEADER_V2)&&rows.get(1).size()==HEADER_V2.size()
+            &&"2".equals(rows.get(1).get(0));
+        if(!v1&&!v2)throw new IOException("Unknown business setup schema/version");
         List<String> row=rows.get(1);
         try{
-            for(int i=5;i<=12;i++)
+            for(int i=5;i<(v2?14:13);i++)
                 if(!row.get(i).equals("true")&&!row.get(i).equals("false"))
                     throw new IllegalArgumentException("Invalid module preference");
             return new BusinessSetupProfile(row.get(1),row.get(2),row.get(3),row.get(4),
                 Boolean.parseBoolean(row.get(5)),Boolean.parseBoolean(row.get(6)),
                 Boolean.parseBoolean(row.get(7)),Boolean.parseBoolean(row.get(8)),
                 Boolean.parseBoolean(row.get(9)),Boolean.parseBoolean(row.get(10)),
-                Boolean.parseBoolean(row.get(11)),Boolean.parseBoolean(row.get(12)));
+                Boolean.parseBoolean(row.get(11)),Boolean.parseBoolean(row.get(12)),
+                v2&&Boolean.parseBoolean(row.get(13)));
         }catch(IllegalArgumentException error){
             throw new IOException("Invalid business setup values",error);
         }

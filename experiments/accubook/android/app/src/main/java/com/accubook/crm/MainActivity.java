@@ -196,6 +196,11 @@ public final class MainActivity extends Activity {
                 button(content, "Revert to previous validated workspace", this::revertSnapshot);
             }
     }
+    private void openInventory(String jobId){
+        Intent open=new Intent(this,InventoryActivity.class);
+        if(jobId!=null)open.putExtra("jobId",jobId);
+        startActivity(open);
+    }
     private void openContactCsvImport(){
         startActivityForResult(new Intent(this,LegacyContactsImportActivity.class),CONTACT_CSV_IMPORT_REQUEST);
     }
@@ -2262,6 +2267,9 @@ public final class MainActivity extends Activity {
                 ()->openBusinessSetup());
             if(FeatureSettings.enabled(this,FeatureSettings.CATALOG))
                 button(content,"Manage item and service pricebook",this::catalogScreen);
+            if(FeatureSettings.enabled(this,FeatureSettings.INVENTORY))
+                button(content,"Inventory · company, job sites and tools",
+                    ()->openInventory(null));
             button(content,"Customize master job fields / checklists",
                 this::masterJobTemplateScreen);
             section("Expenses and costs");
@@ -3365,6 +3373,9 @@ public final class MainActivity extends Activity {
                     java.time.Instant.ofEpochMilli(pickupDue).atZone(
                         java.time.ZoneId.systemDefault()),14,MUTED);
             section("Material requests");
+            if(FeatureSettings.enabled(this,FeatureSettings.INVENTORY))
+                button(content,"Stock on this job · tools and materials",
+                    ()->openInventory(work.id));
             button(content, "Request materials", () -> materialDialog(work, null));
             for (WorkspaceStore.MaterialRequest request : store.materialRequests(work)) {
                 LinearLayout entry = card();

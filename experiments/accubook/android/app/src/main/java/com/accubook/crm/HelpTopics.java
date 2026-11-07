@@ -21,6 +21,15 @@ public final class HelpTopics {
     }
     public static List<Topic> all(){
         return Arrays.asList(
+            new Topic("Track materials and tools on a job",
+                "Enable Inventory when you need it. Receive stock, move to a job and return it.",
+                "Open Business → Settings → Modules → Company materials, job-site stock "+
+                "and tools. Then open Business → Inventory. Add a material or tool and "+
+                "record a delivery to Company. Use Send to job when something moves. "+
+                "Mark material used or return unused stock/tools. Stock counts are "+
+                "calculated from local movement records. Corrections require a reason. "+
+                "Material Requests do not automatically change inventory.",
+                "inventory stock warehouse tools equipment checkout receive supplies job site"),
             new Topic("Set up Accubook in a few taps",
                 "Choose solo or crew, then check only the modules you need.",
                 "A fresh, empty workspace opens Make Accubook yours. Choose Just me or "+
