@@ -54,6 +54,9 @@ public final class BackupArchive {
     private static final String[] ATTACHMENT = {"AttachmentID","DisplayName","MimeType","SizeBytes","StoredName"};
     private static final String[] BRAND = {"BusinessName","Address","Phone","Email","AccentColor","Terms","Footer","LogoMimeType"};
     private static final String[] MEMO = {"Greeting","Closing"};
+    private static final String[] TIME = {"EntryID","Worker","StartedAt","EndedAt","Hours","Notes"};
+    private static final String[] ROUTE = {"RecordedAt","Latitude","Longitude","AccuracyMeters"};
+
 
     public static File rollback(File live) {
         return new File(live.getParentFile(), live.getName() + ".previous");
@@ -108,6 +111,7 @@ public final class BackupArchive {
         String job = client + "/jobs/JOB-[a-f0-9]{32}_[A-Za-z0-9_-]{1,40}";
         return name.matches(job + "/(job_items\\.csv|material_requests\\.csv|field_notes\\.md|job_details\\.json|"
             + "appointment\\.csv|quote\\.csv|payments\\.csv|invoice_memo\\.csv|"
+            + "time_entries\\.csv|route_points\\.csv|"
             + "attachments\\.csv|attachments/ATT-[a-f0-9]{32}\\.bin|"
             + "photos/PHOTO-[a-f0-9]{32}\\.(jpg|png|webp))");
     }
@@ -348,6 +352,50 @@ public final class BackupArchive {
             if(new File(root,memoPath).isFile()){
                 List<List<String>> memos=rows(root,memoPath,MEMO);
                 if(memos.size()>2)throw new IOException("Invalid invoice layout metadata");
+            }
+            String timePath=jobFolder+"/time_entries.csv";
+            if(new File(root,timePath).isFile()){
+                List<List<String>> time=rows(root,timePath,TIME);
+                Set<String> ids=new HashSet<>();
+                for(int t=1;t<time.size();t++){
+                    List<String> e=time.get(t);
+                    if(!e.get(0).matches("TIME-[a-f0-9]{32}")||!ids.add(e.get(0))||
+                        e.get(1).trim().isEmpty())throw new IOException("Invalid worker time entry");
+                    try{
+                        java.time.Instant from=java.time.Instant.parse(e.get(2));
+                        if(!e.get(3).isEmpty()){
+                            java.time.Instant to=java.time.Instant.parse(e.get(3));
+                            if(!to.isAfter(from))throw new IOException("Negative elapsed time");
+                            BigDecimal reported=new BigDecimal(e.get(4));
+                            if(reported.signum()<0||reported.scale()>4)
+                                throw new IOException("Invalid reported work hours");
+                        }else if(!e.get(4).isEmpty())
+                            throw new IOException("Running timer has a completed-hours value");
+                    }catch(java.time.format.DateTimeParseException|NumberFormatException e){
+                        throw new IOException("Invalid time record",e);
+                    }
+                }
+            }
+            String routePath=jobFolder+"/route_points.csv";
+            if(new File(root,routePath).isFile()){
+                List<List<String>> points=rows(root,routePath,ROUTE);
+                if(points.size()>10002)throw new IOException("Oversized route");
+                for(int p=1;p<points.size();p++){
+                    List<String> v=points.get(p);
+                    try{
+                        java.time.Instant.parse(v.get(0));
+                        double lat=Double.parseDouble(v.get(1));
+                        double lon=Double.parseDouble(v.get(2));
+                        double accuracy=Double.parseDouble(v.get(3));
+                        if(!Double.isFinite(lat)||!Double.isFinite(lon)||
+                            !Double.isFinite(accuracy)||lat< -90||lat>90||
+                            lon< -180||lon>180||accuracy<0)
+                            throw new IOException("Invalid recorded route point");
+                    }catch(NumberFormatException|
+                           java.time.format.DateTimeParseException e){
+                        throw new IOException("Invalid route coordinate",e);
+                    }
+                }
             }
             String attachmentsPath=jobFolder+"/attachments.csv";
             if(new File(root,attachmentsPath).isFile()){
