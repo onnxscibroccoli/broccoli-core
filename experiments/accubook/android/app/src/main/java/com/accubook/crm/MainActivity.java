@@ -3318,6 +3318,9 @@ public final class MainActivity extends Activity {
                 : (notes.length() > 800 ? notes.substring(0, 800) + "…" : notes),
                 15, MUTED);
             button(content, "Edit field notes", () -> fieldNotesDialog(work));
+            if(!notes.trim().isEmpty())
+                button(content,"Use this note in a new invoice line",
+                    ()->lineDialog(work,invoiceDescriptionFromNotes(notes)));
             }
             if("checklists".equals(currentJobSection)){
                 jobCustomFields(work);
@@ -4043,7 +4046,18 @@ public final class MainActivity extends Activity {
         }catch(Exception e){error(e);}
     }
 
-    private void lineDialog(WorkspaceStore.Job job) {
+    private static String invoiceDescriptionFromNotes(String notes){
+        for(String line:notes.split("\\R")){
+            String candidate=line.trim().replaceAll("\\s+"," ");
+            if(candidate.length()>180)candidate=candidate.substring(0,180).trim();
+            if(!candidate.isEmpty())return candidate;
+        }
+        return "Work described in field notes";
+    }
+
+    private void lineDialog(WorkspaceStore.Job job){lineDialog(job,"");}
+
+    private void lineDialog(WorkspaceStore.Job job,String preset) {
         LinearLayout fields = form();
         EditText description = field(fields, "Description (required)", "4-inch gutter cleanout");
         EditText quantity = field(fields, "Quantity", "1");
@@ -4082,6 +4096,10 @@ public final class MainActivity extends Activity {
                 }
                 public void afterTextChanged(Editable e){}
             });
+        }
+        if(!preset.isEmpty()){
+            description.setText(preset);
+            description.setSelection(description.length());
         }
         dialog("New line item", fields, () -> {
             try {
