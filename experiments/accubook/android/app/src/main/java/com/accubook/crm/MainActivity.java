@@ -159,6 +159,10 @@ public final class MainActivity extends Activity {
                     else if ("schedule".equals(page)) scheduleScreen();
                 else if("calendar".equals(page))calendarScreen();
                 else if("catalog".equals(page))catalogScreen();
+                else if("contacts".equals(page))contactsScreen();
+                else if("contact".equals(page))contactsScreen();
+                else if("jobs".equals(page))jobsScreen();
+                else if("job_template".equals(page))masterJobTemplateScreen();
                     else home();
                 } else home();
             } catch (Exception error) {
@@ -1541,6 +1545,15 @@ public final class MainActivity extends Activity {
         new AlertDialog.Builder(this).setTitle("Job status")
             .setItems(statuses, (dialog, index) -> {
                 try {
+                    if("Completed".equals(statuses[index])){
+                        List<String> incomplete=new JobTemplates(store).missingRequired(job);
+                        if(!incomplete.isEmpty()){
+                            notice("Complete required fields first",
+                                "Open the job checklist and finish: "+
+                                    String.join(", ",incomplete));
+                            return;
+                        }
+                    }
                     store.updateJob(job.id, job.date, statuses[index]);
                     job(job.id);
                 } catch (Exception failure) { error(failure); }
@@ -1766,6 +1779,8 @@ public final class MainActivity extends Activity {
                 }).show());
             button(content,"Choose business logo",this::pickLogo);
             button(content,"Manage item and service pricebook",this::catalogScreen);
+            button(content,"Customize master job fields / checklists",
+                this::masterJobTemplateScreen);
             section("Expenses and costs");
             button(content,"Record a manual expense",this::expenseDialog);
             BigDecimal expenseSum=BigDecimal.ZERO;
@@ -2676,31 +2691,23 @@ public final class MainActivity extends Activity {
                 : (notes.length() > 800 ? notes.substring(0, 800) + "…" : notes),
                 15, MUTED);
             button(content, "Edit field notes", () -> fieldNotesDialog(work));
-            section("Logistics and job milestones");
+            jobCustomFields(work);
+            section("Vendors, crew and deliveries");
             button(content,"Edit vendor / material delivery / crew",()->jobLogisticsDialog(work));
             TradeModules operations=new TradeModules(store);
             TradeModules.Logistics details=operations.logistics(work);
-            label(content,"Vendor: "+details.vendor+"  ·  Delivery: "+details.delivery,
-                15,MUTED);
+            label(content,"Vendor: "+details.vendor+" · Delivery: "+details.delivery,15,MUTED);
             label(content,"Crew: "+details.crew,15,MUTED);
             if(!details.notes.isEmpty())label(content,details.notes,15,LIGHT);
-            button(content,"+ Add custom milestone",()->addJobMilestone(work));
             button(content,"Create dumpster pickup calendar reminder",
                 ()->createPickupReminder(work));
             button(content,"Schedule device-only dumpster pickup alert",
                 ()->localPickupReminder(work));
             long pickupDue=PickupReminders.due(store,work);
-            if(pickupDue>0)label(content,"Local pickup reminder: "+
-                java.time.Instant.ofEpochMilli(pickupDue).atZone(
-                    java.time.ZoneId.systemDefault()),14,MUTED);
-            for(TradeModules.Milestone step:operations.milestones(work)){
-                LinearLayout stepCard=card();
-                label(stepCard,(step.complete()?"✓ ":"□ ")+step.name,17,LIGHT);
-                if(step.complete())
-                    label(stepCard,"Completed at "+step.date,13,MUTED);
-                button(stepCard,step.complete()?"Reopen":"Mark complete",
-                    ()->toggleMilestone(work,step));
-            }
+            if(pickupDue>0)
+                label(content,"Local pickup reminder: "+
+                    java.time.Instant.ofEpochMilli(pickupDue).atZone(
+                        java.time.ZoneId.systemDefault()),14,MUTED);
             section("Material requests");
             button(content, "Request materials", () -> materialDialog(work, null));
             for (WorkspaceStore.MaterialRequest request : store.materialRequests(work)) {
@@ -2932,6 +2939,152 @@ public final class MainActivity extends Activity {
             }catch(IOException e){throw new IllegalStateException(e);}
         });
     }
+    private void masterJobTemplateScreen(){
+        currentScreen="job_template";currentCustomerId=null;currentJobId=null;
+        try{
+            screen("Master job template",
+                "Your workflow, your fields · new jobs inherit these editable defaults");
+            navigation();
+            label(content,"Add any trade-specific checklist item, text, date, or number. "
+                +"Mark a field required if a job cannot be completed without it. "
+                +"Editing the master changes future jobs only; existing job entries "
+                +"are protected from unwanted overwrites.",15,MUTED);
+            button(content,"+ Add template field",()->editMasterField(null));
+            for(JobTemplates.Field f:new JobTemplates(store).master()){
+                LinearLayout entry=card();
+                label(entry,f.label,18,LIGHT);
+                label(entry,f.kind+" · "+(f.required?"Required":"Optional")+
+                    (f.value.isEmpty()?"":" · Default: "+f.value),14,MUTED);
+                button(entry,"Rename / edit "+f.label,()->editMasterField(f));
+                button(entry,"− Remove from future job templates",()->
+                    new AlertDialog.Builder(this).setTitle("Remove template field?")
+                        .setMessage(f.label+" will be excluded from future jobs. "
+                            +"Existing job records are not erased.")
+                        .setNegativeButton("Keep",(d,w)->{})
+                        .setPositiveButton("Remove",(d,w)->{
+                            try{new JobTemplates(store).removeMaster(f.id);
+                                masterJobTemplateScreen();}
+                            catch(Exception e){error(e);}
+                        }).show());
+            }
+        }catch(Exception e){error(e);}
+    }
+    private void editMasterField(JobTemplates.Field old){
+        LinearLayout fields=form();
+        EditText name=field(fields,"Field label (rename anytime)","On-site estimate visit");
+        if(old!=null)name.setText(old.label);
+        String[] type={old==null?JobTemplates.CHECK:old.kind};
+        Button picker=button(fields,"Type: "+type[0],()->{});
+        picker.setOnClickListener(v->new AlertDialog.Builder(this).setTitle("Field type")
+            .setItems(JobTemplates.KINDS,(d,i)->{
+                type[0]=JobTemplates.KINDS[i];picker.setText("Type: "+type[0]);
+            }).show());
+        CheckBox required=checkbox(fields,"Required before completing a job",
+            old!=null&&old.required);
+        EditText defaultValue=field(fields,"Default value (optional; checkbox true/false)",
+            "Leave empty except for checkboxes");
+        defaultValue.setText(old==null?"false":old.value);
+        dialog(old==null?"Add master job field":"Edit master field",fields,()->{
+            try{
+                new JobTemplates(store).saveMaster(old==null?null:old.id,
+                    name.getText().toString(),type[0],required.isChecked(),
+                    type[0].equals(JobTemplates.CHECK)?
+                        (defaultValue.getText().toString().trim().isEmpty()?"false":
+                            defaultValue.getText().toString()):
+                        defaultValue.getText().toString());
+                masterJobTemplateScreen();
+            }catch(IOException e){throw new IllegalStateException(e);}
+        });
+    }
+    private void editJobField(WorkspaceStore.Job work,JobTemplates.Field old){
+        LinearLayout fields=form();
+        EditText title=field(fields,"Job field label","Materials delivered");
+        title.setText(old==null?"":old.label);
+        String[] type={old==null?JobTemplates.CHECK:old.kind};
+        Button select=button(fields,"Field type: "+type[0],()->{});
+        select.setOnClickListener(v->new AlertDialog.Builder(this).setTitle("Field type")
+            .setItems(JobTemplates.KINDS,(d,i)->{
+                type[0]=JobTemplates.KINDS[i];select.setText("Field type: "+type[0]);
+            }).show());
+        CheckBox required=checkbox(fields,"Required to complete job",
+            old!=null&&old.required);
+        EditText value=field(fields,"Value / notes / date",
+            "Enter text, YYYY-MM-DD, number or true/false");
+        value.setText(old==null?"false":old.value);
+        if(old!=null&&old.kind.equals(JobTemplates.DATE))
+            button(fields,"Choose date",()->openDate(value));
+        dialog(old==null?"Add job-specific field":"Edit job field",fields,()->{
+            try{
+                new JobTemplates(store).saveJob(work,old==null?null:old.id,
+                    title.getText().toString(),type[0],required.isChecked(),
+                    type[0].equals(JobTemplates.CHECK)&&
+                        value.getText().toString().trim().isEmpty()?"false":
+                        value.getText().toString());
+                job(work.id);
+            }catch(IOException e){throw new IllegalStateException(e);}
+        });
+    }
+    private void jobCustomFields(WorkspaceStore.Job work)throws IOException{
+        section("Your customizable job checklist");
+        button(content,"+ Add any field or checklist item",()->editJobField(work,null));
+        button(content,"Edit master job template (future jobs)",this::masterJobTemplateScreen);
+        List<JobTemplates.Field> fields=new JobTemplates(store).forJob(work);
+        for(JobTemplates.Field f:fields){
+            LinearLayout row=card();
+            if(f.kind.equals(JobTemplates.CHECK)){
+                CheckBox check=checkbox(row,f.label+
+                    (f.required?" · Required":""),f.checked());
+                check.setOnClickListener(v->{
+                    boolean newValue=check.isChecked();
+                    try{
+                        new JobTemplates(store).saveJob(work,f.id,f.label,f.kind,
+                            f.required,Boolean.toString(newValue));
+                        Toast.makeText(this,"Saved "+f.label,Toast.LENGTH_SHORT).show();
+                    }catch(Exception e){
+                        check.setChecked(!newValue);
+                        error(e);
+                    }
+                });
+            }else{
+                label(row,f.label+(f.required?" · Required":""),17,LIGHT);
+                label(row,f.value.isEmpty()?"Not entered":f.value,15,MUTED);
+            }
+            button(row,"Edit / rename "+f.label,()->editJobField(work,f));
+            button(row,"− Remove "+f.label+" from this job",()->
+                new AlertDialog.Builder(this).setTitle("Remove job field?")
+                    .setMessage("Remove '"+f.label+"' from THIS job only? "
+                        +"Your master template and other jobs remain unchanged.")
+                    .setNegativeButton("Keep",(d,w)->{})
+                    .setPositiveButton("Remove",(d,w)->{
+                        try{new JobTemplates(store).removeJob(work,f.id);job(work.id);}
+                        catch(Exception e){error(e);}
+                    }).show());
+        }
+        List<String> incomplete=new JobTemplates(store).missingRequired(work);
+        if(!incomplete.isEmpty())
+            label(content,"Required before completion: "+
+                String.join(", ",incomplete),14,MUTED);
+        button(content,"View previous-format milestone checklist",
+            ()->legacyMilestonesScreen(work));
+    }
+    private void legacyMilestonesScreen(WorkspaceStore.Job job){
+        currentScreen="job";currentJobId=job.id;
+        try{
+            screen("Previous milestone checklist",job.title+
+                " · legacy checklist preserved for compatibility");
+            navigation();
+            button(content,"Return to job",()->job(job.id));
+            button(content,"+ Add previous-format milestone",()->addJobMilestone(job));
+            TradeModules operations=new TradeModules(store);
+            for(TradeModules.Milestone step:operations.milestones(job)){
+                LinearLayout row=card();
+                label(row,(step.complete()?"✓ ":"□ ")+step.name,17,LIGHT);
+                button(row,step.complete()?"Reopen":"Mark complete",
+                    ()->toggleMilestone(job,step));
+            }
+        }catch(Exception e){error(e);}
+    }
+
     private void jobLogisticsDialog(WorkspaceStore.Job job) {
         try{
             TradeModules.Logistics current=new TradeModules(store).logistics(job);
