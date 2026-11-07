@@ -150,6 +150,7 @@ public final class BusinessSetupActivity extends Activity {
                     prices.isChecked(),time.isChecked(),gps.isChecked(),
                     previous.advancedCalendar,recurring.isChecked());
                 BusinessSetupStore.save(this,selected);
+                setResult(RESULT_OK);
                 finish();
             }catch(Exception error){showError(error);}
         });
@@ -161,6 +162,7 @@ public final class BusinessSetupActivity extends Activity {
                     previous.dumpsters,previous.crew,previous.catalog,
                     previous.workerTime,previous.gps,previous.advancedCalendar,
                     previous.recurring));
+                setResult(RESULT_OK);
                 finish();
             }catch(Exception error){showError(error);}
         });
