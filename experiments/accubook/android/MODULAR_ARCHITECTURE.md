@@ -1,5 +1,32 @@
 # Accubook modular architecture and migration contract
 
+## Inventory implementation — one independent vertical slice
+
+`StockLedger` is a pure Java event model that derives company, job-site
+and tool balances from a single immutable movement sequence. Every event
+has a stable ID, item ID, UTC time, action, source/destination, quantity and
+optional explanation; count corrections require an explanation. Validation
+rejects duplicates, unknown items, unknown jobs, invalid action routes,
+negative balances and fractional tools.
+
+`InventoryStore` persists an item catalog separately and writes each
+movement as **one atomic append** to `master_data/inventory_movements.csv`;
+one event represents both debit and credit so transfers cannot commit only
+half the balance. `InventoryActivity` is a standalone UI component rather
+than another large business tab. It displays a simple Company/Job/Tool view
+and common actions, with optional per-job entry from Materials.
+`BackupArchive` validates these CSVs on restore, preserving older workspaces
+without inventory files. `BusinessSetupProfile` uses version 2 of its CSV
+schema with backward-compatible version 1 reads; Inventory remains off
+until explicitly enabled.
+
+**Not yet:** inventory cost/cost-of-goods accounting, procurement, purchase
+orders, automated Material Request inventory postings, serial numbers,
+advanced location entities, barcode scanning, crew sync, warehouse reorder
+points, stock audit exports, automated material suggestions. Every feature
+must be verified independently before a maturity claim.
+
+
 ## Incremental migration implementation
 
 `LegacyContactsCsv` is the first standalone parser module. It has strict
