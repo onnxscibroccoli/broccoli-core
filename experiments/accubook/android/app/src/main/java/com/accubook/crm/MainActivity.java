@@ -2464,15 +2464,15 @@ public final class MainActivity extends Activity {
                 for(int i=0;i<categories.length;i++)
                     if(categories[i].isChecked())chosenCategories.add(names[i]);
                 ExportSelection verified=new ExportSelection(selected,chosenMethods,chosenCategories);
-                StringBuilder scope=new StringBuilder("Selected report data:\\n");
+                StringBuilder scope=new StringBuilder("Selected report data:\n");
                 for(int i=0;i<selected.length;i++)
                     if(verified.included(i))
-                        scope.append("• ").append(BusinessReports.SECTIONS[i]).append('\\n');
-                if(verified.included(3))scope.append("\\nPayment ledgers: ")
-                    .append(verified.paymentMethods).append('\\n');
-                if(verified.included(4))scope.append("\\nExpense categories: ")
-                    .append(verified.expenseCategories).append('\\n');
-                scope.append("\\nOnly this data is included. The saved file remains "
+                        scope.append("• ").append(BusinessReports.SECTIONS[i]).append('\n');
+                if(verified.included(3))scope.append("\nPayment ledgers: ")
+                    .append(verified.paymentMethods).append('\n');
+                if(verified.included(4))scope.append("\nExpense categories: ")
+                    .append(verified.expenseCategories).append('\n');
+                scope.append("\nOnly this data is included. The saved file remains "
                     +"on your device unless you choose to share it.");
                 new AlertDialog.Builder(this)
                     .setTitle("Confirm private "+(pdf?"PDF report":"CSV ZIP")+" scope")
