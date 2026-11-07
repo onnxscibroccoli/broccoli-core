@@ -3071,6 +3071,16 @@ public final class MainActivity extends Activity {
                 button(content,"+ Add from service / consumable catalog",
                     ()->catalogLineDialog(work));
             button(content,"Add labor, material or discount",()->lineDialog(work));
+            section("Linked change orders");
+            button(content,"＋ New change order",()->changeOrderCreateDialog(work));
+            for(ChangeOrders.Order change:new ChangeOrders(store).orders(work)){
+                LinearLayout changeCard=card();
+                label(changeCard,change.title+" · "+change.status,17,LIGHT);
+                label(changeCard,"Amount change: $"+
+                    new ChangeOrders(store).total(work,change),15,MUTED);
+                button(changeCard,"View / manage change order",()->
+                    changeOrderActions(work,change));
+            }
             button(content,"Export invoice as HTML",()->{
                 try{
                     pendingInvoice=InvoiceHtml.render(client,work,store.items(work));
@@ -3560,6 +3570,96 @@ public final class MainActivity extends Activity {
             }).show();
     }
 
+
+    private void changeOrderCreateDialog(WorkspaceStore.Job job){
+        LinearLayout fields=form();
+        EditText title=field(fields,"What changed?","Extra downspout, repair, added labor");
+        label(fields,"Linked to this job. A change order is not a separate quote.",14,MUTED);
+        dialog("New change order",fields,()->{
+            try{
+                ChangeOrders.Order made=new ChangeOrders(store).create(job,
+                    title.getText().toString());
+                changeOrderActions(job,made);
+            }catch(IOException e){throw new IllegalStateException(e);}
+        });
+    }
+
+    private void changeOrderActions(WorkspaceStore.Job job,ChangeOrders.Order order){
+        try{
+            ChangeOrders changes=new ChangeOrders(store);
+            List<ChangeOrders.Line> entries=changes.lines(job,order);
+            StringBuilder description=new StringBuilder();
+            for(ChangeOrders.Line entry:entries)description.append("\n")
+                .append(entry.description).append(" · ")
+                .append(entry.quantity).append(" × $").append(entry.rate);
+            String message="Status: "+order.status+"\nDelta: $"+changes.total(job,order)+
+                "\n"+(order.signed()?"Acknowledged by "+order.signedBy+" on "+order.acknowledged+
+                    "\nLocal SHA-256 proof verified.":"Customer has not signed.")+
+                "\n\n"+(description.length()==0?"No lines yet.":description.toString());
+            AlertDialog.Builder menu=new AlertDialog.Builder(this)
+                .setTitle(order.title).setMessage(message)
+                .setNegativeButton("Close",(d,w)->{
+                    currentJobSection="costing";job(job.id);
+                });
+            if(ChangeOrders.PROPOSED.equals(order.status)){
+                menu.setNeutralButton("＋ Add work",(d,w)->changeOrderLineDialog(job,order));
+                if(!entries.isEmpty())menu.setPositiveButton("Sign / acknowledge",
+                    (d,w)->changeOrderSignDialog(job,order));
+            }else if(ChangeOrders.ACKNOWLEDGED.equals(order.status)){
+                menu.setPositiveButton("Add to invoice",(d,w)->
+                    new AlertDialog.Builder(this).setTitle("Confirm billing")
+                        .setMessage("Add these approved work lines to the original job invoice? "+
+                            "Each line is linked and added only once.")
+                        .setNegativeButton("Cancel",(d,w)->{})
+                        .setPositiveButton("Add",(d,w)->{
+                            try{
+                                changes.addToInvoice(job,order);
+                                currentJobSection="costing";job(job.id);
+                            }catch(Exception e){error(e);}
+                        }).show());
+            }
+            menu.show();
+        }catch(Exception e){error(e);}
+    }
+
+    private void changeOrderLineDialog(WorkspaceStore.Job job,ChangeOrders.Order order){
+        LinearLayout fields=form();
+        EditText desc=field(fields,"Work to add","Install additional downspout");
+        EditText qty=field(fields,"Quantity","1");qty.setText("1");
+        qty.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        EditText rate=field(fields,"Unit rate","85.00");
+        rate.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL|
+            InputType.TYPE_NUMBER_FLAG_SIGNED);
+        dialog("Add change-order work",fields,()->{
+            try{
+                new ChangeOrders(store).addLine(job,order,desc.getText().toString(),
+                    qty.getText().toString(),rate.getText().toString());
+                currentJobSection="costing";job(job.id);
+            }catch(IOException e){throw new IllegalStateException(e);}
+        });
+    }
+
+    private void changeOrderSignDialog(WorkspaceStore.Job job,ChangeOrders.Order order){
+        try{
+            ChangeOrders changes=new ChangeOrders(store);
+            LinearLayout fields=form();
+            label(fields,"Review the change and $"+changes.total(job,order)+
+                " difference before handing over the phone.",16,LIGHT);
+            label(fields,"Customer draws below. Stored on this device with a "+
+                "timestamp and tamper-evident hash. This does not verify identity.",14,MUTED);
+            EditText signer=field(fields,"Printed name of signer","Customer or authorized person");
+            SignaturePadView pad=new SignaturePadView(this);
+            fields.addView(pad,new LinearLayout.LayoutParams(-1,dp(190)));
+            button(fields,"Clear signature",pad::clear);
+            dialog("Acknowledge change order",fields,()->{
+                try{
+                    changes.acknowledge(job,order,signer.getText().toString(),pad.png());
+                    currentJobSection="costing";job(job.id);
+                }catch(IOException e){throw new IllegalStateException(e);}
+            });
+        }catch(Exception e){error(e);}
+    }
+
     private void lineDialog(WorkspaceStore.Job job) {
         LinearLayout fields = form();
         EditText description = field(fields, "Description (required)", "4-inch gutter cleanout");
@@ -3569,6 +3669,37 @@ public final class MainActivity extends Activity {
         EditText rate = field(fields, "Unit rate · negative only for discount", "85.00");
         rate.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED |
             InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        if(FeatureSettings.enabled(this,FeatureSettings.CATALOG)){
+            LinearLayout suggestions=new LinearLayout(this);
+            suggestions.setOrientation(LinearLayout.VERTICAL);
+            fields.addView(suggestions);
+            label(fields,"Suggestions are optional. Your own wording and prices always work.",
+                13,MUTED);
+            description.addTextChangedListener(new TextWatcher(){
+                public void beforeTextChanged(CharSequence s,int st,int count,int after){}
+                public void onTextChanged(CharSequence s,int st,int before,int count){
+                    suggestions.removeAllViews();
+                    try{
+                        List<TradeModules.CatalogItem> catalog=new TradeModules(store).catalog();
+                        catalog.sort((a,b)->Integer.compare(
+                            CatalogSuggestions.score(s.toString(),b.name,b.category),
+                            CatalogSuggestions.score(s.toString(),a.name,a.category)));
+                        int shown=0;
+                        for(TradeModules.CatalogItem item:catalog){
+                            if(CatalogSuggestions.score(s.toString(),item.name,item.category)<=0)
+                                continue;
+                            button(suggestions,"Use "+item.name+" · $"+item.price(),()->{
+                                description.setText(item.name);
+                                description.setSelection(description.length());
+                                rate.setText(item.price());
+                            });
+                            if(++shown>=3)break;
+                        }
+                    }catch(Exception ignored){} // Free text must remain usable.
+                }
+                public void afterTextChanged(Editable e){}
+            });
+        }
         dialog("New line item", fields, () -> {
             try {
                 store.addLine(job, description.getText().toString(),
