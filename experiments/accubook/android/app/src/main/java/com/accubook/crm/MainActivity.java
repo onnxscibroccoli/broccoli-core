@@ -173,6 +173,7 @@ public final class MainActivity extends Activity {
                 else if("settings".equals(page))settingsScreen();
                 else if("help".equals(page))helpScreen();
                 else if("lookup".equals(page))universalSearchScreen();
+                else if("service_due".equals(page))serviceDueScreen();
                 else if("contacts".equals(page))contactsScreen();
                 else if("contact".equals(page))contactsScreen();
                 else if("jobs".equals(page))jobsScreen();
@@ -570,6 +571,108 @@ public final class MainActivity extends Activity {
                 });
             }
         },"accubook-local-lookup").start();
+    }
+
+
+    /** Optional repeat-service reminders; never auto-create another job or message a customer. */
+    private void serviceDueScreen(){
+        currentScreen="service_due";currentJobId=null;currentCustomerId=null;
+        try{
+            screen("Next services due","A simple local call-back list. You choose who to contact.");
+            navigation();
+            if(!FeatureSettings.enabled(this,FeatureSettings.RECURRING)){
+                label(content,"Turn on Repeat-service due dates in Business → Settings first.",
+                    16,MUTED);
+                button(content,"Open Settings",this::settingsScreen);
+                return;
+            }
+            List<RecurringServices.Rule> list=new RecurringServices(store).all();
+            list.sort((a,b)->{
+                String ad=a.dueDate.isEmpty()?"9999-12-31":a.dueDate;
+                String bd=b.dueDate.isEmpty()?"9999-12-31":b.dueDate;
+                return ad.compareTo(bd);
+            });
+            int due=0,active=0;
+            for(RecurringServices.Rule rule:list){
+                if(rule.active)active++;
+                if(rule.dueToday())due++;
+            }
+            label(content,due+" due or overdue by date · "+active+" active reminders",
+                19,LIGHT);
+            label(content,"Mileage-only reminders show a target odometer reading. "+
+                "They do not assume how far a vehicle has traveled.",14,MUTED);
+            if(list.isEmpty())
+                label(content,"No repeat service rules yet. Open a job → Overview → "+
+                    "Set next service due.",16,MUTED);
+            int rendered=0;
+            for(RecurringServices.Rule rule:list){
+                if(++rendered>120)break;
+                WorkspaceStore.Customer person=null;
+                for(WorkspaceStore.Customer c:store.customers())
+                    if(c.id.equals(rule.customerId)){person=c;break;}
+                LinearLayout row=card();
+                label(row,rule.label+" · "+
+                    (person==null?"Unknown customer":person.displayName()),18,LIGHT);
+                label(row,rule.active?(rule.dueToday()?"DUE NOW":
+                    "Scheduled"):"Paused",15,rule.dueToday()?0xFFFFCD86:MUTED);
+                label(row,(rule.dueDate.isEmpty()?"No calendar due date":
+                    "Next due: "+rule.dueDate)+
+                    (rule.dueMiles.isEmpty()?"":" · Next odometer: "+rule.dueMiles)+
+                    (rule.site.isEmpty()?"":"\nSite/asset: "+rule.site),15,MUTED);
+                final RecurringServices.Rule entry=rule;
+                button(row,"Open original job",()->job(entry.jobId));
+                button(row,"Update after service / edit interval",()->{
+                    try{serviceIntervalDialog(jobById(entry.jobId),entry);}
+                    catch(Exception e){error(e);}
+                });
+                button(row,rule.active?"Pause reminder":"Resume reminder",()->{
+                    try{
+                        new RecurringServices(store).setActive(entry.id,!entry.active);
+                        serviceDueScreen();
+                    }catch(Exception e){error(e);}
+                });
+            }
+            if(list.size()>120)label(content,
+                "Showing the first 120 services. Smaller filtered lists are planned.",14,MUTED);
+            label(content,"This module does not automatically notify customers, "+
+                "create appointments, read odometers or send data to the cloud.",13,MUTED);
+        }catch(Exception failure){error(failure);}
+    }
+
+    private void serviceIntervalDialog(WorkspaceStore.Job job,RecurringServices.Rule previous){
+        LinearLayout fields=form();
+        label(fields,"When was this service actually finished? "+
+            "Choose how often it is needed. Nothing is sent automatically.",14,MUTED);
+        EditText label=field(fields,"Service","Gutter cleaning / oil change");
+        label.setText(previous==null?job.title:previous.label);
+        EditText site=field(fields,"Site, vehicle or equipment (optional)","Property, VIN or vehicle name");
+        site.setText(previous==null?job.street:previous.site);
+        EditText last=field(fields,"Last completed on · YYYY-MM-DD",
+            java.time.LocalDate.now().toString());
+        last.setText(previous==null?java.time.LocalDate.now().toString():previous.lastDate);
+        button(fields,"Choose completion date",()->openDate(last));
+        EditText month=field(fields,"Every how many months? (0 if mileage only)","6");
+        month.setText(previous==null?"6":previous.months);
+        month.setInputType(InputType.TYPE_CLASS_NUMBER);
+        EditText miles=field(fields,"Last odometer reading (optional)","55812");
+        miles.setText(previous==null?"":previous.lastMiles);
+        miles.setInputType(InputType.TYPE_CLASS_NUMBER);
+        EditText interval=field(fields,"Every how many miles? (0 if date only)","3000");
+        interval.setText(previous==null?"0":previous.miles);
+        interval.setInputType(InputType.TYPE_CLASS_NUMBER);
+        dialog(previous==null?"Set next service":"Update next service",fields,()->{
+            try{
+                RecurringServices.Rule saved=new RecurringServices(store).save(job,
+                    previous==null?null:previous.id,label.getText().toString(),
+                    site.getText().toString(),last.getText().toString(),
+                    month.getText().toString(),miles.getText().toString(),
+                    interval.getText().toString());
+                notice("Next service saved",(saved.dueDate.isEmpty()?"Mileage-only reminder":
+                    "Due "+saved.dueDate)+
+                    (saved.dueMiles.isEmpty()?"":" · "+saved.dueMiles+" miles")+
+                    ". Open Home → due services to review.");
+            }catch(IOException e){throw new IllegalStateException(e);}
+        });
     }
 
     /** Independent contact directory. No automatic customer creation. */
@@ -2038,9 +2141,9 @@ public final class MainActivity extends Activity {
             catch(Exception error){error(error);}
         });
         section("Planned modules");
-        label(content,"Multi-property history, recurring job scheduling, route-density "
-            +"optimization and full accounts payable/general ledger controls are "
-            +"not implemented yet, so they do not have misleading switches.",14,MUTED);
+        label(content,"Automatic repeat-job creation, customer outreach, multi-property "
+            +"history, route-density optimization and full accounts payable/general "
+            +"ledger controls remain unimplemented. Due-date lists are local and manual.",14,MUTED);
     }
 
 
@@ -2921,6 +3024,14 @@ public final class MainActivity extends Activity {
                 button(upcoming,"Open next job →",()->job(nextJob));
             }
             button(content,"? How to use Accubook",this::helpScreen);
+            if(FeatureSettings.enabled(this,FeatureSettings.RECURRING)){
+                int due=0;
+                for(RecurringServices.Rule reminder:new RecurringServices(store).all())
+                    if(reminder.dueToday())due++;
+                Button reminders=button(content,
+                    due+" repeat services due by date · Open due list",this::serviceDueScreen);
+                reminders.setBackgroundTintList(ColorStateList.valueOf(due>0?0xFF9A6825:CARD));
+            }
             section("Quick actions");
             button(content,"＋ New scheduled job",this::chooseCustomer);
             button(content,"Calendar · look ahead",this::calendarScreen);
@@ -3182,6 +3293,9 @@ public final class MainActivity extends Activity {
                 () -> scheduleEditor(work));
             button(content,"Add this job to Calendar app",()->addJobToCalendar(work));
             button(content, "Change job status", () -> statusPicker(work));
+            if(FeatureSettings.enabled(this,FeatureSettings.RECURRING))
+                button(content,"Set or update next service due date / mileage",
+                    ()->serviceIntervalDialog(work,null));
             }
             if("notes".equals(currentJobSection)){
             section("Field notes and site instructions");
