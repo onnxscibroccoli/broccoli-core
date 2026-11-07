@@ -3400,14 +3400,22 @@ public final class MainActivity extends Activity {
                     document(DocumentNumbers.reference(work.id,work.date,false)+".html","text/html");
                 }catch(Exception failure){error(failure);}
             });
-            for (WorkspaceStore.LineItem item : store.items(work)) {
-                LinearLayout row = card();
-                label(row, item.description, 17, LIGHT);
-                label(row, item.quantity + " × $" + item.unitRate + " = $" + item.amount, 14, MUTED);
-                button(row,"+ Increase quantity by 1",()->changeLineQuantity(work,item,1));
-                button(row,"− Decrease quantity by 1",()->changeLineQuantity(work,item,-1));
-                button(row, "Edit " + item.description, () -> editLineDialog(work, item));
-                button(row, "Remove " + item.description, () -> deleteLine(work, item));
+            List<WorkspaceStore.LineItem> billLines=store.items(work);
+            for(int i=0;i<billLines.size();i++){
+                WorkspaceStore.LineItem item=billLines.get(i);
+                LinearLayout row=card();
+                LinearLayout header=new LinearLayout(this);
+                header.setOrientation(LinearLayout.HORIZONTAL);
+                row.addView(header);
+                TextView title=label(header,item.description,17,LIGHT);
+                title.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));
+                final int lineIndex=i;
+                Runnable actions=()->invoiceLineActionMenu(work,item,lineIndex,
+                    billLines.size());
+                fieldMoreButton(header,"invoice line "+item.description,actions);
+                label(row,item.quantity+" × $"+item.unitRate+" = $"+item.amount,14,MUTED);
+                row.setOnLongClickListener(v->{actions.run();return true;});
+                title.setOnLongClickListener(v->{actions.run();return true;});
             }
             }
             if("photos".equals(currentJobSection)){
@@ -3502,6 +3510,39 @@ public final class MainActivity extends Activity {
                 label(content,"Offline manual records only. No payment collection, tax "
                     +"calculation or settlement verification occurs.",13,MUTED);
         } catch (Exception failure) { error(failure); }
+    }
+
+
+    private void invoiceLineActionMenu(WorkspaceStore.Job job,
+            WorkspaceStore.LineItem line,int index,int count){
+        boolean approved=line.description.matches("(?s).*\\[CO:COL-[a-f0-9]{32}\\]$");
+        List<String> actions=new ArrayList<>();
+        if(index>0)actions.add("Move up");
+        if(index<count-1)actions.add("Move down");
+        if(!approved){
+            actions.add("Change quantity +1");
+            actions.add("Change quantity -1");
+            actions.add("Edit line");
+            actions.add("Remove line");
+        }else actions.add("Approved change-order lines are locked");
+        new AlertDialog.Builder(this).setTitle(line.description)
+            .setItems(actions.toArray(new String[0]),(d,which)->{
+                String selected=actions.get(which);
+                try{
+                    switch(selected){
+                        case "Move up":
+                            store.moveLine(job,line.id,index-1);job(job.id);break;
+                        case "Move down":
+                            store.moveLine(job,line.id,index+1);job(job.id);break;
+                        case "Change quantity +1":changeLineQuantity(job,line,1);break;
+                        case "Change quantity -1":changeLineQuantity(job,line,-1);break;
+                        case "Edit line":editLineDialog(job,line);break;
+                        case "Remove line":deleteLine(job,line);break;
+                        default:notice("Change-order protection",
+                            "Approved work is immutable. Create a correcting change order.");
+                    }
+                }catch(Exception e){error(e);}
+            }).setNegativeButton("Cancel",(d,w)->{}).show();
     }
 
     private void changeLineQuantity(WorkspaceStore.Job job,WorkspaceStore.LineItem line,int change){
