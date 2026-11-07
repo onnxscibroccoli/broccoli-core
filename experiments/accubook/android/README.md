@@ -1,5 +1,13 @@
 # Accubook — offline-first field-service CRM (engineering preview)
 
+> **v0.5 modular-screen regression note (2026-11-07):** The emulator smoke
+> now navigates **Notes**, **Overview**, **Billing**, and **Photos** separately.
+> The earlier end-to-end check failed by asserting all four sections' content
+> while still on Overview; see draft PR #90. This repairs stale test navigation,
+> not an app runtime defect. APK compilation, emulator results, physical-device
+> performance and TalkBack acceptance are distinct gates.
+
+
 ## November 7, 2026 — modular field workflow and private reporting increment
 
 **Implementation:** `feat/accubook-modular-reporting-20261107`. **Acceptance:** not
