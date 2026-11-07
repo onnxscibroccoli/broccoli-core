@@ -2751,6 +2751,7 @@ public final class MainActivity extends Activity {
             }
             section("Quick actions");
             button(content,"＋ New scheduled job",this::chooseCustomer);
+            button(content,"Quick PDF / selective accounting report",this::chooseReportExport);
             button(content,"Calendar · look ahead",this::calendarScreen);
             button(content,"Contacts · import all or browse",this::contactsScreen);
             button(content,"＋ New customer",this::customerDialog);
