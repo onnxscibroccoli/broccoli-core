@@ -1897,7 +1897,7 @@ public final class MainActivity extends Activity {
             }
             label(content,"Recorded job value: $"+draftTotal.toPlainString(),17,LIGHT);
             label(content,"Payments recorded: $"+received.toPlainString(),17,LIGHT);
-            label(content,"Unreconciled difference (drafts - receipts): $"+
+            label(content,"Job value minus receipts (not a bank balance): $"+
                 draftTotal.subtract(received).toPlainString(),16,LIGHT);
             label(content,"Estimates manually marked sent: "+sent,15,LIGHT);
             for(Map.Entry<String,BigDecimal> item:totals.entrySet())
@@ -2533,7 +2533,7 @@ public final class MainActivity extends Activity {
                         + "before and after photos, and review materials.");
                     customer(example.id);
                     notice("Sample ready", "Tap the sample job under Job history. "
-                        + "Reschedule it, attach a test photo, and inspect the draft invoice.");
+                        + "Reschedule it, attach a test photo, and preview the invoice.");
                 } catch (Exception failure) { error(failure); }
             }).show();
     }
@@ -2912,7 +2912,7 @@ public final class MainActivity extends Activity {
                     ()->openRouteInOSM(work));
             }
             label(content,"Offline manual records only. No payment collection, tax calculation "
-                +"or settlement verification occurs. Invoice remains a draft.",13,MUTED);
+                +"or settlement verification occurs. An invoice is not a payment receipt.",13,MUTED);
         } catch (Exception failure) { error(failure); }
     }
 
