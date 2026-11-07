@@ -1073,7 +1073,7 @@ public final class MainActivity extends Activity {
             label(content,"Payments recorded: $"+received.toPlainString(),17,LIGHT);
             label(content,"Unreconciled difference (drafts - receipts): $"+
                 draftTotal.subtract(received).toPlainString(),16,LIGHT);
-            label(content,"Quotes manually marked sent: "+sent,15,LIGHT);
+            label(content,"Estimates manually marked sent: "+sent,15,LIGHT);
             for(Map.Entry<String,BigDecimal> item:totals.entrySet())
                 label(content,item.getKey()+" ledger: $"+item.getValue().toPlainString(),17,LIGHT);
             label(content,"No bank, PayPal or Cash App account connection is made. "
@@ -1103,7 +1103,7 @@ public final class MainActivity extends Activity {
             color.setText(brand.accent);
             EditText terms=multiline(fields,"Default payment terms",brand.terms);
             EditText footer=multiline(fields,"Footer / business information",brand.footer);
-            dialog("Default quote and invoice template",fields,()->{
+            dialog("Default estimate and invoice template",fields,()->{
                 try{
                     crm.saveBranding(business.getText().toString(),address.getText().toString(),
                         phone.getText().toString(),email.getText().toString(),
@@ -1143,7 +1143,7 @@ public final class MainActivity extends Activity {
     private void openDocument(WorkspaceStore.Job job,boolean quote) {
         Intent intent=new Intent(this,DocumentActivity.class);
         intent.putExtra("job",job.id);
-        intent.putExtra("quote",quote);
+        intent.putExtra("estimate",quote);
         startActivity(intent);
     }
 
@@ -1355,7 +1355,7 @@ public final class MainActivity extends Activity {
                         store.addLine(j,"DEMO labor","2","95.00");
                         store.addLine(j,"DEMO materials","1","45.00");
                         store.saveFieldNotes(j,"DEMO ONLY: confirm site details, take "
-                            +"photographs and issue a quote before work.");
+                            +"photographs and issue a estimate before work.");
                         crm.setQuoteSent(j,i==2,"Fictional sample status");
                         if(i<2)crm.addPayment(j,LocalDate.now().toString(),methods[i],
                             "50.00","DEMO","Fictional deposit");
@@ -1422,7 +1422,7 @@ public final class MainActivity extends Activity {
             LinearLayout summary=card();
             label(summary,"Today: "+todayJobs+" jobs    Upcoming: "+upcomingJobs,18,LIGHT);
             label(summary,"Customers: "+customers.size()+"    Active work: "+active,17,LIGHT);
-            label(summary,"Quotes marked sent: "+sentQuotes,16,LIGHT);
+            label(summary,"Estimates marked sent: "+sentQuotes,16,LIGHT);
             label(summary,"Draft billing: $"+openDraft.toPlainString(),17,LIGHT);
             label(summary,"Recorded receipts: $"+paid.toPlainString(),17,LIGHT);
 
@@ -1644,15 +1644,15 @@ public final class MainActivity extends Activity {
                 button(entry, "Update material status", () -> materialStatusPicker(work, request));
                 button(entry, "Remove request", () -> removeMaterial(work, request));
             }
-            section("Quote and invoice");
+            section("Estimate and invoice");
             CrmWorkspace.Quote quoteState=crm.quote(work);
-            CheckBox sent=checkbox(content,"Quote sent (manually confirmed)",quoteState.sent);
+            CheckBox sent=checkbox(content,"Estimate sent (manually confirmed)",quoteState.sent);
             if(quoteState.sent)label(content,"Marked sent: "+quoteState.sentDate,14,MUTED);
             sent.setOnCheckedChangeListener((item,checked)->{
                 try{crm.setQuoteSent(work,checked,"Manual checkbox update");}
                 catch(Exception e){error(e);sent.setChecked(!checked);}
             });
-            button(content,"Preview / edit quote (print or Save as PDF)",
+            button(content,"Preview / edit estimate (print or Save as PDF)",
                 ()->openDocument(work,true));
             button(content,"Preview / edit invoice (print or Save as PDF)",
                 ()->openDocument(work,false));
@@ -1752,7 +1752,7 @@ public final class MainActivity extends Activity {
                 String type=getContentResolver().getType(data.getData());
                 crm.saveLogo(in,type);
                 businessScreen();
-                notice("Logo saved","New quotes and invoices will include this logo.");
+                notice("Logo saved","New estimates and invoices will include this logo.");
             }catch(Exception e){error(e);}
             return;
         }
