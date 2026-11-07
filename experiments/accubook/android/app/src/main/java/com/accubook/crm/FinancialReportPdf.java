@@ -101,17 +101,14 @@ public final class FinancialReportPdf {
         }
         if(selection.included(1)){
             w.header("Jobs and recorded invoice totals");
-            BigDecimal total=BigDecimal.ZERO,received=BigDecimal.ZERO;
+            BigDecimal total=BigDecimal.ZERO;
             for(WorkspaceStore.Job job:jobs){
                 w.item(job.date+" / "+job.title, "$"+job.total+"  ["+job.status+"]");
                 total=total.add(new BigDecimal(job.total));
-                received=received.add(crm.received(job));
             }
             w.item("Total job value","$"+total.toPlainString());
-            w.item("All recorded receipts (not filtered by method)",
-                "$"+received.toPlainString());
-            w.item("Open balance (not a bank balance)",
-                "$"+total.subtract(received).toPlainString());
+            w.writeLine("Payment totals are shown only when payment ledgers are "
+                +"explicitly selected below.",9,GRAY,false);
         }
         if(selection.included(2)){
             w.header("Estimate / invoice line items");
