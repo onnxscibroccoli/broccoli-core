@@ -3610,8 +3610,8 @@ public final class MainActivity extends Activity {
                     new AlertDialog.Builder(this).setTitle("Confirm billing")
                         .setMessage("Add these approved work lines to the original job invoice? "+
                             "Each line is linked and added only once.")
-                        .setNegativeButton("Cancel",(d,w)->{})
-                        .setPositiveButton("Add",(d,w)->{
+                        .setNegativeButton("Cancel",(confirmDialog,which)->{})
+                        .setPositiveButton("Add",(confirmDialog,which)->{
                             try{
                                 changes.addToInvoice(job,order);
                                 currentJobSection="costing";job(job.id);
