@@ -270,11 +270,13 @@ public final class BackupArchive {
                     throw new IOException("Tool checked out to a missing job");
             }
         }
+        Set<String> expectedSitePaths=new HashSet<>();
         for(int j=1;j<jobs.size();j++){
             List<String> job=jobs.get(j);
             String prefix=customerFolders.get(job.get(1))+"/jobs/"+
                 job.get(0)+"_"+slug(job.get(2));
             String path=prefix+"/job_site_materials.csv";
+            expectedSitePaths.add(path);
             if(!new File(root,path).isFile())continue;
             List<List<String>> entries=rows(root,path,InventoryRules.SITE);
             if(entries.size()>2001)throw new IOException("Job inventory record limit exceeded");
@@ -286,6 +288,23 @@ public final class BackupArchive {
                 }
                 if(!seen.add(entries.get(i).get(0)))
                     throw new IOException("Duplicate job-site inventory ID");
+            }
+        }
+        // A path matching the ZIP allowlist is not proof it belongs to a real
+        // job. Check for unindexed site tables rather than ignoring them.
+        File customerRoot=new File(root,"customers");
+        if(customerRoot.isDirectory()){
+            try(java.util.stream.Stream<java.nio.file.Path> walk=
+                Files.walk(customerRoot.toPath())){
+                for(java.nio.file.Path p:(Iterable<java.nio.file.Path>)walk::iterator){
+                    if(!p.getFileName().toString().equals("job_site_materials.csv"))continue;
+                    if(Files.isSymbolicLink(p))
+                        throw new IOException("Unsafe linked inventory file");
+                    String relative=root.toPath().relativize(p).toString()
+                        .replace(File.separatorChar,'/');
+                    if(!expectedSitePaths.contains(relative))
+                        throw new IOException("Orphaned job-site inventory file: "+relative);
+                }
             }
         }
     }
