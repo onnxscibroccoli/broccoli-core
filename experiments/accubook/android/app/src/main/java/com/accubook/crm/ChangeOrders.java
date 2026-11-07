@@ -132,6 +132,7 @@ public final class ChangeOrders {
         return list;
     }
     public synchronized List<Order> orders(WorkspaceStore.Job job)throws IOException {
+        lineRows(job); // Initialize both tables together so an empty archive remains restorable.
         List<List<String>> rows=orderRows(job);
         List<Order> out=new ArrayList<>();Set<String> ids=new HashSet<>();
         for(int i=1;i<rows.size();i++){
