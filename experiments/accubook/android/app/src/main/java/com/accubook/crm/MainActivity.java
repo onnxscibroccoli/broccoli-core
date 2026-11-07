@@ -177,6 +177,7 @@ public final class MainActivity extends Activity {
                 else if("contact".equals(page))contactsScreen();
                 else if("jobs".equals(page))jobsScreen();
                 else if("job_template".equals(page))masterJobTemplateScreen();
+                else if("features".equals(page))featuresScreen();
                     else home();
                 } else home();
             } catch (Exception error) {
@@ -1878,7 +1879,10 @@ public final class MainActivity extends Activity {
                     }catch(Exception e){error(e);}
                 }).show());
             button(content,"Choose business logo",this::pickLogo);
-            button(content,"Manage item and service pricebook",this::catalogScreen);
+            if(new AppFeatures(this).enabled(AppFeatures.PRICEBOOK))
+                button(content,"Manage item and service pricebook",this::catalogScreen);
+            button(content,"Customize visible features / solo or crew mode",
+                this::featuresScreen);
             button(content,"Customize master job fields / checklists",
                 this::masterJobTemplateScreen);
             section("Expenses and costs");
@@ -1991,6 +1995,40 @@ public final class MainActivity extends Activity {
                 getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE);
                 businessScreen();
             }).show();
+    }
+
+    private void featuresScreen(){
+        currentScreen="features";
+        currentJobId=null;currentCustomerId=null;
+        screen("Choose your features","Only use what your business needs");
+        navigation();
+        label(content,"Switches change the interface, not your stored records. "
+            +"Re-enable a feature to see the same data again. "
+            +"Contacts, customers, basic jobs, billing, backups, and app security "
+            +"are always available.",15,MUTED);
+        AppFeatures features=new AppFeatures(this);
+        for(int i=0;i<AppFeatures.KEYS.length;i++){
+            String key=AppFeatures.KEYS[i];
+            String name=AppFeatures.LABELS[i];
+            CheckBox toggle=checkbox(content,name,features.enabled(key));
+            toggle.setOnClickListener(v->{
+                boolean desired=toggle.isChecked();
+                try{features.set(key,desired);}
+                catch(Exception e){toggle.setChecked(!desired);error(e);}
+            });
+        }
+        section("Accessibility and navigation");
+        label(content,"TalkBack is an Android system accessibility service. "
+            +"Accubook automatically exposes controls when Android's screen reader "
+            +"is enabled; it cannot switch TalkBack on or off for you. "
+            +"Long-press and small options menus are paired with accessible buttons "
+            +"and labels. The optional extra move controls above are a visual preference.",
+            15,MUTED);
+        button(content,"Open Android accessibility settings",()->{
+            try{startActivity(new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS));}
+            catch(Exception e){error(e);}
+        });
+        button(content,"Return to Business",this::businessScreen);
     }
 
     private void brandingDialog() {
@@ -2650,7 +2688,8 @@ public final class MainActivity extends Activity {
             button(content,"Customize job checklist",this::masterJobTemplateScreen);
             button(content,"Try fictional sample job",this::createDemoWorkspace);
 
-            button(content,"Open daybook schedule",this::scheduleScreen);
+            if(new AppFeatures(this).enabled(AppFeatures.ADVANCED_SCHEDULING))
+                button(content,"Open daybook schedule",this::scheduleScreen);
             button(content, "Export workspace ZIP backup", () -> {
                 pendingBackup = true;
                 pendingInvoice = null;
@@ -2869,7 +2908,9 @@ public final class MainActivity extends Activity {
             }
             if("Materials".equals(selectedJobSection)){
             section("Vendors, crew and deliveries");
-            button(content,"Edit vendor / material delivery / crew",()->jobLogisticsDialog(work));
+            button(content,new AppFeatures(this).enabled(AppFeatures.CREWS)?
+                "Edit vendor / material delivery / crew":
+                "Edit vendor and delivery details",()->jobLogisticsDialog(work));
             TradeModules operations=new TradeModules(store);
             TradeModules.Logistics details=operations.logistics(work);
             label(content,"Vendor: "+details.vendor+" · Delivery: "+details.delivery,15,MUTED);
@@ -3334,6 +3375,8 @@ public final class MainActivity extends Activity {
             EditText crew=field(fields,"Assigned crew or personnel",
                 "Crew names");
             crew.setText(current.crew);
+        crew.setVisibility(new AppFeatures(this).enabled(AppFeatures.CREWS)?
+            View.VISIBLE:View.GONE);
             EditText notes=multiline(fields,"Operations notes / site instructions",
                 current.notes);
             dialog("Job vendors and logistics",fields,()->{
@@ -3600,7 +3643,8 @@ public final class MainActivity extends Activity {
     @Override
     public void onBackPressed() {
         if("contact".equals(currentScreen)){contactsScreen();return;}
-        if("job_template".equals(currentScreen)||"catalog".equals(currentScreen)){
+        if("job_template".equals(currentScreen)||"catalog".equals(currentScreen)||
+           "features".equals(currentScreen)){
             businessScreen();return;
         }
         if(currentJobId!=null){
