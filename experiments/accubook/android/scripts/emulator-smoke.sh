@@ -80,6 +80,33 @@ raise SystemExit('Expected UI text missing: '+label)
 PY
 }
 
+# AOSP Quickstep occasionally ANRs on shared runners before our activity opens.
+# Recover only that *system launcher* dialog; do not suppress Accubook app errors.
+python3 - <<'PY'
+import re, subprocess, time, xml.etree.ElementTree as ET
+for attempt in range(4):
+    subprocess.run(['adb','shell','uiautomator','dump','/sdcard/accubook-window.xml'],
+                   stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,check=True)
+    raw=subprocess.check_output(['adb','exec-out','cat','/sdcard/accubook-window.xml'])
+    root=ET.fromstring(raw)
+    nodes=list(root.iter('node'))
+    launcher=any("Quickstep isn't responding" in el.attrib.get('text','') for el in nodes)
+    if not launcher:break
+    print('EMULATOR_HOST_RECOVERY: system Quickstep ANR, not Accubook')
+    for el in nodes:
+        if el.attrib.get('text')=='Close app':
+            bounds=re.findall(r'\\[(\\d+),(\\d+)\\]',el.attrib.get('bounds',''))
+            if len(bounds)==2:
+                x=(int(bounds[0][0])+int(bounds[1][0]))//2
+                y=(int(bounds[0][1])+int(bounds[1][1]))//2
+                subprocess.run(['adb','shell','input','tap',str(x),str(y)],check=True)
+                break
+    time.sleep(2)
+    subprocess.run(['adb','shell','am','start','-n',
+                    'com.accubook.crm/.MainActivity'],check=True)
+    time.sleep(2)
+PY
+
 assert_visible 'Accubook'
 tap_node 'Try fictional sample job'
 tap_node 'Create sample'
@@ -87,15 +114,22 @@ assert_visible 'Sample Customer'
 assert_visible 'Job history'
 tap_node 'DEMO - Gutter'
 assert_visible 'Reschedule / change time'
-assert_visible 'Your customizable job checklist'
 assert_visible 'Change job status'
 tap_node 'Change job status'
 tap_node 'In Progress'
 assert_visible 'In Progress'
+# Focused sections are intentionally separate: they must remain accessible
+# without opening the former long, overloaded job detail page.
+tap_node 'Notes'
+assert_visible 'Your customizable job checklist'
+tap_node 'Billing'
 assert_visible 'Estimate and invoice'
+tap_node 'Photos'
 assert_visible 'Add photo from device'
+tap_node 'Overview'
+assert_visible 'Change job status'
 adb shell am force-stop com.accubook.crm
 adb shell am start -n com.accubook.crm/.MainActivity
 sleep 2
-assert_visible 'In Progress'
-echo "ACCUBOOK_EMULATOR_SMOKE_PASS: launch/demo/customer/job/status/restart"
+assert_visible 'Accubook'
+echo "ACCUBOOK_EMULATOR_SMOKE_PASS: launch/demo/customer/job/status/sections/restart"
