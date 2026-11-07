@@ -40,6 +40,7 @@ jobs:
           mkdir -p build/csv-test
           javac -d build/csv-test \
             app/src/main/java/com/accubook/crm/CsvCodec.java \
+            app/src/main/java/com/accubook/crm/BusinessSetupProfile.java \
             app/src/main/java/com/accubook/crm/BackupArchive.java \
             app/src/main/java/com/accubook/crm/DocumentNumbers.java \
             app/src/main/java/com/accubook/crm/PricingEngine.java \
@@ -53,6 +54,7 @@ jobs:
             app/src/main/java/com/accubook/crm/PhotoOrdering.java \
             app/src/main/java/com/accubook/crm/SecureArchive.java \
             app/src/test/java/com/accubook/crm/CsvCodecSmoke.java \
+            app/src/test/java/com/accubook/crm/BusinessSetupProfileSmoke.java \
             app/src/test/java/com/accubook/crm/BackupArchiveSmoke.java \
             app/src/test/java/com/accubook/crm/SecureArchiveSmoke.java \
             app/src/test/java/com/accubook/crm/PricingEngineSmoke.java \
@@ -65,6 +67,7 @@ jobs:
             app/src/test/java/com/accubook/crm/ServiceIntervalsSmoke.java \
             app/src/test/java/com/accubook/crm/InvoiceLineOrderingSmoke.java
           java -cp build/csv-test com.accubook.crm.CsvCodecSmoke
+          java -cp build/csv-test com.accubook.crm.BusinessSetupProfileSmoke
           java -cp build/csv-test com.accubook.crm.BackupArchiveSmoke
           java -cp build/csv-test com.accubook.crm.SecureArchiveSmoke
           java -cp build/csv-test com.accubook.crm.PricingEngineSmoke
