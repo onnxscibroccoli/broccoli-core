@@ -59,7 +59,7 @@ public final class DocumentActivity extends Activity {
     }
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state);
-        quote=getIntent().getBooleanExtra("quote",false);
+        quote=getIntent().getBooleanExtra("estimate",false);
         String jobId=getIntent().getStringExtra("job");
         try {
             store=new WorkspaceStore(this);
@@ -87,7 +87,7 @@ public final class DocumentActivity extends Activity {
         setContentView(main);
 
         TextView title=new TextView(this);
-        title.setText(quote?"Quote / estimate · live document editor":
+        title.setText(quote?"Estimate / estimate · live document editor":
             "Invoice draft · live document editor");
         title.setTextColor(LIGHT);
         title.setTextSize(21);
@@ -124,8 +124,8 @@ public final class DocumentActivity extends Activity {
             catch(Exception error){error(error);}
         });
         if(quote) {
-            action(actions,"Share quote text using installed app",this::shareQuote);
-            action(actions,"Mark quote sent / unsent",this::quoteStatus);
+            action(actions,"Share estimate text using installed app",this::shareQuote);
+            action(actions,"Mark estimate sent / unsent",this::quoteStatus);
         }
         preview=new WebView(this);
         preview.setBackgroundColor(Color.WHITE);
@@ -187,7 +187,7 @@ public final class DocumentActivity extends Activity {
         try {
             PrintManager printer=(PrintManager)getSystemService(Context.PRINT_SERVICE);
             if(printer==null)throw new IOException("Android printing is unavailable");
-            printer.print((quote?"Accubook-Quote-":"Accubook-Invoice-")+job.id,
+            printer.print((quote?"Accubook-Estimate-":"Accubook-Invoice-")+job.id,
                 preview.createPrintDocumentAdapter("Accubook Document"),
                 new PrintAttributes.Builder()
                     .setMediaSize(PrintAttributes.MediaSize.NA_LETTER)
@@ -205,17 +205,17 @@ public final class DocumentActivity extends Activity {
                 Html.FROM_HTML_MODE_COMPACT).toString();
             Intent send=new Intent(Intent.ACTION_SEND);
             send.setType("text/plain");
-            send.putExtra(Intent.EXTRA_SUBJECT,"Quote - "+job.title);
+            send.putExtra(Intent.EXTRA_SUBJECT,"Estimate - "+job.title);
             send.putExtra(Intent.EXTRA_TEXT,text);
-            startActivity(Intent.createChooser(send,"Share quote with"));
-            Toast.makeText(this,"After sending, mark Quote sent separately",
+            startActivity(Intent.createChooser(send,"Share estimate with"));
+            Toast.makeText(this,"After sending, mark Estimate sent separately",
                 Toast.LENGTH_LONG).show();
         }catch(Exception e){error(e);}
     }
     private void quoteStatus() {
         try {
             CrmWorkspace.Quote state=crm.quote(job);
-            new AlertDialog.Builder(this).setTitle("Quote sent status")
+            new AlertDialog.Builder(this).setTitle("Estimate sent status")
                 .setMessage(state.sent?"Marked sent on "+state.sentDate+
                     ". This is a manual delivery flag, not proof of delivery.":
                     "Mark sent only after your message has actually been sent.")
@@ -223,7 +223,7 @@ public final class DocumentActivity extends Activity {
                 .setPositiveButton(state.sent?"Mark unsent":"Mark sent",(d,w)->{
                     try {
                         crm.setQuoteSent(job,!state.sent,"Manually confirmed by user");
-                        Toast.makeText(this,!state.sent?"Quote marked sent":"Quote marked unsent",
+                        Toast.makeText(this,!state.sent?"Estimate marked sent":"Estimate marked unsent",
                             Toast.LENGTH_SHORT).show();
                     }catch(Exception e){error(e);}
                 }).show();
