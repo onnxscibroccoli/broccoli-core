@@ -13,6 +13,10 @@ public final class ReportSelectionSmoke {
         try{action.run();throw new AssertionError("Accepted invalid "+name);}
         catch(IllegalArgumentException expected){}
     }
+    private static void immutable(Runnable action,String name){
+        try{action.run();throw new AssertionError("Mutated "+name);}
+        catch(UnsupportedOperationException expected){}
+    }
     public static void main(String[] args){
         boolean[] sections={false,true,false,false,false,false};
         ReportSelection jobs=new ReportSelection(sections,
@@ -34,8 +38,8 @@ public final class ReportSelectionSmoke {
         check(!selected.expense("Mileage"),"Mileage must be excluded");
         boolean[] copy=selected.sections();copy[3]=false;
         check(selected.include(3),"returned sections are not immutable");
-        fails(()->selected.methods().add("Cash App"),"mutable payment allow-list");
-        fails(()->selected.categories().add("Mileage"),"mutable expense allow-list");
+        immutable(()->selected.methods().add("Cash App"),"payment allow-list");
+        immutable(()->selected.categories().add("Mileage"),"expense allow-list");
 
         fails(()->new ReportSelection(new boolean[6],
             Collections.emptySet(),Collections.emptySet()),"empty report");
