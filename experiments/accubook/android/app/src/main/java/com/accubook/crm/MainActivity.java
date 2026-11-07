@@ -1315,6 +1315,10 @@ public final class MainActivity extends Activity {
             List<WorkspaceStore.Job> jobs = store.jobs();
             screen("Accubook", "Your offline field service workspace");
             navigation();
+            section("Quick actions");
+            button(content, "+ Schedule job / create customer", this::chooseCustomer);
+            button(content, "New customer", this::customerDialog);
+            button(content, "Try with a sample customer and job", this::createDemoWorkspace);
             section("At a glance");
             int todayJobs=0,upcomingJobs=0,sentQuotes=0,active=0;
             BigDecimal openDraft=BigDecimal.ZERO,paid=BigDecimal.ZERO;
@@ -1332,10 +1336,7 @@ public final class MainActivity extends Activity {
             label(summary,"Quotes marked sent: "+sentQuotes,16,LIGHT);
             label(summary,"Draft billing: $"+openDraft.toPlainString(),17,LIGHT);
             label(summary,"Recorded receipts: $"+paid.toPlainString(),17,LIGHT);
-            section("Quick actions");
-            button(content,"+ Schedule job / create customer",this::chooseCustomer);
-            button(content, "New customer", this::customerDialog);
-            button(content, "Try with a sample customer and job", this::createDemoWorkspace);
+
             button(content, "Open daybook schedule", this::scheduleScreen);
             button(content, "Import one phone contact", this::pickContact);
             button(content, "Import multiple phone contacts", this::requestBulkContacts);
