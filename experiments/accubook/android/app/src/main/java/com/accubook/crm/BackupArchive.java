@@ -371,8 +371,8 @@ public final class BackupArchive {
                                 throw new IOException("Invalid reported work hours");
                         }else if(!e.get(4).isEmpty())
                             throw new IOException("Running timer has a completed-hours value");
-                    }catch(java.time.format.DateTimeParseException|NumberFormatException e){
-                        throw new IOException("Invalid time record",e);
+                    }catch(java.time.format.DateTimeParseException|NumberFormatException parseError){
+                        throw new IOException("Invalid time record",parseError);
                     }
                 }
             }
