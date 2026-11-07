@@ -106,7 +106,7 @@ public final class DocumentActivity extends Activity {
         LinearLayout actions=new LinearLayout(this);
         actions.setOrientation(LinearLayout.VERTICAL);
         controls.addView(actions);
-        LinearLayout.LayoutParams controlHeight=new LinearLayout.LayoutParams(-1,dp(208));
+        LinearLayout.LayoutParams controlHeight=new LinearLayout.LayoutParams(-1,dp(265));
         main.addView(controls,controlHeight);
 
         LinearLayout format=new LinearLayout(this);
@@ -116,8 +116,9 @@ public final class DocumentActivity extends Activity {
         formatButton(format,"Italic","italic");
         formatButton(format,"Underline","underline");
 
-        action(actions,"Save edited document sections",()->saveRich(false));
-        action(actions,"Print / Save as PDF",()->saveRich(true));
+        action(actions,"Save edited document sections",()->saveRich(false,false));
+        action(actions,"Save current layout as default template",()->saveRich(false,true));
+        action(actions,"Print / Save as PDF",()->saveRich(true,false));
         action(actions,"Refresh merged customer and line items",()->{
             try{render();}
             catch(Exception error){error(error);}
@@ -162,7 +163,7 @@ public final class DocumentActivity extends Activity {
             if(j.id.equals(job.id))return j;
         throw new IOException("Job deleted while editing");
     }
-    private void saveRich(boolean print) {
+    private void saveRich(boolean print,boolean asDefault) {
         // View reads only two editable areas; never accept script or arbitrary HTML.
         String code="(function(){return JSON.stringify(["
             +"document.getElementById('greeting').innerHTML,"
@@ -175,7 +176,9 @@ public final class DocumentActivity extends Activity {
                 String greeting=InvoiceHtml.safeRichFragment(values.getString(0));
                 String closing=InvoiceHtml.safeRichFragment(values.getString(1));
                 crm.saveMemo(job,greeting,closing);
-                Toast.makeText(this,"Document edits saved locally",Toast.LENGTH_SHORT).show();
+                if(asDefault)crm.saveDefaultMemo(greeting,closing);
+                Toast.makeText(this,asDefault?"Default template saved for new jobs":
+                    "Document edits saved locally",Toast.LENGTH_SHORT).show();
                 if(print) printPdf();
             }catch(Exception e){error(e);}
         });
