@@ -383,6 +383,8 @@ The baseline interaction is **Customer → Job → Notes/Photos → Invoice → 
 
 **Data ownership:** Three independent CSV tables: `master_data/inventory_materials.csv`, `master_data/inventory_tools.csv`, and `job_site_materials.csv` under the job folder. Stable IDs, four-decimal quantity bounds, two-decimal cost bounds, Android AtomicFile writes, optional pricebook IDs and job-linked tool assignments. Restore checks schema, duplicate IDs, tool job references and quantity/state consistency. Both normal ZIP and encrypted `.acbk` backup use the same allowlisted archive path.
 
+**Searchability:** When inventory is enabled, the same Home → Find anything query also matches company material names, tools and asset tags, and job-site material descriptions. Results deep-link to the inventory screen or the owning job.
+
 **Deliberate non-automation:** A delivered site quantity is an observation, not automatically a billable line or a decrement in company stock. Owners explicitly update counts and add invoice lines. This prevents duplicate accounting and stock mutations during offline retries. A future reconciled stock ledger must add explicit immutable movements, cross-file recovery and reconciliation tests before any automatic decrement. Supplier APIs remain opt-in adapters, not an app dependency.
 
 **Verification state:** Portable validation and archive regression tests are in CI; physical Android touch/large-font/TalkBack workflows, inventory export/restore on a device and simultaneous-editor contention are not yet accepted. No production readiness is asserted.
