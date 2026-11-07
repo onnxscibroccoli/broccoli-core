@@ -1871,7 +1871,7 @@ public final class MainActivity extends Activity {
                     Toast.makeText(this,(enabled?"Enabled: ":"Hidden: ")+
                         toggle.getText(),Toast.LENGTH_SHORT).show();
                 }catch(Exception error){
-                    toggle.setChecked(!enabled);
+                    settingsScreen(); // Re-read the persisted value; avoid recursive switch callbacks.
                     error(error);
                 }
             });
