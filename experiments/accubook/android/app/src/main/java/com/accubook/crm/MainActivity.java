@@ -94,6 +94,7 @@ public final class MainActivity extends Activity {
     private static final int REPORT_EXPORT_REQUEST=857;
     private static final int ENCRYPTED_BACKUP_EXPORT=858;
     private static final int ENCRYPTED_BACKUP_IMPORT=859;
+    private static final int CALENDAR_PERMISSIONS=860;
     private boolean lockRequestInProgress=false;
     private boolean unlocked=false;
     private long lastHiddenAt=0;
@@ -492,6 +493,7 @@ public final class MainActivity extends Activity {
             screen("Schedule", scheduleMode + " · " + first + " through " + last);
             navigation();
             button(content,"Open full month calendar grid",this::calendarScreen);
+            if(CalendarBridge.enabled(this))syncCalendarNow();
             button(content, "Change view (currently " + scheduleMode + ")", () -> {
                 String[] options = {"Day", "Week", "Month"};
                 new AlertDialog.Builder(this).setTitle("Show schedule by")
@@ -773,6 +775,106 @@ public final class MainActivity extends Activity {
             result.accept(pass);
         });
     }
+    private void calendarSettings(){
+        if(CalendarBridge.enabled(this)){
+            new AlertDialog.Builder(this).setTitle("Calendar synchronization")
+                .setMessage("Jobs are shared one way with your selected device calendar. "
+                    +"If it belongs to Google, that account may upload the events. "
+                    +"Turning sync off stops future updates but does not delete past events.")
+                .setNegativeButton("Keep enabled",(d,w)->{})
+                .setNeutralButton("Sync now",(d,w)->syncCalendarNow())
+                .setPositiveButton("Disable sync",(d,w)->{
+                    CalendarBridge.setEnabled(this,-1,false);
+                    businessScreen();
+                }).show();
+        }else new AlertDialog.Builder(this)
+            .setTitle("Share schedules with an Android / Google calendar?")
+            .setMessage("OFF by default. Selecting a calendar grants permission to copy "
+                +"job titles, site addresses, dates, status and daybook notes to that "
+                +"calendar. Google-account calendars can synchronize this information "
+                +"off-device. Nothing is transmitted by Accubook itself. "
+                +"Sync is one-way; only jobs are published and no customer phone/email "
+                +"or route points are included. No background sync is guaranteed.")
+            .setNegativeButton("Keep private",(d,w)->{})
+            .setPositiveButton("Choose calendar",(d,w)->{
+                if(checkSelfPermission(Manifest.permission.READ_CALENDAR)!=
+                    PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(Manifest.permission.WRITE_CALENDAR)!=
+                    PackageManager.PERMISSION_GRANTED){
+                    requestPermissions(new String[]{Manifest.permission.READ_CALENDAR,
+                        Manifest.permission.WRITE_CALENDAR},CALENDAR_PERMISSIONS);
+                }else chooseSyncCalendar();
+            }).show();
+    }
+    private void chooseSyncCalendar(){
+        try{
+            List<CalendarBridge.CalendarChoice> choices=
+                new CalendarBridge(this,store).choices();
+            if(choices.isEmpty()){
+                notice("No writable calendar","Add a calendar account or use the "
+                    +"device calendar application. Local scheduling remains available.");
+                return;
+            }
+            String[] names=new String[choices.size()];
+            for(int i=0;i<choices.size();i++)names[i]=choices.get(i).toString();
+            new AlertDialog.Builder(this).setTitle("Select destination calendar")
+                .setItems(names,(d,index)->{
+                    CalendarBridge.CalendarChoice choice=choices.get(index);
+                    new AlertDialog.Builder(this).setTitle("Confirm calendar sharing")
+                        .setMessage("Copy scheduled jobs and notes to "+choice+
+                            "? Calendar events will be visible to anyone with access "
+                            +"to that account or shared calendar. This is OFF by default.")
+                        .setNegativeButton("Cancel",(dd,w)->{})
+                        .setPositiveButton("Enable",(dd,w)->{
+                            CalendarBridge.setEnabled(this,choice.id,true);
+                            businessScreen();
+                            syncCalendarNow();
+                        }).show();
+                }).setNegativeButton("Cancel",(d,w)->{}).show();
+        }catch(Exception e){error(e);}
+    }
+    private void syncCalendarNow(){
+        if(!CalendarBridge.enabled(this))return;
+        new Thread(()->{
+            try {
+                int count=new CalendarBridge(this,store).syncAll();
+                runOnUiThread(()->Toast.makeText(this,
+                    count+" Accubook jobs reconciled with selected calendar",
+                    Toast.LENGTH_LONG).show());
+            }catch(Exception e){runOnUiThread(()->error(e));}
+        },"accubook-optin-calendar-sync").start();
+    }
+    private void createPickupReminder(WorkspaceStore.Job job){
+        LinearLayout fields=form();
+        EditText date=field(fields,"Pickup date · YYYY-MM-DD","Choose calendar date");
+        date.setText(job.date);
+        button(fields,"Pick dumpster pickup date",()->openDate(date));
+        EditText time=field(fields,"Pickup time · HH:mm","09:00");
+        time.setText("09:00");
+        button(fields,"Pick pickup time",()->openClock(time));
+        dialog("Set a calendar pickup reminder",fields,()->{
+            try {
+                java.time.LocalDateTime timestamp=java.time.LocalDateTime.parse(
+                    date.getText().toString()+"T"+time.getText().toString());
+                long start=timestamp.atZone(java.time.ZoneId.systemDefault())
+                    .toInstant().toEpochMilli();
+                Intent insert=new Intent(Intent.ACTION_INSERT,
+                    android.provider.CalendarContract.Events.CONTENT_URI);
+                insert.putExtra(android.provider.CalendarContract.Events.TITLE,
+                    "Dumpster pickup · "+job.title);
+                insert.putExtra(android.provider.CalendarContract.EXTRA_EVENT_BEGIN_TIME,start);
+                insert.putExtra(android.provider.CalendarContract.EXTRA_EVENT_END_TIME,
+                    start+30*60*1000);
+                insert.putExtra(android.provider.CalendarContract.Events.DESCRIPTION,
+                    "Accubook contractor pickup reminder. Please configure an event "
+                    +"notification in the calendar.");
+                insert.putExtra(android.provider.CalendarContract.Events.EVENT_LOCATION,
+                    job.street+", "+job.city+", "+job.state+" "+job.zip);
+                startActivity(insert); // explicit handoff, calendar app controls save.
+            }catch(Exception e){error(e);}
+        });
+    }
+
     private void chooseEncryptedBackup(){
         backupPasswordDialog("Encrypt a backup",true,pass->{
             pendingBackupPassword=pass;
@@ -911,6 +1013,15 @@ public final class MainActivity extends Activity {
     @Override public void onRequestPermissionsResult(int code,String[] permissions,
                                                      int[] grants) {
         super.onRequestPermissionsResult(code,permissions,grants);
+        if(code==CALENDAR_PERMISSIONS){
+            if(grants.length>=2 &&
+                grants[0]==PackageManager.PERMISSION_GRANTED &&
+                grants[1]==PackageManager.PERMISSION_GRANTED)
+                chooseSyncCalendar();
+            else notice("Calendar sync disabled","Calendar read/write permission was not "
+                +"granted. The local Accubook schedule is unchanged.");
+            return;
+        }
         if(code==ROUTE_LOCATION_PERMISSION){
             if(grants.length>0&&grants[0]==PackageManager.PERMISSION_GRANTED &&
                 routeJobId!=null)startRoute(routeJobId);
@@ -1392,6 +1503,11 @@ public final class MainActivity extends Activity {
             label(content,"No bank, PayPal or Cash App account connection is made. "
                 +"These are manual offline ledger entries, not verified settlements.",14,MUTED);
             button(content,"Create fictional test business data",this::createTestBusiness);
+            section("Optional calendar integration");
+            label(content,"Device/Google calendar sync: "+(
+                CalendarBridge.enabled(this)?"Opted in":"Off (private default)"),15,LIGHT);
+            button(content,"Calendar sync permissions and account",
+                this::calendarSettings);
             section("Privacy and protection");
             boolean protectedApp=UnlockActivity.isEnabled(this);
             label(content,"App unlock: "+(protectedApp?"Fingerprint/device PIN enabled":
@@ -2262,6 +2378,8 @@ public final class MainActivity extends Activity {
             label(content,"Crew: "+details.crew,15,MUTED);
             if(!details.notes.isEmpty())label(content,details.notes,15,LIGHT);
             button(content,"+ Add custom milestone",()->addJobMilestone(work));
+            button(content,"Create dumpster pickup calendar reminder",
+                ()->createPickupReminder(work));
             for(TradeModules.Milestone step:operations.milestones(work)){
                 LinearLayout stepCard=card();
                 label(stepCard,(step.complete()?"✓ ":"□ ")+step.name,17,LIGHT);
