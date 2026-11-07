@@ -128,6 +128,7 @@ public final class BusinessSetupActivity extends Activity {
         label(root,"3 · What do you want to see?",20);
         CheckBox prices=check(root,"Services and materials pricebook",previous.catalog);
         CheckBox recurring=check(root,"Repeat-service reminders",previous.recurring);
+        CheckBox inventory=check(root,"Materials, job-site stock and tools",previous.inventory);
         CheckBox time=check(root,"Record worker time (optional)",previous.workerTime);
         CheckBox gps=check(root,"Private GPS route capture (off by default)",previous.gps);
         label(root,"GPS never starts just because you enable its menu. "
@@ -148,7 +149,7 @@ public final class BusinessSetupActivity extends Activity {
                     materials.isChecked(),dumpsters.isChecked(),
                     team.getCheckedRadioButtonId()==crew.getId(),
                     prices.isChecked(),time.isChecked(),gps.isChecked(),
-                    previous.advancedCalendar,recurring.isChecked());
+                    previous.advancedCalendar,recurring.isChecked(),inventory.isChecked());
                 BusinessSetupStore.save(this,selected);
                 setResult(RESULT_OK);
                 finish();
@@ -161,7 +162,7 @@ public final class BusinessSetupActivity extends Activity {
                     previous.trade,previous.vendors,previous.materialDeliveries,
                     previous.dumpsters,previous.crew,previous.catalog,
                     previous.workerTime,previous.gps,previous.advancedCalendar,
-                    previous.recurring));
+                    previous.recurring,previous.inventory));
                 setResult(RESULT_OK);
                 finish();
             }catch(Exception error){showError(error);}
