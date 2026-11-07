@@ -129,8 +129,8 @@ public final class BusinessReports {
             StringBuilder scope=new StringBuilder("Explicit export scope. Files not selected are not included.\\n");
             for(int i=0;i<SECTIONS.length;i++)
                 scope.append(sections[i]?"INCLUDED: ":"EXCLUDED: ").append(SECTIONS[i]).append('\\n');
-            scope.append("Included payment methods: ").append(selection.paymentMethods).append('\\n')
-                .append("Included expense categories: ").append(selection.expenseCategories).append('\\n');
+            scope.append("Included payment methods: ").append(sections[3]?selection.paymentMethods:"(none: payment records disabled)").append('\\n')
+                .append("Included expense categories: ").append(sections[4]?selection.expenseCategories:"(none: expenses disabled)").append('\\n');
             zip.write(scope.toString().getBytes(StandardCharsets.UTF_8));
             zip.closeEntry();
 
