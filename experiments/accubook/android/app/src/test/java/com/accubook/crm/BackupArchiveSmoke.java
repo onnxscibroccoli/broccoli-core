@@ -58,6 +58,31 @@ public final class BackupArchiveSmoke {
             File photo = new File(root, jdir + "/photos/PHOTO-" + "c".repeat(32) + ".jpg");
             Files.createDirectories(photo.getParentFile().toPath());
             Files.write(photo.toPath(), new byte[]{(byte)255,(byte)216,(byte)255,0,1,2});
+            table(root,directory+"/contact_preferences.csv",
+                new String[]{"Call","SMS","Email","Color"},
+                row("true","false","true","#165DAB"));
+            table(root,jdir+"/appointment.csv",
+                new String[]{"StartTime","EndTime","Color","DaybookNote"},
+                row("09:00","10:30","#137C66","Roof visit"));
+            table(root,jdir+"/quote.csv",
+                new String[]{"QuoteSent","DateSent","QuoteNote"},
+                row("true","2026-11-07","Sent via email"));
+            table(root,jdir+"/payments.csv",
+                new String[]{"PaymentID","Date","Method","Amount","Reference","Notes"},
+                row("PAY-"+"e".repeat(32),"2026-11-07","Cash","10.00","R1","Deposit"));
+            table(root,jdir+"/invoice_memo.csv",new String[]{"Greeting","Closing"},
+                row("Welcome","Thank you"));
+            table(root,jdir+"/attachments.csv",
+                new String[]{"AttachmentID","DisplayName","MimeType","SizeBytes","StoredName"},
+                row("ATT-"+"f".repeat(32),"spec.pdf","application/pdf","5",
+                    "ATT-"+"f".repeat(32)+".bin"));
+            File attachment=new File(root,jdir+"/attachments/ATT-"+"f".repeat(32)+".bin");
+            Files.createDirectories(attachment.getParentFile().toPath());
+            Files.write(attachment.toPath(),new byte[]{1,2,3,4,5});
+            table(root,"templates/branding.csv",
+                new String[]{"BusinessName","Address","Phone","Email","AccentColor","Terms","Footer","LogoMimeType"},
+                row("Demo LLC","Boston, MA","555-0100","demo@example.invalid",
+                    "#165DAB","Pay on delivery","Thank you",""));
             File profile = new File(root, directory + "/profile.md");
             Files.createDirectories(profile.getParentFile().toPath());
             Files.writeString(profile.toPath(), "# notes\n", StandardCharsets.UTF_8);
@@ -135,6 +160,23 @@ public final class BackupArchiveSmoke {
             .contains("Shingle bundles"), "Materials not restored");
         check(Files.readString(new File(live, jdir + "/field_notes.md").toPath())
             .contains("Gate:"), "Field notes not restored");
+        check(Files.readString(new File(live,jdir+"/appointment.csv").toPath())
+            .contains("09:00"),"Appointment time missing");
+        check(Files.readString(new File(live,jdir+"/quote.csv").toPath())
+            .contains("true"),"Quote status missing");
+        check(Files.readString(new File(live,jdir+"/payments.csv").toPath())
+            .contains("Cash"),"Payment ledger missing");
+        check(Files.readAllBytes(new File(live,jdir+"/attachments/ATT-"+
+            "f".repeat(32)+".bin").toPath()).length==5,"Attachment missing");
+        File invalid=new File(tmp,"corrupt");
+        workspace(invalid,true);
+        table(invalid,jdir+"/payments.csv",
+            new String[]{"PaymentID","Date","Method","Amount","Reference","Notes"},
+            row("PAY-"+"e".repeat(32),"2026-11-07","Cash","-100.00","",""));
+        boolean rejectedLedger=false;
+        try{BackupArchive.validate(invalid);}
+        catch(IOException expected){rejectedLedger=true;}
+        check(rejectedLedger,"Corrupt payment ledger was accepted");
         boolean refused = false;
         try { BackupArchive.restore(live, new ByteArrayInputStream(good)); }
         catch (IOException expected) { refused = true; }
