@@ -1325,8 +1325,9 @@ public final class MainActivity extends Activity {
                 .setMessage("Accubook will copy your visible Android contacts into "
                     +"its PRIVATE local Contacts directory. Duplicates are skipped. "
                     +"Nothing is uploaded or converted into customers.")
-                .setNegativeButton("Cancel",(d,w)->{})
-                .setPositiveButton("Import all contacts",(d,w)->requestPhoneContacts(true))
+                .setNegativeButton("Cancel",(dialog,which)->{})
+                .setPositiveButton("Import all contacts",
+                    (dialog,which)->requestPhoneContacts(true))
                 .show()).show();
     }
     private void requestPhoneContacts(boolean all){
