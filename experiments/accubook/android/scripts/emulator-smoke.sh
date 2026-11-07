@@ -87,12 +87,17 @@ assert_visible 'Sample Customer'
 assert_visible 'Job history'
 tap_node 'DEMO - Gutter'
 assert_visible 'Reschedule / change time'
+# v0.5 separates the job into focused sections. Test each section explicitly.
+tap_node 'Job section Notes'
 assert_visible 'Your customizable job checklist'
+tap_node 'Job section Overview'
 assert_visible 'Change job status'
 tap_node 'Change job status'
 tap_node 'In Progress'
 assert_visible 'In Progress'
+tap_node 'Job section Billing'
 assert_visible 'Estimate and invoice'
+tap_node 'Job section Photos'
 assert_visible 'Add photo from device'
 adb shell am force-stop com.accubook.crm
 adb shell am start -n com.accubook.crm/.MainActivity
