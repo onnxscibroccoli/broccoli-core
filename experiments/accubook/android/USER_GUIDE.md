@@ -106,7 +106,7 @@ Custom VIN fields and basic month/mileage due rules are available. Structured ve
 6. Update this guide, README and the acceptance matrix, distinguishing implementation, CI validation and physical-device verification.
 7. Test the same task as a solo contractor, field tech, scheduler, bookkeeper, and customer. Remove needless taps.
 
-**Not yet production verified:** Android 15 physical signoff, signature rotation/recovery, full accessibility acceptance, separate signed change-order PDF, consented camera evidence, a persistent enterprise search index, automatic recurring job generation, inventory, supplier ordering, GL reconciliation, QuickBooks import formats and launcher logo packaging.
+**Not yet production verified:** Android 15 physical signoff, signature rotation/recovery, full accessibility acceptance, separate signed change-order PDF, consented camera evidence, a persistent enterprise search index, automatic recurring job generation, automatic inventory reconciliation, supplier ordering, GL reconciliation and QuickBooks import formats.
 
 **Design rule:** One obvious action; free text first; optional structure; editable owner settings; recoverable data; no background service dependency.
 
@@ -118,3 +118,22 @@ From **Home → Find anything**, type part of a name, phone number, address, job
 ## Printable service reminders
 
 Check the actual date work was completed before setting a due rule. Mileage-only services need a current reading; Accubook cannot read vehicle odometers. The optional due-service PDF does not contact anyone automatically. Choosing a cloud document provider for the save destination may upload the PDF through that provider, despite Accubook itself having no INTERNET permission.
+
+## Materials and tools — optional, simple mode
+
+1. **Switch on:** Business → Settings → turn on **Company materials, job-site stock and tools**. A solo operator never needs to create crew accounts or request an administrator.
+2. **Count stock:** Business → Company materials + tool inventory → **Add company material**. Enter a name, unit, count and cost. If you use a pricebook, **Copy a material from pricebook** pre-fills the name, unit and cost; the values remain editable. No pricebook match is required.
+3. **Track delivery:** Open a job → Materials → **Record delivered / used / returned material**. Enter what happened, quantity, and choose its status with a visible radio button. Edit or remove a mistaken entry directly.
+4. **Track equipment:** Business → inventory → **Add tool**. At a job, choose **Check out an available company tool** and tap the tool name. Use **Return tool to company** at the job or in Business. Available, checked-out and maintenance states are mutually exclusive.
+5. **Back up:** Business → **Create encrypted backup** before reinstalling or restoring. The stock, job-site and tool CSV files travel with the other workspace files. Imported backups reject invalid quantities, duplicate IDs and tools assigned to missing jobs.
+
+These three lists are a manual record, **not automatic inventory reconciliation**. Marking something Delivered or Used does not reduce the company count, record an expense or invoice it. When you want to bill it, open that job → Money → **Add labor, material or discount**. Prices remain owner-controlled. Turning off the inventory switch hides the screens and retains all files.
+
+### Developer map — inventory extension
+
+- `InventoryRules.java`: Android-independent strict CSV headers, stable ID and numeric/status validation.
+- `InventoryLayers.java`: three local lists, AtomicFile read/write and explicit tool checkout/return.
+- `BackupArchive.java`: allowlists the three CSVs and rejects orphan tool links or malformed rows.
+- `InventoryRulesSmoke.java` and `BackupArchiveSmoke.java`: deterministic numeric, foreign-key and ZIP roundtrip regression checks.
+
+For another trade, rename the displayed material, use an appropriate unit (bundle, piece, foot, gallon), and edit the owner-controlled fields. Do **not** clone the app or build a mandatory supplier integration.
