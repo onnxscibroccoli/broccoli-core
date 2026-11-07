@@ -64,6 +64,8 @@ public final class DocumentActivity extends Activity {
 
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state);
+        if((getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE)!=0)
+            AnnotationUi.install(this,()->unlocked?"document_editor":"locked");
         if(UnlockActivity.isEnabled(this)){
             getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE);
             showLock();
