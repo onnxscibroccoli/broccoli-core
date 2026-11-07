@@ -105,7 +105,7 @@ public final class BackupArchive {
     }
 
     private static boolean allowedFile(String name) {
-        if (name.matches("master_data/(customers|jobs|catalog|expenses|pricebook)\\.csv")) return true;
+        if (name.matches("master_data/(customers|jobs|catalog|expenses|pricebook|calendar_links)\\.csv")) return true;
         if(name.equals("templates/branding.csv")||name.equals("templates/default_memo.csv")
             ||name.equals("templates/logo.bin"))return true;
         if (name.matches("templates/[A-Za-z0-9_./-]{1,220}\\.(html|txt|md|json)"))
@@ -223,6 +223,19 @@ public final class BackupArchive {
         if(new File(root,"templates/default_memo.csv").isFile()){
             List<List<String>> templates=rows(root,"templates/default_memo.csv",MEMO);
             if(templates.size()>2)throw new IOException("Invalid default document template");
+        }
+        if(new File(root,"master_data/calendar_links.csv").isFile()){
+            List<List<String>> links=rows(root,"master_data/calendar_links.csv",
+                new String[]{"JobID","CalendarID","EventID"});
+            Set<String> linkKeys=new HashSet<>();
+            for(int i=1;i<links.size();i++){
+                List<String> values=links.get(i);
+                if(!values.get(0).matches("JOB-[a-f0-9]{32}")||
+                    !values.get(1).matches("[0-9]{1,18}")||
+                    !values.get(2).matches("[0-9]{1,18}")||
+                    !linkKeys.add(values.get(0)+"|"+values.get(1)))
+                    throw new IOException("Invalid calendar link record");
+            }
         }
         if(new File(root,"master_data/pricebook.csv").isFile()){
             List<List<String>> book=rows(root,"master_data/pricebook.csv",PRICEBOOK);
