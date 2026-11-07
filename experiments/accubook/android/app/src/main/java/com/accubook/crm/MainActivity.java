@@ -91,6 +91,7 @@ public final class MainActivity extends Activity {
     private String scheduleMode = "Week";
     private String currentScreen = "home";
     private String currentJobSection = "overview";
+    private int lookupRequestSerial=0;
     private static final int UNLOCK_REQUEST=853;
     private static final int ROUTE_LOCATION_PERMISSION=855;
     private static final int ROUTE_EXPORT_REQUEST=856;
@@ -171,6 +172,7 @@ public final class MainActivity extends Activity {
                 else if("catalog".equals(page))catalogScreen();
                 else if("settings".equals(page))settingsScreen();
                 else if("help".equals(page))helpScreen();
+                else if("lookup".equals(page))universalSearchScreen();
                 else if("contacts".equals(page))contactsScreen();
                 else if("contact".equals(page))contactsScreen();
                 else if("jobs".equals(page))jobsScreen();
@@ -489,6 +491,85 @@ public final class MainActivity extends Activity {
             });
             render.run();
         }catch(Exception e){error(e);}
+    }
+
+
+    /**
+     * A single explicit offline lookup avoids per-keystroke disk scans and
+     * does not create searchable copies of confidential customer information.
+     */
+    private void universalSearchScreen(){
+        currentScreen="lookup";currentJobId=null;currentCustomerId=null;
+        screen("Find anything","One search across customers, contacts, jobs, work and documents.");
+        navigation();
+        EditText query=field(content,"What are you looking for?",
+            "Name, phone, address, PO, invoice, VIN, material...");
+        query.setSingleLine(true);
+        query.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH);
+        LinearLayout results=new LinearLayout(this);
+        results.setOrientation(LinearLayout.VERTICAL);
+        Button search=button(content,"Search this device",()->runUniversalLookup(
+            query.getText().toString(),results));
+        query.setOnEditorActionListener((v,action,event)->{
+            if(action==android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH){
+                runUniversalLookup(query.getText().toString(),results);
+                return true;
+            }
+            return false;
+        });
+        content.addView(results,new LinearLayout.LayoutParams(-1,-2));
+        label(results,"No account, internet or special keyword required. "+
+            "Your search is never sent to a server.",14,MUTED);
+    }
+
+    private void runUniversalLookup(String query,LinearLayout results){
+        if(SearchTerms.normalize(query).length()<2){
+            results.removeAllViews();
+            label(results,"Type at least two letters or digits, then tap Search.",15,MUTED);
+            return;
+        }
+        final int request=++lookupRequestSerial;
+        results.removeAllViews();
+        label(results,"Searching this device…",16,MUTED);
+        // No customer data, queries, or matched notes are put into application logs.
+        new Thread(()->{
+            try{
+                List<UniversalLookup.Match> found=new UniversalLookup(this,store,crm)
+                    .search(query);
+                runOnUiThread(()->{
+                    if(!"lookup".equals(currentScreen)||request!=lookupRequestSerial)return;
+                    results.removeAllViews();
+                    if(found.isEmpty()){
+                        label(results,"Nothing found. Try a name, part of an address or "+
+                            "a shorter word.",16,MUTED);
+                        return;
+                    }
+                    label(results,found.size()+(found.size()==80?" or more":"")+
+                        " results · best matches first",14,MUTED);
+                    for(UniversalLookup.Match item:found){
+                        button(results,item.title+"\n"+item.detail,()->{
+                            switch(item.kind){
+                                case "CUSTOMER": customer(item.id); break;
+                                case "CONTACT": contactDetails(item.id); break;
+                                case "JOB": job(item.id); break;
+                                case "CATALOG": catalogScreen(); break;
+                                default: notice("Search result","This record cannot be opened.");
+                            }
+                        });
+                    }
+                    if(found.size()==80)label(results,"Showing the first 80 matches. "+
+                        "Use another word to narrow the results.",14,MUTED);
+                });
+            }catch(Exception failure){
+                runOnUiThread(()->{
+                    if(!"lookup".equals(currentScreen)||request!=lookupRequestSerial)return;
+                    results.removeAllViews();
+                    error(failure);
+                    label(results,"Search could not finish. No workspace records were "+
+                        "deleted or reset.",15,MUTED);
+                });
+            }
+        },"accubook-local-lookup").start();
     }
 
     /** Independent contact directory. No automatic customer creation. */
@@ -2801,6 +2882,7 @@ public final class MainActivity extends Activity {
             screen("Accubook · Dashboard",greeting+
                 "  |  PRIVATE • OFFLINE • YOUR DATA");
             navigation();
+            button(content,"Find anything · name, phone, address, job, invoice",this::universalSearchScreen);
             section("Today · live overview");
             int todayJobs=0,upcomingJobs=0,sentQuotes=0,active=0;
             BigDecimal openDraft=BigDecimal.ZERO,paid=BigDecimal.ZERO;
