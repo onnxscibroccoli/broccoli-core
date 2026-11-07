@@ -33,9 +33,10 @@ public final class HelpTopics {
                 "Only promote a contact when they actually become a customer.",
                 "phone address book bulk import"),
             new Topic("Find a job quickly",
-                "Open Jobs or Customers. Use the available search box to narrow results.",
-                "Find by customer name, phone or relevant job details where shown. "+
-                "A universal all-fields index is planned, not yet available.",
+                "Open Home → Find anything. One box finds existing records.",
+                "Search by customer/contact name, phone, address, invoice reference, note, "+
+                "material, job ID or value in a custom field. Search runs locally only "+
+                "when you tap Search; narrow long result lists with more terms.",
                 "search lookup address phone work order invoice vin"),
             new Topic("Take and reorder photos",
                 "Open a job → Photos → Import multiple photos.",
@@ -76,7 +77,8 @@ public final class HelpTopics {
             new Topic("Hide modules you do not use",
                 "Start simple. Switch on additional tools only when useful.",
                 "Open Business → Settings → Modules. Turn on crew, catalog, worker time, "+
-                "GPS or experimental calendar sync individually. Switching off a module "+
+                "GPS, repeat-service due dates or experimental calendar sync. Switching off "+
+                "a module "+
                 "hides its controls and never deletes stored records.",
                 "solo business feature flags crew toggles preferences"),
             new Topic("Customize a job template",
@@ -97,6 +99,15 @@ public final class HelpTopics {
                 "For an Android Calendar event, use Add to Calendar. "+
                 "External calendar account synchronization is optional and experimental.",
                 "due dates dumpster local alarm calendar reminders"),
+            new Topic("Know who needs repeat service",
+                "Repeat service is an optional due-by-date and mileage list.",
+                "Enable Repeat-service due dates in Business → Settings. Open an old "+
+                "job → Overview → Set next service due. Enter when the service "+
+                "actually happened and the months or miles until it is due again. "+
+                "Home shows date-due reminders. You can save printable PDF slips, "+
+                "pause rules and update completion dates. It never contacts customers "+
+                "or creates new jobs by itself.",
+                "oil change mileage gutters recurring service reminder slips"),
             new Topic("Keep a safe backup",
                 "Export an encrypted backup before restoring or uninstalling.",
                 "From Home choose Create encrypted workspace backup, set a strong password "+
@@ -112,7 +123,7 @@ public final class HelpTopics {
                 "screenreader screen reader keyboard voice low vision"),
             new Topic("Features still in development",
                 "A planned feature is not a working feature.",
-                "Universal search, recurring due-date service reminders, multi-property "+
+                "Automatic repeat-job creation, persistent full-text indexing, multi-property "+
                 "records, inventory reconciliation, supplier ordering, deep AR/AP/GL "+
                 "posting and full QuickBooks mappings are not complete. "+
                 "The app continues to operate offline without these.",
