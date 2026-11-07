@@ -562,7 +562,7 @@ public final class WorkspaceStore {
             List<String> sorted=new ArrayList<>();
             for(int i=1;i<rows.size();i++){
                 String filename=rows.get(i).get(0);
-                if(!filename.matches("PHOTO-[a-f0-9]{32}\\\\.(jpg|png|webp|heic|heif|avif|gif|bmp|tiff|dng|img)")||
+                if(!filename.matches("PHOTO-[a-f0-9]{32}\\.(jpg|png|webp|heic|heif|avif|gif|bmp|tiff|dng|img)")||
                     !seen.add(filename))
                     throw new IOException("Invalid saved photo order");
                 if(names.contains(filename))sorted.add(filename);
