@@ -3079,61 +3079,71 @@ public final class MainActivity extends Activity {
             }
         }catch(Exception e){error(e);}
     }
-    private void editMasterField(JobTemplates.Field old){
+    /** Type-specific editor: no user must enter true/false for a checkbox. */
+    private static String customFieldValue(String kind,CheckBox checked,
+        EditText text,EditText date,EditText number){
+        if(kind.equals(JobTemplates.CHECK))return Boolean.toString(checked.isChecked());
+        if(kind.equals(JobTemplates.DATE))return date.getText().toString();
+        if(kind.equals(JobTemplates.NUMBER))return number.getText().toString();
+        return text.getText().toString();
+    }
+    private void customFieldEditor(JobTemplates.Field old,WorkspaceStore.Job job){
+        boolean master=job==null;
         LinearLayout fields=form();
-        EditText name=field(fields,"Field label (rename anytime)","On-site estimate visit");
+        EditText name=field(fields,"Field name · you can rename it","Site visit confirmed");
         if(old!=null)name.setText(old.label);
-        String[] type={old==null?JobTemplates.CHECK:old.kind};
-        Button picker=button(fields,"Type: "+type[0],()->{});
-        picker.setOnClickListener(v->new AlertDialog.Builder(this).setTitle("Field type")
-            .setItems(JobTemplates.KINDS,(d,i)->{
-                type[0]=JobTemplates.KINDS[i];picker.setText("Type: "+type[0]);
-            }).show());
-        CheckBox required=checkbox(fields,"Required before completing a job",
+        String[] kind={old==null?JobTemplates.CHECK:old.kind};
+        Button type=button(fields,"Field type: "+kind[0],()->{});
+        CheckBox required=checkbox(fields,"Required before a job can be completed",
             old!=null&&old.required);
-        EditText defaultValue=field(fields,"Default value (optional; checkbox true/false)",
-            "Leave empty except for checkboxes");
-        defaultValue.setText(old==null?"false":old.value);
-        dialog(old==null?"Add master job field":"Edit master field",fields,()->{
-            try{
-                new JobTemplates(store).saveMaster(old==null?null:old.id,
-                    name.getText().toString(),type[0],required.isChecked(),
-                    type[0].equals(JobTemplates.CHECK)?
-                        (defaultValue.getText().toString().trim().isEmpty()?"false":
-                            defaultValue.getText().toString()):
-                        defaultValue.getText().toString());
-                masterJobTemplateScreen();
-            }catch(IOException e){throw new IllegalStateException(e);}
+        CheckBox checked=checkbox(fields,"Completed / checked",
+            old!=null&&old.kind.equals(JobTemplates.CHECK)&&old.checked());
+        EditText text=multiline(fields,master?"Default text or instructions":
+            "Job-specific notes or value",
+            old!=null&&old.kind.equals(JobTemplates.TEXT)?old.value:"");
+        EditText date=field(fields,"Date (tap calendar or type YYYY-MM-DD)","YYYY-MM-DD");
+        if(old!=null&&old.kind.equals(JobTemplates.DATE))date.setText(old.value);
+        Button datePicker=button(fields,"Pick date",()->openDate(date));
+        EditText number=field(fields,"Number","0");
+        number.setInputType(InputType.TYPE_CLASS_NUMBER|
+            InputType.TYPE_NUMBER_FLAG_DECIMAL|InputType.TYPE_NUMBER_FLAG_SIGNED);
+        if(old!=null&&old.kind.equals(JobTemplates.NUMBER))number.setText(old.value);
+        Runnable show=()->{
+            checked.setVisibility(kind[0].equals(JobTemplates.CHECK)?View.VISIBLE:View.GONE);
+            text.setVisibility(kind[0].equals(JobTemplates.TEXT)?View.VISIBLE:View.GONE);
+            date.setVisibility(kind[0].equals(JobTemplates.DATE)?View.VISIBLE:View.GONE);
+            datePicker.setVisibility(kind[0].equals(JobTemplates.DATE)?View.VISIBLE:View.GONE);
+            number.setVisibility(kind[0].equals(JobTemplates.NUMBER)?View.VISIBLE:View.GONE);
+        };
+        show.run();
+        type.setOnClickListener(v->new AlertDialog.Builder(this)
+            .setTitle("Choose field type")
+            .setItems(JobTemplates.KINDS,(d,index)->{
+                kind[0]=JobTemplates.KINDS[index];
+                type.setText("Field type: "+kind[0]);show.run();
+            }).show());
+        dialog(master?(old==null?"Add to master template":"Edit master template field"):
+            (old==null?"New job field":"Edit job field"),fields,()->{
+            String value=customFieldValue(kind[0],checked,text,date,number);
+            try {
+                JobTemplates templates=new JobTemplates(store);
+                if(master){
+                    templates.saveMaster(old==null?null:old.id,name.getText().toString(),
+                        kind[0],required.isChecked(),value);
+                    masterJobTemplateScreen();
+                }else{
+                    templates.saveJob(job,old==null?null:old.id,name.getText().toString(),
+                        kind[0],required.isChecked(),value);
+                    job(job.id);
+                }
+            }catch(IOException failure){throw new IllegalStateException(failure);}
         });
     }
-    private void editJobField(WorkspaceStore.Job work,JobTemplates.Field old){
-        LinearLayout fields=form();
-        EditText title=field(fields,"Job field label","Materials delivered");
-        title.setText(old==null?"":old.label);
-        String[] type={old==null?JobTemplates.CHECK:old.kind};
-        Button select=button(fields,"Field type: "+type[0],()->{});
-        select.setOnClickListener(v->new AlertDialog.Builder(this).setTitle("Field type")
-            .setItems(JobTemplates.KINDS,(d,i)->{
-                type[0]=JobTemplates.KINDS[i];select.setText("Field type: "+type[0]);
-            }).show());
-        CheckBox required=checkbox(fields,"Required to complete job",
-            old!=null&&old.required);
-        EditText value=field(fields,"Value / notes / date",
-            "Enter text, YYYY-MM-DD, number or true/false");
-        value.setText(old==null?"false":old.value);
-        if(old!=null&&old.kind.equals(JobTemplates.DATE))
-            button(fields,"Choose date",()->openDate(value));
-        dialog(old==null?"Add job-specific field":"Edit job field",fields,()->{
-            try{
-                new JobTemplates(store).saveJob(work,old==null?null:old.id,
-                    title.getText().toString(),type[0],required.isChecked(),
-                    type[0].equals(JobTemplates.CHECK)&&
-                        value.getText().toString().trim().isEmpty()?"false":
-                        value.getText().toString());
-                job(work.id);
-            }catch(IOException e){throw new IllegalStateException(e);}
-        });
+    private void editMasterField(JobTemplates.Field old){customFieldEditor(old,null);}
+    private void editJobField(WorkspaceStore.Job job,JobTemplates.Field old){
+        customFieldEditor(old,job);
     }
+
     private void jobCustomFields(WorkspaceStore.Job work)throws IOException{
         section("Your customizable job checklist");
         button(content,"+ Add any field or checklist item",()->editJobField(work,null));
