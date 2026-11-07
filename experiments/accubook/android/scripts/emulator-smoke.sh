@@ -20,7 +20,7 @@ tap_node() {
   LABEL="$label" python3 - <<'PY'
 import os, re, subprocess, time, xml.etree.ElementTree as ET
 label = os.environ['LABEL']
-for attempt in range(8):
+for attempt in range(28):
     subprocess.run(['adb','shell','uiautomator','dump','/sdcard/accubook-window.xml'],
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
     xml = subprocess.check_output(['adb','exec-out','cat','/sdcard/accubook-window.xml'])
@@ -43,7 +43,7 @@ for attempt in range(8):
                 exit(0)
             print('OFFSCREEN_NODE',label,x,y,'screen_height',height)
     # Scroll to the target; accessibility XML can contain off-screen bounds.
-    if attempt < 5:
+    if attempt < 24:
         subprocess.run(['adb','shell','input','swipe','500','1550','500','560','350'],check=True)
     else:
         subprocess.run(['adb','shell','input','swipe','500','560','500','1500','350'],check=True)
@@ -68,7 +68,7 @@ for attempt in range(8):
     if label.lower() in raw.lower():
         print('VISIBLE',label)
         exit(0)
-    if attempt<6:
+    if attempt<24:
         subprocess.run(['adb','shell','input','swipe','500','1550','500','570','350'],check=True)
     else:
         subprocess.run(['adb','shell','input','swipe','500','570','500','1500','350'],check=True)
@@ -81,12 +81,13 @@ PY
 }
 
 assert_visible 'Accubook'
-tap_node 'Try with a sample customer'
+tap_node 'Try fictional sample job'
 tap_node 'Create sample'
 assert_visible 'Sample Customer'
 assert_visible 'Job history'
 tap_node 'DEMO - Gutter'
 assert_visible 'Reschedule / change time'
+assert_visible 'Your customizable job checklist'
 assert_visible 'Change job status'
 tap_node 'Change job status'
 tap_node 'In Progress'
