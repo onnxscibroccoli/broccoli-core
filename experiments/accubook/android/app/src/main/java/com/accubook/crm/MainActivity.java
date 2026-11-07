@@ -2468,13 +2468,12 @@ public final class MainActivity extends Activity {
         try {
             List<WorkspaceStore.Customer> customers = store.customers();
             List<WorkspaceStore.Job> jobs = store.jobs();
-            screen("Accubook", "Your offline field service workspace");
+            String greeting=LocalTime.now().getHour()<12?"Good morning":
+                LocalTime.now().getHour()<17?"Good afternoon":"Good evening";
+            screen("Accubook · Dashboard",greeting+
+                "  |  PRIVATE • OFFLINE • YOUR DATA");
             navigation();
-            section("Quick actions");
-            button(content, "+ Schedule job / create customer", this::chooseCustomer);
-            button(content, "New customer", this::customerDialog);
-            button(content, "Try with a sample customer and job", this::createDemoWorkspace);
-            section("At a glance");
+            section("Today · live overview");
             int todayJobs=0,upcomingJobs=0,sentQuotes=0,active=0;
             BigDecimal openDraft=BigDecimal.ZERO,paid=BigDecimal.ZERO;
             for(WorkspaceStore.Job entry:jobs){
@@ -2486,14 +2485,40 @@ public final class MainActivity extends Activity {
                 paid=paid.add(crm.received(entry));
             }
             LinearLayout summary=card();
-            label(summary,"Today: "+todayJobs+" jobs    Upcoming: "+upcomingJobs,18,LIGHT);
-            label(summary,"Customers: "+customers.size()+"    Active work: "+active,17,LIGHT);
-            label(summary,"Estimates marked sent: "+sentQuotes,16,LIGHT);
-            label(summary,"Estimated job value: $"+openDraft.toPlainString(),17,LIGHT);
-            label(summary,"Recorded receipts: $"+paid.toPlainString(),17,LIGHT);
+            label(summary,"TODAY  "+LocalDate.now().getDayOfWeek()+" · "+
+                LocalDate.now(),15,MUTED);
+            label(summary,todayJobs+" appointments today   ·   "+upcomingJobs+
+                " upcoming",21,LIGHT);
+            label(summary,active+" active jobs   ·   "+customers.size()+
+                " customers",17,LIGHT);
+            label(summary,new ContactDirectory(store).all().size()+
+                " saved contacts   ·   "+sentQuotes+" estimates sent",16,MUTED);
+            label(summary,"JOB VALUE   $"+openDraft.toPlainString(),19,LIGHT);
+            label(summary,"RECEIVED   $"+paid.toPlainString()+"   ·   OPEN   $"+
+                openDraft.subtract(paid).toPlainString(),16,LIGHT);
+            WorkspaceStore.Job next=null;
+            for(WorkspaceStore.Job j:jobs)
+                if(j.date.compareTo(LocalDate.now().toString())>=0 &&
+                    (next==null||j.date.compareTo(next.date)<0))
+                    next=j;
+            if(next!=null){
+                CrmWorkspace.Appointment time=crm.appointment(next);
+                LinearLayout upcoming=card();
+                label(upcoming,"NEXT VISIT",14,MUTED);
+                label(upcoming,next.title,20,LIGHT);
+                label(upcoming,next.date+"  ·  "+time.start+"–"+time.end,17,LIGHT);
+                final String nextJob=next.id;
+                button(upcoming,"Open next job →",()->job(nextJob));
+            }
+            section("Quick actions");
+            button(content,"＋ New scheduled job",this::chooseCustomer);
+            button(content,"Calendar · look ahead",this::calendarScreen);
+            button(content,"Contacts · import all or browse",this::contactsScreen);
+            button(content,"＋ New customer",this::customerDialog);
+            button(content,"Customize job checklist",this::masterJobTemplateScreen);
+            button(content,"Try fictional sample job",this::createDemoWorkspace);
 
-            button(content, "Open daybook schedule", this::scheduleScreen);
-            button(content,"Contacts: import all or browse",this::contactsScreen);
+            button(content,"Open daybook schedule",this::scheduleScreen);
             button(content, "Export workspace ZIP backup", () -> {
                 pendingBackup = true;
                 pendingInvoice = null;
