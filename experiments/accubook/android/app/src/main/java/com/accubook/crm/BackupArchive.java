@@ -113,7 +113,7 @@ public final class BackupArchive {
             + "appointment\\.csv|quote\\.csv|payments\\.csv|invoice_memo\\.csv|"
             + "time_entries\\.csv|route_points\\.csv|"
             + "attachments\\.csv|attachments/ATT-[a-f0-9]{32}\\.bin|"
-            + "photos/PHOTO-[a-f0-9]{32}\\.(jpg|png|webp))");
+            + "photos/PHOTO-[a-f0-9]{32}\\.(jpg|png|webp|heic|heif|avif|gif|bmp|tiff|dng|img))");
     }
 
     private static void unpack(File destination, InputStream input) throws IOException {
