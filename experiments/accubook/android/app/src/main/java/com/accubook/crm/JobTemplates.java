@@ -112,7 +112,8 @@ public final class JobTemplates {
     }
     public synchronized List<Field> master()throws IOException {
         List<Field> fields=new ArrayList<>();
-        for(List<String> r:masterRows().subList(1,masterRows().size())){
+        List<List<String>> rows=masterRows();
+        for(List<String> r:rows.subList(1,rows.size())){
             Field field=new Field(r,false);
             if(field.active)fields.add(field);
         }
@@ -159,7 +160,8 @@ public final class JobTemplates {
     }
     public synchronized List<Field> forJob(WorkspaceStore.Job job)throws IOException{
         List<Field> fields=new ArrayList<>();
-        for(List<String> line:jobRows(job).subList(1,jobRows(job).size())){
+        List<List<String>> rows=jobRows(job);
+        for(List<String> line:rows.subList(1,rows.size())){
             Field field=new Field(line,true);
             if(field.active)fields.add(field);
         }
