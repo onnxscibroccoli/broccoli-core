@@ -282,6 +282,44 @@ public final class BackupArchiveSmoke {
         BackupArchive.recover(live);
         check(live.isDirectory(), "Crash recovery failed to reopen previous");
         BackupArchive.validate(live);
+
+        // Signed change orders must survive ZIP export and reject altered evidence.
+        File signed=new File(tmp,"signed-workspace");
+        workspace(signed,true);
+        String coId="CO-"+"6".repeat(32),coLineId="COL-"+"7".repeat(32);
+        byte[] png=new byte[128];
+        byte[] magic={(byte)137,80,78,71,13,10,26,10};
+        System.arraycopy(magic,0,png,0,magic.length);
+        String signedName=jdir+"/change_order_signatures/"+coId+".png";
+        File signature=new File(signed,signedName);
+        Files.createDirectories(signature.getParentFile().toPath());
+        Files.write(signature.toPath(),png);
+        List<List<String>> signedLines=new ArrayList<>();
+        signedLines.add(row(coLineId,coId,"Extra downspout","2","25.00","50.00"));
+        table(signed,jdir+"/change_order_lines.csv",
+            new String[]{"LineID","ChangeOrderID","Description","Quantity","UnitRate","Amount"},
+            signedLines.get(0));
+        String at="2026-11-07T19:20:00Z",sigHash=ChangeOrderProof.sha256(png);
+        String contentHash=ChangeOrderProof.contentHash("JOB-"+"b".repeat(32),coId,
+            "Customer-approved work",at,"Sample Signer",sigHash,signedLines);
+        table(signed,jdir+"/change_orders.csv",
+            new String[]{"ChangeOrderID","Title","Status","CreatedUTC","AcknowledgedUTC",
+                "SignedBy","SignatureSHA256","ContentSHA256"},
+            row(coId,"Customer-approved work","Acknowledged",
+                "2026-11-07T19:00:00Z",at,"Sample Signer",sigHash,contentHash));
+        BackupArchive.validate(signed);
+        File restoredSigned=new File(tmp,"restored-signed-workspace");
+        BackupArchive.restore(restoredSigned,new ByteArrayInputStream(zip(signed)));
+        BackupArchive.validate(restoredSigned);
+        check(Files.isRegularFile(new File(restoredSigned,signedName).toPath()),
+            "Acknowledgement PNG lost in restore");
+        table(signed,jdir+"/change_order_lines.csv",
+            new String[]{"LineID","ChangeOrderID","Description","Quantity","UnitRate","Amount"},
+            row(coLineId,coId,"Different unauthorized work","2","25.00","50.00"));
+        boolean rejectedSigned=false;
+        try{BackupArchive.validate(signed);}catch(IOException expected){rejectedSigned=true;}
+        check(rejectedSigned,"Tampered signed change order was accepted");
+
         System.out.println("BackupArchiveSmoke: PASS (validation, traversal, rollback, crash)");
     }
 }
