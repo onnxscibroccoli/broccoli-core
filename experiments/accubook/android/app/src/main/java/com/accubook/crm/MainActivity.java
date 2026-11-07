@@ -663,46 +663,135 @@ public final class MainActivity extends Activity {
         }
     }
 
+    /** Loads the user's complete permitted contacts, without a fixed result cap. */
     private void showBulkContactPicker() {
-        try {
-            LinkedHashMap<String,PhoneContact> contacts=new LinkedHashMap<>();
-            String[] projection={
-                ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
-                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-                ContactsContract.CommonDataKinds.Phone.NUMBER
-            };
-            try(Cursor cursor=getContentResolver().query(
-                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                projection,null,null,ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME+" ASC")){
-                if(cursor==null)throw new IOException("Cannot browse phone contacts");
-                while(cursor.moveToNext()&&contacts.size()<250){
-                    String id=cursor.getString(0), name=cursor.getString(1), phone=cursor.getString(2);
-                    if(id!=null&&name!=null&&!name.trim().isEmpty()&&!contacts.containsKey(id))
-                        contacts.put(id,new PhoneContact(id,name,phone==null?"":phone));
-                }
-            }
-            List<PhoneContact> values=new ArrayList<>(contacts.values());
-            if(values.isEmpty()){notice("No contacts found","No phone contacts are available.");return;}
-            String[] labels=new String[values.size()];
-            boolean[] selected=new boolean[values.size()];
-            for(int i=0;i<values.size();i++)
-                labels[i]=values.get(i).name+" · "+values.get(i).phone;
-            AlertDialog dlg=new AlertDialog.Builder(this)
-                .setTitle("Select customers ("+values.size()+" shown)")
-                .setMultiChoiceItems(labels,selected,(dialog,index,checked)->selected[index]=checked)
-                .setNegativeButton("Cancel",(dialog,index)->{})
-                .setNeutralButton("Select all shown",null)
-                .setPositiveButton("Import selected",(dialog,index)->importSelectedContacts(values,selected))
-                .create();
-            dlg.setOnShowListener(d->dlg.getButton(AlertDialog.BUTTON_NEUTRAL)
-                .setOnClickListener(v->{
-                    for(int i=0;i<selected.length;i++){
-                        selected[i]=true;dlg.getListView().setItemChecked(i,true);
+        Toast.makeText(this,"Loading contacts…",Toast.LENGTH_SHORT).show();
+        new Thread(()->{
+            try {
+                LinkedHashMap<String,PhoneContact> contacts=new LinkedHashMap<>();
+                String[] projection={
+                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
+                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                    ContactsContract.CommonDataKinds.Phone.NUMBER
+                };
+                try(Cursor cursor=getContentResolver().query(
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                    projection,null,null,ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME+" ASC")){
+                    if(cursor==null)throw new IOException("Cannot browse phone contacts");
+                    while(cursor.moveToNext()){
+                        String id=cursor.getString(0), name=cursor.getString(1),phone=cursor.getString(2);
+                        if(id!=null&&name!=null&&!name.trim().isEmpty()&&!contacts.containsKey(id))
+                            contacts.put(id,new PhoneContact(id,name,phone==null?"":phone));
                     }
-                }));
-            dlg.show();
-        }catch(Exception e){error(e);}
+                }
+                runOnUiThread(()->bulkContactDialog(new ArrayList<>(contacts.values())));
+            }catch(Exception failure){runOnUiThread(()->error(failure));}
+        },"accubook-contact-discovery").start();
     }
+
+    /**
+     * Search applies to the entire contact collection. Checked IDs persist across
+     * queries/pages; the visible page is just a small, recyclable selection surface.
+     */
+    private void bulkContactDialog(List<PhoneContact> all) {
+        if(all.isEmpty()){notice("No contacts","Your address book has no phone contacts.");return;}
+        final Set<String> chosen=new HashSet<>();
+        final int[] page={0};
+        final int pageSize=60;
+        final LinearLayout root=new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.setPadding(dp(15),dp(10),dp(15),dp(12));
+        final EditText search=new EditText(this);
+        search.setSingleLine(true);
+        search.setHint("Search any contact by name or phone");
+        search.setTextSize(17);
+        root.addView(search,new LinearLayout.LayoutParams(-1,dp(52)));
+        final TextView status=new TextView(this);
+        status.setTextSize(15);
+        status.setTextColor(Color.DKGRAY);
+        root.addView(status);
+        final ScrollView scroll=new ScrollView(this);
+        final LinearLayout results=new LinearLayout(this);
+        results.setOrientation(LinearLayout.VERTICAL);
+        scroll.addView(results);
+        root.addView(scroll,new LinearLayout.LayoutParams(-1,dp(360)));
+        final LinearLayout pager=new LinearLayout(this);
+        pager.setOrientation(LinearLayout.HORIZONTAL);
+        root.addView(pager);
+        final Button previous=new Button(this),next=new Button(this);
+        previous.setText("Previous");
+        next.setText("Next");
+        pager.addView(previous,new LinearLayout.LayoutParams(0,dp(50),1));
+        pager.addView(next,new LinearLayout.LayoutParams(0,dp(50),1));
+        Runnable render=()->{
+            String needle=search.getText().toString().trim().toLowerCase(Locale.ROOT);
+            List<PhoneContact> filtered=new ArrayList<>();
+            for(PhoneContact c:all)if(c.name.toLowerCase(Locale.ROOT).contains(needle)||
+                c.phone.toLowerCase(Locale.ROOT).contains(needle))filtered.add(c);
+            int pages=Math.max(1,(filtered.size()+pageSize-1)/pageSize);
+            page[0]=Math.max(0,Math.min(page[0],pages-1));
+            results.removeAllViews();
+            int start=page[0]*pageSize;
+            int end=Math.min(filtered.size(),start+pageSize);
+            for(int i=start;i<end;i++){
+                final PhoneContact contact=filtered.get(i);
+                CheckBox box=new CheckBox(this);
+                box.setText(contact.name+" · "+contact.phone);
+                box.setTextColor(Color.BLACK);
+                box.setTextSize(15);
+                box.setMinHeight(dp(50));
+                box.setChecked(chosen.contains(contact.id));
+                box.setOnCheckedChangeListener((widget,checked)->{
+                    if(checked)chosen.add(contact.id);else chosen.remove(contact.id);
+                    status.setText(filtered.size()+" matching · "+chosen.size()+" selected · Page "
+                        +(page[0]+1)+" of "+pages);
+                });
+                results.addView(box,new LinearLayout.LayoutParams(-1,-2));
+            }
+            status.setText(filtered.size()+" matching · "+chosen.size()+" selected · Page "
+                +(page[0]+1)+" of "+pages);
+            previous.setEnabled(page[0]>0);
+            next.setEnabled(page[0]+1<pages);
+            scroll.scrollTo(0,0);
+        };
+        search.addTextChangedListener(new TextWatcher(){
+            @Override public void beforeTextChanged(CharSequence text,int start,int count,int after){}
+            @Override public void onTextChanged(CharSequence text,int start,int before,int count){
+                page[0]=0;render.run();
+            }
+            @Override public void afterTextChanged(Editable text){}
+        });
+        previous.setOnClickListener(v->{page[0]--;render.run();});
+        next.setOnClickListener(v->{page[0]++;render.run();});
+        render.run();
+        AlertDialog dlg=new AlertDialog.Builder(this)
+            .setTitle("Select contacts — "+all.size()+" available")
+            .setView(root)
+            .setNegativeButton("Cancel",(dialog,index)->{})
+            .setNeutralButton("Select visible",null)
+            .setPositiveButton("Import selected",null).create();
+        dlg.setOnShowListener(d->{
+            dlg.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v->{
+                String needle=search.getText().toString().trim().toLowerCase(Locale.ROOT);
+                List<PhoneContact> filtered=new ArrayList<>();
+                for(PhoneContact c:all)if(c.name.toLowerCase(Locale.ROOT).contains(needle)||
+                    c.phone.toLowerCase(Locale.ROOT).contains(needle))filtered.add(c);
+                for(int i=page[0]*pageSize;i<Math.min(filtered.size(),(page[0]+1)*pageSize);i++)
+                    chosen.add(filtered.get(i).id);
+                render.run();
+            });
+            dlg.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v->{
+                if(chosen.isEmpty()){Toast.makeText(this,
+                    "Select one or more contacts",Toast.LENGTH_SHORT).show();return;}
+                boolean[] selected=new boolean[all.size()];
+                for(int i=0;i<all.size();i++)selected[i]=chosen.contains(all.get(i).id);
+                dlg.dismiss();
+                importSelectedContacts(all,selected);
+            });
+        });
+        dlg.show();
+    }
+
     private String emailForContact(String id) {
         try(Cursor c=getContentResolver().query(
             ContactsContract.CommonDataKinds.Email.CONTENT_URI,
