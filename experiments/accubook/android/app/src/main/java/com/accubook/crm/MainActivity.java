@@ -2500,7 +2500,7 @@ public final class MainActivity extends Activity {
                 try{
                     pendingInvoice=InvoiceHtml.render(client,work,store.items(work));
                     pendingBackup=false;
-                    document("invoice-"+work.id+".html","text/html");
+                    document(DocumentNumbers.reference(work.id,work.date,false)+".html","text/html");
                 }catch(Exception failure){error(failure);}
             });
             for (WorkspaceStore.LineItem item : store.items(work)) {
