@@ -108,21 +108,5 @@ public final class SecureArchive {
             if(!authenticated&&temporary!=null)temporary.delete();
         }
     }
-    /**
-     * Decrypt, authenticate completely, then invoke existing staged ZIP restore.
-     * Plaintext temporary file exists briefly in private cache and is deleted.
-     */
-    public static void restore(WorkspaceStore store,InputStream input,
-                               File privateCache,char[] passphrase) throws IOException {
-        File copy=null;
-        try{
-            copy=decryptToTemp(input,privateCache,passphrase);
-            try(InputStream zip=new FileInputStream(copy)){
-                store.restoreBackup(zip);
-            }
-        }finally{
-            if(copy!=null&&!copy.delete()&&copy.exists())
-                throw new IOException("Sensitive decrypted temporary file needs cleanup");
-        }
-    }
+
 }
