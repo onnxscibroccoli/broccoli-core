@@ -952,18 +952,33 @@
         label(panel, "Job photo " + number, 16, LIGHT);
         try {
             File imageFile = store.photoFile(job, name);
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
-            if (options.outWidth <= 0 || options.outHeight <= 0)
-                throw new IOException("Image cannot be decoded");
-            options.inJustDecodeBounds = false;
-            options.inSampleSize = 1;
-            while (options.outWidth / options.inSampleSize > 1200
-                || options.outHeight / options.inSampleSize > 1200)
-                options.inSampleSize *= 2;
-            Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
-            if (bitmap == null) throw new IOException("Image cannot be decoded");
+            Bitmap bitmap;
+            if(Build.VERSION.SDK_INT>=28){
+                android.graphics.ImageDecoder.Source source=
+                    android.graphics.ImageDecoder.createSource(imageFile);
+                bitmap=android.graphics.ImageDecoder.decodeBitmap(source,(decoder,info,sourceInfo)->{
+                    android.util.Size size=info.getSize();
+                    int width=size.getWidth(),height=size.getHeight();
+                    if(width<=0||height<=0)throw new IOException("Invalid image dimensions");
+                    double divisor=Math.max(1.0,Math.max(width,height)/1200.0);
+                    decoder.setTargetSize(Math.max(1,(int)(width/divisor)),
+                        Math.max(1,(int)(height/divisor)));
+                    decoder.setAllocator(android.graphics.ImageDecoder.ALLOCATOR_SOFTWARE);
+                });
+            }else{
+                BitmapFactory.Options options=new BitmapFactory.Options();
+                options.inJustDecodeBounds=true;
+                BitmapFactory.decodeFile(imageFile.getAbsolutePath(),options);
+                if(options.outWidth<=0||options.outHeight<=0)
+                    throw new IOException("Image codec not supported on this Android version");
+                options.inJustDecodeBounds=false;
+                options.inSampleSize=1;
+                while(options.outWidth/options.inSampleSize>1200||
+                    options.outHeight/options.inSampleSize>1200)
+                    options.inSampleSize*=2;
+                bitmap=BitmapFactory.decodeFile(imageFile.getAbsolutePath(),options);
+            }
+            if(bitmap==null)throw new IOException("Cannot preview this image codec");
             ImageView preview = new ImageView(this);
             preview.setImageBitmap(bitmap);
             preview.setAdjustViewBounds(true);
@@ -1299,7 +1314,8 @@
             for(Uri uri:uris){
                 if(photos){
                     try(InputStream stream=getContentResolver().openInputStream(uri)){
-                        store.addPhoto(selected,stream);
+                        store.addPhoto(selected,stream,
+                            getContentResolver().getType(uri));
                     }
                 } else {
                     String name="Attachment";
@@ -2077,7 +2093,7 @@
             if (jobId == null) return;
             try (InputStream input = getContentResolver().openInputStream(data.getData())) {
                 WorkspaceStore.Job work = jobById(jobId);
-                store.addPhoto(work, input);
+                store.addPhoto(work, input,getContentResolver().getType(data.getData()));
                 job(jobId);
             } catch (Exception failure) { error(failure); }
             return;
