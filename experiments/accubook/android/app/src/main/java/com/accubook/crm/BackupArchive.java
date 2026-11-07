@@ -61,6 +61,7 @@ public final class BackupArchive {
     private static final String[] MILESTONE={"Key","Name","Complete","CompletedUTC","Notes"};
     private static final String[] LOGISTICS={
         "Vendor","MaterialDeliveryContact","AssignedCrew","OperationsNotes"};
+    private static final String[] PICKUP={"DueAtUTC","ConfiguredAtUTC","State"};
 
 
     public static File rollback(File live) {
@@ -116,7 +117,8 @@ public final class BackupArchive {
         String job = client + "/jobs/JOB-[a-f0-9]{32}_[A-Za-z0-9_-]{1,40}";
         return name.matches(job + "/(job_items\\.csv|material_requests\\.csv|field_notes\\.md|job_details\\.json|"
             + "appointment\\.csv|quote\\.csv|payments\\.csv|invoice_memo\\.csv|"
-            + "time_entries\\.csv|route_points\\.csv|job_milestones\\.csv|job_logistics\\.csv|"
+            + "time_entries\\.csv|route_points\\.csv|job_milestones\\.csv|"
+            + "job_logistics\\.csv|pickup_reminder\\.csv|"
             + "attachments\\.csv|attachments/ATT-[a-f0-9]{32}\\.bin|"
             + "photos/PHOTO-[a-f0-9]{32}\\.(jpg|png|webp|heic|heif|avif|gif|bmp|tiff|dng|img))");
     }
@@ -447,6 +449,20 @@ public final class BackupArchive {
                             throw new IOException("Invalid milestone timestamp",e);}
                     }
                 }
+            }
+            String pickupPath=jobFolder+"/pickup_reminder.csv";
+            if(new File(root,pickupPath).isFile()){
+                List<List<String>> reminders=rows(root,pickupPath,PICKUP);
+                if(reminders.size()!=2)throw new IOException("Invalid pickup reminder count");
+                List<String> v=reminders.get(1);
+                try{
+                    java.time.Instant.parse(v.get(0));
+                    java.time.Instant.parse(v.get(1));
+                }catch(java.time.format.DateTimeParseException e){
+                    throw new IOException("Invalid pickup timestamp",e);
+                }
+                if(!v.get(2).equals("Scheduled"))
+                    throw new IOException("Invalid pickup reminder status");
             }
             String logisticsPath=jobFolder+"/job_logistics.csv";
             if(new File(root,logisticsPath).isFile()){
