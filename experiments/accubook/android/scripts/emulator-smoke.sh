@@ -35,11 +35,18 @@ for attempt in range(8):
         if len(bounds) == 2:
             x = (int(bounds[0][0]) + int(bounds[1][0])) // 2
             y = (int(bounds[0][1]) + int(bounds[1][1])) // 2
-            print('TAP',label,x,y)
-            subprocess.run(['adb','shell','input','tap',str(x),str(y)],check=True)
-            exit(0)
-    if attempt == 3:
-        subprocess.run(['adb','shell','input','swipe','500','1600','500','550','400'],check=True)
+            height=int(re.search(r'(?:Physical|Override) size: \\d+x(\\d+)',
+                subprocess.check_output(['adb','shell','wm','size']).decode()).group(1))
+            if 95 < y < height-170:
+                print('TAP',label,x,y)
+                subprocess.run(['adb','shell','input','tap',str(x),str(y)],check=True)
+                exit(0)
+            print('OFFSCREEN_NODE',label,x,y,'screen_height',height)
+    # Scroll to the target; accessibility XML can contain off-screen bounds.
+    if attempt < 5:
+        subprocess.run(['adb','shell','input','swipe','500','1550','500','560','350'],check=True)
+    else:
+        subprocess.run(['adb','shell','input','swipe','500','560','500','1500','350'],check=True)
     time.sleep(1)
 print('VISIBLE_NODES:', [(el.attrib.get('text'), el.attrib.get('content-desc'), el.attrib.get('bounds')) for el in root.iter('node') if el.attrib.get('text') or el.attrib.get('content-desc')][:100])
 subprocess.run(['adb','shell','dumpsys','activity','activities'])
@@ -61,8 +68,10 @@ for attempt in range(8):
     if label.lower() in raw.lower():
         print('VISIBLE',label)
         exit(0)
-    if attempt==3:
-        subprocess.run(['adb','shell','input','swipe','500','1600','500','500','400'],check=True)
+    if attempt<6:
+        subprocess.run(['adb','shell','input','swipe','500','1550','500','570','350'],check=True)
+    else:
+        subprocess.run(['adb','shell','input','swipe','500','570','500','1500','350'],check=True)
     time.sleep(1)
 print('VISIBLE_NODES:', [(el.attrib.get('text'),el.attrib.get('content-desc')) for el in __import__('xml.etree.ElementTree',fromlist=['ElementTree']).fromstring(raw).iter('node') if el.attrib.get('text') or el.attrib.get('content-desc')][:100])
 logs=subprocess.run(['adb','logcat','-d','-t','150','-s','AndroidRuntime:E','ActivityTaskManager:I'], capture_output=True,text=True)
@@ -77,10 +86,10 @@ tap_node 'Create sample'
 assert_visible 'Sample Customer'
 assert_visible 'Job history'
 tap_node 'DEMO - Gutter'
-assert_visible 'Reschedule date'
+assert_visible 'Reschedule / change time'
 assert_visible 'Change job status'
 assert_visible 'Add photo from device'
-assert_visible 'Invoice draft'
+assert_visible 'Quote and invoice'
 tap_node 'Change job status'
 tap_node 'In Progress'
 assert_visible 'In Progress'
