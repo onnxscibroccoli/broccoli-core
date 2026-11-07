@@ -52,7 +52,7 @@ public final class BusinessReports {
     public static void export(WorkspaceStore store,CrmWorkspace crm,
                               ExportSelection selection,OutputStream destination)
         throws IOException {
-        boolean[] sections=selection.sections;
+        boolean[] sections=selection.selectedSections();
         try(ZipOutputStream zip=new ZipOutputStream(destination,StandardCharsets.UTF_8)){
             List<WorkspaceStore.Customer> customers=store.customers();
             List<WorkspaceStore.Job> jobs=store.jobs();
