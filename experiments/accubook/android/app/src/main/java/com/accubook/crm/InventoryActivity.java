@@ -110,6 +110,7 @@ public final class InventoryActivity extends Activity {
                     label(card,job.title+" (job site): "+count.toPlainString()+" "+item.unit,
                         15,MUTED);
             }
+            button(card,"Rename item",()->rename(item));
             button(card,"Receive stock",()->quantityDialog(item,StockLedger.RECEIVE,
                 StockLedger.EXTERNAL,StockLedger.COMPANY));
             button(card,"Send to job",()->selectJob(item,StockLedger.TRANSFER,false));
@@ -122,6 +123,17 @@ public final class InventoryActivity extends Activity {
             +"A rejected move cannot leave negative stock. Export a workspace backup "
             +"before making large changes.",14,MUTED);
         button(root,"Back to Accubook",this::finish);
+    }
+    private void rename(StockLedger.Item item){
+        LinearLayout panel=form();
+        EditText name=input(panel,"Item name","Name");
+        name.setText(item.name);
+        new AlertDialog.Builder(this).setTitle("Rename material or tool")
+            .setView(panel).setNegativeButton("Cancel",(d,w)->{})
+            .setPositiveButton("Save name",(d,w)->{
+                try{inventory.renameItem(item.id,name.getText().toString());render();}
+                catch(Exception error){showError(error);}
+            }).show();
     }
     private void newItem(){
         LinearLayout panel=form();
