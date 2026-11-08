@@ -3,7 +3,7 @@
 This standalone development tool runs on GitHub Actions or locally with Python 3.11+.
 It does not alter the Android runtime, call an LLM, send telemetry, or open issues.
 A weekly/manual workflow collects metadata and uploads compact Markdown and JSON reports.
-PR runs execute offline tests only. Schedules become active only after merge to the default branch.
+Same-repository PR runs execute tests and a live single-repository pilot; fork PRs execute tests only. Schedules become active only after merge to the default branch.
 
 ## Scope and trust
 
@@ -54,7 +54,7 @@ From the repository root, with GH_TOKEN supplied securely in the environment:
 
 ```bash
 python3 -m unittest tests.test_cern_audit -v
-python3 scripts/cern_audit/harvest.py --owner onnxscibroccoli --request-budget 900
+python3 scripts/cern_audit/harvest.py --owner onnxscibroccoli --repo onnxscibroccoli/broccoli-core --request-budget 900
 python3 scripts/cern_audit/reduce.py --output reports/cern
 ```
 

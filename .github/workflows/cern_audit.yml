@@ -25,7 +25,7 @@ jobs:
           python-version: '3.11'
       - run: python -m unittest tests.test_cern_audit -v
   audit-ecosystem:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     needs: test
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -40,15 +40,25 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Harvest public owned repositories
+      - name: Harvest public metadata (single repository for PR pilot)
         id: harvest
         continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AUDIT_OWNER: ${{ github.repository_owner }}
-        run: python scripts/cern_audit/harvest.py --owner "$AUDIT_OWNER" --request-budget 900
+          AUDIT_EVENT: ${{ github.event_name }}
+        run: |
+          scope=()
+          if [ "$AUDIT_EVENT" = pull_request ]; then
+            scope=(--repo "$GITHUB_REPOSITORY")
+          fi
+          python scripts/cern_audit/harvest.py --owner "$AUDIT_OWNER" --request-budget 900 "${scope[@]}"
       - name: Reduce available evidence
         run: python scripts/cern_audit/reduce.py --output reports/cern
+      - name: Inspect pilot report
+        run: |
+          cat reports/cern/cern_signal_report.md
+          cat reports/cern/cern_signal_report.json
       - name: Upload compact reports only
         uses: actions/upload-artifact@v4
         with:

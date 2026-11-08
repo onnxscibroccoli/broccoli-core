@@ -70,6 +70,21 @@ class AuditTests(unittest.TestCase):
                 api.get('repos/o/r/branches')
             sleep.assert_not_called()
 
+    def test_single_repository_pilot(self):
+        class Fake:
+            requests = 3
+            def get(self, path):
+                self.path = path
+                return {'owner': {'login': 'o'}, 'fork': False, 'private': False, 'full_name': 'o/r'}
+            def pages(self, path):
+                return iter([])
+        api = Fake()
+        with tempfile.TemporaryDirectory() as tmp:
+            result = harvest(api, 'o', Path(tmp), repository='o/r')
+            self.assertTrue(result['complete'])
+            self.assertEqual(result['repositories'], ['o/r'])
+            self.assertEqual(api.path, 'repos/o/r')
+
     def test_harvest_failure_records_gap_and_private_exclusion(self):
         class Fake:
             requests = 3

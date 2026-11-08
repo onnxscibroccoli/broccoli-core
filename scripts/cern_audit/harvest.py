@@ -50,7 +50,7 @@ class API:
             page += 1
 
 
-def harvest(api, owner, output, include_private=False):
+def harvest(api, owner, output, include_private=False, repository=None):
     output.mkdir(parents=True, exist_ok=True)
     manifest = {'schema': 1, 'started_at': dt.datetime.now(dt.timezone.utc).isoformat(),
                 'owner': owner, 'complete': True, 'repositories': [], 'gaps': [],
@@ -63,7 +63,8 @@ def harvest(api, owner, output, include_private=False):
             stream.write(json.dumps(record, ensure_ascii=True) + '\n')
         try:
             path = 'user/repos?affiliation=owner' if include_private else f'users/{owner}/repos?type=owner'
-            for repo in api.pages(path):
+            repos = [api.get('repos/' + repository)] if repository else api.pages(path)
+            for repo in repos:
                 if repo['owner']['login'].lower() != owner.lower() or repo['fork']:
                     continue
                 if repo['private'] and not include_private:
@@ -104,14 +105,17 @@ def main():
     p.add_argument('--owner', required=True)
     p.add_argument('--output', type=Path, default=Path('data/cern'))
     p.add_argument('--include-private', action='store_true')
+    p.add_argument('--repo', help='Pilot a single owner/repository instead of the ecosystem')
     p.add_argument('--request-budget', type=int, default=2000)
     args = p.parse_args()
     if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9-]{0,38}', args.owner):
         p.error('invalid GitHub owner')
+    if args.repo and (not re.fullmatch(r'[A-Za-z0-9-]+/[A-Za-z0-9_.-]+', args.repo) or args.repo.split('/')[0].lower() != args.owner.lower()):
+        p.error('--repo must belong to --owner')
     token = os.environ.get('GH_TOKEN')
     if not token:
         p.error('GH_TOKEN is required')
-    manifest = harvest(API(token, args.request_budget), args.owner, args.output, args.include_private)
+    manifest = harvest(API(token, args.request_budget), args.owner, args.output, args.include_private, args.repo)
     print(json.dumps({'complete': manifest['complete'], 'requests': manifest['requests'], 'gaps': len(manifest['gaps'])}))
     return 0 if manifest['complete'] else 2
 
