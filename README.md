@@ -139,3 +139,18 @@ python3 scripts/autojs_run.py smoke
 ```
 
 The legacy `read` and `fsm` modes require `/sdcard/broccoli/autojs/grok_read_chat.js` and `/sdcard/broccoli/autojs/grok_button_fsm.js`. If those payloads are absent, the adapter now fails immediately instead of waiting for an output file that cannot be produced. The side-effect-free `smoke` check uses a bounded two-attempt retry for cold-start or transient Rish launch failures because AutoJS/Shizuku can be reclaimed under memory pressure; `read` and `fsm` remain single-shot to avoid duplicate UI actions. The primary production-capable Android path remains Rish + UIAutomator / accessibility surfaces; AutoJS should not be made a hard dependency.
+
+## Ecosystem signal audit
+
+The [CERN-inspired metadata auditor](docs/CERN_AUDIT.md) collects public owned-repository
+issues, PR titles, branches and commit metadata into local JSONL, then creates bounded,
+source-linked reports without an LLM or third-party Python dependencies. Weekly/manual
+GitHub Actions runs publish report artifacts; incomplete collection fails visibly.
+Frequency anomalies are descriptive investigation leads, never proof of user utility.
+
+```bash
+python3 -m unittest tests.test_cern_audit -v
+```
+
+The six-repository pilot also reports open backlog and recent PR/commit topics, including
+Accubook, independently of historical issue-frequency scores. See the audit guide for scope.
