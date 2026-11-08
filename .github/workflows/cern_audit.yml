@@ -1,0 +1,63 @@
+name: CERN GitHub Signal Audit
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 1'
+  pull_request:
+    paths:
+      - 'scripts/cern_audit/**'
+      - 'tests/test_cern_audit.py'
+      - '.github/workflows/cern_audit.yml'
+permissions:
+  contents: read
+concurrency:
+  group: cern-audit-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest tests.test_cern_audit -v
+  audit-ecosystem:
+    if: github.event_name != 'pull_request'
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      issues: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Harvest public owned repositories
+        id: harvest
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AUDIT_OWNER: ${{ github.repository_owner }}
+        run: python scripts/cern_audit/harvest.py --owner "$AUDIT_OWNER" --request-budget 900
+      - name: Reduce available evidence
+        run: python scripts/cern_audit/reduce.py --output reports/cern
+      - name: Upload compact reports only
+        uses: actions/upload-artifact@v4
+        with:
+          name: cern-signal-report
+          path: reports/cern/cern_signal_report.*
+          if-no-files-found: error
+          retention-days: 14
+      - name: Surface incomplete coverage
+        if: steps.harvest.outcome != 'success'
+        run: |
+          echo 'Collection incomplete; inspect the coverage manifest in the JSON report.'
+          exit 1
