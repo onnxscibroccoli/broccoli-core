@@ -1,0 +1,63 @@
+name: CERN GitHub Signal Audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 1'  # Weekly Monday 00:00 UTC
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+  actions: read
+
+jobs:
+  audit-ecosystem:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Auditor
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas numpy requests
+
+      - name: Harvest Ecosystem Metadata
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_OWNER: ${{ github.repository_owner }}
+        run: |
+          mkdir -p cern-pipeline/data/raw
+          cd cern-pipeline
+          python scripts/harvest_github.py
+
+      - name: Execute Linear-Time Statistical Reduction
+        run: |
+          cd cern-pipeline
+          python scripts/cern_reducer.py
+
+      - name: Upload CERN Signal Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: cern-signal-report
+          path: |
+            cern-pipeline/cern_signal_report.md
+            cern-pipeline/data/raw/*.json
+          retention-days: 30
+
+      - name: Optional - Commit Report (if main branch writable)
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+        continue-on-error: true
+        run: |
+          git config user.name "cern-auditor"
+          git config user.email "cern-auditor@users.noreply.github.com"
+          git add cern-pipeline/cern_signal_report.md || true
+          git commit -m "chore: update CERN signal report [skip ci]" || true
+          git push || true
