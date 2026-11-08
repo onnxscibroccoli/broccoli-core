@@ -11,6 +11,10 @@ import tempfile
 
 # Fixed vocabulary keeps matching cost linear in input text size.
 TOPICS = {
+    'accubook': {'accubook'},
+    'documentation': {'docs', 'documentation', 'readme'},
+    'validation': {'test', 'tests', 'ci', 'smoke', 'verification', 'audit'},
+    'infrastructure': {'deployment', 'kubernetes', 'container', 'containers', 'terraform'},
     'accessibility': {'accessibility', 'a11y', 'screenreader'},
     'local-first': {'offline', 'local-first', 'sync'},
     'security': {'security', 'permission', 'permissions', 'encryption', 'encrypted'},
@@ -30,6 +34,10 @@ def reduce_records(records, manifest, as_of):
     counts = {topic: [0] * 9 for topic in TOPICS}
     links = {topic: [] for topic in TOPICS}
     activity = Counter()
+    active = {topic: {'open_issues': 0, 'open_prs': 0, 'recent_prs': 0, 'recent_commits': 0,
+                      'sources': []} for topic in TOPICS}
+    recent_start = as_of - dt.timedelta(days=29)
+
     with tempfile.TemporaryDirectory() as tmp:
         db = sqlite3.connect(str(Path(tmp) / 'seen.db'))
         db.execute('CREATE TABLE seen (repo TEXT, kind TEXT, id TEXT, PRIMARY KEY(repo,kind,id)) WITHOUT ROWID')
@@ -38,6 +46,31 @@ def reduce_records(records, manifest, as_of):
             if not inserted:
                 continue
             activity[record['kind']] += 1
+            tokens = set(re.findall(r'[a-z0-9]+(?:-[a-z0-9]+)*', (record.get('text', '') + ' ' + ' '.join(record.get('labels', []))).lower()))
+            # Also match components in compound words (e.g. offline-first, security-hardening).
+            tokens.update(part for token in list(tokens) for part in token.split('-'))
+            topics = {INDEX[t] for t in tokens if t in INDEX}
+            current = record.get('state') == 'open'
+            date_text = record.get('updated_at') or record.get('date')
+            recent = bool(date_text and recent_start <= dt.date.fromisoformat(date_text[:10]) <= as_of)
+            for topic in topics:
+                row = active[topic]
+                kind = record['kind']
+                matched = False
+                if current and kind in ('issue', 'pr'):
+                    row['open_issues' if kind == 'issue' else 'open_prs'] += 1
+                    matched = True
+                if recent and kind in ('pr', 'commit'):
+                    row['recent_prs' if kind == 'pr' else 'recent_commits'] += 1
+                    matched = True
+                url = record.get('url', '')
+                if matched and re.fullmatch(r'https://github\.com/[\w.-]+/[\w.-]+/(?:issues/\d+|pull/\d+|commit/[0-9a-f]{40})', url):
+                    evidence = {'kind': kind, 'state': record.get('state'), 'url': url,
+                                'date': date_text, 'open': current, 'recent': recent}
+                    # Fixed-size, deterministic sample favors open work, then recent evidence.
+                    row['sources'].append(evidence)
+                    row['sources'].sort(key=lambda e: (e['open'], e['recent'], e['date'] or '', e['url']), reverse=True)
+                    del row['sources'][3:]
             if record['kind'] != 'issue' or record.get('bot'):
                 continue
             date = dt.date.fromisoformat(record['date'][:10])
@@ -45,8 +78,7 @@ def reduce_records(records, manifest, as_of):
             if not 0 <= bucket < 9:
                 continue
             totals[bucket] += 1
-            tokens = set(re.findall(r'[a-z0-9]+(?:-[a-z0-9]+)*', (record['text'] + ' ' + ' '.join(record.get('labels', []))).lower()))
-            for topic in {INDEX[t] for t in tokens if t in INDEX}:
+            for topic in topics:
                 counts[topic][bucket] += 1
                 url = record.get('url', '')
                 if bucket == 8 and len(links[topic]) < 3 and re.fullmatch(r'https://github\.com/[\w.-]+/[\w.-]+/issues/\d+', url):
@@ -63,7 +95,7 @@ def reduce_records(records, manifest, as_of):
                         'status': 'anomaly' if z is not None and z >= 3 else 'descriptive', 'sources': links[topic]})
     return {'schema': 1, 'complete': manifest['complete'], 'window_start': str(start), 'window_end_exclusive': str(end),
             'weekly_issue_totals': totals, 'activity': dict(activity), 'signals': signals,
-            'coverage': manifest}
+            'coverage': manifest, 'active_development': active, 'recent_start': str(recent_start), 'as_of': str(as_of)}
 
 
 def markdown(result):
@@ -83,6 +115,18 @@ def markdown(result):
               '', '## Evidence (up to three issue links per topic)']
     for item in result['signals']:
         lines.extend(f"- {item['topic']}: {url}" for url in item['sources'])
+    lines += ['', '## Active development and open backlog',
+              f"Recent activity: {result['recent_start']} through {result['as_of']} inclusive (UTC); open work is all ages.",
+              'Counts are implementation/backlog evidence, not independent user demand or validated priorities.',
+              'Open PRs may also count as recent PRs; do not add these columns together.',
+              '| Topic | Open issues | Open PRs | Recent PRs | Recent commits |',
+              '|---|---:|---:|---:|---:|']
+    for topic, row in result['active_development'].items():
+        if any(row[key] for key in ('open_issues', 'open_prs', 'recent_prs', 'recent_commits')):
+            lines.append(f"| {topic} | {row['open_issues']} | {row['open_prs']} | {row['recent_prs']} | {row['recent_commits']} |")
+    lines += ['', '### Active-work evidence']
+    for topic, row in result['active_development'].items():
+        lines.extend(f"- {topic} / {e['kind']} / {e['state'] or 'commit'}: {e['url']}" for e in row['sources'])
     lines += ['', '## Coverage', result['coverage']['scope'],
               'Repositories collected: ' + str(len(result['coverage']['repositories'])),
               'Gaps: ' + str(len(result['coverage']['gaps'])),

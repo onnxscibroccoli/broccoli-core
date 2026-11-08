@@ -29,6 +29,11 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        repository: [broccoli-core, accubook, bank-it-operations-lab, Grasshopper, helix, TCL-orc]
     permissions:
       contents: read
       issues: read
@@ -46,13 +51,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AUDIT_OWNER: ${{ github.repository_owner }}
-          AUDIT_EVENT: ${{ github.event_name }}
+          AUDIT_REPOSITORY: ${{ matrix.repository }}
         run: |
-          scope=()
-          if [ "$AUDIT_EVENT" = pull_request ]; then
-            scope=(--repo "$GITHUB_REPOSITORY")
-          fi
-          python scripts/cern_audit/harvest.py --owner "$AUDIT_OWNER" --request-budget 900 "${scope[@]}"
+          python scripts/cern_audit/harvest.py --owner "$AUDIT_OWNER" --repo "$AUDIT_OWNER/$AUDIT_REPOSITORY" --request-budget 900
       - name: Reduce available evidence
         run: python scripts/cern_audit/reduce.py --output reports/cern
       - name: Inspect pilot report
@@ -62,7 +63,7 @@ jobs:
       - name: Upload compact reports only
         uses: actions/upload-artifact@v4
         with:
-          name: cern-signal-report
+          name: cern-signal-report-${{ matrix.repository }}
           path: reports/cern/cern_signal_report.*
           if-no-files-found: error
           retention-days: 14

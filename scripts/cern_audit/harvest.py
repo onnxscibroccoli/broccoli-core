@@ -75,7 +75,7 @@ def harvest(api, owner, output, include_private=False, repository=None):
                 try:
                     for item in api.pages(root + 'issues?state=all&sort=created&direction=asc'):
                         emit({'repo': name, 'kind': 'pr' if 'pull_request' in item else 'issue',
-                              'id': item['number'], 'date': item['created_at'], 'state': item['state'],
+                              'id': item['number'], 'date': item['created_at'], 'updated_at': item['updated_at'], 'state': item['state'],
                               'bot': (item.get('user') or {}).get('type') == 'Bot',
                               'text': item['title'], 'labels': [x['name'] for x in item['labels']],
                               'url': item['html_url']})

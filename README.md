@@ -151,3 +151,6 @@ Frequency anomalies are descriptive investigation leads, never proof of user uti
 ```bash
 python3 -m unittest tests.test_cern_audit -v
 ```
+
+The six-repository pilot also reports open backlog and recent PR/commit topics, including
+Accubook, independently of historical issue-frequency scores. See the audit guide for scope.

@@ -70,6 +70,33 @@ class AuditTests(unittest.TestCase):
                 api.get('repos/o/r/branches')
             sleep.assert_not_called()
 
+    def test_accubook_current_week_pr_and_old_open_backlog(self):
+        rows = [
+            {'repo': 'o/r', 'kind': 'pr', 'id': 96, 'state': 'open', 'text': 'feat(accubook): offline-first photo reorder', 'date': '2026-11-07', 'url': 'https://github.com/o/r/pull/96'},
+            {'repo': 'o/r', 'kind': 'issue', 'id': 1, 'state': 'open', 'text': 'security-hardening', 'date': '2025-01-01', 'url': 'https://github.com/o/r/issues/1'},
+            {'repo': 'o/r', 'kind': 'pr', 'id': 2, 'state': 'closed', 'text': 'accubook', 'date': '2025-01-01', 'updated_at': '2026-11-06', 'url': 'https://github.com/o/r/pull/2'},
+            {'repo': 'o/r', 'kind': 'pr', 'id': 3, 'state': 'closed', 'text': 'accubook', 'date': '2025-01-01', 'url': 'https://github.com/o/r/pull/3'},
+        ]
+        result = reduce_records(iter(rows + rows), self.manifest(), dt.date(2026, 11, 8))
+        active = result['active_development']
+        self.assertEqual(active['accubook']['open_prs'], 1)
+        self.assertEqual(active['accubook']['recent_prs'], 2)
+        self.assertEqual(active['security']['open_issues'], 1)
+        self.assertEqual(active['local-first']['open_prs'], 1)
+        self.assertEqual(sum(result['weekly_issue_totals']), 0)
+        self.assertTrue(all(x['z'] is None for x in result['signals']))
+        self.assertIn('https://github.com/o/r/pull/96', markdown(result))
+
+    def test_active_evidence_bounded_and_untrusted_urls_excluded(self):
+        rows = [{'repo': 'o/r', 'kind': 'pr', 'id': i, 'state': 'open', 'text': 'accubook',
+                 'date': '2026-11-07', 'url': f'https://github.com/o/r/pull/{i}'} for i in range(100)]
+        rows.append(dict(rows[0], id=101, url='https://evil.invalid/instruction'))
+        result = reduce_records(iter(rows), self.manifest(False), dt.date(2026, 11, 8))
+        self.assertEqual(result['active_development']['accubook']['open_prs'], 101)
+        self.assertEqual(len(result['active_development']['accubook']['sources']), 3)
+        self.assertNotIn('evil.invalid', markdown(result))
+        self.assertIn('PARTIAL', markdown(result))
+
     def test_single_repository_pilot(self):
         class Fake:
             requests = 3

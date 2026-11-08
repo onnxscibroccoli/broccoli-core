@@ -3,7 +3,10 @@
 This standalone development tool runs on GitHub Actions or locally with Python 3.11+.
 It does not alter the Android runtime, call an LLM, send telemetry, or open issues.
 A weekly/manual workflow collects metadata and uploads compact Markdown and JSON reports.
-Same-repository PR runs execute tests and a live single-repository pilot; fork PRs execute tests only. Schedules become active only after merge to the default branch.
+Same-repository PR runs execute tests and six live repository pilots; fork PRs execute tests only.
+The bounded pilot matrix covers broccoli-core plus accubook, bank-it-operations-lab,
+Grasshopper, helix and TCL-orc. Each gets its own artifact, request budget and coverage result.
+There are at most two concurrent harvests. This is not an account-wide rollout. Schedules become active only after merge to the default branch.
 
 ## Scope and trust
 
@@ -43,7 +46,7 @@ No utility weight is fabricated without an explicitly validated outcome model.
 
 JSONL is streamed; matching costs O(B) for input bytes with the fixed vocabulary.
 SQLite provides disk-backed deduplication by repository/type/ID, with O(N log N) worst-case
-index work. Report size is bounded by the seven topics and three links per topic; the JSON
+index work. Report size is bounded by the eleven topics and three links per topic; the JSON
 coverage manifest grows with repository and failure count. Branch traversal can fetch
 shared commits repeatedly; this costs API requests even though counts are deduplicated.
 No guarantee of seconds-long execution, constant storage or avoiding rate limits is made.
@@ -75,3 +78,18 @@ GitHub documentation:
 
 There is no Drive upload in this workflow. Existing repository sync tooling is unchanged;
 report distribution requires an explicitly selected destination, especially for private data.
+
+## Current development view
+
+The weekly issue-frequency view deliberately excludes the incomplete current week and
+implementation events. The original live pilot therefore missed Accubook's recent PR work.
+A separate view now counts all open issues and PRs, plus PRs created/updated and commits
+committed during the last 30 UTC dates including today. Each topic has up to three validated
+source links, favoring open and recent work. Closed PRs are labeled closed, not presumed merged.
+PR update dates can reflect discussion or metadata edits, not code changes. Open/recent PR
+columns overlap and must not be summed. Commit counts are unique within each repository;
+mirrored histories across repositories are not independent evidence. Fixed topic vocabulary
+can miss concepts in bodies or code; a missing match is not proof of absent work.
+Accubook gets an explicit project topic, while general topic tags also recognize components
+of hyphenated words. Bot-authored development is included in this view; issue-demand scores
+still exclude known bots. These counts expose work to inspect and never prove user utility.
