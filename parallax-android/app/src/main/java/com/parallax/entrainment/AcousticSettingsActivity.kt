@@ -100,6 +100,28 @@ class AcousticSettingsActivity : Activity() {
             sliders += slider; box.addView(slider)
         }
         box.addView(Button(this).apply { text = "Return all bands to automatic"; setOnClickListener { AcousticBus.resetManual() } })
+
+        // v2.1 Sonar Overlay controls
+        text("Acoustic Sonar Visualization Overlay").textSize = 20f
+        text("Active near-ultrasound sonar mode maps room reflections as dynamic visual artifacts on the existing stress-relief overlay. Uses the same microphone loop; no additional network.")
+        box.addView(Switch(this).apply {
+            text = "Enable Acoustic Sonar Overlay"; minHeight = 64; isChecked = AcousticBus.state.sonarEnabled
+            setOnCheckedChangeListener { _, value -> AcousticBus.sonar(value) }
+        })
+        text("Sonar Sensitivity / Decay Rate")
+        box.addView(SeekBar(this).apply {
+            max = 100
+            progress = (AcousticBus.state.sonarSensitivity * 100).toInt()
+            contentDescription = "Sonar sensitivity, 0 to 100 percent"
+            setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onStartTrackingTouch(bar: SeekBar?) {}
+                override fun onStopTrackingTouch(bar: SeekBar?) {}
+                override fun onProgressChanged(bar: SeekBar?, value: Int, fromUser: Boolean) {
+                    if (fromUser) AcousticBus.sonarSensitivity(value / 100f)
+                }
+            })
+        })
+
         box.addView(Button(this).apply { text = "Back to settings"; setOnClickListener { finish() } })
     }
     private fun requestCalibration(continuous: Boolean) {
