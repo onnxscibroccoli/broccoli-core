@@ -2,7 +2,7 @@ name: Build Parallax Distortion APK
 
 on:
   push:
-    branches: [ "feat/parallax-distortion-apk", "main" ]
+    branches: [ "feat/parallax-distortion-apk", "feat/parallax-acoustic-v2", "main" ]
   workflow_dispatch:
   pull_request:
     paths:
@@ -29,7 +29,7 @@ jobs:
           gradle-version: "8.11.1"
       - name: Build debug APK
         working-directory: parallax-android
-        run: gradle --no-daemon assembleDebug
+        run: gradle --no-daemon testDebugUnitTest lintDebug assembleDebug
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
