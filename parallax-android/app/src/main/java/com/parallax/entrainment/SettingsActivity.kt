@@ -109,11 +109,13 @@ class SettingsActivity : Activity() {
                 menu.add(0, 1, 0, "Permissions & access")
                 menu.add(0, 2, 1, "Audio controls")
                 menu.add(0, 3, 2, "About Parallax Distortion")
+                menu.add(0, 4, 3, "Acoustic & Healing Profiles")
                 setOnMenuItemClickListener { item ->
                     when (item.itemId) {
                         1 -> showPermissionManagement()
                         2 -> showAudioHelp()
                         3 -> showAboutDialog()
+                        4 -> startActivity(Intent(this@SettingsActivity, AcousticSettingsActivity::class.java))
                     }
                     true
                 }

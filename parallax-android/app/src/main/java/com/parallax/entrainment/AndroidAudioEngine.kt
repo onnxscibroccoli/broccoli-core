@@ -26,6 +26,7 @@ class AndroidAudioEngine(
     volume: Float,
     private val audioMode: Int
 ) {
+    init { AcousticBus.initialize(context) }
     private val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     @Volatile private var targetHz = targetHz.coerceIn(0.5f, 40f)
     @Volatile private var seedStr = seedStr
@@ -110,13 +111,21 @@ class AndroidAudioEngine(
         worker = thread(start = true, name = "ParallaxAudio", priority = Thread.NORM_PRIORITY - 1) {
             val frames = 1024
             val buffer = FloatArray(frames * 2)
-            var sample = 0L
+            val eq = EqualizerDsp(sampleRate)
+            val bell = BellSynth(sampleRate)
+            var bellMix = 0f
+            var calibrationGain = 1f
             var fadeInFrames = 0
             var fadeOutFrames = sampleRate / 8
             var leftPhase = 0.0
             var rightPhase = 0.0
             try {
                 while (playing || fadeOutFrames > 0) {
+                    val acoustic = AcousticBus.state
+                    val speaker = created.routedDevice?.type == android.media.AudioDeviceInfo.TYPE_BUILTIN_SPEAKER
+                    eq.configure(if (speaker) acoustic.effective else AcousticDsp.effective(List(7) { 0f }, acoustic.manual, acoustic.locked))
+                    val bellTarget = if (acoustic.bells) 1f else 0f
+                    val muteTarget = if (AcousticBus.calibrating) 0f else 1f
                     val hz = targetHz.toDouble().coerceIn(0.5, 40.0)
                     val seedOffset = ((seedStr.hashCode() and 0x7fffffff) % 3000) / 100.0 - 15.0
                     val leftHz = (carrierHz + seedOffset).coerceIn(180.0, 240.0)
@@ -137,19 +146,27 @@ class AndroidAudioEngine(
                                 value
                             }
                         }
-                        val gain = baseGain * envelope
+                        bellMix += (bellTarget - bellMix) * .001f
+                        calibrationGain += (muteTarget - calibrationGain) * .001f
+                        // 12 dB fixed headroom for positive manual gains and bell partials.
+                        val gain = baseGain * envelope * calibrationGain * .25f
+                        val bellSample = if (bellMix > .00001f || bellTarget > 0f) bell.next(AcousticDsp.bells[acoustic.profile]) else 0f
                         // Leave headroom and clamp floating-point samples before AudioTrack conversion.
-                        buffer[frame * 2] = (sin(leftPhase).toFloat() * gain).coerceIn(-0.92f, 0.92f)
-                        buffer[frame * 2 + 1] = (sin(rightPhase).toFloat() * gain).coerceIn(-0.92f, 0.92f)
+                        buffer[frame * 2] = eq.process((sin(leftPhase).toFloat() * (1f - bellMix) + bellSample * bellMix) * gain, 0)
+                        buffer[frame * 2 + 1] = eq.process((sin(rightPhase).toFloat() * (1f - bellMix) + bellSample * bellMix) * gain, 1)
                         leftPhase += 2.0 * PI * leftHz / sampleRate
                         rightPhase += 2.0 * PI * rightHz / sampleRate
                         if (leftPhase >= 2.0 * PI) leftPhase -= 2.0 * PI
                         if (rightPhase >= 2.0 * PI) rightPhase -= 2.0 * PI
-                        sample++
+
                     }
                     val activeTrack = track ?: break
-                    val written = activeTrack.write(buffer, 0, buffer.size, AudioTrack.WRITE_BLOCKING)
-                    if (written < 0) break
+                    var offset = 0
+                    while (offset < buffer.size) {
+                        val written = activeTrack.write(buffer, offset, buffer.size - offset, AudioTrack.WRITE_BLOCKING)
+                        if (written <= 0) throw IllegalStateException("Audio write failed: $written")
+                        offset += written
+                    }
                     if (!playing && fadeOutFrames <= 0) break
                 }
             } catch (_: IllegalStateException) {
