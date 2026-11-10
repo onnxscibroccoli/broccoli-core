@@ -58,6 +58,9 @@ class EntrainmentSurfaceView(
     private val darkMode get() = context.getSharedPreferences(OverlayService.PREFS, Context.MODE_PRIVATE)
         .getBoolean(OverlayService.KEY_DARK_THEME, true)
 
+    // Simple sonar ring state for v2.1 overlay (proxy for reflection peaks)
+    private var sonarPhase = 0f
+
     init {
         setLayerType(View.LAYER_TYPE_HARDWARE, null)
         initEntities(seedText)
@@ -225,6 +228,31 @@ class EntrainmentSurfaceView(
         paint.shader = null
     }
 
+    private fun drawSonarOverlay(c: Canvas) {
+        val acoustic = AcousticBus.state
+        if (!acoustic.sonarEnabled) return
+        val sens = acoustic.sonarSensitivity
+        val cx = width * 0.5f
+        val cy = height * 0.5f
+        val maxR = min(width, height) * 0.45f
+        sonarPhase = (sonarPhase + 0.02f * (0.5f + sens)) % 1f
+
+        paint.style = Paint.Style.STROKE
+        paint.strokeWidth = 3f * density
+        paint.shader = null
+
+        // Draw 3 expanding rings as proxy for reflection peaks / standing waves
+        for (i in 0 until 3) {
+            val phase = (sonarPhase + i * 0.33f) % 1f
+            val radius = phase * maxR
+            val alpha = ((1f - phase) * 180 * sens).toInt().coerceIn(0, 180)
+            paint.color = Color.argb(alpha, 100, 200, 255)
+            c.drawCircle(cx, cy, radius, paint)
+        }
+        paint.style = Paint.Style.FILL
+        paint.alpha = 255
+    }
+
     override fun onDraw(c: Canvas) {
         super.onDraw(c)
         if (width <= 0 || height <= 0) return
@@ -261,6 +289,9 @@ class EntrainmentSurfaceView(
 
             drawEntity(c, e, pulse)
         }
+
+        // Draw sonar overlay on top of existing entities, before mask
+        drawSonarOverlay(c)
 
         if (!isFullOverlay) {
             ensureBorderMask()
