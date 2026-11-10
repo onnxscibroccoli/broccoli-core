@@ -9,7 +9,9 @@ data class AcousticState(
     val manual: List<Float> = List(7) { 0f },
     val locked: List<Boolean> = List(7) { false },
     val bells: Boolean = false,
-    val profile: Int = 4
+    val profile: Int = 4,
+    val sonarEnabled: Boolean = false,
+    val sonarSensitivity: Float = 0.5f
 ) {
     val effective = AcousticDsp.effective(auto, manual, locked)
 }
@@ -28,7 +30,9 @@ object AcousticBus {
             auto = List(7) { p.getFloat("auto_$it", 0f).takeIf { it.isFinite() }?.coerceIn(-6f, 0f) ?: 0f },
             manual = List(7) { p.getFloat("manual_$it", 0f).takeIf { it.isFinite() }?.coerceIn(-12f, 6f) ?: 0f },
             locked = List(7) { p.getBoolean("locked_$it", false) },
-            bells = p.getBoolean("bells", false), profile = p.getInt("profile", 4).coerceIn(0, 8)
+            bells = p.getBoolean("bells", false), profile = p.getInt("profile", 4).coerceIn(0, 8),
+            sonarEnabled = p.getBoolean("sonar_enabled", false),
+            sonarSensitivity = p.getFloat("sonar_sensitivity", 0.5f).coerceIn(0f, 1f)
         )
     }
     @Synchronized private fun publish(next: AcousticState) {
@@ -38,6 +42,7 @@ object AcousticBus {
                 putFloat("auto_$i", next.auto[i]); putFloat("manual_$i", next.manual[i]); putBoolean("locked_$i", next.locked[i])
             }
             putBoolean("bells", next.bells); putInt("profile", next.profile)
+            putBoolean("sonar_enabled", next.sonarEnabled); putFloat("sonar_sensitivity", next.sonarSensitivity)
         }?.apply()
     }
     @Synchronized fun manual(band: Int, db: Float) {
@@ -50,4 +55,6 @@ object AcousticBus {
     @Synchronized fun correction(value: List<Float>, micro: Boolean) {
         publish(state.copy(auto = if (micro) AcousticDsp.microCorrection(state.auto, value) else value.toList()))
     }
+    @Synchronized fun sonar(enabled: Boolean) = publish(state.copy(sonarEnabled = enabled))
+    @Synchronized fun sonarSensitivity(value: Float) = publish(state.copy(sonarSensitivity = value.coerceIn(0f, 1f)))
 }
