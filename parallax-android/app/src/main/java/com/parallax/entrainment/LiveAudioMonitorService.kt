@@ -177,7 +177,9 @@ class LiveAudioMonitorService : Service() {
                 val auto = AcousticBus.state.liveAutoEq
                 PlaybackReferenceBus.meter(match.scorePercent, match.confidencePercent,
                     "Speaker/mic spectral match ${match.scorePercent}%; confidence ${match.confidencePercent}%. " +
-                    "${match.activeBands} reference bands; ${if (unprocessed) "unprocessed" else "device-processed"} mic. " +
+                    "${match.activeBands} reference bands; mic/output level ratio " +
+                    "${"%.1f".format(match.relativeLevelDb)} dB (uncalibrated); " +
+                    "${if (unprocessed) "unprocessed" else "device-processed"} mic. " +
                     (if (auto) "Conservative live EQ enabled." else "Monitor only; EQ unchanged."))
                 // Do not continuously chase environmental noise or one-note partials.
                 // Manual-locked bands remain authoritative; no upward EQ boosts.
@@ -217,7 +219,8 @@ class LiveAudioMonitorService : Service() {
         PlaybackReferenceBus.comparisonRequested = false
         runCatching { recorder?.stop() } // unblock READ_BLOCKING
         worker?.interrupt()
-        PlaybackReferenceBus.monitorRunning = false
+        // Keep the monitor busy until the capture worker has released AudioRecord.
+        // An immediate new room-calibration request must not race this release.
         super.onDestroy()
     }
 
