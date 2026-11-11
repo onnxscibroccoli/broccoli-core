@@ -1,5 +1,7 @@
 # Parallax Distortion 2.0 — Acoustic & Healing Profiles
 
+This installable variant uses package ID `com.parallax.entrainment.v2` and a distinct launcher label so it can coexist with the 1.x app and with the v2.1 sonar-style variant.
+
 Development update based on `fix/parallax-overlay-nav-bar-insets` at
 `592fbda1830276dea39c4286b4a73da8c4f6f6c8`, preserving the 1.10 overlay and ducking fixes.
 
@@ -109,7 +111,7 @@ cat > "$HOME/get-parallax-v2.sh" <<'SH'
 #!/data/data/com.termux/files/usr/bin/bash
 set -euo pipefail
 repo=onnxscibroccoli/broccoli-core
-run_id=$(gh run list --repo "$repo" --branch feat/parallax-acoustic-v2 \
+run_id=$(gh run list --repo "$repo" --branch feat/parallax-v2-distinct-package \
   --workflow parallax-android-build.yml --status success --limit 1 --json databaseId \
   --jq '.[0].databaseId // empty')
 [ -n "$run_id" ] || { echo 'No successful v2 build is available yet.'; exit 1; }
