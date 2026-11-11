@@ -28,6 +28,10 @@ class AcousticService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == "stop") { stopSelf(); return START_NOT_STICKY }
         if (worker != null || AcousticBus.polling) return START_NOT_STICKY
+        if (PlaybackReferenceBus.monitorRunning) {
+            AcousticBus.status = "Stop continuous speaker comparison before room calibration."
+            stopSelf(); return START_NOT_STICKY
+        }
         if (AcousticBus.calibrating) { stopSelf(); return START_NOT_STICKY }
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             AcousticBus.status = "Microphone permission is required. No correction was changed."
