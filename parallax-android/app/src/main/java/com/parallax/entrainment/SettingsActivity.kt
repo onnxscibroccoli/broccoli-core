@@ -35,6 +35,8 @@ class SettingsActivity : Activity() {
     private val p by lazy { getSharedPreferences(OverlayService.PREFS, MODE_PRIVATE) }
 
     private lateinit var hz: Spinner
+    private val borderRadioId = View.generateViewId()
+    private val fullRadioId = View.generateViewId()
     private lateinit var mode: RadioGroup
     private lateinit var volume: SeekBar
     private lateinit var audioMode: Spinner
@@ -160,13 +162,13 @@ class SettingsActivity : Activity() {
         mode = RadioGroup(this).apply {
             orientation = RadioGroup.VERTICAL
             addView(RadioButton(this@SettingsActivity).apply {
-                id = 100
+                id = borderRadioId
                 minHeight = dp(48)
                 text = "Border overlay"
                 isChecked = !p.getBoolean(OverlayService.KEY_FULL, false)
             })
             addView(RadioButton(this@SettingsActivity).apply {
-                id = 101
+                id = fullRadioId
                 minHeight = dp(48)
                 text = "Full-screen overlay"
                 isChecked = p.getBoolean(OverlayService.KEY_FULL, false)
@@ -174,7 +176,7 @@ class SettingsActivity : Activity() {
         }
         content.addView(mode)
         mode.setOnCheckedChangeListener { _, checkedId ->
-            p.edit().putBoolean(OverlayService.KEY_FULL, checkedId == 101).apply()
+            p.edit().putBoolean(OverlayService.KEY_FULL, checkedId == fullRadioId).apply()
             requestLiveUpdate()
         }
 
@@ -354,7 +356,7 @@ class SettingsActivity : Activity() {
                 return@setOnClickListener
             }
             val minutes = parsedMinutes?.coerceIn(1, 720) ?: 5L
-            val full = mode.checkedRadioButtonId == 101
+            val full = mode.checkedRadioButtonId == fullRadioId
             val seedText = seed.text.toString().ifBlank { "PARALLAX_MOBILE" }
             val vol = volume.progress / 100f
             val opacity = fullOpacity.progress / 100f
