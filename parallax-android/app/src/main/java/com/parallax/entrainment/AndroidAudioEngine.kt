@@ -112,7 +112,12 @@ class AndroidAudioEngine(
             val frames = 1024
             val buffer = FloatArray(frames * 2)
             val eq = EqualizerDsp(sampleRate)
-            val bell = BellSynth(sampleRate)
+            val bellLeft = BellSynth(sampleRate)
+            val bellRight = BellSynth(sampleRate)
+            val chimeLeft = BellSynth(sampleRate)
+            val chimeRight = BellSynth(sampleRate)
+            var lastHourBucket = System.currentTimeMillis() / 3_600_000L
+            var chimeFrames = 0
             var bellMix = 0f
             var calibrationGain = 1f
             var fadeInFrames = 0
@@ -124,6 +129,14 @@ class AndroidAudioEngine(
                     val acoustic = AcousticBus.state
                     val speaker = created.routedDevice?.type == android.media.AudioDeviceInfo.TYPE_BUILTIN_SPEAKER
                     eq.configure(if (speaker) acoustic.effective else AcousticDsp.effective(List(7) { 0f }, acoustic.manual, acoustic.locked))
+                    val hourBucket = System.currentTimeMillis() / 3_600_000L
+                    if (hourBucket != lastHourBucket) {
+                        lastHourBucket = hourBucket
+                        if (acoustic.hourlyChime) {
+                            chimeFrames = sampleRate * acoustic.bellRingSeconds.coerceIn(2, 60)
+                            chimeLeft.trigger(); chimeRight.trigger()
+                        }
+                    }
                     val bellTarget = if (acoustic.bells) 1f else 0f
                     val muteTarget = if (AcousticBus.calibrating) 0f else 1f
                     val hz = targetHz.toDouble().coerceIn(0.5, 40.0)
@@ -150,10 +163,24 @@ class AndroidAudioEngine(
                         calibrationGain += (muteTarget - calibrationGain) * .001f
                         // 12 dB fixed headroom for positive manual gains and bell partials.
                         val gain = baseGain * envelope * calibrationGain * .25f
-                        val bellSample = if (bellMix > .00001f || bellTarget > 0f) bell.next(AcousticDsp.bells[acoustic.profile]) else 0f
-                        // Leave headroom and clamp floating-point samples before AudioTrack conversion.
-                        buffer[frame * 2] = eq.process((sin(leftPhase).toFloat() * (1f - bellMix) + bellSample * bellMix) * gain, 0)
-                        buffer[frame * 2 + 1] = eq.process((sin(rightPhase).toFloat() * (1f - bellMix) + bellSample * bellMix) * gain, 1)
+                        val fundamental = AcousticDsp.bells[acoustic.profile]
+                        val bellL = if (bellMix > .00001f || bellTarget > 0f)
+                            bellLeft.next(fundamental, acoustic.bellRingSeconds,
+                                acoustic.bellIntervalSeconds, acoustic.bowlMode) else 0f
+                        val bellR = if (bellMix > .00001f || bellTarget > 0f)
+                            bellRight.next(fundamental + hz, acoustic.bellRingSeconds,
+                                acoustic.bellIntervalSeconds, acoustic.bowlMode) else 0f
+                        val layer = if (acoustic.bellCarrier) 1f else .45f
+                        var left = sin(leftPhase).toFloat() * (1f - bellMix * layer) + bellL * bellMix * layer
+                        var right = sin(rightPhase).toFloat() * (1f - bellMix * layer) + bellR * bellMix * layer
+                        if (chimeFrames > 0) {
+                            val chimeL = chimeLeft.next(fundamental, acoustic.bellRingSeconds, 300, acoustic.bowlMode)
+                            val chimeR = chimeRight.next(fundamental + hz, acoustic.bellRingSeconds, 300, acoustic.bowlMode)
+                            left += chimeL * .35f; right += chimeR * .35f
+                            chimeFrames--
+                        }
+                        buffer[frame * 2] = eq.process(left * gain, 0)
+                        buffer[frame * 2 + 1] = eq.process(right * gain, 1)
                         leftPhase += 2.0 * PI * leftHz / sampleRate
                         rightPhase += 2.0 * PI * rightHz / sampleRate
                         if (leftPhase >= 2.0 * PI) leftPhase -= 2.0 * PI

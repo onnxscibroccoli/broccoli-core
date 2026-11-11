@@ -78,4 +78,30 @@ class AcousticDspTest {
         assertNull(AcousticDsp.normalizedSpectrum(List(7) { .2 }, List(7) { .1 }))
     }
 
+    @Test fun bellCarriersMaintainTargetDifferenceAndLongRing() {
+        val rate = 48000
+        val left = BellSynth(rate)
+        val right = BellSynth(rate)
+        var stereoDifference = 0.0
+        var energySecondFive = 0.0
+        repeat(rate * 6) {
+            val a = left.next(528.0, 16, 24)
+            val b = right.next(534.0, 16, 24)
+            stereoDifference += kotlin.math.abs(a - b)
+            if (it in rate * 4 until rate * 5) energySecondFive += kotlin.math.abs(a.toDouble())
+        }
+        assertTrue(stereoDifference > 100.0)
+        assertTrue("ring should last beyond four seconds", energySecondFive > 0.01)
+    }
+    @Test fun bowlSynthesisIsFiniteAndLongLived() {
+        val model = BellSynth(48000)
+        var nonzero = 0
+        repeat(48000 * 5) {
+            val value = model.next(174.0, 24, 30, true)
+            assertTrue(value.isFinite() && value in -1f..1f)
+            if (it > 48000 * 4 && kotlin.math.abs(value) > .00001f) nonzero++
+        }
+        assertTrue(nonzero > 100)
+    }
+
 }

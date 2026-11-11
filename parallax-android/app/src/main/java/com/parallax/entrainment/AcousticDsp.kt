@@ -48,24 +48,42 @@ object AcousticDsp {
     }
 }
 
+/** Independent stereo modal voices support a true interaural frequency difference. */
 class BellSynth(private val rate: Int) {
-    private val ratios = doubleArrayOf(.5, 1.0, 1.2, 1.5, 2.0)
-    private val weights = doubleArrayOf(.12, .42, .18, .12, .16)
-    private val phases = DoubleArray(5)
+    private val bellRatios = doubleArrayOf(.5, 1.0, 1.2, 1.5, 2.0)
+    private val bellWeights = doubleArrayOf(.12, .42, .18, .12, .16)
+    private val bowlRatios = doubleArrayOf(1.0, 2.78, 5.12, 8.15, 11.8)
+    private val bowlWeights = doubleArrayOf(.48, .25, .13, .09, .05)
+    private val phases = DoubleArray(10)
     private var frequency = 528.0
     private var age = 0
-    fun next(hz: Double): Float {
-        frequency += (hz - frequency) * .0005 // Smooth preset changes, preserving oscillator phase.
+    fun trigger() { age = 0 }
+    fun next(hz: Double, ringSeconds: Int = 16, intervalSeconds: Int = 24, bowl: Boolean = false): Float {
+        frequency += (hz - frequency) * .0005
+        val ring = ringSeconds.coerceIn(2, 60)
+        val interval = max(intervalSeconds.coerceIn(4, 300), ring)
+        val totalFrames = rate * interval
         val t = age.toDouble() / rate
-        val attack = min(t / .025, 1.0)
-        val release = min((4.0 - t) / .1, 1.0).coerceAtLeast(0.0)
+        val attack = (t / .025).coerceIn(0.0, 1.0)
+        val release = ((ring - t) / .20).coerceIn(0.0, 1.0)
+        val ratios = if (bowl) bowlRatios else bellRatios
+        val weights = if (bowl) bowlWeights else bellWeights
         var sum = 0.0
-        for (i in phases.indices) {
-            sum += weights[i] * sin(phases[i]) * exp(-t * (1.0 + i * .3))
-            phases[i] = (phases[i] + 2 * PI * frequency * ratios[i] / rate) % (2 * PI)
+        for (i in ratios.indices) {
+            val decay = if (bowl) (0.6 + i * .15) else (1.2 + i * .25)
+            val normalizedDecay = decay * t / (ring / 4.0)
+            val phaseIndex = i * 2
+            val fundamentalHz = (frequency * ratios[i]).coerceAtMost(rate * .46)
+            sum += weights[i] * sin(phases[phaseIndex]) * exp(-normalizedDecay)
+            phases[phaseIndex] = (phases[phaseIndex] + 2 * PI * fundamentalHz / rate) % (2 * PI)
+            if (bowl) {
+                val pairHz = (fundamentalHz + .5).coerceAtMost(rate * .46)
+                sum += weights[i] * 0.60 * sin(phases[phaseIndex + 1]) * exp(-normalizedDecay)
+                phases[phaseIndex + 1] = (phases[phaseIndex + 1] + 2 * PI * pairHz / rate) % (2 * PI)
+            }
         }
-        age = (age + 1) % (rate * 4)
-        return (sum * attack * release).toFloat()
+        age = (age + 1) % totalFrames
+        return (sum * attack * release * (if (bowl) .58 else 1.0)).toFloat().coerceIn(-1f, 1f)
     }
 }
 
