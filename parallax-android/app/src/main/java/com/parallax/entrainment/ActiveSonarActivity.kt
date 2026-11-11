@@ -28,6 +28,7 @@ class ActiveSonarActivity : Activity(), SensorEventListener {
     private lateinit var runButton: Button
     private lateinit var sensorManager: SensorManager
     private var previousYaw: Float? = null
+    private var previousGyroTimestampNs = 0L
     @Volatile private var relativeYawDegrees = 0f
     @Volatile private var motionObserved = false
     @Volatile private var cancelled = false
@@ -185,6 +186,7 @@ class ActiveSonarActivity : Activity(), SensorEventListener {
     }
     override fun onResume() {
         super.onResume()
+        previousGyroTimestampNs = 0L
         val rotation = sensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR)
         val gyro = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
         val accel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
@@ -207,6 +209,16 @@ class ActiveSonarActivity : Activity(), SensorEventListener {
                 val yaw = Math.toDegrees(angles[0].toDouble()).toFloat()
                 if (previousYaw == null) previousYaw = yaw
                 relativeYawDegrees = (yaw - (previousYaw ?: yaw) + 540f) % 360f - 180f
+            }
+            Sensor.TYPE_GYROSCOPE -> {
+                // Relative-only fallback when Android does not expose a fused
+                // GAME_ROTATION_VECTOR. Drift accumulates; never use as absolute position.
+                if (previousGyroTimestampNs > 0L && event.timestamp > previousGyroTimestampNs) {
+                    val dt = ((event.timestamp - previousGyroTimestampNs) / 1e9).coerceIn(0.0, 0.1)
+                    val degrees = Math.toDegrees(event.values[2].toDouble() * dt).toFloat()
+                    relativeYawDegrees = (relativeYawDegrees + degrees + 540f) % 360f - 180f
+                }
+                previousGyroTimestampNs = event.timestamp
             }
             Sensor.TYPE_ACCELEROMETER -> {
                 val magnitude = sqrt(event.values.sumOf { (it * it).toDouble() })
