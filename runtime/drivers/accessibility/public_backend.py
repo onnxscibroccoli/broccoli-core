@@ -1,3 +1,4 @@
+from typing import Dict
 import subprocess
 from .backend import AccessibilityBackend
 
