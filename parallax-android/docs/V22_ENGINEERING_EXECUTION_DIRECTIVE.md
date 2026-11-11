@@ -89,3 +89,13 @@ E4. Later experimentation with offline physics-informed neural models and conven
 - Document unknowns and next measurable experiments rather than inventing functionality.
 
 **Definition of done:** The binaural and calibration features are usable and regression-tested, the experimental sonar returns real measured candidate echoes or an honest failure, the user can access controls from home, permissions and audio state are safe, and the independently installable APK passes CI. Verified mapping, a full ES-EKF, background chimes and native C++ remain separate explicitly gated work until implemented and tested.
+
+## v2.2.1 continuous audio supervision and visualization corrective directive
+
+- Replace the visible legacy 10-minute polling control with a separate **true continuous microphone-to-playback comparator**. Do not mistake periodic audible test-tone sweeps for continuous measurement.
+- Read the **real PCM output** of the active bell/binaural generator *after* synthesis, EQ and volume. Compare its spectral shape against the user-consented microphone's captured output at approximately 300 ms intervals; report a confidence qualifier and inadequate-input conditions.
+- The speaker/microphone transfer function and gain are uncalibrated. Do not advertise precise reproduction, phase lock, actual brain/ear stimulation, room maps or stereo-headphone monitoring. Continuous microphone comparison requires the **built-in speaker route**.
+- Keep manual EQ precedence. Default monitoring never modifies sound; optional live Auto EQ is strictly cut-only, broadband-evidence-gated and rate-limited. No gain boost after weak, noisy, clipped or missing evidence.
+- Make **audio-reactive Parallax visuals** a persisted optional mode independent from the **existing room-test sonar-ring overlay**. Use the native original parallax radial gradients: increase displacement from center and glow/radius by smoothed playback amplitude. Do not add a new sonar style or require microphone permission for visual animation.
+- Prevent microphone sharing races with the existing 40-second room calibration, stop/release on audio pauses and route changes, keep explicit notification controls, and avoid background auto-start.
+- CI regression gates: phase-independent FFT similarity on simulated matching/discordant sounds, low-input rejection, muted/zero amplitude mapping, Android Lint, and compilation. Hardware acceptance: Samsung A14 Android 15 as in README; single phone only.

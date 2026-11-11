@@ -152,3 +152,42 @@ positioning system, EKF or medical treatment. It does not require another device
 See [v2.2 single-device research and validation gates](docs/v2.2-single-device-acoustic-research.md).
 
 For the gated integration and AI-agent handoff see [v2.2 engineering directive](docs/V22_ENGINEERING_EXECUTION_DIRECTIVE.md).
+
+## v2.2.1 development correction — continuous mic feedback and themed audio visuals
+
+**Overrides the older “10-minute auto-polling correction” description for these two new controls.** The earlier 40-second room probe remains available as a separate, explicitly triggered calibration test; it does not run repeatedly while continuous monitoring is enabled.
+
+### Continuous microphone comparison (explicit opt-in)
+
+- Start **an audible Parallax session using the phone's built-in speaker**, then enable **Compare speaker audio to microphone continuously** on the home screen or under Advanced Acoustics.
+- With the microphone permission granted, a **user-started microphone foreground service** continuously captures 4096-sample windows at 44.1 kHz. It evaluates a new capture approximately every 300 ms.
+- The expected signal comes from Parallax's **actual stereo audio PCM written to AudioTrack**, after binaural bell/bowl synthesis, equalizer, current volume, fades and audio ducking; the speaker comparison reference is the channel-downmixed PCM. No unrelated app audio is used as the reference.
+- FFT-based energy comparison computes frequency-band similarity on independently captured microphone audio. The result is a **spectral resemblance estimate**, not raw waveform phase cancellation, spatial localization, human hearing verification or calibrated SPL. Stereo headphones, wired headsets, USB or Bluetooth audio **cannot be evaluated** through the phone's internal microphone; the service refuses non-built-in-speaker routes.
+- Similarity, confidence, valid spectral bands and an **uncalibrated mic/reference gain ratio** are visible in the home/advanced status. Low input, clipping, absent signal, processing effects, route changes and background noise may make comparisons unreliable. The comparison handles unsynchronized Android playback and capture clocks by comparing spectra rather than claiming exact sample-by-sample alignment.
+- Default mode is **monitor-only**. The separate optional **conservative live Auto EQ** toggle permits peak cuts with max **0.2 dB per eligible band per 15 seconds**, only after repeated confident, broadband matches. At least four correction bands must be supported. No boosts, no modification of manual-locked EQ, and no change to weak/noisy measurements.
+- Microphone capture never starts from boot, background scheduling, audio visualization, the sonar-ring switch, or the separate one-shot FMCW room test. The ongoing notification provides Stop. Capture stops when the audio session ends/pauses, route changes, a call begins, permission disappears, battery saver starts or battery is low. It does not restart by itself.
+- The app does not save PCM recordings, upload microphone data, store acoustic fingerprints or use the internet for this feature. The real-time PCM snapshot exists only transiently in memory while live monitoring is enabled.
+
+### Two independent visual systems
+
+1. **Audio-reactive Parallax Distortion** (new, off by default): reads a smoothed output amplitude level directly from Parallax's post-EQ playback. It moves the **original Parallax radial-gradient entities** farther from the visual origin, increases their radius and brightens their existing glow according to actual audio amplitude. It maintains the original seeded colors, border/full-screen masking, visual theme, overlay touch safety and 30-fps cap; it introduces no rings or flashing. The user can adjust response strength under Advanced Acoustics. It needs **no microphone permission**.
+2. **Room-test sonar rings** (existing, separate, off by default): displays measured spectral-band/range-candidate indicators from explicit acoustic room tests. Sonar rings and audio-reactive Parallax shapes have independent toggles and states. Turning on either visual does **not** start a microphone recording or a sensing probe.
+
+### Hardware QA on one Samsung A14 / Android 15
+
+- With bells playing through the **built-in speaker**, start live comparison from the home screen. Ensure the notification/microphone indicator remains visible, score changes repeatedly, and no 10-minute calibration tones interrupt the music.
+- Compare the result with matching bell audio, ambient speech/noise, volume changes and silence. A high number is not a controlled calibration claim. Note any invalid statuses, microphone gain processing, loss of speaker route or muted capture.
+- Enable conservative Auto EQ separately and verify that only qualified automatic bands change downward slowly, **manual locks remain untouched**, and no change occurs for silence, clipping, headphones or insufficient spectral coverage.
+- Pause/stop playback and stop from the notification. Check the mic indicator clears. Try permission denial/revocation, calibration conflict, calls, battery saver, and route to wired/Bluetooth headphones.
+- Toggle audio-reactive visual with microphone **denied**. Confirm original Parallax blobs expand outward/brighten only as playback amplitude increases and return to baseline after silence. Check both theme modes, border/full overlay, TalkBack and navigation-bar touch passthrough.
+- Toggle sonar rings independently. Do not show sonar rings unless room-test data exists; do not interpret the audio-reactive blobs as actual room geometry.
+
+### DSP/implementation files
+
+- `PlaybackReferenceBus.kt`: transient playback reference snapshots, visual amplitude and monitor status.
+- `LiveAudioMatcher.kt`: pure FFT spectral similarity, conservative EQ advice and radial/intensity mapping.
+- `LiveAudioMonitorService.kt`: user-started microphone FGS, periodic ~300 ms analysis and conservative optional EQ.
+- `LiveMonitorUi.kt`: shared permission/consent controls for home and Advanced Acoustics.
+- `LiveAudioMatcherTest.kt`: deterministic phase-shift, unrelated spectrum, clipping/silence and visual mapping tests.
+
+This is a testable **single-device development implementation**. Real-world speaker/microphone transfer characterization, synchronized audio clocks and listener-perceived binaural effects remain outside the claims of this monitoring module.
