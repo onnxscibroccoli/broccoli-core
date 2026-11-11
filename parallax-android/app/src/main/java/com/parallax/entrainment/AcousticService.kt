@@ -142,7 +142,7 @@ class AcousticService : Service() {
                     for (i in output.indices) {
                         val within = elapsed % 5000 + i * 1000.0 / rate
                         val ramp = min(min(within / 100, (5000 - within) / 100), 1.0).coerceAtLeast(0.0)
-                        output[i] = (sin(phase) * .06 * ramp).toFloat()
+                        output[i] = (sin(phase) * .10 * ramp).toFloat()
                         phase = (phase + 2 * PI * frequency / rate) % (2 * PI)
                     }
                     offset = 0
@@ -166,18 +166,25 @@ class AcousticService : Service() {
                 Thread.sleep(4)
             }
             check(counts.all { it >= 10 } && total > 0) { "Insufficient microphone samples" }
-            check(clipped.toDouble() / total < .001) { "Microphone clipped; lower volume and retry" }
-            val correction = AcousticDsp.correction(noise.map { it / counts[0] }, signal.mapIndexed { i, v -> v / counts[i + 1] })
-                ?: error("Test signal too weak or room too noisy; previous EQ retained")
+            val clipPercent = clipped.toDouble() * 100.0 / total
+            check(clipPercent < .5) {
+                "Mic clipped (${"%.2f".format(clipPercent)}%). Lower media volume and retry; previous EQ retained."
+            }
+            val noisePower = noise.map { it / counts[0] }
+            val signalPower = signal.mapIndexed { i, v -> v / counts[i + 1] }
+            val adaptive = AcousticDsp.adaptiveCorrection(noisePower, signalPower)
+                ?: error("Insufficient clear test bands (need 4/7). Move away from noise, raise media volume one step at a time, or try a different orientation. Original EQ retained.")
             if (cancelled.get()) throw InterruptedException()
-            AcousticBus.correction(correction, micro)
-            // Sonar-style rings use measured frequency response, never invented reflection distances.
-            AcousticDsp.normalizedSpectrum(
-                noise.map { it / counts[0] },
-                signal.mapIndexed { i, v -> v / counts[i + 1] }
-            )?.let { AcousticBus.sonarReading(it) }
-            AcousticBus.status = "Correction applied (${if (micro) "up to 0.5 dB per band" else "up to 6 dB peak reduction"}). " +
-                if (unprocessed) "Unprocessed microphone." else "Device-processed microphone; approximate result."
+            val current = AcousticBus.state.auto
+            // Keep the previous EQ in weak bands. Auto-polling still limits gain steps.
+            val target = adaptive.bands.mapIndexed { i, correction -> correction ?: current[i] }
+            AcousticBus.correction(target, micro)
+            AcousticDsp.normalizedSpectrum(noisePower, signalPower)
+                ?.let { AcousticBus.sonarReading(it) }
+            AcousticBus.status =
+                "Correction applied using ${adaptive.validCount}/7 valid bands; " +
+                if (adaptive.weakHz.isEmpty()) "all bands measured."
+                else "weak bands ${adaptive.weakHz.joinToString()} Hz preserved."
         } finally {
             runCatching { record?.stop() }; runCatching { record?.release() }
             runCatching { track?.pause() }; runCatching { track?.flush() }; runCatching { track?.release() }

@@ -34,6 +34,37 @@ object AcousticDsp {
         return db.map { (median - it).coerceIn(-6.0, 0.0).toFloat() }
     }
 
+
+    data class AdaptiveResult(
+        /** Null means the band was unreliable; retain the previous correction. */
+        val bands: List<Float?>,
+        val validCount: Int,
+        val weakHz: List<Int>
+    )
+
+    /** Accept only measured bands with useful SNR; do not extrapolate into nulls. */
+    fun adaptiveCorrection(noise: List<Double>, signal: List<Double>): AdaptiveResult? {
+        if (noise.size != bands.size || signal.size != bands.size) return null
+        val valid = bands.indices.filter { i ->
+            val n = noise[i]; val s = signal[i]
+            n.isFinite() && s.isFinite() && n >= 0 && s > 1e-9 &&
+                s > max(n, 1e-12) * 4.0
+        }
+        // At least four independent bands required for a meaningful median.
+        if (valid.size < 4) return null
+        val db = valid.map { i ->
+            10 * log10(max(signal[i] - noise[i], 1e-12))
+        }.sorted()
+        val median = db[db.size / 2]
+        val values = bands.indices.map { i ->
+            if (i !in valid) null
+            else (median - 10 * log10(max(signal[i] - noise[i], 1e-12)))
+                .coerceIn(-6.0, 0.0).toFloat()
+        }
+        return AdaptiveResult(values, valid.size,
+            bands.indices.filter { it !in valid }.map { bands[it].toInt() })
+    }
+
     fun microCorrection(old: List<Float>, target: List<Float>) = old.indices.map {
         (old[it] + (target[it] - old[it]).coerceIn(-0.5f, 0.5f)).coerceIn(-6f, 0f)
     }

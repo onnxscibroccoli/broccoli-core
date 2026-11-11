@@ -104,4 +104,17 @@ class AcousticDspTest {
         assertTrue(nonzero > 100)
     }
 
+    @Test fun adaptiveCalibrationKeepsUnreliableBands() {
+        val n = List(7) { 1e-7 }
+        val s = listOf(.001, .002, .004, .03, .001, .0001, 1e-8)
+        val out = AcousticDsp.adaptiveCorrection(n, s)!!
+        assertEquals(6, out.validCount)
+        assertNull(out.bands[6])
+        assertTrue(out.bands.dropLast(1).all { it != null && it in -6f..0f })
+    }
+    @Test fun adaptiveCalibrationRejectsMostlyWeakSignals() {
+        assertNull(AcousticDsp.adaptiveCorrection(List(7) { 1e-4 },
+            listOf(.01, 1e-4, 2e-4, 2e-4, 2e-4, 2e-4, 1e-4)))
+    }
+
 }
