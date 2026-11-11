@@ -486,7 +486,7 @@ class SettingsActivity : Activity() {
         val text = label(title + "  " + value + suffix)
         root.addView(text)
         val bar = SeekBar(this).apply {
-            minHeight = dp(48)
+            minimumHeight = dp(48)
             contentDescription = title
             this.max = max - min
             progress = (value - min).coerceIn(0, max - min)
