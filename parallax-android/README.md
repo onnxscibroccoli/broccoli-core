@@ -128,3 +128,25 @@ chmod +x "$HOME/get-parallax-v2.sh"
 Version 2.1 installs separately as `com.parallax.entrainment.v21`. Enable **Acoustic Sonar Overlay**, select the ring intensity, then complete a successful **Calibrate Room & Speakers** run. The screen overlay visualizes seven calibrated frequency-band energy levels as concentric rings. The bands are normalized relative to the strongest measured band; the summary survives app restarts but no PCM recordings are retained. Repeat calibration to refresh it.
 
 This is a **sonar-inspired frequency-response visualizer**. It does not transmit ultrasonic chirps, estimate echo time-of-flight, localize reflections, measure distance, or form a spatial map. The microphone is never activated by the visualization toggle alone. Check the rings on the physical device after a calibration, then disable the toggle and verify they disappear. Device measurements remain required before any acoustic accuracy claim.
+
+
+## v2.2 — Binaural bowl upgrade and single-phone acoustic probe
+
+Draft PR #101 builds on the v2.1 branch with a separately installable Android package:
+`com.parallax.entrainment.v22`.
+
+Home-screen controls now include bell and ringing bowl toggles, binaural-carrier mode,
+16 fundamental frequencies, an optional within-session hourly chime, and a direct
+Auto EQ calibration control. The advanced acoustic screen provides ringing sustain
+and repeat interval controls. Bells use independent stereo synthesis voices so the
+selected binaural target is preserved when bell carriers are enabled. **Use headphones**
+for binaural perception.
+
+Calibration preserves prior EQ on weak-band failures and reports valid band counts.
+A user-triggered 48 kHz single-phone near-ultrasound diagnostic captures a short
+microphone burst, estimates candidate echo delay relative to direct speaker leakage,
+and discards the PCM. IMU input reports orientation change and motion flags.
+This is an experiment, **not** a verified room scanner, human detector, acoustic
+positioning system, EKF or medical treatment. It does not require another device.
+
+See [v2.2 single-device research and validation gates](docs/v2.2-single-device-acoustic-research.md).
