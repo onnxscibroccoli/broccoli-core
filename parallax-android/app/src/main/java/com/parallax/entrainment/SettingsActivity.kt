@@ -40,6 +40,17 @@ class SettingsActivity : Activity() {
     private lateinit var mode: RadioGroup
     private lateinit var volume: SeekBar
     private lateinit var audioMode: Spinner
+    private var quickBellSwitch: Switch? = null
+    private var quickMonitorSwitch: Switch? = null
+    private var quickMonitorStatus: TextView? = null
+    private val monitorUiHandler = Handler(Looper.getMainLooper())
+    private val monitorUiRefresh = object : Runnable {
+        override fun run() {
+            quickMonitorSwitch?.isChecked = PlaybackReferenceBus.monitorRunning
+            quickMonitorStatus?.text = PlaybackReferenceBus.status
+            monitorUiHandler.postDelayed(this, 800L)
+        }
+    }
     private lateinit var fullOpacity: SeekBar
     private lateinit var borderWidth: SeekBar
     private lateinit var borderOpacity: SeekBar
@@ -274,6 +285,94 @@ class SettingsActivity : Activity() {
             override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
         }
 
+        // Redundant home controls: no navigation menu required to reach core acoustics.
+        AcousticBus.initialize(this)
+        content.addView(sectionTitle("Bells & Acoustic — Quick Controls"))
+        content.addView(label("Bells can carry your selected binaural beat. Headphones are needed for a binaural effect."))
+        quickBellSwitch = Switch(this).apply {
+            text = "Enable bells / ringing bowls"; minHeight = dp(52)
+            isChecked = AcousticBus.state.bells
+            setOnCheckedChangeListener { _, value ->
+                AcousticBus.bells(value)
+                if (value && p.getInt(OverlayService.KEY_AUDIO_MODE, OverlayService.AUDIO_MODE_MIX) == OverlayService.AUDIO_MODE_OFF) {
+                    p.edit().putInt(OverlayService.KEY_AUDIO_MODE, OverlayService.AUDIO_MODE_MIX).apply()
+                    audioMode.setSelection(OverlayService.AUDIO_MODE_MIX)
+                }
+                requestLiveUpdate()
+            }
+        }
+        content.addView(quickBellSwitch)
+        content.addView(Switch(this).apply {
+            text = "Bells as binaural carrier"; minHeight = dp(52)
+            isChecked = AcousticBus.state.bellCarrier
+            setOnCheckedChangeListener { _, value -> AcousticBus.bellCarrier(value) }
+        })
+        content.addView(Switch(this).apply {
+            text = "Long singing bowl sound"; minHeight = dp(52)
+            isChecked = AcousticBus.state.bowlMode
+            setOnCheckedChangeListener { _, value -> AcousticBus.bowlMode(value) }
+        })
+        content.addView(Switch(this).apply {
+            text = "Hourly chime during session"; minHeight = dp(52)
+            isChecked = AcousticBus.state.hourlyChime
+            setOnCheckedChangeListener { _, value -> AcousticBus.hourlyChime(value) }
+        })
+        content.addView(label("Bell fundamental"))
+        content.addView(Spinner(this).apply {
+            contentDescription = "Bell fundamental selection"
+            adapter = ArrayAdapter(this@SettingsActivity, android.R.layout.simple_spinner_dropdown_item,
+                AcousticDsp.bells.map { "${it.toInt()} Hz" })
+            setSelection(AcousticBus.state.profile)
+            onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
+                override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    AcousticBus.profile(position)
+                }
+            }
+        })
+        content.addView(Button(this).apply {
+            text = "Calibrate Auto EQ"
+            setOnClickListener {
+                startActivity(Intent(this@SettingsActivity, AcousticSettingsActivity::class.java)
+                    .putExtra("start_calibration", true))
+            }
+        })
+        content.addView(Switch(this).apply {
+            text = "Audio-reactive Parallax glow (no microphone)"
+            minHeight = dp(52); isChecked = AcousticBus.state.audioVisualEnabled
+            setOnCheckedChangeListener { _, enabled -> AcousticBus.audioVisual(enabled) }
+        })
+        content.addView(label("Reacts to bell/binaural audio amplitude by gently increasing the original Parallax blobs' distance from the center and glow. Separate from sonar rings."))
+        quickMonitorSwitch = Switch(this).apply {
+            text = "Compare speaker audio to microphone continuously"
+            minHeight = dp(52); isChecked = PlaybackReferenceBus.monitorRunning
+            setOnClickListener {
+                if (isChecked) LiveMonitorUi.confirmStart(this@SettingsActivity)
+                else LiveMonitorUi.stop(this@SettingsActivity)
+            }
+        }
+        content.addView(quickMonitorSwitch)
+        quickMonitorStatus = label(PlaybackReferenceBus.status).apply {
+            // Fast numerical changes should not interrupt TalkBack every second.
+            accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_NONE
+        }
+        content.addView(quickMonitorStatus)
+        content.addView(label("Live comparison is a separate explicit microphone session. Start playback on the built-in speaker first. Headphones cannot be tested acoustically by the phone microphone."))
+        content.addView(Switch(this).apply {
+            text = "Show room-test sonar rings (independent)"
+            minHeight = dp(52)
+            isChecked = AcousticBus.state.sonarEnabled
+            setOnCheckedChangeListener { _, checked -> AcousticBus.sonar(checked) }
+        })
+        content.addView(Button(this).apply {
+            text = "Test single-phone active acoustic sonar"
+            setOnClickListener { startActivity(Intent(this@SettingsActivity, ActiveSonarActivity::class.java)) }
+        })
+        content.addView(Button(this).apply {
+            text = "Advanced acoustics: EQ, bowl timing, sonar"
+            setOnClickListener { startActivity(Intent(this@SettingsActivity, AcousticSettingsActivity::class.java)) }
+        })
+
         content.addView(sectionTitle("Appearance"))
         volume = slider(content, "Volume", 0, 100, (p.getFloat(OverlayService.KEY_VOLUME, .12f) * 100).roundToInt(), "%") {
             p.edit().putFloat(OverlayService.KEY_VOLUME, it / 100f).apply()
@@ -451,7 +550,15 @@ class SettingsActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
+        monitorUiHandler.removeCallbacks(monitorUiRefresh)
+        monitorUiHandler.post(monitorUiRefresh)
         if (hasRequiredPermissions()) {
+            quickBellSwitch?.let { if (it.isChecked != AcousticBus.state.bells) it.isChecked = AcousticBus.state.bells }
+            // Mirror an Audio off -> Play Alongside update made in Advanced Acoustics.
+            if (::audioMode.isInitialized) {
+                val storedMode = p.getInt(OverlayService.KEY_AUDIO_MODE, OverlayService.AUDIO_MODE_MIX).coerceIn(0, 2)
+                if (audioMode.selectedItemPosition != storedMode) audioMode.setSelection(storedMode)
+            }
             if (showingPermissionGate) {
                 showingPermissionGate = false
                 recreate()
@@ -459,6 +566,11 @@ class SettingsActivity : Activity() {
         } else {
             showPermissionsScreen()
         }
+    }
+
+    override fun onPause() {
+        monitorUiHandler.removeCallbacks(monitorUiRefresh)
+        super.onPause()
     }
 
     private fun requestLiveUpdate() {
@@ -515,6 +627,7 @@ class SettingsActivity : Activity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (LiveMonitorUi.onPermissionResult(this, requestCode, grantResults)) return
         if (requestCode == 3001 && grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
             ScheduleReceiver.reschedule(this)
         }

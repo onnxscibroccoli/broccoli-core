@@ -44,7 +44,7 @@ class AcousticDspTest {
         assertEquals(-6.0, 10 * log10(outputPower / inputPower), .1)
     }
     @Test fun everyBellIsFiniteBoundedAndNonSilentAcrossRepeatedStrikes() {
-        assertEquals(9, AcousticDsp.bells.distinct().size)
+        assertEquals(16, AcousticDsp.bells.distinct().size)
         for (hz in AcousticDsp.bells) {
             val bell = BellSynth(44100)
             var peak = 0f; var previous = 0f
@@ -76,6 +76,45 @@ class AcousticDspTest {
         assertTrue(response.all { it in 0f..1f && it.isFinite() })
         assertNull(AcousticDsp.normalizedSpectrum(List(7) { 0.0 }, List(7) { Double.NaN }))
         assertNull(AcousticDsp.normalizedSpectrum(List(7) { .2 }, List(7) { .1 }))
+    }
+
+    @Test fun bellCarriersMaintainTargetDifferenceAndLongRing() {
+        val rate = 48000
+        val left = BellSynth(rate)
+        val right = BellSynth(rate)
+        var stereoDifference = 0.0
+        var energySecondFive = 0.0
+        repeat(rate * 6) {
+            val a = left.next(528.0, 16, 24)
+            val b = right.next(534.0, 16, 24)
+            stereoDifference += kotlin.math.abs(a - b)
+            if (it in rate * 4 until rate * 5) energySecondFive += kotlin.math.abs(a.toDouble())
+        }
+        assertTrue(stereoDifference > 100.0)
+        assertTrue("ring should last beyond four seconds", energySecondFive > 0.01)
+    }
+    @Test fun bowlSynthesisIsFiniteAndLongLived() {
+        val model = BellSynth(48000)
+        var nonzero = 0
+        repeat(48000 * 5) {
+            val value = model.next(174.0, 24, 30, true)
+            assertTrue(value.isFinite() && value in -1f..1f)
+            if (it > 48000 * 4 && kotlin.math.abs(value) > .00001f) nonzero++
+        }
+        assertTrue(nonzero > 100)
+    }
+
+    @Test fun adaptiveCalibrationKeepsUnreliableBands() {
+        val n = List(7) { 1e-7 }
+        val s = listOf(.001, .002, .004, .03, .001, .0001, 1e-8)
+        val out = AcousticDsp.adaptiveCorrection(n, s)!!
+        assertEquals(6, out.validCount)
+        assertNull(out.bands[6])
+        assertTrue(out.bands.dropLast(1).all { it != null && it in -6f..0f })
+    }
+    @Test fun adaptiveCalibrationRejectsMostlyWeakSignals() {
+        assertNull(AcousticDsp.adaptiveCorrection(List(7) { 1e-4 },
+            listOf(.01, 1e-4, 2e-4, 2e-4, 2e-4, 2e-4, 1e-4)))
     }
 
 }

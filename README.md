@@ -26,6 +26,9 @@ The project also contains a provider-agnostic problem-solving pipeline and manag
 
 ## Parallax Distortion Android app
 
+The v2.2 experimental Android development line adds home-screen audio controls, binaural bell-carrier/modal bowls, adaptive Auto EQ diagnostics, and an opt-in single-device FMCW+IMU echo probe. This is not yet a validated room-mapping or clinical sensing product; see [v2.2 research gates](parallax-android/docs/v2.2-single-device-acoustic-research.md).
+
+
 The `parallax-android/` subtree contains the Parallax Distortion application.
 See [its build, acoustic controls and device-validation guide](parallax-android/README.md)
 for the 2.0 development update: local microphone calibration, nine bell profiles,

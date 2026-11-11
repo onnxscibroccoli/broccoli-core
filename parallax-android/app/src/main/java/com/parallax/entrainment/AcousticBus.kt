@@ -9,11 +9,21 @@ data class AcousticState(
     val manual: List<Float> = List(7) { 0f },
     val locked: List<Boolean> = List(7) { false },
     val bells: Boolean = false,
-    val profile: Int = 4,
+    val profile: Int = 11,
+    val bellCarrier: Boolean = true,
+    val bowlMode: Boolean = false,
+    val bellRingSeconds: Int = 16,
+    val bellIntervalSeconds: Int = 24,
+    val hourlyChime: Boolean = false,
+    val audioVisualEnabled: Boolean = false,
+    val audioVisualStrength: Float = 0.65f,
+    val liveAutoEq: Boolean = false,
     val sonarEnabled: Boolean = false,
     val sonarSensitivity: Float = 0.5f,
     val sonarLevels: List<Float> = List(7) { 0f },
-    val sonarMeasured: Boolean = false
+    val sonarMeasured: Boolean = false,
+    val sonarRangeMeters: Float? = null,
+    val sonarRangeConfidence: Float = 0f
 ) {
     val effective = AcousticDsp.effective(auto, manual, locked)
 }
@@ -32,7 +42,16 @@ object AcousticBus {
             auto = List(7) { p.getFloat("auto_$it", 0f).takeIf { it.isFinite() }?.coerceIn(-6f, 0f) ?: 0f },
             manual = List(7) { p.getFloat("manual_$it", 0f).takeIf { it.isFinite() }?.coerceIn(-12f, 6f) ?: 0f },
             locked = List(7) { p.getBoolean("locked_$it", false) },
-            bells = p.getBoolean("bells", false), profile = p.getInt("profile", 4).coerceIn(0, 8),
+            bells = p.getBoolean("bells", false), profile = p.getInt("profile", 11).coerceIn(0, AcousticDsp.bells.lastIndex),
+            bellCarrier = p.getBoolean("bell_carrier", true),
+            bowlMode = p.getBoolean("bowl_mode", false),
+            bellRingSeconds = p.getInt("bell_ring_seconds", 16).coerceIn(2, 60),
+            bellIntervalSeconds = p.getInt("bell_interval_seconds", 24).coerceIn(4, 300),
+            hourlyChime = p.getBoolean("hourly_chime", false),
+            audioVisualEnabled = p.getBoolean("audio_visual_enabled", false),
+            audioVisualStrength = p.getFloat("audio_visual_strength", .65f)
+                .takeIf { it.isFinite() }?.coerceIn(0f, 1f) ?: .65f,
+            liveAutoEq = p.getBoolean("live_auto_eq", false),
             sonarEnabled = p.getBoolean("sonar_enabled", false),
             sonarSensitivity = p.getFloat("sonar_sensitivity", 0.5f).takeIf { it.isFinite() }?.coerceIn(0f, 1f) ?: 0.5f,
             sonarLevels = List(7) { p.getFloat("sonar_band_$it", 0f).takeIf { v -> v.isFinite() }?.coerceIn(0f, 1f) ?: 0f },
@@ -46,6 +65,13 @@ object AcousticBus {
                 putFloat("auto_$i", next.auto[i]); putFloat("manual_$i", next.manual[i]); putBoolean("locked_$i", next.locked[i])
             }
             putBoolean("bells", next.bells); putInt("profile", next.profile)
+            putBoolean("bell_carrier", next.bellCarrier); putBoolean("bowl_mode", next.bowlMode)
+            putInt("bell_ring_seconds", next.bellRingSeconds)
+            putInt("bell_interval_seconds", next.bellIntervalSeconds)
+            putBoolean("hourly_chime", next.hourlyChime)
+            putBoolean("audio_visual_enabled", next.audioVisualEnabled)
+            putFloat("audio_visual_strength", next.audioVisualStrength)
+            putBoolean("live_auto_eq", next.liveAutoEq)
             putBoolean("sonar_enabled", next.sonarEnabled); putFloat("sonar_sensitivity", next.sonarSensitivity)
             for (i in 0..6) putFloat("sonar_band_$i", next.sonarLevels[i])
             putBoolean("sonar_measured", next.sonarMeasured)
@@ -57,7 +83,17 @@ object AcousticBus {
     }
     @Synchronized fun resetManual() = publish(state.copy(locked = List(7) { false }))
     @Synchronized fun bells(enabled: Boolean) = publish(state.copy(bells = enabled))
-    @Synchronized fun profile(index: Int) = publish(state.copy(profile = index.coerceIn(0, 8)))
+    @Synchronized fun profile(index: Int) = publish(state.copy(profile = index.coerceIn(0, AcousticDsp.bells.lastIndex)))
+    @Synchronized fun bellCarrier(value: Boolean) = publish(state.copy(bellCarrier = value))
+    @Synchronized fun bowlMode(value: Boolean) = publish(state.copy(bowlMode = value))
+    @Synchronized fun bellRingSeconds(value: Int) = publish(state.copy(bellRingSeconds = value.coerceIn(2, 60)))
+    @Synchronized fun bellIntervalSeconds(value: Int) = publish(state.copy(bellIntervalSeconds = value.coerceIn(4, 300)))
+    @Synchronized fun hourlyChime(value: Boolean) = publish(state.copy(hourlyChime = value))
+    @Synchronized fun audioVisual(enabled: Boolean) = publish(state.copy(audioVisualEnabled = enabled))
+    @Synchronized fun audioVisualStrength(value: Float) {
+        if (value.isFinite()) publish(state.copy(audioVisualStrength = value.coerceIn(0f, 1f)))
+    }
+    @Synchronized fun liveAutoEq(enabled: Boolean) = publish(state.copy(liveAutoEq = enabled))
     @Synchronized fun correction(value: List<Float>, micro: Boolean) {
         publish(state.copy(auto = if (micro) AcousticDsp.microCorrection(state.auto, value) else value.toList()))
     }
@@ -66,6 +102,12 @@ object AcousticBus {
         if (value.isFinite()) publish(state.copy(sonarSensitivity = value.coerceIn(0f, 1f))) else Unit
 
     /** Derived seven-band spectral shape only. Never store microphone PCM. */
+    @Synchronized fun sonarEcho(rangeMeters: Float, confidence: Float) {
+        if (!rangeMeters.isFinite() || rangeMeters !in .35f..3.3f || !confidence.isFinite()) return
+        // Ephemeral derived reading, not stored in preferences.
+        state = state.copy(sonarRangeMeters = rangeMeters,
+            sonarRangeConfidence = confidence.coerceIn(0f, 1f))
+    }
     @Synchronized fun sonarReading(levels: List<Float>) {
         if (levels.size != 7 || levels.any { !it.isFinite() || it !in 0f..1f }) return
         publish(state.copy(sonarLevels = levels.toList(), sonarMeasured = true))

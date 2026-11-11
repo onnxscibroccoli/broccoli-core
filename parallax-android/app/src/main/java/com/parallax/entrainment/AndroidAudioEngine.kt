@@ -12,6 +12,7 @@ import android.os.Build
 import kotlin.concurrent.thread
 import kotlin.math.PI
 import kotlin.math.sin
+import kotlin.math.sqrt
 
 /**
  * Small streaming binaural-tone engine.
@@ -108,11 +109,19 @@ class AndroidAudioEngine(
             return
         }
 
+        val playbackId = PlaybackReferenceBus.begin()
         worker = thread(start = true, name = "ParallaxAudio", priority = Thread.NORM_PRIORITY - 1) {
             val frames = 1024
+            val referenceMono = FloatArray(4096)
+            var referenceIndex = 0
             val buffer = FloatArray(frames * 2)
             val eq = EqualizerDsp(sampleRate)
-            val bell = BellSynth(sampleRate)
+            val bellLeft = BellSynth(sampleRate)
+            val bellRight = BellSynth(sampleRate)
+            val chimeLeft = BellSynth(sampleRate)
+            val chimeRight = BellSynth(sampleRate)
+            var lastHourBucket = System.currentTimeMillis() / 3_600_000L
+            var chimeFrames = 0
             var bellMix = 0f
             var calibrationGain = 1f
             var fadeInFrames = 0
@@ -124,6 +133,14 @@ class AndroidAudioEngine(
                     val acoustic = AcousticBus.state
                     val speaker = created.routedDevice?.type == android.media.AudioDeviceInfo.TYPE_BUILTIN_SPEAKER
                     eq.configure(if (speaker) acoustic.effective else AcousticDsp.effective(List(7) { 0f }, acoustic.manual, acoustic.locked))
+                    val hourBucket = System.currentTimeMillis() / 3_600_000L
+                    if (hourBucket != lastHourBucket) {
+                        lastHourBucket = hourBucket
+                        if (acoustic.hourlyChime) {
+                            chimeFrames = sampleRate * acoustic.bellRingSeconds.coerceIn(2, 60)
+                            chimeLeft.trigger(); chimeRight.trigger()
+                        }
+                    }
                     val bellTarget = if (acoustic.bells) 1f else 0f
                     val muteTarget = if (AcousticBus.calibrating) 0f else 1f
                     val hz = targetHz.toDouble().coerceIn(0.5, 40.0)
@@ -150,10 +167,24 @@ class AndroidAudioEngine(
                         calibrationGain += (muteTarget - calibrationGain) * .001f
                         // 12 dB fixed headroom for positive manual gains and bell partials.
                         val gain = baseGain * envelope * calibrationGain * .25f
-                        val bellSample = if (bellMix > .00001f || bellTarget > 0f) bell.next(AcousticDsp.bells[acoustic.profile]) else 0f
-                        // Leave headroom and clamp floating-point samples before AudioTrack conversion.
-                        buffer[frame * 2] = eq.process((sin(leftPhase).toFloat() * (1f - bellMix) + bellSample * bellMix) * gain, 0)
-                        buffer[frame * 2 + 1] = eq.process((sin(rightPhase).toFloat() * (1f - bellMix) + bellSample * bellMix) * gain, 1)
+                        val fundamental = AcousticDsp.bells[acoustic.profile]
+                        val bellL = if (bellMix > .00001f || bellTarget > 0f)
+                            bellLeft.next(fundamental, acoustic.bellRingSeconds,
+                                acoustic.bellIntervalSeconds, acoustic.bowlMode) else 0f
+                        val bellR = if (bellMix > .00001f || bellTarget > 0f)
+                            bellRight.next(fundamental + hz, acoustic.bellRingSeconds,
+                                acoustic.bellIntervalSeconds, acoustic.bowlMode) else 0f
+                        val layer = if (acoustic.bellCarrier) 1f else .45f
+                        var left = sin(leftPhase).toFloat() * (1f - bellMix * layer) + bellL * bellMix * layer
+                        var right = sin(rightPhase).toFloat() * (1f - bellMix * layer) + bellR * bellMix * layer
+                        if (chimeFrames > 0) {
+                            val chimeL = chimeLeft.next(fundamental, acoustic.bellRingSeconds, 300, acoustic.bowlMode)
+                            val chimeR = chimeRight.next(fundamental + hz, acoustic.bellRingSeconds, 300, acoustic.bowlMode)
+                            left += chimeL * .35f; right += chimeR * .35f
+                            chimeFrames--
+                        }
+                        buffer[frame * 2] = eq.process(left * gain, 0)
+                        buffer[frame * 2 + 1] = eq.process(right * gain, 1)
                         leftPhase += 2.0 * PI * leftHz / sampleRate
                         rightPhase += 2.0 * PI * rightHz / sampleRate
                         if (leftPhase >= 2.0 * PI) leftPhase -= 2.0 * PI
@@ -167,11 +198,32 @@ class AndroidAudioEngine(
                         if (written <= 0) throw IllegalStateException("Audio write failed: $written")
                         offset += written
                     }
+                    // The visualization always follows actual post-EQ/post-volume samples.
+                    // PCM reference windows are only published during explicit comparison.
+                    var sumSquares = 0.0
+                    for (i in 0 until frames) {
+                        val left = buffer[2 * i]
+                        val right = buffer[2 * i + 1]
+                        val mono = (left + right) * .5f
+                        sumSquares += (left * left + right * right).toDouble() * .5
+                        referenceMono[referenceIndex++] = mono
+                        if (referenceIndex == referenceMono.size) {
+                            referenceIndex = 0
+                            if (PlaybackReferenceBus.comparisonRequested) {
+                                PlaybackReferenceBus.capture(playbackId, referenceMono.copyOf(),
+                                    created.routedDevice?.type == android.media.AudioDeviceInfo.TYPE_BUILTIN_SPEAKER)
+                            }
+                        }
+                    }
+                    PlaybackReferenceBus.level(playbackId,
+                        (sqrt(sumSquares / frames) * 26.0).toFloat(),
+                        created.routedDevice?.type == android.media.AudioDeviceInfo.TYPE_BUILTIN_SPEAKER)
                     if (!playing && fadeOutFrames <= 0) break
                 }
             } catch (_: IllegalStateException) {
                 // A device audio route can disappear while the service is running.
             } finally {
+                PlaybackReferenceBus.finish(playbackId)
                 playing = false
                 val finishedTrack = track
                 track = null

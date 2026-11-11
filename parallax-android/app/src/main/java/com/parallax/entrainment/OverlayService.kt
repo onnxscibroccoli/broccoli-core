@@ -44,6 +44,7 @@ class OverlayService : Service() {
             view = null
             audio?.stop()
             audio = null
+            stopService(Intent(this, LiveAudioMonitorService::class.java))
             activeAudioMode = AUDIO_MODE_OFF
             startForeground(NOTIFICATION_ID, notification())
             return START_STICKY
@@ -76,6 +77,7 @@ class OverlayService : Service() {
         }
 
         if (p.getBoolean(KEY_SESSION_PAUSED, false) || audioMode == AUDIO_MODE_OFF || volume <= 0f) {
+            stopService(Intent(this, LiveAudioMonitorService::class.java))
             audio?.stop()
             audio = null
             activeAudioMode = AUDIO_MODE_OFF
@@ -184,6 +186,7 @@ class OverlayService : Service() {
         getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean(KEY_SESSION_ACTIVE, false).putBoolean(KEY_SESSION_PAUSED, false).putLong(KEY_SESSION_REMAINING_MS, 0L).apply()
         view?.let { runCatching { wm.removeViewImmediate(it) } }
         view = null
+        stopService(Intent(this, LiveAudioMonitorService::class.java))
         audio?.stop()
         audio = null
     }
