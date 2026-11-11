@@ -129,7 +129,7 @@ def markdown(report: dict) -> str:
             if run:
                 name = run["workflow"].replace("|", "/")
                 branch = run["head_branch"].replace("|", "/")
-                ci = f"[{name}]({run['url']}) on \`{branch}\`"
+                ci = f"[{name}]({run['url']}) on `{branch}`"
                 result = str(run["conclusion"] or run["status"]).replace("|", "/")
             else:
                 ci, result = "No returned run", "NOT_VERIFIED"
