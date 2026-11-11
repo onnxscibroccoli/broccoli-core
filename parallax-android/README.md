@@ -57,6 +57,8 @@ the existing overlay service so scheduled overlays cannot accidentally activate
 the microphone. Stopping an overlay does not stop an explicitly enabled acoustic
 polling session; use the acoustic notification or settings Stop control.
 
+> **Installable debug artifact integrity:** [SHA-256, signing check, source commit and CI build manifest](docs/DEBUG_APK_PROVENANCE.md). The v2.2 artifact is an experimental development build; physical-device acoustic tests and production release approval remain outstanding.
+
 ## Build and tests
 
 JDK 17, Android SDK 35 and Gradle 8.11.1:
