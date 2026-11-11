@@ -12,6 +12,7 @@ import android.os.Build
 import kotlin.concurrent.thread
 import kotlin.math.PI
 import kotlin.math.sin
+import kotlin.math.sqrt
 
 /**
  * Small streaming binaural-tone engine.
@@ -108,8 +109,11 @@ class AndroidAudioEngine(
             return
         }
 
+        val playbackId = PlaybackReferenceBus.begin()
         worker = thread(start = true, name = "ParallaxAudio", priority = Thread.NORM_PRIORITY - 1) {
             val frames = 1024
+            val referenceMono = FloatArray(4096)
+            var referenceIndex = 0
             val buffer = FloatArray(frames * 2)
             val eq = EqualizerDsp(sampleRate)
             val bellLeft = BellSynth(sampleRate)
@@ -194,11 +198,32 @@ class AndroidAudioEngine(
                         if (written <= 0) throw IllegalStateException("Audio write failed: $written")
                         offset += written
                     }
+                    // The visualization always follows actual post-EQ/post-volume samples.
+                    // PCM reference windows are only published during explicit comparison.
+                    var sumSquares = 0.0
+                    for (i in 0 until frames) {
+                        val left = buffer[2 * i]
+                        val right = buffer[2 * i + 1]
+                        val mono = (left + right) * .5f
+                        sumSquares += (left * left + right * right).toDouble() * .5
+                        referenceMono[referenceIndex++] = mono
+                        if (referenceIndex == referenceMono.size) {
+                            referenceIndex = 0
+                            if (PlaybackReferenceBus.comparisonRequested) {
+                                PlaybackReferenceBus.capture(playbackId, referenceMono.copyOf(),
+                                    created.routedDevice?.type == android.media.AudioDeviceInfo.TYPE_BUILTIN_SPEAKER)
+                            }
+                        }
+                    }
+                    PlaybackReferenceBus.level(playbackId,
+                        (sqrt(sumSquares / frames) * 26.0).toFloat(),
+                        created.routedDevice?.type == android.media.AudioDeviceInfo.TYPE_BUILTIN_SPEAKER)
                     if (!playing && fadeOutFrames <= 0) break
                 }
             } catch (_: IllegalStateException) {
                 // A device audio route can disappear while the service is running.
             } finally {
+                PlaybackReferenceBus.finish(playbackId)
                 playing = false
                 val finishedTrack = track
                 track = null
