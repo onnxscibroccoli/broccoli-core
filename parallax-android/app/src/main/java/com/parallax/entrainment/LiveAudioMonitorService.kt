@@ -94,6 +94,8 @@ class LiveAudioMonitorService : Service() {
                 AudioFormat.ENCODING_PCM_16BIT)
             check(minBytes > 0) { "Device microphone cannot record the required 44.1 kHz format." }
             val unprocessed = manager.getProperty(AudioManager.PROPERTY_SUPPORT_AUDIO_SOURCE_UNPROCESSED) == "true"
+            if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED)
+                throw SecurityException("Microphone permission revoked before capture initialization.")
             input = AudioRecord.Builder()
                 .setAudioSource(if (unprocessed) MediaRecorder.AudioSource.UNPROCESSED
                     else MediaRecorder.AudioSource.VOICE_RECOGNITION)
