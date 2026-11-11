@@ -5,7 +5,8 @@ import kotlin.math.*
 /** Pure DSP: no permissions, Android objects, persistence, or allocations per sample. */
 object AcousticDsp {
     val bands = listOf(125.0, 250.0, 500.0, 1000.0, 2000.0, 4000.0, 8000.0)
-    val bells = listOf(174.0, 285.0, 396.0, 417.0, 528.0, 639.0, 741.0, 852.0, 963.0)
+    val bells = listOf(110.0, 136.1, 174.0, 220.0, 256.0, 285.0, 330.0, 396.0,
+        417.0, 432.0, 440.0, 528.0, 639.0, 741.0, 852.0, 963.0)
     fun effective(auto: List<Float>, manual: List<Float>, locked: List<Boolean>): List<Float> =
         bands.indices.map { (if (locked[it]) manual[it] else auto[it]).let { v ->
             if (v.isFinite()) v.coerceIn(-12f, 6f) else 0f

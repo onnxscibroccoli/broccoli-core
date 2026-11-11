@@ -9,7 +9,7 @@ data class AcousticState(
     val manual: List<Float> = List(7) { 0f },
     val locked: List<Boolean> = List(7) { false },
     val bells: Boolean = false,
-    val profile: Int = 4,
+    val profile: Int = 11,
     val bellCarrier: Boolean = true,
     val bowlMode: Boolean = false,
     val bellRingSeconds: Int = 16,
@@ -39,7 +39,7 @@ object AcousticBus {
             auto = List(7) { p.getFloat("auto_$it", 0f).takeIf { it.isFinite() }?.coerceIn(-6f, 0f) ?: 0f },
             manual = List(7) { p.getFloat("manual_$it", 0f).takeIf { it.isFinite() }?.coerceIn(-12f, 6f) ?: 0f },
             locked = List(7) { p.getBoolean("locked_$it", false) },
-            bells = p.getBoolean("bells", false), profile = p.getInt("profile", 4).coerceIn(0, 8),
+            bells = p.getBoolean("bells", false), profile = p.getInt("profile", 11).coerceIn(0, AcousticDsp.bells.lastIndex),
             bellCarrier = p.getBoolean("bell_carrier", true),
             bowlMode = p.getBoolean("bowl_mode", false),
             bellRingSeconds = p.getInt("bell_ring_seconds", 16).coerceIn(2, 60),
@@ -73,7 +73,7 @@ object AcousticBus {
     }
     @Synchronized fun resetManual() = publish(state.copy(locked = List(7) { false }))
     @Synchronized fun bells(enabled: Boolean) = publish(state.copy(bells = enabled))
-    @Synchronized fun profile(index: Int) = publish(state.copy(profile = index.coerceIn(0, 8)))
+    @Synchronized fun profile(index: Int) = publish(state.copy(profile = index.coerceIn(0, AcousticDsp.bells.lastIndex)))
     @Synchronized fun bellCarrier(value: Boolean) = publish(state.copy(bellCarrier = value))
     @Synchronized fun bowlMode(value: Boolean) = publish(state.copy(bowlMode = value))
     @Synchronized fun bellRingSeconds(value: Int) = publish(state.copy(bellRingSeconds = value.coerceIn(2, 60)))

@@ -44,7 +44,7 @@ class AcousticDspTest {
         assertEquals(-6.0, 10 * log10(outputPower / inputPower), .1)
     }
     @Test fun everyBellIsFiniteBoundedAndNonSilentAcrossRepeatedStrikes() {
-        assertEquals(9, AcousticDsp.bells.distinct().size)
+        assertEquals(16, AcousticDsp.bells.distinct().size)
         for (hz in AcousticDsp.bells) {
             val bell = BellSynth(44100)
             var peak = 0f; var previous = 0f
