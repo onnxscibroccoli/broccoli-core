@@ -23,7 +23,7 @@ python3 scripts/portfolio/pr_inventory.py \
 
 ## Reproducible GitHub Actions execution
 
-After this PR is reviewed and merged to the default branch, use **Actions → Broccoli Portfolio PR Inventory → Run workflow**. The workflow runs unit regressions first. On a manual dispatch, it fetches PR metadata with the workflow token's `pull-requests: read` permission, attaches a dated workflow artifact named `portfolio-open-pr-inventory-<sha>`, and appends the table to the job summary.
+After the source is reviewed and merged to the default branch, the workflow runs unit regressions on relevant **main pushes** and automatically generates a bounded inventory artifact. Manual **Actions → Broccoli Portfolio PR Inventory → Run workflow** is also supported. The workflow fetches PR metadata with the workflow token's `pull-requests: read` permission, attaches an artifact named `portfolio-open-pr-inventory-<sha>`, and appends the table to the job summary. PR-triggered runs execute offline tests only and cannot use untrusted PR input to generate a default-branch snapshot.
 
 The artifact filename uses the **workflow source SHA**. Each record includes the **PR head SHA**. Neither is evidence of a successful feature merge; they only identify the scope of the metadata snapshot.
 
