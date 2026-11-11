@@ -232,7 +232,7 @@ class EntrainmentSurfaceView(
         val acoustic = AcousticBus.state
         // No fabricated "sonar" readings: visual response requires a successful
         // measurement. These rings encode measured frequency bands, not distance.
-        if (!acoustic.sonarEnabled || !acoustic.sonarMeasured) return
+        if (!acoustic.sonarEnabled || (!acoustic.sonarMeasured && acoustic.sonarRangeMeters == null)) return
         val sens = acoustic.sonarSensitivity
         val cx = width * 0.5f
         val cy = height * 0.5f
@@ -240,7 +240,7 @@ class EntrainmentSurfaceView(
         sonarPhase = (sonarPhase + 0.005f * (0.5f + sens)) % 1f
         paint.style = Paint.Style.STROKE
         paint.shader = null
-        for (i in 0 until 7) {
+        for (i in 0 until (if (acoustic.sonarMeasured) 7 else 0)) {
             val response = acoustic.sonarLevels[i].coerceIn(0f, 1f)
             val alpha = (sens * (18f + 160f * response)).toInt().coerceIn(0, 180)
             if (alpha == 0) continue
@@ -249,6 +249,13 @@ class EntrainmentSurfaceView(
             // Gentle motion only; brightness encodes the real measured response.
             val drift = sin((sonarPhase * 2f * Math.PI + i * 0.8).toDouble()).toFloat() * 2f * density
             c.drawCircle(cx, cy, maxR * (i + 1f) / 7f + drift, paint)
+        }
+        // Actual calibrated radial echo candidate: ring radius is range, not direction.
+        acoustic.sonarRangeMeters?.let { meters ->
+            paint.strokeWidth = 5f * density
+            paint.color = Color.argb((200f * acoustic.sonarRangeConfidence)
+                .toInt().coerceIn(0, 200), 90, 250, 150)
+            c.drawCircle(cx, cy, maxR * (meters / 3.3f).coerceIn(0f, 1f), paint)
         }
         paint.style = Paint.Style.FILL
         paint.alpha = 255

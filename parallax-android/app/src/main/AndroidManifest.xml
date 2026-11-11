@@ -18,6 +18,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".AcousticSettingsActivity" android:exported="false"/>
+        <activity android:name=".ActiveSonarActivity" android:exported="false"/>
         <service android:name=".AcousticService" android:exported="false" android:foregroundServiceType="microphone|mediaPlayback"/>
         <receiver android:name=".ScheduleReceiver" android:enabled="true" android:exported="false">
             <intent-filter>

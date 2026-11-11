@@ -333,6 +333,10 @@ class SettingsActivity : Activity() {
             setOnCheckedChangeListener { _, checked -> AcousticBus.sonar(checked) }
         })
         content.addView(Button(this).apply {
+            text = "Test single-phone active acoustic sonar"
+            setOnClickListener { startActivity(Intent(this@SettingsActivity, ActiveSonarActivity::class.java)) }
+        })
+        content.addView(Button(this).apply {
             text = "Advanced acoustics: EQ, bowl timing, sonar"
             setOnClickListener { startActivity(Intent(this@SettingsActivity, AcousticSettingsActivity::class.java)) }
         })

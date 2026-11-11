@@ -18,7 +18,9 @@ data class AcousticState(
     val sonarEnabled: Boolean = false,
     val sonarSensitivity: Float = 0.5f,
     val sonarLevels: List<Float> = List(7) { 0f },
-    val sonarMeasured: Boolean = false
+    val sonarMeasured: Boolean = false,
+    val sonarRangeMeters: Float? = null,
+    val sonarRangeConfidence: Float = 0f
 ) {
     val effective = AcousticDsp.effective(auto, manual, locked)
 }
@@ -85,6 +87,12 @@ object AcousticBus {
         if (value.isFinite()) publish(state.copy(sonarSensitivity = value.coerceIn(0f, 1f))) else Unit
 
     /** Derived seven-band spectral shape only. Never store microphone PCM. */
+    @Synchronized fun sonarEcho(rangeMeters: Float, confidence: Float) {
+        if (!rangeMeters.isFinite() || rangeMeters !in .35f..3.3f || !confidence.isFinite()) return
+        // Ephemeral derived reading, not stored in preferences.
+        state = state.copy(sonarRangeMeters = rangeMeters,
+            sonarRangeConfidence = confidence.coerceIn(0f, 1f))
+    }
     @Synchronized fun sonarReading(levels: List<Float>) {
         if (levels.size != 7 || levels.any { !it.isFinite() || it !in 0f..1f }) return
         publish(state.copy(sonarLevels = levels.toList(), sonarMeasured = true))
