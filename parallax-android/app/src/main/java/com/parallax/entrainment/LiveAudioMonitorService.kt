@@ -108,9 +108,13 @@ class LiveAudioMonitorService : Service() {
                     .setEncoding(AudioFormat.ENCODING_PCM_16BIT).build())
                 .setBufferSizeInBytes(max(minBytes, 16384)).build()
             recorder = input
-            check(input.state == AudioRecord.STATE_INITIALIZED && input.setPreferredDevice(mic)) {
-                "Unable to use the internal microphone."
+            check(input.state == AudioRecord.STATE_INITIALIZED) {
+                "Unable to initialize the microphone."
             }
+            // Some low-cost phones reject a preferred-device request while still
+            // routing the default microphone internally. Verify the ACTUAL route
+            // after recording starts instead of treating that hint as a hard gate.
+            input.setPreferredDevice(mic)
             input.startRecording()
             val buffer = ShortArray(LiveAudioMatcher.WINDOW)
             var consecutive = 0
@@ -145,8 +149,8 @@ class LiveAudioMonitorService : Service() {
                     break
                 }
                 val routed = input.routedDevice
-                if (routed != null && routed.id != mic.id) {
-                    stopReason = "Microphone route changed. Comparison stopped."
+                if (routed != null && routed.type != AudioDeviceInfo.TYPE_BUILTIN_MIC) {
+                    stopReason = "Microphone route changed away from the built-in mic. Comparison stopped."
                     break
                 }
                 var filled = 0
