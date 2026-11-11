@@ -1,97 +1,72 @@
 # Accubook Voice-to-Text Agentic Mode
 
-**Status:** Design + prototype scaffold (v1). Target: Android 15, 4 GB RAM devices. Offline-first, no runtime cloud.
+**Status:** Design + prototype scaffold (v1). Target: Android 15, 4GB RAM devices. Fully offline common path.
 
-## Goals
+## Overview
 
-Provide a voice-driven agentic interface for Accubook field-service CRM so contractors can create/update customers, schedule jobs, log notes, and query status without looking at the screen. Accessibility-first (TalkBack, Switch Access). Must work fully offline.
+Voice-to-text agentic mode enables field contractors to interact with Accubook CRM via speech for common workflows (create job, log material, update status, schedule, record payment) without typing. Design prioritizes reliability on low-end hardware, accessibility (TalkBack compatible), and zero mandatory cloud.
 
-## Architecture Overview
+Hybrid architecture: common path is pure keyword + slot-filling with zero ML model. Fallbacks escalate only when needed.
 
-Hybrid zero-model common path with optional tiny on-device classifier fallback.
+## Architecture Layers
 
-```
-STT transcript
-  → keyword match (exact / fuzzy)
-  → slot extraction (regex + lexicon)
-  → missing-slot detection
-  → single clarifying question (voice + multiple-choice)
-  → action execution (WorkspaceStore / domain APIs)
-  → confirmation / audit log
-```
-
-### 1. Keyword + Slot-Filling Layer
-
-- Intent keywords mapped to Accubook actions (add_customer, schedule_job, add_line, query_balance, etc.).
-- Slot extractors for: customer name, date (YYYY-MM-DD or relative), amount, quantity, address fragments, job title.
-- Zero-model path handles >80% of common field commands.
+### 1. Keyword + Slot-Filling Layer (Zero-Model Common Path)
+- Deterministic intent detection via keyword dictionaries and lightweight regex/pattern matching on STT transcript.
+- Slot extraction for entities: customer_name, job_type, date/time, material, amount, status, address.
+- Canonical actions mapped to existing Accubook domain operations (customer/job/estimate/invoice/payment/photo/note).
+- No model inference on the happy path. Latency target: <100ms post-STT.
 
 ### 2. Multiple-Choice Disambiguation with Voice Response
-
-When ambiguity is detected (multiple customers matching name, unclear date):
-- Speak options via TTS or system speech.
-- Accept spoken selection ("first", "the second one", "Boston job").
-- Limit to 3–5 options to stay within cognitive load.
+- When intent or slot is ambiguous (e.g., multiple matching customers), present 2-4 options via TTS + UI.
+- User responds by voice ("first", "the roofing one", "number two") or tap.
+- Confirmed selection fills the slot and proceeds.
 
 ### 3. 20-Questions Binary Splits Seeded by STT Transcript
-
-For open-ended or high-entropy queries:
-- Seed a binary decision tree from the transcript tokens.
-- Ask yes/no questions that maximally reduce entropy (e.g., "Is this for an existing customer?").
-- Cap at 5–7 questions in practice; full 20 only as theoretical bound.
+- For high-cardinality slots (e.g., customer from 300+ list) or open-ended clarification.
+- Binary questions seeded by partial transcript matches and context ranking (recent jobs, location, schedule).
+- Example: "Is this for an existing customer?" → yes/no → further splits by first letter, recent, site address.
+- Max depth limited to keep interaction short.
 
 ### 4. Context-Ranked Slot Disambiguation
+- Rank candidate slots using conversation history, current schedule, last customer, GPS/site context (when permitted), and recent actions.
+- Prefer recent/high-frequency entities.
 
-- Maintain short-term conversation context (last customer, last job, current date).
-- Rank candidate slot fills by recency, frequency, and geographic proximity (if location available).
-- Prefer context over pure lexical match when scores are close.
-
-### 5. Tiny Classifier Fallback (1-3B 4-bit quantized)
-
-- For utterances that fail keyword/slot path.
-- ONNX Runtime or ExecuTorch, 4-bit quantization, target <400 MB peak RAM on 4 GB devices.
-- Models: distilled intent classifier or small LLM (e.g., quantized Phi-3-mini, Gemma-2B, or custom).
-- Loaded only on demand; unloaded after inference.
-- Reuses patterns from `runtime/onnx_runtime.py` and `feat/ollama-ci-observatory` hooks where present.
+### 5. Tiny 1-3B 4-bit Quantized Classifier Fallback
+- Triggered only when keyword match confidence is low or multi-intent detected.
+- 1-3B parameter model, 4-bit quantized, run via ONNX Runtime or ExecuTorch.
+- Target footprint fits comfortably in 4GB RAM devices alongside the app (model ~0.5-1.5GB quantized).
+- Classification only (intent + slot labels); not generative.
+- Hot-swap or lazy-load; disabled by default if memory pressure.
 
 ### 6. Federated Learning from Contractor Corrections
-
-- Local correction log (user says "no, I meant the other job").
-- Aggregate anonymized correction pairs on-device or via optional opt-in export.
-- Periodic local fine-tune of the tiny classifier (or update keyword lexicon).
-- No raw transcripts leave the device without explicit consent.
+- On-device logging of user corrections (intent misclassification, slot fills).
+- Optional, privacy-preserving federated updates (differential privacy, no raw transcripts leave device).
+- Aggregated model improvements shipped as future quantized updates. Opt-in only.
 
 ### 7. Hybrid Zero-Model Common Path
+- 80%+ of interactions complete without any model.
+- Escalation ladder: keyword → context rank → binary questions → multi-choice → tiny classifier.
+- Explicit user confirmation before any mutating action (create, update, payment).
 
-- Default path never requires a model.
-- Classifier is pure fallback.
-- All paths produce the same structured action record for audit and undo.
+## Prototype Flow (Scaffold)
 
-## Prototype Scaffold
+STT input → keyword match → slot extraction → missing-slot detection → single clarifying question → action execution.
 
-Location: `experiments/accubook/voice/`
+See `experiments/accubook/voice_mode/` for the initial prototype.
 
-- `VoiceAgent.java` (or Kotlin) – Android STT listener + pipeline.
-- `KeywordSlotEngine.java` – pure Java keyword/slot layer.
-- `ClarificationDialog.java` – single-question UI + voice reply.
-- `ActionExecutor.java` – maps filled slots to WorkspaceStore calls.
-- Integration point: optional button or always-listening hotword in MainActivity (gated by permission).
+## Integration Notes
 
-## Constraints & Risks
+- STT: Android SpeechRecognizer or on-device alternative (no cloud required for common path).
+- TTS: Android TextToSpeech for responses.
+- Must respect Accubook offline constraints, no INTERNET permission on core path.
+- Accessibility: all voice flows have equivalent TalkBack/keyboard paths.
+- Ties into existing domain models from draft branches (Nov 5-7 Accubook stack).
 
-- Android 15 / 4 GB RAM: avoid loading large models concurrently with camera or large CSVs.
-- STT accuracy in noisy job sites; require confirmation for financial actions.
-- Privacy: transcripts stay local; no INTERNET permission by default.
-- Accessibility: every clarifying question must be TalkBack-friendly.
-- Existing Accubook draft branches (Nov 5–7) are experimental; voice layer must not assume production data schema stability.
+## Open Questions / Next
 
-## Next Steps
+- Exact STT engine selection and accuracy on job-site noise.
+- Quantized model training data (synthetic + anonymized corrections).
+- Memory profiling on 4GB devices.
+- Check `feat/ollama-ci-observatory` branch for reusable on-device inference hooks (currently limited).
 
-1. Wire STT (Android SpeechRecognizer or on-device Whisper-tiny/Parakeet via ONNX).
-2. Implement keyword lexicon for core CRM actions.
-3. Add unit tests for slot extraction and missing-slot detection.
-4. Prototype single clarifying question flow.
-5. Measure RAM/CPU on target devices.
-6. Document errors found during draft-branch testing (see `docs/accubook-draft-errors.md`).
-
-Related: Accubook release gate issues, `runtime/onnx_runtime.py`, feat/ollama-ci-observatory.
+Related issues: #83 (release gate), #86 (security/integration).
