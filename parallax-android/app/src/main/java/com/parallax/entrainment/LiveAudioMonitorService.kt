@@ -82,6 +82,10 @@ class LiveAudioMonitorService : Service() {
         return START_NOT_STICKY // No boot, crash or system restart of microphone.
     }
 
+    // Runtime permission is checked before constructing AudioRecord AND on every
+    // capture loop iteration. Lint cannot prove that onStartCommand's check
+    // dominates this separate worker thread, so catch revocation at runtime.
+    @android.annotation.SuppressLint("MissingPermission")
     private fun monitor() {
         var input: AudioRecord? = null
         try {

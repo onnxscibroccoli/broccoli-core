@@ -138,7 +138,8 @@ class AcousticSettingsActivity : Activity() {
         })
         text("Live EQ adjusts at most 0.2 dB per eligible band every 15 seconds after repeated confident broadband matches. Weak, clipped, or one-note input is monitor-only. Manual EQ locks always win. Comparison stops if session/route ends or battery saver activates. It does not restart automatically.")
         monitorStatus = text(PlaybackReferenceBus.status).apply {
-            accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE
+            // Status stays focusable/readable without incessant TalkBack announcements.
+            accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_NONE
         }
         box.addView(Button(this).apply {
             text = "Stop live microphone comparison"

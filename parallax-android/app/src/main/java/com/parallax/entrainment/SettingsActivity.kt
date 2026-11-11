@@ -353,7 +353,8 @@ class SettingsActivity : Activity() {
         }
         content.addView(quickMonitorSwitch)
         quickMonitorStatus = label(PlaybackReferenceBus.status).apply {
-            accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE
+            // Fast numerical changes should not interrupt TalkBack every second.
+            accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_NONE
         }
         content.addView(quickMonitorStatus)
         content.addView(label("Live comparison is a separate explicit microphone session. Start playback on the built-in speaker first. Headphones cannot be tested acoustically by the phone microphone."))
