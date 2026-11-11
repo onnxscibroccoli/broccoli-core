@@ -163,7 +163,7 @@ class SettingsActivity : Activity() {
             orientation = RadioGroup.VERTICAL
             addView(RadioButton(this@SettingsActivity).apply {
                 id = borderRadioId
-                minHeight = dp(48)
+                minimumHeight = dp(48)
                 text = "Border overlay"
                 isChecked = !p.getBoolean(OverlayService.KEY_FULL, false)
             })
