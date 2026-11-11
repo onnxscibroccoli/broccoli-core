@@ -40,6 +40,7 @@ class SettingsActivity : Activity() {
     private lateinit var mode: RadioGroup
     private lateinit var volume: SeekBar
     private lateinit var audioMode: Spinner
+    private var quickBellSwitch: Switch? = null
     private lateinit var fullOpacity: SeekBar
     private lateinit var borderWidth: SeekBar
     private lateinit var borderOpacity: SeekBar
@@ -274,6 +275,68 @@ class SettingsActivity : Activity() {
             override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
         }
 
+        // Redundant home controls: no navigation menu required to reach core acoustics.
+        AcousticBus.initialize(this)
+        content.addView(sectionTitle("Bells & Acoustic — Quick Controls"))
+        content.addView(label("Bells can carry your selected binaural beat. Headphones are needed for a binaural effect."))
+        quickBellSwitch = Switch(this).apply {
+            text = "Enable bells / ringing bowls"; minHeight = dp(52)
+            isChecked = AcousticBus.state.bells
+            setOnCheckedChangeListener { _, value ->
+                AcousticBus.bells(value)
+                if (value && p.getInt(OverlayService.KEY_AUDIO_MODE, OverlayService.AUDIO_MODE_MIX) == OverlayService.AUDIO_MODE_OFF) {
+                    p.edit().putInt(OverlayService.KEY_AUDIO_MODE, OverlayService.AUDIO_MODE_MIX).apply()
+                    audioMode.setSelection(OverlayService.AUDIO_MODE_MIX)
+                }
+                requestLiveUpdate()
+            }
+        }
+        content.addView(quickBellSwitch)
+        content.addView(Switch(this).apply {
+            text = "Bells as binaural carrier"; minHeight = dp(52)
+            isChecked = AcousticBus.state.bellCarrier
+            setOnCheckedChangeListener { _, value -> AcousticBus.bellCarrier(value) }
+        })
+        content.addView(Switch(this).apply {
+            text = "Long singing bowl sound"; minHeight = dp(52)
+            isChecked = AcousticBus.state.bowlMode
+            setOnCheckedChangeListener { _, value -> AcousticBus.bowlMode(value) }
+        })
+        content.addView(Switch(this).apply {
+            text = "Hourly chime during session"; minHeight = dp(52)
+            isChecked = AcousticBus.state.hourlyChime
+            setOnCheckedChangeListener { _, value -> AcousticBus.hourlyChime(value) }
+        })
+        content.addView(label("Bell fundamental"))
+        content.addView(Spinner(this).apply {
+            contentDescription = "Bell fundamental selection"
+            adapter = ArrayAdapter(this@SettingsActivity, android.R.layout.simple_spinner_dropdown_item,
+                AcousticDsp.bells.map { "${it.toInt()} Hz" })
+            setSelection(AcousticBus.state.profile)
+            onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
+                override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    AcousticBus.profile(position)
+                }
+            }
+        })
+        content.addView(Button(this).apply {
+            text = "Calibrate Auto EQ"
+            setOnClickListener {
+                startActivity(Intent(this@SettingsActivity, AcousticSettingsActivity::class.java)
+                    .putExtra("start_calibration", true))
+            }
+        })
+        content.addView(Switch(this).apply {
+            text = "Show measured acoustic overlay"; minHeight = dp(52)
+            isChecked = AcousticBus.state.sonarEnabled
+            setOnCheckedChangeListener { _, checked -> AcousticBus.sonar(checked) }
+        })
+        content.addView(Button(this).apply {
+            text = "Advanced acoustics: EQ, bowl timing, sonar"
+            setOnClickListener { startActivity(Intent(this@SettingsActivity, AcousticSettingsActivity::class.java)) }
+        })
+
         content.addView(sectionTitle("Appearance"))
         volume = slider(content, "Volume", 0, 100, (p.getFloat(OverlayService.KEY_VOLUME, .12f) * 100).roundToInt(), "%") {
             p.edit().putFloat(OverlayService.KEY_VOLUME, it / 100f).apply()
@@ -452,6 +515,7 @@ class SettingsActivity : Activity() {
     override fun onResume() {
         super.onResume()
         if (hasRequiredPermissions()) {
+            quickBellSwitch?.let { if (it.isChecked != AcousticBus.state.bells) it.isChecked = AcousticBus.state.bells }
             if (showingPermissionGate) {
                 showingPermissionGate = false
                 recreate()

@@ -47,8 +47,61 @@ class AcousticSettingsActivity : Activity() {
         text("Acoustic & Healing Profiles").textSize = 24f
         text("Bell profiles are listening presets, not medical treatments. Enable session audio in the main settings to hear them. Audio analysis stays on this device; recordings are never saved.")
         box.addView(Switch(this).apply {
-            text = "Enable Healing Bell Profiles"; minHeight = 64; isChecked = AcousticBus.state.bells
-            setOnCheckedChangeListener { _, value -> AcousticBus.bells(value) }
+            text = "Enable Bell Profiles"; minHeight = 64; isChecked = AcousticBus.state.bells
+            setOnCheckedChangeListener { _, value ->
+                AcousticBus.bells(value)
+                if (value) {
+                    val p = getSharedPreferences(OverlayService.PREFS, MODE_PRIVATE)
+                    if (p.getInt(OverlayService.KEY_AUDIO_MODE, OverlayService.AUDIO_MODE_MIX) == OverlayService.AUDIO_MODE_OFF) {
+                        p.edit().putInt(OverlayService.KEY_AUDIO_MODE, OverlayService.AUDIO_MODE_MIX).apply()
+                        if (p.getBoolean(OverlayService.KEY_SESSION_ACTIVE, false))
+                            startForegroundService(Intent(this@AcousticSettingsActivity, OverlayService::class.java)
+                                .setAction(OverlayService.ACTION_UPDATE))
+                        AcousticBus.status = "Bell playback enabled in Play Alongside mode. Start a session to hear it."
+                    }
+                }
+            }
+        })
+        text("Binaural mode requires stereo headphones. On the phone speaker you hear the sound, but not the interaural binaural beat. The chosen beat rate comes from the main screen's target frequency.")
+        box.addView(Switch(this).apply {
+            text = "Bells as binaural carrier (rather than a soft layer)"
+            minHeight = 64; isChecked = AcousticBus.state.bellCarrier
+            setOnCheckedChangeListener { _, value -> AcousticBus.bellCarrier(value) }
+        })
+        box.addView(Switch(this).apply {
+            text = "Long ringing bowl timbre (paired modal resonances)"
+            minHeight = 64; isChecked = AcousticBus.state.bowlMode
+            setOnCheckedChangeListener { _, value -> AcousticBus.bowlMode(value) }
+        })
+        box.addView(Switch(this).apply {
+            text = "Hourly bell chime during an active audio session"
+            minHeight = 64; isChecked = AcousticBus.state.hourlyChime
+            setOnCheckedChangeListener { _, value -> AcousticBus.hourlyChime(value) }
+        })
+        text("Chimes trigger at the top of each hour only while an audio session is already playing. Android will not start the microphone, an overlay, or a stopped session to ring.")
+        val ringLabel = text("Bell sustain: ${AcousticBus.state.bellRingSeconds} seconds")
+        box.addView(SeekBar(this).apply {
+            max = 58; progress = AcousticBus.state.bellRingSeconds - 2
+            contentDescription = "Bell sustain duration in seconds"
+            setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onStartTrackingTouch(bar: SeekBar?) {}
+                override fun onStopTrackingTouch(bar: SeekBar?) {}
+                override fun onProgressChanged(bar: SeekBar?, value: Int, fromUser: Boolean) {
+                    if (fromUser) { AcousticBus.bellRingSeconds(value + 2); ringLabel.text = "Bell sustain: ${value + 2} seconds" }
+                }
+            })
+        })
+        val intervalLabel = text("Bell repeat interval: ${AcousticBus.state.bellIntervalSeconds} seconds")
+        box.addView(SeekBar(this).apply {
+            max = 296; progress = AcousticBus.state.bellIntervalSeconds - 4
+            contentDescription = "Bell repeat interval in seconds"
+            setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onStartTrackingTouch(bar: SeekBar?) {}
+                override fun onStopTrackingTouch(bar: SeekBar?) {}
+                override fun onProgressChanged(bar: SeekBar?, value: Int, fromUser: Boolean) {
+                    if (fromUser) { AcousticBus.bellIntervalSeconds(value + 4); intervalLabel.text = "Bell repeat interval: ${value + 4} seconds" }
+                }
+            })
         })
         text("Bell frequency")
         box.addView(Spinner(this).apply {
@@ -123,6 +176,9 @@ class AcousticSettingsActivity : Activity() {
         })
 
         box.addView(Button(this).apply { text = "Back to settings"; setOnClickListener { finish() } })
+        if (intent.getBooleanExtra("start_calibration", false)) {
+            handler.post { requestCalibration(false) }
+        }
     }
     private fun requestCalibration(continuous: Boolean) {
         polling.isChecked = AcousticBus.polling
