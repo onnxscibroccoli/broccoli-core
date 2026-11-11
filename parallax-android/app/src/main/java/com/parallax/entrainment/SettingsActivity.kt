@@ -520,6 +520,11 @@ class SettingsActivity : Activity() {
         super.onResume()
         if (hasRequiredPermissions()) {
             quickBellSwitch?.let { if (it.isChecked != AcousticBus.state.bells) it.isChecked = AcousticBus.state.bells }
+            // Mirror an Audio off -> Play Alongside update made in Advanced Acoustics.
+            if (::audioMode.isInitialized) {
+                val storedMode = p.getInt(OverlayService.KEY_AUDIO_MODE, OverlayService.AUDIO_MODE_MIX).coerceIn(0, 2)
+                if (audioMode.selectedItemPosition != storedMode) audioMode.setSelection(storedMode)
+            }
             if (showingPermissionGate) {
                 showingPermissionGate = false
                 recreate()
