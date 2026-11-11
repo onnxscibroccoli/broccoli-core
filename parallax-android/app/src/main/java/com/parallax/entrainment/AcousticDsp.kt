@@ -37,6 +37,15 @@ object AcousticDsp {
     fun microCorrection(old: List<Float>, target: List<Float>) = old.indices.map {
         (old[it] + (target[it] - old[it]).coerceIn(-0.5f, 0.5f)).coerceIn(-6f, 0f)
     }
+    /** Relative spectral levels from a successful calibration, not range or echo timing. */
+    fun normalizedSpectrum(noise: List<Double>, measured: List<Double>): List<Float>? {
+        if (noise.size != bands.size || measured.size != bands.size) return null
+        if (bands.indices.any { !noise[it].isFinite() || !measured[it].isFinite() ||
+                noise[it] < 0.0 || measured[it] <= noise[it] }) return null
+        val db = bands.indices.map { 10.0 * log10(max(measured[it] - noise[it], 1e-12)) }
+        val peak = db.maxOrNull() ?: return null
+        return db.map { ((it - (peak - 36.0)) / 36.0).coerceIn(0.0, 1.0).toFloat() }
+    }
 }
 
 class BellSynth(private val rate: Int) {

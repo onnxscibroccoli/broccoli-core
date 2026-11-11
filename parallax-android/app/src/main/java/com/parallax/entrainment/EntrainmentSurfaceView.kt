@@ -230,24 +230,25 @@ class EntrainmentSurfaceView(
 
     private fun drawSonarOverlay(c: Canvas) {
         val acoustic = AcousticBus.state
-        if (!acoustic.sonarEnabled) return
+        // No fabricated "sonar" readings: visual response requires a successful
+        // measurement. These rings encode measured frequency bands, not distance.
+        if (!acoustic.sonarEnabled || !acoustic.sonarMeasured) return
         val sens = acoustic.sonarSensitivity
         val cx = width * 0.5f
         val cy = height * 0.5f
         val maxR = min(width, height) * 0.45f
-        sonarPhase = (sonarPhase + 0.02f * (0.5f + sens)) % 1f
-
+        sonarPhase = (sonarPhase + 0.005f * (0.5f + sens)) % 1f
         paint.style = Paint.Style.STROKE
-        paint.strokeWidth = 3f * density
         paint.shader = null
-
-        // Draw 3 expanding rings as proxy for reflection peaks / standing waves
-        for (i in 0 until 3) {
-            val phase = (sonarPhase + i * 0.33f) % 1f
-            val radius = phase * maxR
-            val alpha = ((1f - phase) * 180 * sens).toInt().coerceIn(0, 180)
-            paint.color = Color.argb(alpha, 100, 200, 255)
-            c.drawCircle(cx, cy, radius, paint)
+        for (i in 0 until 7) {
+            val response = acoustic.sonarLevels[i].coerceIn(0f, 1f)
+            val alpha = (sens * (18f + 160f * response)).toInt().coerceIn(0, 180)
+            if (alpha == 0) continue
+            paint.strokeWidth = (1.5f + 2.0f * response) * density
+            paint.color = Color.argb(alpha, 100 + 14 * i, 195, 255 - 15 * i)
+            // Gentle motion only; brightness encodes the real measured response.
+            val drift = sin((sonarPhase * 2f * Math.PI + i * 0.8).toDouble()).toFloat() * 2f * density
+            c.drawCircle(cx, cy, maxR * (i + 1f) / 7f + drift, paint)
         }
         paint.style = Paint.Style.FILL
         paint.alpha = 255

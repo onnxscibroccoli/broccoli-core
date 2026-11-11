@@ -103,12 +103,12 @@ class AcousticSettingsActivity : Activity() {
 
         // v2.1 Sonar Overlay controls
         text("Acoustic Sonar Visualization Overlay").textSize = 20f
-        text("Active near-ultrasound sonar mode maps room reflections as dynamic visual artifacts on the existing stress-relief overlay. Uses the same microphone loop; no additional network.")
+        text("Sonar-style rings represent the seven frequency bands measured in the last successful acoustic calibration. Enable this option, then run Calibrate Room & Speakers to update them. This is not ultrasonic echo ranging or a spatial room map; the microphone remains off outside explicit calibration and optional polling.")
         box.addView(Switch(this).apply {
             text = "Enable Acoustic Sonar Overlay"; minHeight = 64; isChecked = AcousticBus.state.sonarEnabled
             setOnCheckedChangeListener { _, value -> AcousticBus.sonar(value) }
         })
-        text("Sonar Sensitivity / Decay Rate")
+        text("Sonar Ring Intensity")
         box.addView(SeekBar(this).apply {
             max = 100
             progress = (AcousticBus.state.sonarSensitivity * 100).toInt()

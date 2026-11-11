@@ -67,4 +67,15 @@ class AcousticDspTest {
             }
         }
     }
+    @Test fun sonarSpectrumUsesMeasuredBandsAndRejectsInvalidInput() {
+        val measured = listOf(.001, .002, .01, .1, .01, .002, .001)
+        val response = AcousticDsp.normalizedSpectrum(List(7) { 1e-7 }, measured)!!
+        assertEquals(7, response.size)
+        assertEquals(1f, response[3], 0f)
+        assertTrue(response[0] < response[3])
+        assertTrue(response.all { it in 0f..1f && it.isFinite() })
+        assertNull(AcousticDsp.normalizedSpectrum(List(7) { 0.0 }, List(7) { Double.NaN }))
+        assertNull(AcousticDsp.normalizedSpectrum(List(7) { .2 }, List(7) { .1 }))
+    }
+
 }

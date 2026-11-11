@@ -122,3 +122,9 @@ SH
 chmod +x "$HOME/get-parallax-v2.sh"
 "$HOME/get-parallax-v2.sh"
 ```
+
+## v2.1 sonar-style spectral overlay
+
+Version 2.1 installs separately as `com.parallax.entrainment.v21`. Enable **Acoustic Sonar Overlay**, select the ring intensity, then complete a successful **Calibrate Room & Speakers** run. The screen overlay visualizes seven calibrated frequency-band energy levels as concentric rings. The bands are normalized relative to the strongest measured band; the summary survives app restarts but no PCM recordings are retained. Repeat calibration to refresh it.
+
+This is a **sonar-inspired frequency-response visualizer**. It does not transmit ultrasonic chirps, estimate echo time-of-flight, localize reflections, measure distance, or form a spatial map. The microphone is never activated by the visualization toggle alone. Check the rings on the physical device after a calibration, then disable the toggle and verify they disappear. Device measurements remain required before any acoustic accuracy claim.

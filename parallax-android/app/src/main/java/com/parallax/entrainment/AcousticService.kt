@@ -171,6 +171,11 @@ class AcousticService : Service() {
                 ?: error("Test signal too weak or room too noisy; previous EQ retained")
             if (cancelled.get()) throw InterruptedException()
             AcousticBus.correction(correction, micro)
+            // Sonar-style rings use measured frequency response, never invented reflection distances.
+            AcousticDsp.normalizedSpectrum(
+                noise.map { it / counts[0] },
+                signal.mapIndexed { i, v -> v / counts[i + 1] }
+            )?.let { AcousticBus.sonarReading(it) }
             AcousticBus.status = "Correction applied (${if (micro) "up to 0.5 dB per band" else "up to 6 dB peak reduction"}). " +
                 if (unprocessed) "Unprocessed microphone." else "Device-processed microphone; approximate result."
         } finally {
