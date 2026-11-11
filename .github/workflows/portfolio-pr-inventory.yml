@@ -1,0 +1,48 @@
+name: Broccoli Portfolio PR Inventory
+on:
+  pull_request:
+    paths:
+      - 'scripts/portfolio/**'
+      - '.github/workflows/portfolio-pr-inventory.yml'
+      - 'docs/PORTFOLIO_BRANCH_INVENTORY.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  inventory-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout without credential persistence
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Run offline deterministic PR inventory tests
+        run: PYTHONPATH=. python3 -m unittest discover -s scripts/portfolio/tests -v
+
+  snapshot:
+    if: github.event_name == 'workflow_dispatch'
+    needs: inventory-regression
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - name: Checkout without credential persistence
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Fetch open PR metadata (read-only, fail on API errors)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/portfolio/pr_inventory.py --repo "$GITHUB_REPOSITORY" --out inventory
+          cat inventory/open-pr-inventory.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload reproducible report
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: portfolio-open-pr-inventory-${{ github.sha }}
+          path: inventory/
+          if-no-files-found: error
+          retention-days: 14
