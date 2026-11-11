@@ -150,3 +150,5 @@ This is an experiment, **not** a verified room scanner, human detector, acoustic
 positioning system, EKF or medical treatment. It does not require another device.
 
 See [v2.2 single-device research and validation gates](docs/v2.2-single-device-acoustic-research.md).
+
+For the gated integration and AI-agent handoff see [v2.2 engineering directive](docs/V22_ENGINEERING_EXECUTION_DIRECTIVE.md).
