@@ -58,6 +58,9 @@ class EntrainmentSurfaceView(
     private val darkMode get() = context.getSharedPreferences(OverlayService.PREFS, Context.MODE_PRIVATE)
         .getBoolean(OverlayService.KEY_DARK_THEME, true)
 
+    // Simple sonar ring state for v2.1 overlay (proxy for reflection peaks)
+    private var sonarPhase = 0f
+
     init {
         setLayerType(View.LAYER_TYPE_HARDWARE, null)
         initEntities(seedText)
@@ -225,6 +228,32 @@ class EntrainmentSurfaceView(
         paint.shader = null
     }
 
+    private fun drawSonarOverlay(c: Canvas) {
+        val acoustic = AcousticBus.state
+        // No fabricated "sonar" readings: visual response requires a successful
+        // measurement. These rings encode measured frequency bands, not distance.
+        if (!acoustic.sonarEnabled || !acoustic.sonarMeasured) return
+        val sens = acoustic.sonarSensitivity
+        val cx = width * 0.5f
+        val cy = height * 0.5f
+        val maxR = min(width, height) * 0.45f
+        sonarPhase = (sonarPhase + 0.005f * (0.5f + sens)) % 1f
+        paint.style = Paint.Style.STROKE
+        paint.shader = null
+        for (i in 0 until 7) {
+            val response = acoustic.sonarLevels[i].coerceIn(0f, 1f)
+            val alpha = (sens * (18f + 160f * response)).toInt().coerceIn(0, 180)
+            if (alpha == 0) continue
+            paint.strokeWidth = (1.5f + 2.0f * response) * density
+            paint.color = Color.argb(alpha, 100 + 14 * i, 195, 255 - 15 * i)
+            // Gentle motion only; brightness encodes the real measured response.
+            val drift = sin((sonarPhase * 2f * Math.PI + i * 0.8).toDouble()).toFloat() * 2f * density
+            c.drawCircle(cx, cy, maxR * (i + 1f) / 7f + drift, paint)
+        }
+        paint.style = Paint.Style.FILL
+        paint.alpha = 255
+    }
+
     override fun onDraw(c: Canvas) {
         super.onDraw(c)
         if (width <= 0 || height <= 0) return
@@ -261,6 +290,9 @@ class EntrainmentSurfaceView(
 
             drawEntity(c, e, pulse)
         }
+
+        // Draw sonar overlay on top of existing entities, before mask
+        drawSonarOverlay(c)
 
         if (!isFullOverlay) {
             ensureBorderMask()

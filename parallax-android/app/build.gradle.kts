@@ -8,11 +8,11 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.parallax.entrainment"
+        applicationId = "com.parallax.entrainment.v21"
         minSdk = 26
         targetSdk = 35
-        versionCode = 12
-        versionName = "1.10.0"
+        versionCode = 14
+        versionName = "2.1.0"
     }
 
     compileOptions {
@@ -26,5 +26,6 @@ android {
 }
 
 dependencies {
+    testImplementation("junit:junit:4.13.2")
     implementation("androidx.core:core-ktx:1.15.0")
 }
