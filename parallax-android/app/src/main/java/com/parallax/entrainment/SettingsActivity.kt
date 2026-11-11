@@ -41,6 +41,16 @@ class SettingsActivity : Activity() {
     private lateinit var volume: SeekBar
     private lateinit var audioMode: Spinner
     private var quickBellSwitch: Switch? = null
+    private var quickMonitorSwitch: Switch? = null
+    private var quickMonitorStatus: TextView? = null
+    private val monitorUiHandler = Handler(Looper.getMainLooper())
+    private val monitorUiRefresh = object : Runnable {
+        override fun run() {
+            quickMonitorSwitch?.isChecked = PlaybackReferenceBus.monitorRunning
+            quickMonitorStatus?.text = PlaybackReferenceBus.status
+            monitorUiHandler.postDelayed(this, 800L)
+        }
+    }
     private lateinit var fullOpacity: SeekBar
     private lateinit var borderWidth: SeekBar
     private lateinit var borderOpacity: SeekBar
@@ -328,7 +338,28 @@ class SettingsActivity : Activity() {
             }
         })
         content.addView(Switch(this).apply {
-            text = "Show measured acoustic overlay"; minHeight = dp(52)
+            text = "Audio-reactive Parallax glow (no microphone)"
+            minHeight = dp(52); isChecked = AcousticBus.state.audioVisualEnabled
+            setOnCheckedChangeListener { _, enabled -> AcousticBus.audioVisual(enabled) }
+        })
+        content.addView(label("Reacts to bell/binaural audio amplitude by gently increasing the original Parallax blobs' distance from the center and glow. Separate from sonar rings."))
+        quickMonitorSwitch = Switch(this).apply {
+            text = "Compare speaker audio to microphone continuously"
+            minHeight = dp(52); isChecked = PlaybackReferenceBus.monitorRunning
+            setOnClickListener {
+                if (isChecked) LiveMonitorUi.confirmStart(this@SettingsActivity)
+                else LiveMonitorUi.stop(this@SettingsActivity)
+            }
+        }
+        content.addView(quickMonitorSwitch)
+        quickMonitorStatus = label(PlaybackReferenceBus.status).apply {
+            accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE
+        }
+        content.addView(quickMonitorStatus)
+        content.addView(label("Live comparison is a separate explicit microphone session. Start playback on the built-in speaker first. Headphones cannot be tested acoustically by the phone microphone."))
+        content.addView(Switch(this).apply {
+            text = "Show room-test sonar rings (independent)"
+            minHeight = dp(52)
             isChecked = AcousticBus.state.sonarEnabled
             setOnCheckedChangeListener { _, checked -> AcousticBus.sonar(checked) }
         })
@@ -518,6 +549,8 @@ class SettingsActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
+        monitorUiHandler.removeCallbacks(monitorUiRefresh)
+        monitorUiHandler.post(monitorUiRefresh)
         if (hasRequiredPermissions()) {
             quickBellSwitch?.let { if (it.isChecked != AcousticBus.state.bells) it.isChecked = AcousticBus.state.bells }
             // Mirror an Audio off -> Play Alongside update made in Advanced Acoustics.
@@ -532,6 +565,11 @@ class SettingsActivity : Activity() {
         } else {
             showPermissionsScreen()
         }
+    }
+
+    override fun onPause() {
+        monitorUiHandler.removeCallbacks(monitorUiRefresh)
+        super.onPause()
     }
 
     private fun requestLiveUpdate() {
@@ -588,6 +626,7 @@ class SettingsActivity : Activity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (LiveMonitorUi.onPermissionResult(this, requestCode, grantResults)) return
         if (requestCode == 3001 && grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
             ScheduleReceiver.reschedule(this)
         }

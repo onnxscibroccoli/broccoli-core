@@ -60,6 +60,7 @@ class EntrainmentSurfaceView(
 
     // Simple sonar ring state for v2.1 overlay (proxy for reflection peaks)
     private var sonarPhase = 0f
+    private var audioSmoothed = 0f
 
     init {
         setLayerType(View.LAYER_TYPE_HARDWARE, null)
@@ -201,9 +202,17 @@ class EntrainmentSurfaceView(
         }
     }
 
-    private fun drawEntity(c: Canvas, e: WaveEntity, pulse: Float) {
+    private fun drawEntity(c: Canvas, e: WaveEntity, pulse: Float,
+        reactive: AudioReactiveMapping.Parameters) {
         val base = if (e.isShadow) .35f + pulse * .15f else .42f + pulse * .20f
-        val a = (base * 255f).toInt().coerceIn(0, 255)
+        val a = (base * reactive.intensityScale * 255f).toInt().coerceIn(0, 255)
+        // Keep the OG radial-gradient entities and their hue. Audio only expands
+        // their position from the original center and subtly intensifies the glow.
+        val ox = width * .5f
+        val oy = height * .5f
+        val x = ox + (e.x - ox) * reactive.radialScale
+        val y = oy + (e.y - oy) * reactive.radialScale
+        val radius = e.radius * reactive.radiusScale
 
         val center: Int
         val gradientEdge: Int
@@ -220,11 +229,11 @@ class EntrainmentSurfaceView(
         }
 
         paint.shader = RadialGradient(
-            e.x, e.y, e.radius,
+            x, y, radius,
             center, gradientEdge,
             Shader.TileMode.CLAMP
         )
-        c.drawCircle(e.x, e.y, e.radius, paint)
+        c.drawCircle(x, y, radius, paint)
         paint.shader = null
     }
 
@@ -283,6 +292,17 @@ class EntrainmentSurfaceView(
             c.saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null)
         } else -1
 
+        // Audio-reactive Parallax blobs are independent of the room-test sonar rings.
+        // This responds only to Parallax's own actual post-EQ PCM amplitude;
+        // no microphone permission is needed for the visual.
+        val audioConfig = AcousticBus.state
+        val targetAmplitude = if (audioConfig.audioVisualEnabled)
+            PlaybackReferenceBus.visualAmplitude else 0f
+        val easing = if (targetAmplitude > audioSmoothed) .18f else .07f
+        audioSmoothed += (targetAmplitude - audioSmoothed) * easing
+        val reactive = if (audioConfig.audioVisualEnabled)
+            AudioReactiveMapping.fromAmplitude(audioSmoothed, audioConfig.audioVisualStrength)
+        else AudioReactiveMapping.fromAmplitude(0f)
         entities.forEach { e ->
             e.angleX += e.speedX
             e.angleY += e.speedY
@@ -295,7 +315,7 @@ class EntrainmentSurfaceView(
             if (e.y < -e.radius) e.y = height + e.radius
             if (e.y > height + e.radius) e.y = -e.radius
 
-            drawEntity(c, e, pulse)
+            drawEntity(c, e, pulse, reactive)
         }
 
         // Draw sonar overlay on top of existing entities, before mask
