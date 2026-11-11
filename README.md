@@ -24,6 +24,14 @@ python -c "from runtime.kernel import Kernel; print(Kernel().tick('turn on bluet
 
 The project also contains a provider-agnostic problem-solving pipeline and managed transports for accessibility, clipboard, provider, workflow, planning, knowledge, agent coordination, and plugins.
 
+## Parallax Distortion Android app
+
+The `parallax-android/` subtree contains the Parallax Distortion application.
+See [its build, acoustic controls and device-validation guide](parallax-android/README.md)
+for the 2.0 development update: local microphone calibration, nine bell profiles,
+periodic correction and manual EQ priority. Physical acoustic accuracy and battery
+acceptance require device measurements.
+
 ## Contents
 
 The tree contains roughly **5,900 entries**, far more than a normal application repository. Major areas include:
