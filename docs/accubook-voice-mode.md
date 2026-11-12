@@ -70,3 +70,9 @@ See `experiments/accubook/voice_mode/` for the initial prototype.
 - Check `feat/ollama-ci-observatory` branch for reusable on-device inference hooks (currently limited).
 
 Related issues: #83 (release gate), #86 (security/integration).
+
+## Reusable Inference Hooks (checked)
+
+- `feat/ollama-ci-observatory` branch contains a CI workflow for failure analysis using a central Ollama job (Grasshopper). It is diagnostic only and does not provide on-device inference code.
+- Existing `docs/ONNX_INTEGRATION.md` and `runtime/onnx_runtime.py` provide a keyword-fallback ONNX intent classifier pattern that can be adapted for the tiny 1-3B fallback path. Prefer ExecuTorch or ONNX Runtime Mobile for Android 15 / 4GB targets.
+- No production on-device 4-bit classifier is present yet; the common path remains zero-model.
