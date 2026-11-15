@@ -51,13 +51,14 @@ Concretely:
 - Measurements the user takes in Google Earth etc. go in "Manual measurements", labelled "user-entered (Google Earth ruler)", and are never used in totals.
 - Never put Google/Microsoft/Esri tiles, URLs or keys in a report or export.
 
+Google logo: use only the unmodified official SVGs in www/icons (light on imagery). Height 16–19 dp, clear space 10 dp left/top/right and 5 dp bottom,
+alt "Google Maps". Never recolour, crop or put it in reports.
+
 ## Task list (pick one, label results PASS/FAIL/NOT_PROVEN)
-1. NOT_PROVEN: on-device test of 0.1.7.1 (Save PDF to Downloads, Share PDF, print fallback) on a real phone and on the emulator (AVD rm34 did not boot headless on the box).
-2. Per-edge markings on the report's aerial photo (draw the typed, labelled outline over the MassGIS thumbnail in build_report.py's aerial section).
-3. Per-facet pitch: use lidar plane pitch per facet in the totals (behind a toggle), not just the cross-check table. Needs a validation set.
-4. Auto-detect from free data, more edge types: step flashing and wall flashing candidates where the roofprint touches another structure; dormers from lidar height jumps.
-5. Map Tiles API: render the official Google logo image (not text) and refresh the session before expiry; check the Azure attribution on zoom changes.
-6. Detached structures and solar sections (in v0.1.8/0.1.9) ported onto the 0.1.7.x live-result path.
-7. Report editing: structured edits (edge type/length table) in the preview, re-rendered by Python, in addition to free-text designMode edits.
-8. National fallback: Microsoft US Building Footprints / Overture where MassGIS has none; county parcel registry (see research/RESEARCH.md).
-9. Accessibility: TalkBack labels for map edges (list view mirrors the map), larger hit targets option, colour-blind-safe palette option.
+Done in 0.1.7.2 (headless PASS, on-device NOT_PROVEN): 2, 3 (opt-in), 5 (logo + session refresh; Azure attribution-on-zoom still open), 6, 7 (FEMA/ORNL USA Structures), 8 (partial: palette, big targets, aria; real TalkBack NOT_PROVEN).
+1. NOT_PROVEN: on-device test of 0.1.7.1/0.1.7.2 (Save PDF to Downloads, Share PDF, print fallback, TalkBack) on a real phone; AVD rm34 never came online headless on the box (two more retries in 0.1.7.2).
+2. Validate per-facet pitch against measured roofs before considering making it default.
+3. Auto-detect from free data, more edge types: step/wall flashing candidates where the roofprint touches another structure; dormers from lidar height jumps.
+4. Azure Maps: re-query Get Map Attribution on zoom/move end.
+5. National parcels/assessor outside MA (county registries; see research/RESEARCH.md); Overture/Microsoft footprints as a second fallback.
+6. Structures on lot outside MA (FEMA) and lidar pitch per detached structure.

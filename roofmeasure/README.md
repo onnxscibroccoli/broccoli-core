@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: MIT -->
-# RoofMeasure 0.1.7.1 (versionCode 10701)
+# RoofMeasure 0.1.7.2 (versionCode 10702)
 
-Based on the reconstructed v0.1.7 source; changes are in CHANGELOG.md. Headless test: `node tests/v0171_test.cjs <outdir>` (Playwright + Chrome, live MassGIS/USGS; Google/Azure/Bing endpoints are mocked).
+Based on the reconstructed v0.1.7 source; changes are in CHANGELOG.md. Headless test: `node tests/v0172_test.cjs <outdir>` (0.1.7.1 test kept as tests/v0171_test.cjs) (Playwright + Chrome, live MassGIS/USGS; Google/Azure/Bing endpoints are mocked).
 
 ## Original v0.1.7 reconstruction notes
 

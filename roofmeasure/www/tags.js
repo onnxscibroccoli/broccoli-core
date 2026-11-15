@@ -9,7 +9,7 @@
   var EDGE_TAGS = { step_flashing: 'Step flashing', drip_edge: 'Drip edge', wall_flashing: 'Wall / headwall flashing', no_gutter: 'No gutter' };
   var AREA_TAGS = { steep: 'Steep-slope (shingle)', low_slope: 'Low-slope', flat: 'Flat', deck: 'Deck' };
   var LINE_TYPES = ['ridge', 'hip', 'valley'];
-  function emptyTags() { return { edges: {}, lines: {}, linesKey: null, areas: {}, layers: {}, confirmed: {} }; }
+  function emptyTags() { return { edges: {}, lines: {}, linesKey: null, areas: {}, layers: {}, confirmed: {}, lengths: {} }; }
   function r1(x) { return Math.round(x * 10) / 10; }
   function r2(x) { return Math.round(x * 100) / 100; }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
@@ -74,7 +74,7 @@
         var d = angDiff(p.aspect_deg, x.downslope_bearing_deg);
         if (d <= tolDeg && (!best || p.n > best.p.n)) best = { p: p, d: d };
       });
-      var out = { id: x.id, model_pitch: x.pitch, plan_area_sqft: x.plan_area_sqft, model_area_sqft: x.area_sqft, downslope_bearing_deg: x.downslope_bearing_deg };
+      var out = { id: x.id, model_pitch: x.model_pitch || x.pitch, plan_area_sqft: x.plan_area_sqft, model_area_sqft: x.model_area_sqft || x.area_sqft, downslope_bearing_deg: x.downslope_bearing_deg };
       if (best) {
         var pp = pitchFromDeg(best.p.slope_deg), fac = 1 / Math.cos(best.p.slope_deg * Math.PI / 180);
         Object.assign(out, { lidar_pitch: pp.label, lidar_slope_deg: best.p.slope_deg, lidar_aspect_deg: best.p.aspect_deg, aspect_diff_deg: r1(best.d),
@@ -92,7 +92,7 @@
     Object.keys(EDGE_TAGS).forEach(function (k) { tagLf[k] = { plan: 0, sloped: 0, n: 0, edges: [] }; });
     (r.edges || []).forEach(function (e) {
       var t = tags.edges[e.i]; var keys = t ? Object.keys(t).filter(function (k) { return EDGE_TAGS[k]; }) : [];
-      var manual = e.auto === false;
+      var manual = e.auto === false || e.length_source === 'user edit';
       if (!keys.length && !manual) return;
       var sloped = e.type === 'rake' ? e.length_ft * pf : e.length_ft;
       keys.forEach(function (k) { var a = tagLf[k]; a.plan += e.length_ft; a.sloped += sloped; a.n++; a.edges.push(e.i); });
@@ -126,8 +126,10 @@
     var lenSrc = 'roofprint/outline: ' + (r.source || 'manual outline');
     var sources = (r.edges || []).map(function (e) {
       var retag = e.auto === false, c = conf['E' + e.i];
+      var le = e.length_source === 'user edit';
       return { kind: 'edge', id: 'E' + e.i, type: e.type, length_ft: r2(e.type === 'rake' ? e.length_ft * pf : e.length_ft), length_basis: e.type === 'rake' ? 'sloped (plan × pitch factor ' + pf + ')' : 'plan',
-        length_source: lenSrc, type_source: retag ? 'user retag (auto ' + e.auto_type + ')' : typeSrc, status: retag ? 'user-set' : (c ? 'confirmed by user' : 'auto (unconfirmed)') };
+        length_source: le ? 'user edit (auto ' + (+e.length_ft_auto).toFixed(1) + ' ft plan)' : lenSrc, type_source: retag ? 'user retag (auto ' + e.auto_type + ')' : typeSrc,
+        status: retag || le ? 'user-set' : (c ? 'confirmed by user' : 'auto (unconfirmed)') };
     });
     (r.line_segments || []).forEach(function (sg, i) {
       if (LINE_TYPES.indexOf(sg.type) < 0) return;
@@ -137,7 +139,7 @@
         type_source: sg.user_tagged ? 'user retag (auto ' + sg.auto_type + ')' : 'facets model', status: sg.user_tagged ? 'user-set' : (c ? 'confirmed by user' : 'auto (unconfirmed)') });
     });
     var nConf = sources.filter(function (x) { return x.status !== 'auto (unconfirmed)'; }).length;
-    return { sources: sources, n_checked: nConf, pitch_source: r.pitch_source, edge_rows: edgeRows, tag_lf: tagLf, line_changes: lineChanges || [], area_rows: areaRows, area_by_category: byCat,
+    return { per_facet_used: !!r.per_facet_pitch_used, sources: sources, n_checked: nConf, pitch_source: r.pitch_source, edge_rows: edgeRows, tag_lf: tagLf, line_changes: lineChanges || [], area_rows: areaRows, area_by_category: byCat,
       stale_area_tags: stale, plane_rows: planeRows, layers_used: Object.keys(layersUsed),
       any: edgeRows.length > 0 || (lineChanges || []).length > 0 || areaRows.length > 0 };
   }
@@ -186,7 +188,7 @@
     }
     if (p.plane_rows.length) {
       H.push('<h3>Per-facet pitch from lidar planes (cross-check, NOT_PROVEN)</h3><p class="note">Each modelled facet is matched to the largest USGS 3DEP ' +
-        'lidar RANSAC plane whose downslope direction is within 35° of the facet\'s. The report totals above still use the single pitch shown in the Summary.</p>');
+        'lidar RANSAC plane whose downslope direction is within 35° of the facet\'s. ' + (p.per_facet_used ? 'OPT-IN ON: the report roof area above is the per-facet sum below.' : 'The report totals above still use the single pitch shown in the Summary.') + '</p>');
       H.push('<table><thead><tr><th scope="col">Facet</th><th scope="col">Model pitch</th><th scope="col">Lidar plane pitch</th><th scope="col">Aspect Δ°</th><th scope="col">Plane pts</th><th scope="col">Plan sq ft</th><th scope="col">Roof sq ft (lidar pitch)</th></tr></thead><tbody>');
       var tot = 0, ok = true;
       p.plane_rows.forEach(function (x) {

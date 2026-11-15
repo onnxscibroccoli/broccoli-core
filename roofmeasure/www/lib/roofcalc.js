@@ -387,7 +387,7 @@
     o = o || {};
     var st = String(o.sourceType || '').toUpperCase(), src = String(o.source || '').toLowerCase();
     var roofprint = st === 'ROOFPRINT' || st === 'ROOFPRINT_SHIFTED' || (!st && /massgis/.test(src));
-    var kind = roofprint ? 'roofprint' : (/osm|openstreetmap|overpass/.test(src) ? 'osm' : (/overture/.test(src) ? 'overture' : 'manual'));
+    var kind = roofprint ? 'roofprint' : (/osm|openstreetmap|overpass/.test(src) ? 'osm' : (/overture/.test(src) ? 'overture' : (st === 'FEMA_USA_STRUCTURES' || /usa structures|fema/.test(src) ? 'fema_usa_structures' : 'manual')));
     var userOh = o.overhangFt != null && o.overhangFt !== '' && isFinite(Number(o.overhangFt));
     var oh = userOh ? Number(o.overhangFt) : (roofprint ? 0 : DEFAULTS.overhangFt);
     var userExt = o.gutterEndExtFt != null && o.gutterEndExtFt !== '' && isFinite(Number(o.gutterEndExtFt));

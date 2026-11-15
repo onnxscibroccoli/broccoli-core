@@ -15,7 +15,7 @@ button{padding:5px 8px;border:1px solid #888;border-radius:4px;background:#fff;c
 .note{font-size:11px;color:#555}
 /* 0.1.7.1 */
 #refBanner{position:absolute;left:8px;top:8px;z-index:5;background:#b91c1c;color:#fff;font-weight:700;font-size:12px;padding:4px 8px;border-radius:4px;pointer-events:none;max-width:60%}
-#googleLogo{position:absolute;left:8px;bottom:26px;z-index:5;font:600 16px/1 Arial,sans-serif;color:#fff;text-shadow:0 0 3px #000;pointer-events:none}
+#googleLogo{position:absolute;left:10px;bottom:5px;z-index:5;height:18px;width:auto;pointer-events:none}#googleLogo[hidden]{display:none}
 #reportView{position:fixed;inset:0;z-index:50;background:#333;display:flex;flex-direction:column}
 #reportView[hidden]{display:none}
 #reportView .rv-bar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:6px;background:#111;color:#fff}
@@ -31,3 +31,9 @@ textarea{font:inherit}
 body.hc .lbl{font-size:14px;padding:3px 6px;border:2px solid #000;font-weight:700}
 .lbl.line{background:rgba(17,17,17,.85)}.lbl.ridge{background:#b91c1c}.lbl.hip{background:#7e22ce}.lbl.valley{background:#0f766e}
 .lbl.ok::after{content:" ✓"}
+#rvEditor{background:#fff;max-height:45vh;overflow:auto;padding:8px;border-bottom:2px solid #111}
+#rvEditor[hidden]{display:none}#rvEditor table{border-collapse:collapse;margin:6px 0}#rvEditor td,#rvEditor th{padding:2px 6px;border-bottom:1px solid #ddd}
+body.cb .lbl.eave{background:#0072B2}body.cb .lbl.rake{background:#E69F00;color:#000}body.cb .lbl.ridge{background:#D55E00}body.cb .lbl.hip{background:#CC79A7;color:#000}body.cb .lbl.valley{background:#009E73}
+body.cb .eave{color:#0072B2}body.cb .rake{color:#a86f00}
+#edges tr[data-i]:focus{outline:3px solid #facc15}
+body.big button,body.big select{min-height:52px}

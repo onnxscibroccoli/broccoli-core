@@ -9,6 +9,7 @@
   'use strict';
   var ENDPOINTS = {
     massgisBuildings: 'https://services1.arcgis.com/hGdibHYSPO59RG1h/arcgis/rest/services/Building_Structures/FeatureServer/0/query',
+    femaStructures: 'https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/USA_Structures_View/FeatureServer/0/query',
     overpass: ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter'],
     massgisGeocoder: 'https://arcgisserver.digital.mass.gov/arcgisserver/rest/services/MassGISStatewideGeocodeService/GeocodeServer/findAddressCandidates',
     censusGeocoder: 'https://geocoding.geo.census.gov/geocoder/locations/onelineaddress',
@@ -85,6 +86,29 @@
     });
   }
 
+  /** 0.1.7.2: FEMA / ORNL USA Structures (nationwide building footprints with HEIGHT; public FEMA FeatureServer, CORS *).
+   *  Used after MassGIS (outside MA or when MassGIS has no roofprint). Footprints are wall-line/imagery outlines -> 1 ft default overhang. */
+  function fetchFema(lon, lat, opts) {
+    var o = Object.assign({}, opts || {}); o.timeoutMs = o.femaTimeoutMs || 12000;
+    // point + distance is fast on this very large layer (an envelope query timed out at 20 s in testing)
+    var url = ENDPOINTS.femaStructures + '?' + qs({
+      geometry: lon + ',' + lat, geometryType: 'esriGeometryPoint', inSR: 4326, spatialRel: 'esriSpatialRelIntersects',
+      distance: o.radiusM || 45, units: 'esriSRUnit_Meter',
+      outFields: 'BUILD_ID,HEIGHT,SQFEET,OCC_CLS,PRIM_OCC,PROP_ADDR,PROP_CITY,PROP_ST,SOURCE,IMAGE_NAME,IMAGE_DATE', outSR: 4326, f: 'geojson', resultRecordCount: 200
+    });
+    return getJSON(url, o).then(function (fc) {
+      if (fc.error) throw new Error('FEMA USA Structures error: ' + JSON.stringify(fc.error));
+      var p = pickBuilding(fc.features, [lon, lat], o.maxFt, o.minSqft);
+      if (!p) return null;
+      var pr = p.feature.properties || {};
+      p.source = 'FEMA/ORNL USA Structures BUILD_ID ' + (pr.BUILD_ID || '?') + (pr.SOURCE ? ' (source ' + pr.SOURCE + ')' : '') + (pr.HEIGHT != null ? ', height ' + pr.HEIGHT + ' m' : '');
+      p.sourceType = 'FEMA_USA_STRUCTURES';
+      p.warning = 'Outside MassGIS roofprints: FEMA USA Structures footprint (wall-line/imagery outline), 1 ft overhang assumed; align and verify on free imagery.';
+      p.url = url;
+      return p;
+    });
+  }
+
   /** OSM buildings via Overpass (ODbL). Runtime fallback outside MA / when MassGIS is down. */
   function fetchOverpass(lon, lat, opts) {
     var o = opts || {}, r = o.radiusM || 40;
@@ -111,6 +135,7 @@
   function fetchFootprint(lon, lat, opts) {
     var log = [];
     var chain = [['MassGIS', fetchMassGIS]];
+    if (!(opts && opts.noFema)) chain.push(['FEMA USA Structures', fetchFema]);
     var ov = (opts && opts.overture) || (typeof RoofOverture !== 'undefined' && RoofOverture.fetchOverture) ||
       (typeof module === 'object' && (function () { try { return require('./overture.js').fetchOverture; } catch (e) { return null; } })());
     if (ov && !(opts && opts.noOverture)) chain.push(['Overture', ov]);
@@ -161,6 +186,6 @@
   }
 
   return { ENDPOINTS: ENDPOINTS, pointInRing: pointInRing, distToRingFt: distToRingFt, pickBuilding: pickBuilding,
-    fetchMassGIS: fetchMassGIS, fetchOverpass: fetchOverpass, fetchFootprint: fetchFootprint,
+    fetchMassGIS: fetchMassGIS, fetchFema: fetchFema, fetchOverpass: fetchOverpass, fetchFootprint: fetchFootprint,
     geocode: geocode, geocodeMassGIS: geocodeMassGIS, geocodeCensus: geocodeCensus, geocodeNominatim: geocodeNominatim };
 });

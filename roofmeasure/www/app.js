@@ -50,8 +50,18 @@
       layers: [{ id: 'fallback', type: 'raster', source: 'fallback' }, { id: 'ortho', type: 'raster', source: 'ortho' }] }
   });
   map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }));
-  map.addControl(new maplibregl.ScaleControl({ unit: 'imperial' }));
+  map.addControl(new maplibregl.ScaleControl({ unit: 'imperial' }), 'bottom-right'); // bottom-left is kept clear for the Google Maps logo
   window.RoofApp = { map: map, state: state, errors: errors, BASEMAPS: BASEMAPS };
+  // 0.1.7.2: MapLibre 'load' waits for every first tile; a hanging/404 tile server (e.g. MassGIS outside MA) delayed it forever,
+  // so the app never initialised. Initialise once on 'load' OR 1.5 s after the style is ready, whichever comes first.
+  var readyFns = [], readyDone = false;
+  function onMapReady(fn) { if (readyDone) fn(); else readyFns.push(fn); }
+  function fireReady() {
+    if (readyDone) return; readyDone = true;
+    readyFns.forEach(function (f) { try { f(); } catch (e) { errors.push('init: ' + e.message); console.error(e); } });
+  }
+  map.on('load', fireReady);
+  var readyPoll = setInterval(function () { if (map.isStyleLoaded()) { clearInterval(readyPoll); setTimeout(fireReady, 1500); } }, 300);
 
   // ---- reference layers that need the user's own key (display only; never snapped, traced, measured or stored)
   var refAttr = { google: null, azure: null };
@@ -63,7 +73,7 @@
         body: JSON.stringify({ mapType: 'satellite', language: 'en-US', region: 'US' }) }).then(function (r) {
         if (!r.ok) throw new Error('Google createSession HTTP ' + r.status); return r.json(); }).then(function (j) {
         b.session = j.session; b.tiles = ['https://tile.googleapis.com/v1/2dtiles/{z}/{x}/{y}?session=' + encodeURIComponent(j.session) + '&key=' + encodeURIComponent(key)];
-        b.tileKey = key; return b; });
+        b.tileKey = key; b.sessionExpiry = +j.expiry || null; b.sessionAt = Date.now(); return b; });
     }
     if (k === 'azure') {
       b.tiles = ['https://atlas.microsoft.com/map/tile?api-version=2024-04-01&tilesetId=microsoft.imagery&zoom={z}&x={x}&y={y}&tileSize=256&subscription-key=' + encodeURIComponent(key)];
@@ -140,6 +150,30 @@
     }).catch(function (e) { status(e.message); setCompare(false); });
   }
   window.RoofApp.setCompare = setCompare;
+  // ---- Google Map Tiles session refresh: re-create the session ~1 h before expiry (or after 12 h) and on tile auth errors.
+  function googleInUse() { return state.basemap === 'google' || state.overlay === 'google' || (map2 && $('cmpLayer').value === 'google'); }
+  var lastRefresh = 0;
+  function refreshGoogle(why) {
+    if (!googleInUse() || Date.now() - lastRefresh < 60000) return Promise.resolve(false);
+    lastRefresh = Date.now(); window.RoofApp.googleRefreshes = (window.RoofApp.googleRefreshes || 0) + 1;
+    var jobs = [];
+    if (state.basemap === 'google') jobs.push(setBasemap('google'));
+    if (state.overlay === 'google') jobs.push(setOverlay('google'));
+    if (map2 && $('cmpLayer').value === 'google') jobs.push(setCompare(true));
+    return Promise.all(jobs).then(function () { status('Google Map Tiles session refreshed (' + why + ').', true); return true; });
+  }
+  window.RoofApp.refreshGoogle = refreshGoogle;
+  function googleDue() {
+    var b = BASEMAPS.google; if (!b.session) return false;
+    var now = Date.now() / 1000;
+    return (b.sessionExpiry && b.sessionExpiry - now < 3600) || (Date.now() - (b.sessionAt || 0) > 12 * 3600 * 1000);
+  }
+  window.RoofApp.googleDue = googleDue;
+  setInterval(function () { if (googleInUse() && googleDue()) refreshGoogle('expiry'); }, 5 * 60 * 1000);
+  map.on('error', function (e) {
+    var st = e && e.error && (e.error.status || (/\b(401|403)\b/.exec(String(e.error.message || '')) || [])[1]);
+    if (googleInUse() && (e.sourceId === 'ortho' || e.sourceId === 'refover') && (+st === 401 || +st === 403)) refreshGoogle('tile HTTP ' + st);
+  });
   map.on('move', cmpSync); window.addEventListener('resize', function () { if (map2) { map2.resize(); cmpLayout(); } });
   $('cmpOn').onchange = function () { setCompare(this.checked); };
   $('cmpLayer').onchange = function () { if ($('cmpOn').checked) setCompare(true); };
@@ -202,11 +236,11 @@
       if (BASEMAPS[state.basemap].key) { $('basemap').value = 'massgis'; setBasemap('massgis'); } };
   })();
   $('basemap').onchange = function () { setBasemap(this.value); };
-  map.on('load', function () { applyRefUi(state.basemap); });
+  onMapReady( function () { applyRefUi(state.basemap); });
 
   var labelMarkers = [];
   function emptyFC() { return { type: 'FeatureCollection', features: [] }; }
-  map.on('load', function () {
+  onMapReady( function () {
     map.addSource('fp', { type: 'geojson', data: emptyFC() });
     map.addSource('edges', { type: 'geojson', data: emptyFC() });
     map.addSource('verts', { type: 'geojson', data: emptyFC() });
@@ -261,6 +295,7 @@
       var tg = state.tags && state.tags.edges[e.i], ab = tg ? Object.keys(tg).map(function (k) { return { step_flashing: 'SF', drip_edge: 'DE', wall_flashing: 'WF', no_gutter: 'NG' }[k] || ''; }).join(' ') : '';
       var el = document.createElement('div'); el.className = 'lbl ' + e.type + (ab ? ' tagged' : '') + (state.tags && state.tags.confirmed['E' + e.i] ? ' ok' : '');
       el.textContent = e.type.toUpperCase() + ' ' + e.length_ft.toFixed(1) + "'" + (ab ? ' ' + ab : '');
+      el.setAttribute('role', 'img'); el.setAttribute('aria-label', 'Edge ' + e.i + ', ' + e.type + ', ' + e.length_ft.toFixed(1) + ' feet' + (ab ? ', tags ' + ab : '') + (state.tags && state.tags.confirmed['E' + e.i] ? ', confirmed' : ''));
       labelMarkers.push(new maplibregl.Marker({ element: el }).setLngLat([(e.from[0] + e.to[0]) / 2, (e.from[1] + e.to[1]) / 2]).addTo(map));
     });
     renderFacets(r);
@@ -273,10 +308,11 @@
       ['Source', '<span class="note">' + (r.source || 'manual') + '</span>']
     ].map(function (x) { return '<tr><td>' + x[0] + '</td><td>' + x[1] + '</td></tr>'; }).join('') + '</table>';
     $('edges').innerHTML = '<table><tr><th>#</th><th>ft</th><th>bearing</th><th>type</th></tr>' + r.edges.map(function (e) {
-      return '<tr data-i="' + e.i + '" style="cursor:pointer"><td>' + e.i + '</td><td>' + e.length_ft.toFixed(1) + '</td><td>' + e.bearing_deg.toFixed(0) +
+      return '<tr data-i="' + e.i + '" tabindex="0" role="button" aria-label="Edge ' + e.i + ', ' + e.length_ft.toFixed(1) + ' feet, ' + e.type + (e.auto ? '' : ', set by you') + '. Press Enter to toggle eave or rake." style="cursor:pointer"><td>' + e.i + '</td><td>' + e.length_ft.toFixed(1) + '</td><td>' + e.bearing_deg.toFixed(0) +
         '°</td><td class="' + e.type + '">' + e.type + (e.auto ? '' : ' ✎') + '</td></tr>';
     }).join('') + '</table>';
-    Array.prototype.forEach.call($('edges').querySelectorAll('tr[data-i]'), function (tr) { tr.onclick = function () { toggleEdge(+tr.dataset.i); }; });
+    Array.prototype.forEach.call($('edges').querySelectorAll('tr[data-i]'), function (tr) { tr.onclick = function () { toggleEdge(+tr.dataset.i); };
+      tr.onkeydown = function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); toggleEdge(+tr.dataset.i); setTimeout(function () { var n = $('edges').querySelector('tr[data-i="' + tr.dataset.i + '"]'); if (n) n.focus(); }, 0); } }; });
   }
   // ------------------------------------------------------------ live facets / interior lines (same inputs as the report)
   function renderFacets(r) {
@@ -294,6 +330,7 @@
       var c = s2.coords_lonlat, el = document.createElement('div');
       el.className = 'lbl line ' + s2.type + (state.tags.confirmed['L' + i] ? ' ok' : '');
       el.textContent = s2.type.toUpperCase() + ' ' + (+s2.length_ft).toFixed(1) + "'";
+      el.setAttribute('role', 'img'); el.setAttribute('aria-label', 'Line ' + i + ', ' + s2.type + ', ' + (+s2.length_ft).toFixed(1) + ' feet');
       labelMarkers.push(new maplibregl.Marker({ element: el }).setLngLat([(c[0][0] + c[1][0]) / 2, (c[0][1] + c[1][1]) / 2]).addTo(map));
     });
     map.getSource('facets').setData({ type: 'FeatureCollection', features: (f && f.facets || []).map(function (x) {
@@ -348,9 +385,20 @@
     (state.facetsLive && state.facetsLive.line_segments || []).forEach(function (s2, i) { if (window.RoofTags.LINE_TYPES.indexOf(s2.type) >= 0) state.tags.confirmed['L' + i] = lab; });
     render(); status('All shown edges and lines marked confirmed by you.');
   };
+  var PAL = { std: { eave: '#2563eb', rake: '#ea580c', ridge: '#dc2626', hip: '#9333ea', valley: '#0d9488', wall_flashing: '#64748b' },
+    cb: { eave: '#0072B2', rake: '#E69F00', ridge: '#D55E00', hip: '#CC79A7', valley: '#009E73', wall_flashing: '#999999' } };
+  function applyPalette() {
+    var P = PAL[$('palette').value] || PAL.std; document.body.classList.toggle('cb', $('palette').value === 'cb');
+    if (map.getLayer('edges')) map.setPaintProperty('edges', 'line-color', ['match', ['get', 'type'], 'eave', P.eave, P.rake]);
+    if (map.getLayer('lines')) map.setPaintProperty('lines', 'line-color', ['match', ['get', 'type'], 'ridge', P.ridge, 'hip', P.hip, 'valley', P.valley, 'rake', P.rake, 'wall_flashing', P.wall_flashing, '#ffffff']);
+  }
+  $('palette').onchange = applyPalette; onMapReady( applyPalette);
+  $('bigTargets').onchange = function () { var m = this.checked ? 1.6 : 1; TOL.touch = { vert: 22 * m, edge: 20 * m }; TOL.pen = { vert: 14 * m, edge: 14 * m }; TOL.mouse = { vert: 8 * m, edge: 8 * m };
+    document.body.classList.toggle('big', this.checked); };
+  $('perFacet').onchange = function () { state.perFacetPitch = this.checked; status(this.checked ? 'Per-facet lidar pitch ON for the report roof area (opt-in, NOT_PROVEN). Needs Auto pitch (lidar).' : 'Per-facet lidar pitch off: single pitch for all totals.'); };
   function applyContrast() { document.body.classList.toggle('hc', $('hiContrast').checked);
     ['edges-case', 'lines-case'].forEach(function (l) { if (map.getLayer(l)) map.setLayoutProperty(l, 'visibility', $('hiContrast').checked ? 'visible' : 'none'); }); }
-  $('hiContrast').onchange = applyContrast; map.on('load', applyContrast);
+  $('hiContrast').onchange = applyContrast; onMapReady( applyContrast);
   $('tagTool').onchange = function () { state.tagTool = this.value; status(this.value ? 'Tag tool: ' + this.options[this.selectedIndex].text + ' — tap the map. (Dragging the outline is paused while tagging.)' : 'Tag tool off.'); };
   function toggleEdge(i) {
     if (!state.result) return;
@@ -359,9 +407,9 @@
     render();
   }
   function setRing(ring, source) {
-    state.ring = RC.normalizeRing(ring); state.overrides = {}; if (state.tags) { state.tags.edges = {}; state.tags.layers = {}; state.tags.confirmed = {}; } state.source = source || state.source; render();
+    state.ring = RC.normalizeRing(ring); state.overrides = {}; if (state.tags) { state.tags.edges = {}; state.tags.layers = {}; state.tags.confirmed = {}; state.tags.lengths = {}; } state.source = source || state.source; render();
   }
-  window.RoofApp.setRing = setRing;
+  window.RoofApp.setRing = setRing; window.RoofApp.render = function () { render(); };
   ['pitch', 'roofType', 'overhang', 'gext', 'ftds', 'waste', 'useRidge'].forEach(function (id) { $(id).addEventListener('change', function () {
     if (id === 'roofType' || id === 'useRidge') state.overrides = {};
     if (id === 'pitch') { state.pitchSource = 'manual'; state.pitchConfidence = null; }
@@ -492,7 +540,7 @@
     var h = hitTest([e.point.x, e.point.y], lastPointerType);
     if (h.vert == null) return;
     e.preventDefault();
-    state.ring.splice(h.vert, 1); state.overrides = {}; state.tags.edges = {}; state.tags.confirmed = {}; render();
+    state.ring.splice(h.vert, 1); state.overrides = {}; state.tags.edges = {}; state.tags.confirmed = {}; state.tags.lengths = {}; render();
   });
   function finishDraw(pts) {
     if (pts.length >= 3) { if (window.RoofTags) state.tags = window.RoofTags.emptyTags(); state.click = pts[0]; state.sourceType = null; state.lidar = null; $('overhang').value = ''; $('gext').value = ''; setRing(pts, 'manual trace'); }
@@ -518,7 +566,7 @@
       if (h.vert != null) return;
       if (h.edge != null) {
         if ((e.originalEvent.altKey || e.originalEvent.shiftKey) && traceLocked()) { status('Adding vertices is disabled on visual-reference layers.'); return; }
-        if (e.originalEvent.altKey || e.originalEvent.shiftKey) { state.ring.splice(h.edge + 1, 0, ll); state.overrides = {}; state.tags.edges = {}; state.tags.confirmed = {}; render(); } // insert vertex
+        if (e.originalEvent.altKey || e.originalEvent.shiftKey) { state.ring.splice(h.edge + 1, 0, ll); state.overrides = {}; state.tags.edges = {}; state.tags.confirmed = {}; state.tags.lengths = {}; render(); } // insert vertex
         else toggleEdge(h.edge);
         return;
       }

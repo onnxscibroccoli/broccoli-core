@@ -346,14 +346,52 @@ def aerial_from_ortho(r, z=19, half=None):
         return None
     poly = " ".join(f"{p[0]-x0:.1f},{p[1]-y0:.1f}" for p in pts)
     alt = (f"Aerial photo (MassGIS 2025 orthoimagery, zoom {z}) centred on the roof at {r['address']}, "
-           "with the 2-D roofprint outline drawn as a white-and-black dashed line.")
+           "with the 2-D roofprint outline drawn as a white-and-black dashed line and each edge drawn in its type colour with its edge number.")
     svg = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {2*half:.1f} {2*half:.1f}" width="100%" role="img" '
            f'aria-labelledby="ae-title ae-desc"><title id="ae-title">Aerial image</title><desc id="ae-desc">{esc(alt)}</desc>'
            + "".join(imgs) +
            f'<polygon points="{poly}" fill="none" stroke="#ffffff" stroke-width="4"/>'
-           f'<polygon points="{poly}" fill="none" stroke="#000000" stroke-width="2" stroke-dasharray="6 4"/></svg>')
-    return ("massgis_ortho_2025", f'<figure class="aerial">{svg}<figcaption>MassGIS 2025 orthoimagery (15 cm); '
-            'roofprint outline overlaid (dashed). Tile URL template from shared/endpoints.json.</figcaption></figure>')
+           f'<polygon points="{poly}" fill="none" stroke="#000000" stroke-width="2" stroke-dasharray="6 4"/>'
+           + aerial_markings(r, world, x0, y0, 2 * half) + '</svg>')
+    marked = bool(r.get("edges")) and all(e.get("from") and e.get("to") for e in r["edges"])
+    cap = ('MassGIS 2025 orthoimagery (15 cm); typed edges overlaid with the edge numbers used in the tables '
+           '(blue eave, orange rake, red ridge, purple hip, teal valley; dashed = roofprint outline). Tile URL template from shared/endpoints.json.'
+           if marked else 'MassGIS 2025 orthoimagery (15 cm); roofprint outline overlaid (dashed). Tile URL template from shared/endpoints.json.')
+    return ("massgis_ortho_2025", f'<figure class="aerial">{svg}<figcaption>{cap}</figcaption></figure>')
+
+
+AERIAL_COLORS = {"eave": "#1d4ed8", "rake": "#ea580c", "ridge": "#dc2626", "hip": "#9333ea", "valley": "#0d9488", "wall_flashing": "#64748b"}
+
+
+def aerial_markings(r, world, x0, y0, size):
+    """0.1.7.2: per-edge markings on the aerial photo: each outline edge drawn in its type colour with its edge number,
+    plus interior ridge/hip/valley lines from the facets model (line_segments.coords_lonlat). Geometry comes only from the
+    result (free data); nothing is derived from the imagery."""
+    out = []
+    fs = max(9.0, size / 32)
+    for sg in r.get("line_segments") or []:
+        c = sg.get("coords_lonlat")
+        t = str(sg.get("type", "")).lower()
+        if not c or len(c) < 2 or t not in ("ridge", "hip", "valley"):
+            continue
+        a, b = world(*c[0]), world(*c[1])
+        col = AERIAL_COLORS.get(t, "#ffffff")
+        out.append(f'<line x1="{a[0]-x0:.1f}" y1="{a[1]-y0:.1f}" x2="{b[0]-x0:.1f}" y2="{b[1]-y0:.1f}" stroke="#000" stroke-width="5" stroke-linecap="round"/>'
+                   f'<line x1="{a[0]-x0:.1f}" y1="{a[1]-y0:.1f}" x2="{b[0]-x0:.1f}" y2="{b[1]-y0:.1f}" stroke="{col}" stroke-width="3" stroke-linecap="round"/>')
+    labels = []
+    for e in r.get("edges") or []:
+        f, t2 = e.get("from"), e.get("to")
+        if not f or not t2:
+            continue
+        a, b = world(*f), world(*t2)
+        col = AERIAL_COLORS.get(str(e.get("type", "")).lower(), "#ffffff")
+        out.append(f'<line x1="{a[0]-x0:.1f}" y1="{a[1]-y0:.1f}" x2="{b[0]-x0:.1f}" y2="{b[1]-y0:.1f}" stroke="#000" stroke-width="6" stroke-linecap="round"/>'
+                   f'<line x1="{a[0]-x0:.1f}" y1="{a[1]-y0:.1f}" x2="{b[0]-x0:.1f}" y2="{b[1]-y0:.1f}" stroke="{col}" stroke-width="3.5" stroke-linecap="round"/>')
+        if float(e.get("length_ft", 0)) >= 3:
+            mx, my = (a[0] + b[0]) / 2 - x0, (a[1] + b[1]) / 2 - y0
+            labels.append(f'<circle cx="{mx:.1f}" cy="{my:.1f}" r="{fs*0.75:.1f}" fill="#fff" stroke="{col}" stroke-width="2"/>'
+                          f'<text x="{mx:.1f}" y="{my + fs*0.35:.1f}" font-size="{fs:.1f}" font-family="Arial,sans-serif" font-weight="700" text-anchor="middle" fill="#111">{esc(e["i"])}</text>')
+    return "".join(out + labels)
 
 
 def aerial_html(r, input_dir):
@@ -405,6 +443,8 @@ def attributions(r, aerial_kind=None):
         a.append("Overture Maps Foundation buildings (ODbL/CDLA as applicable).")
     if "osm" in blob or "openstreetmap" in blob or "overpass" in blob:
         a.append("© OpenStreetMap contributors (ODbL).")
+    if "usa structures" in blob or "fema" in blob:
+        a.append("FEMA / ORNL USA Structures building footprints (public FEMA FeatureServer; cite FEMA and ORNL), used outside MassGIS coverage.")
     if isinstance(r.get("structures_on_lot"), dict):
         a.append("MassGIS Level 3 Property Tax Parcels (lot boundary for the detached-structures list).")
     if isinstance(r.get("solar"), dict) and (r["solar"].get("pvwatts") or {}).get("worked"):
