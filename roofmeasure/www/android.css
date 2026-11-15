@@ -1,0 +1,4 @@
+/* android.css — phone/touch layer added by android/bundle (web/ untouched): larger tap targets only;
+ * web/style.css already switches to a map-over-panel layout below 760 px. */
+button, select { min-height: 44px; touch-action: manipulation; }
+input[type=text], input[type=number] { min-height: 40px; font-size: 16px; } /* 16px stops Android zoom-on-focus */

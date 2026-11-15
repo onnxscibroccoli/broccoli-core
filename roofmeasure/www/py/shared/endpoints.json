@@ -1,0 +1,297 @@
+{
+  "generated_at": "2026-11-14T22:44:27-05:00",
+  "generator": "/workspace/roofmeasure/data/verify_endpoints.py",
+  "test_address": "15 Ward Street, Hingham, MA 02043",
+  "endpoints": {
+    "census_geocoder": {
+      "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress",
+      "example": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=15+Ward+Street%2C+Hingham%2C+MA+02043&benchmark=Public_AR_Current&format=json",
+      "http_status": 200,
+      "cors_allow_origin": null,
+      "sample_response": {
+        "matchedAddress": "15 WARD ST, HINGHAM, MA, 02043",
+        "coordinates": {
+          "x": -70.91189786594,
+          "y": 42.212879069539
+        }
+      },
+      "notes": "Interpolated along TIGER street segment; point is on/near the street centreline, NOT the house. No CORS header -> browser must use GM_xmlhttpRequest.",
+      "verified": true,
+      "verified_at": "2026-11-14T22:44:27-05:00",
+      "elapsed_s": 0.29
+    },
+    "massgis_geocoder": {
+      "url": "https://arcgisserver.digital.mass.gov/arcgisserver/rest/services/MassGISStatewideGeocodeService/GeocodeServer/findAddressCandidates",
+      "example": "https://arcgisserver.digital.mass.gov/arcgisserver/rest/services/MassGISStatewideGeocodeService/GeocodeServer/findAddressCandidates?SingleLine=15+Ward+Street%2C+Hingham%2C+MA+02043&outSR=4326&maxLocations=1&f=json",
+      "http_status": 200,
+      "cors_allow_origin": "https://www.google.com",
+      "sample_response": {
+        "address": "15 WARD STREET, HINGHAM, MA, 02043",
+        "location": {
+          "x": -70.912946970628,
+          "y": 42.213604535079
+        },
+        "score": 100
+      },
+      "notes": "MassGIS Master Address Data points; lands inside the parcel/on the building. Preferred geocoder for MA.",
+      "verified": true,
+      "verified_at": "2026-11-14T22:44:27-05:00",
+      "elapsed_s": 0.11
+    },
+    "massgis_building_structures": {
+      "url": "https://services1.arcgis.com/hGdibHYSPO59RG1h/arcgis/rest/services/Building_Structures/FeatureServer/0/query",
+      "layer": "https://services1.arcgis.com/hGdibHYSPO59RG1h/arcgis/rest/services/Building_Structures/FeatureServer/0",
+      "example": "https://services1.arcgis.com/hGdibHYSPO59RG1h/arcgis/rest/services/Building_Structures/FeatureServer/0/query?geometry=-70.912946970628%2C42.213604535079&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=STRUCT_ID%2CSOURCE%2CSOURCEDATE%2CAREA_SQ_FT&outSR=4326&f=geojson",
+      "http_status": 200,
+      "cors_allow_origin": "*",
+      "maxRecordCount": 2000,
+      "feature_count": 1,
+      "sample_feature": {
+        "properties": {
+          "STRUCT_ID": "248476_884962",
+          "SOURCE": "ROLTA",
+          "SOURCEDATE": 20110000,
+          "AREA_SQ_FT": 1430.71706696
+        },
+        "geometry_type": "Polygon",
+        "n_vertices": 7,
+        "first_vertex": [
+          -70.9128083332544,
+          42.2136137977281
+        ]
+      },
+      "verified": true,
+      "notes": "Point-in-polygon query with MassGIS address point. Also supports esriGeometryEnvelope or distance+units buffer. Shape__Area/Shape__Length are Web-Mercator units; compute metrics in UTM 19N (EPSG:26919).",
+      "verified_at": "2026-11-14T22:44:28-05:00",
+      "elapsed_s": 0.67,
+      "overhang_default_ft": 0
+    },
+    "massgis_parcels": {
+      "url": "https://services1.arcgis.com/hGdibHYSPO59RG1h/arcgis/rest/services/Massachusetts_Property_Tax_Parcels/FeatureServer/0/query",
+      "layer": "https://services1.arcgis.com/hGdibHYSPO59RG1h/arcgis/rest/services/Massachusetts_Property_Tax_Parcels/FeatureServer/0",
+      "example": "https://services1.arcgis.com/hGdibHYSPO59RG1h/arcgis/rest/services/Massachusetts_Property_Tax_Parcels/FeatureServer/0/query?geometry=-70.912946970628%2C42.213604535079&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=LOC_ID%2CMAP_PAR_ID%2CPROP_ID%2CSITE_ADDR%2CTOWN_ID%2CSTORIES%2CSTYLE%2CYEAR_BUILT%2CUSE_CODE&returnGeometry=false&f=json",
+      "http_status": 200,
+      "cors_allow_origin": "*",
+      "feature_count": 1,
+      "sample_attributes": {
+        "LOC_ID": "F_815196_2903405",
+        "MAP_PAR_ID": "1311230000000170",
+        "PROP_ID": "123_0_17",
+        "SITE_ADDR": "15 WARD STREET",
+        "TOWN_ID": 131,
+        "STORIES": "1",
+        "STYLE": "Cape Cod",
+        "YEAR_BUILT": 1920,
+        "USE_CODE": "1010"
+      },
+      "verified": true,
+      "notes": "Level-3 standardized tax parcels joined to assessor records (STORIES, STYLE, YEAR_BUILT usable for eave-height heuristic). Census centreline points often fall in the road -> query by MassGIS address point, by SITE_ADDR+TOWN_ID, or with a distance buffer.",
+      "verified_at": "2026-11-14T22:44:29-05:00",
+      "elapsed_s": 1.21
+    },
+    "massgis_ortho_2025": {
+      "service": "https://tiles.arcgis.com/tiles/hGdibHYSPO59RG1h/arcgis/rest/services/Massachusetts_Aerial_Imagery_2025/MapServer",
+      "title": "Massachusetts 2025 Aerial Imagery (Tile Service), MassGIS",
+      "xyz_template": "https://tiles.arcgis.com/tiles/hGdibHYSPO59RG1h/arcgis/rest/services/Massachusetts_Aerial_Imagery_2025/MapServer/tile/{z}/{y}/{x}",
+      "xyz_note": "ArcGIS order is /tile/{z}/{y}/{x} (row before column)",
+      "wmts_capabilities": "https://tiles.arcgis.com/tiles/hGdibHYSPO59RG1h/arcgis/rest/services/Massachusetts_Aerial_Imagery_2025/MapServer/WMTS/1.0.0/WMTSCapabilities.xml",
+      "wmts_capabilities_http": 200,
+      "wmts_kvp_template": "https://tiles.arcgis.com/tiles/hGdibHYSPO59RG1h/arcgis/rest/services/Massachusetts_Aerial_Imagery_2025/MapServer/WMTS/tile/1.0.0/Massachusetts_Aerial_Imagery_2025/default/default028mm/{TileMatrix}/{TileRow}/{TileCol}",
+      "tile_matrix_set": "default028mm (Web Mercator EPSG:3857, GoogleMapsCompatible grid, 256px)",
+      "spatial_reference": {
+        "wkid": 102100,
+        "latestWkid": 3857
+      },
+      "tile_size": 256,
+      "format": "Mixed",
+      "zoom_min": 7,
+      "zoom_max": 20,
+      "resolution_m_per_px": {
+        "z19": 0.298582141647617,
+        "z20": 0.14929107082380833
+      },
+      "verified_tile": {
+        "url": "https://tiles.arcgis.com/tiles/hGdibHYSPO59RG1h/arcgis/rest/services/Massachusetts_Aerial_Imagery_2025/MapServer/tile/19/194206/158871",
+        "http_status": 200,
+        "bytes": 21587,
+        "content_kind": "jpeg"
+      },
+      "cors_allow_origin": "https://www.google.com",
+      "attribution": "Imagery: MassGIS (Bureau of Geographic Information), Commonwealth of Massachusetts EOTSS, 2025 aerial imagery",
+      "zoom_note": "tileInfo lists LODs 0-23 but the cache holds 7-20 (service minLOD/maxLOD); z21 returned 404 in testing.",
+      "notes": "2025 imagery IS published. Native GSD per MassGIS is ~15 cm; z20 (~0.149 m/px at equator, ~0.11 m/px at 42N) is the deepest level; z21 returns 404.",
+      "verified": true,
+      "verified_at": "2026-11-14T22:44:29-05:00",
+      "elapsed_s": 0.16
+    },
+    "overture_buildings": {
+      "latest_release": "2026-10-21.0",
+      "stac_catalog": "https://stac.overturemaps.org/catalog.json",
+      "geoparquet_s3": "s3://overturemaps-us-west-2/release/2026-10-21.0/theme=buildings/type=building/*",
+      "geoparquet_https": "https://overturemaps-us-west-2.s3.us-west-2.amazonaws.com/release/2026-10-21.0/theme=buildings/type=building/",
+      "geoparquet_azure": "https://overturemapswestus2.blob.core.windows.net/release/2026-10-21.0/theme=buildings/type=building/",
+      "python_access": "overturemaps.core.record_batch_reader('building', bbox) (anonymous S3, pyarrow) or DuckDB httpfs+spatial read_parquet with bbox.xmin/xmax/ymin/ymax filter",
+      "python_test": {
+        "bbox": [
+          -71.4133,
+          41.8235,
+          -71.4123,
+          41.8245
+        ],
+        "buildings_returned": 10
+      },
+      "pmtiles": {
+        "url": "https://overturemaps-extras-us-west-2.s3.us-west-2.amazonaws.com/tiles/2026-10-21.0/buildings.pmtiles",
+        "http_status": 206,
+        "content_range": "bytes 0-126/180679746134",
+        "magic": "PMTiles",
+        "spec_version": 3,
+        "min_zoom": 0,
+        "max_zoom": 14,
+        "cors_allow_origin": "*",
+        "notes": "Browser-usable via HTTP Range (CORS *). Needs a PMTiles reader + MVT decoder (e.g. pmtiles + @mapbox/vector-tile, or MapLibre pmtiles:// protocol); full properties only at z14. Overture says these tiles are for inspection, not production."
+      },
+      "license": "ODbL-1.0 (OSM-derived) / CDLA-Permissive-2.0 etc. per source; see sources[] on each feature",
+      "verified": true,
+      "verified_at": "2026-11-14T22:44:31-05:00",
+      "elapsed_s": 2.1,
+      "overhang_default_ft": 1
+    },
+    "osm_overpass": {
+      "mirrors": [
+        "https://overpass-api.de/api/interpreter",
+        "https://overpass.kumi.systems/api/interpreter",
+        "https://overpass.private.coffee/api/interpreter",
+        "https://maps.mail.ru/osm/tools/overpass/api/interpreter"
+      ],
+      "url": "https://overpass-api.de/api/interpreter",
+      "query_example": "[out:json][timeout:15];way[\"building\"](around:40,LAT,LON);out geom tags;",
+      "client_behaviour": "POST data=<query>; rotate mirrors with 15 s per-mirror timeout; fall through on SSL/timeout/429/5xx/non-JSON",
+      "attempts_from_box": [
+        {
+          "round": 1,
+          "attempts": [
+            {
+              "mirror": "https://overpass-api.de/api/interpreter",
+              "ok": false,
+              "error": "SSLError: HTTPSConnectionPool(host='overpass-api.de', port=443): Max retries exceeded with url: /api/interpreter (Caused by SSLErr",
+              "secs": 8.0
+            },
+            {
+              "mirror": "https://overpass.kumi.systems/api/interpreter",
+              "ok": false,
+              "error": "ReadTimeout: HTTPSConnectionPool(host='overpass.kumi.systems', port=443): Read timed out. (read timeout=15)",
+              "secs": 15.2
+            },
+            {
+              "mirror": "https://overpass.private.coffee/api/interpreter",
+              "ok": false,
+              "error": "ReadTimeout: HTTPSConnectionPool(host='overpass.private.coffee', port=443): Read timed out. (read timeout=15)",
+              "secs": 15.2
+            },
+            {
+              "mirror": "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+              "ok": false,
+              "http_status": 504,
+              "secs": 0.8
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "attempts": [
+            {
+              "mirror": "https://overpass-api.de/api/interpreter",
+              "ok": false,
+              "error": "SSLError: HTTPSConnectionPool(host='overpass-api.de', port=443): Max retries exceeded with url: /api/interpreter (Caused by SSLErr",
+              "secs": 8.0
+            },
+            {
+              "mirror": "https://overpass.kumi.systems/api/interpreter",
+              "ok": false,
+              "error": "ReadTimeout: HTTPSConnectionPool(host='overpass.kumi.systems', port=443): Read timed out. (read timeout=15)",
+              "secs": 15.3
+            },
+            {
+              "mirror": "https://overpass.private.coffee/api/interpreter",
+              "ok": false,
+              "error": "ReadTimeout: HTTPSConnectionPool(host='overpass.private.coffee', port=443): Read timed out. (read timeout=15)",
+              "secs": 15.2
+            },
+            {
+              "mirror": "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+              "ok": false,
+              "error": "ReadTimeout: HTTPSConnectionPool(host='maps.mail.ru', port=443): Read timed out. (read timeout=15)",
+              "secs": 15.4
+            }
+          ]
+        },
+        {
+          "round": 3,
+          "attempts": [
+            {
+              "mirror": "https://overpass-api.de/api/interpreter",
+              "ok": false,
+              "error": "SSLError: HTTPSConnectionPool(host='overpass-api.de', port=443): Max retries exceeded with url: /api/interpreter (Caused by SSLErr",
+              "secs": 8.0
+            },
+            {
+              "mirror": "https://overpass.kumi.systems/api/interpreter",
+              "ok": false,
+              "error": "ReadTimeout: HTTPSConnectionPool(host='overpass.kumi.systems', port=443): Read timed out. (read timeout=15)",
+              "secs": 15.9
+            },
+            {
+              "mirror": "https://overpass.private.coffee/api/interpreter",
+              "ok": false,
+              "error": "ReadTimeout: HTTPSConnectionPool(host='overpass.private.coffee', port=443): Read timed out. (read timeout=15)",
+              "secs": 15.3
+            },
+            {
+              "mirror": "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+              "ok": false,
+              "error": "ReadTimeout: HTTPSConnectionPool(host='maps.mail.ru', port=443): Read timed out. (read timeout=15)",
+              "secs": 15.4
+            }
+          ]
+        }
+      ],
+      "verified": false,
+      "building_ways_for_15_ward_st": null,
+      "notes": "UNVERIFIED from this sandbox box: no mirror returned building ways for 15 Ward St (per-mirror results above: SSL UNEXPECTED_EOF / read timeouts / 504). CA bundle is fine; this is box egress or server load. It may work from a user's browser via GM_xmlhttpRequest (userscript @connect lists all mirrors). Box-side fallback is Overture (GeoParquet via overturemaps/DuckDB).",
+      "license": "OpenStreetMap data (c) OpenStreetMap contributors, ODbL-1.0",
+      "verified_at": "2026-11-14T22:46:59-05:00",
+      "elapsed_s": 147.84,
+      "overhang_default_ft": 1
+    },
+    "usgs_epqs_elevation": {
+      "url": "https://epqs.nationalmap.gov/v1/json",
+      "example": "https://epqs.nationalmap.gov/v1/json?x=-70.912947&y=42.213605&units=Meters&wkid=4326",
+      "sample_response": {
+        "location": {
+          "x": -70.912947,
+          "y": 42.213605,
+          "spatialReference": {
+            "wkid": 4326,
+            "latestWkid": 4326
+          }
+        },
+        "locationId": 0,
+        "value": "15.640981674",
+        "rasterId": 126673,
+        "resolution": 1
+      },
+      "cors_allow_origin": "*",
+      "notes": "USGS 3DEP ground elevation (bare earth), optional.",
+      "verified": true,
+      "verified_at": "2026-11-14T22:47:24-05:00",
+      "elapsed_s": 25.24
+    }
+  },
+  "overhang_default_ft": {
+    "massgis_building_structures": 0,
+    "osm_overpass": 1,
+    "overture_buildings": 1,
+    "_note": "MassGIS roofprints are traced roof outlines (overhang included) -> 0; OSM/Overture are usually wall outlines -> 1 ft. Used by roof_measure_mvp.py when --overhang is not given."
+  }
+}

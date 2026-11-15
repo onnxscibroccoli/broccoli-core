@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0d1418">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>RoofMeasure — free roof &amp; gutter estimator (MA)</title>
+<link rel="stylesheet" href="vendor/maplibre-gl.css">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="android.css">
+</head>
+<body>
+<div id="map"></div>
+<div id="panel">
+  <h1>RoofMeasure <span class="note">free MA roof &amp; gutter estimator</span></h1>
+  <div class="row"><input id="addr" type="text" placeholder="Address, e.g. 45 Cushing St, Hingham MA"><button id="go">Find</button></div>
+  <div class="row">
+    <button id="pickBtn" class="on" title="Click a roof to load its MassGIS roofprint">Pick building</button>
+    <button id="drawBtn" title="Click/tap corners; double-click or tap the first corner to finish">Draw manually</button>
+    <button id="snapBtn" title="Nudge edges to strong roof lines in the ortho">Snap to edges</button>
+  </div>
+  <div class="row"><label>Imagery</label><select id="basemap">
+    <option value="massgis">MassGIS 2025 15 cm (MA only)</option>
+    <option value="esri">Esri World Imagery</option>
+    <option value="usgs">USGS Imagery (NAIP-based)</option>
+  </select></div>
+  <h2>Roof</h2>
+  <div class="row"><label>Roof type</label><select id="roofType"><option value="gable">Gable</option><option value="hip">Hip (all eaves)</option><option value="flat">Flat</option></select></div>
+  <div class="row"><label>Pitch</label><select id="pitch"></select><button id="lidarBtn" title="Estimate pitch + ridge from USGS 3DEP lidar (free)">Auto pitch (lidar)</button></div>
+  <div class="row note" id="pitchInfo">pitch_source: manual</div>
+  <div class="row"><label>Overhang (ft)</label><input id="overhang" type="number" step="0.5" min="0" placeholder="auto"> <span id="ohSrc" class="note"></span></div>
+  <div class="row"><label>Gutter ext/end (ft)</label><input id="gext" type="number" step="0.5" min="0" placeholder="auto"></div>
+  <div class="row"><label>Ft per downspout</label><input id="ftds" type="number" step="1" min="10" value="35"></div>
+  <div class="row"><label>Waste %</label><input id="waste" type="number" step="1" min="0" value="10"></div>
+  <div class="row"><button id="resetBtn">Re-run auto eave/rake</button><label style="min-width:0"><input type="checkbox" id="useRidge" checked> use lidar ridge</label></div>
+  <h2>Results</h2>
+  <div id="warn" style="color:#b45309;font-weight:600"></div>
+  <div id="summary"><span class="note">Pick a building to start.</span></div>
+  <div class="row"><button id="pdfBtn" title="Full roof measurement report (same format as the reference PDF); Save as PDF from the print dialog">Export PDF report</button></div>
+  <div class="row"><button id="copyBtn">Copy text</button><button id="csvBtn">CSV</button><button id="jsonBtn">JSON</button></div>
+  <h2>Edges <span class="note">(click/tap an edge on map or here to toggle eave/rake; drag white vertices; drag inside the outline to move it onto the roof; shift-click an edge to add a vertex; right-click a vertex to delete)</span></h2>
+  <div id="edges"></div>
+  <div id="status"></div>
+  <p class="note"><b>Not yet field-verified; check before ordering.</b> Eave/rake is a heuristic from the 2-D outline — verify on imagery and on site.
+  Data: MassGIS (Building Structures, 2025 orthos), Esri, USGS, © OpenStreetMap contributors (ODbL).</p>
+</div>
+<script src="vendor/maplibre-gl.js"></script>
+<script>window.ROOF_LIDAR_URL = new URL("lidar/pitch.js", document.baseURI).href;</script>
+<script src="lib/roofcalc.js"></script>
+<script src="sources.js"></script>
+<script src="overture.js"></script>
+<script src="lib/facets.js"></script>
+<script>window.ROOF_PYODIDE_URL = new URL("vendor/pyodide/", document.baseURI).href; window.ROOF_PY_BASE = new URL("py/", document.baseURI).href;</script>
+<script src="report.js"></script>
+<script src="app.js"></script>
+<script>if('serviceWorker' in navigator && /^https?:$/.test(location.protocol) && !/RoofMeasureAndroid/.test(navigator.userAgent)) navigator.serviceWorker.register('sw.js').catch(function (e) { console.warn('sw', e); });</script>
+</body>
+</html>

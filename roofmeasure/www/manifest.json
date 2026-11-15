@@ -1,0 +1,42 @@
+{
+  "name": "RoofMeasure \u2014 roof edge overlay",
+  "short_name": "RoofMeasure",
+  "description": "Measure roof edges, eaves (gutters) and rakes on MassGIS roofprints over free aerial imagery.",
+  "id": "./index.html",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0d1418",
+  "theme_color": "#0d1418",
+  "categories": [
+    "utilities",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
