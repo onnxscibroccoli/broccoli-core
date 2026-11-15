@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0d1418">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<title>RoofMeasure — free roof &amp; gutter estimator (MA)</title>
+<title>RoofMeasure 0.1.7.1 — free roof &amp; gutter estimator (MA)</title>
 <link rel="stylesheet" href="vendor/maplibre-gl.css">
 <link rel="stylesheet" href="style.css">
 <link rel="icon" href="icons/icon-192.png">
@@ -14,6 +14,12 @@
 </head>
 <body>
 <div id="map"></div>
+<div id="map2" hidden></div><div id="cmpDivider" hidden></div>
+<div id="refBanner" hidden>VISUAL REFERENCE ONLY — not used for measuring, tracing or snapping</div>
+<div id="googleLogo" hidden>Google</div>
+<div id="reportView" hidden><div class="rv-bar"><b>Report preview</b>
+  <button id="rvEdit" title="Edit the report text before saving">Edit text</button><button id="rvSave">Save PDF</button><button id="rvShare">Share PDF</button><button id="rvClose">Close</button>
+  <span id="rvStatus" class="note"></span></div><iframe id="rvFrame" title="Roof measurement report preview"></iframe></div>
 <div id="panel">
   <h1>RoofMeasure <span class="note">free MA roof &amp; gutter estimator</span></h1>
   <div class="row"><input id="addr" type="text" placeholder="Address, e.g. 45 Cushing St, Hingham MA"><button id="go">Find</button></div>
@@ -23,10 +29,57 @@
     <button id="snapBtn" title="Nudge edges to strong roof lines in the ortho">Snap to edges</button>
   </div>
   <div class="row"><label>Imagery</label><select id="basemap">
+    <optgroup label="Free, measurement-grade (used for snap / report)">
     <option value="massgis">MassGIS 2025 15 cm (MA only)</option>
-    <option value="esri">Esri World Imagery</option>
-    <option value="usgs">USGS Imagery (NAIP-based)</option>
+    <option value="massgis2023">MassGIS 2023 orthos (MA only)</option>
+    <option value="massgis2021">MassGIS 2021 orthos (MA only)</option>
+    <option value="naip">USDA NAIP (USGS, public domain, 0.6 m)</option>
+    <option value="usgs">USGS Imagery Only (NAIP-based, z16)</option>
+    </optgroup>
+    <optgroup label="Visual reference only (never measured)">
+    <option value="esri">Esri World Imagery (reference)</option>
+    <option value="google">Google satellite (reference; your API key)</option>
+    <option value="azure">Microsoft Azure Maps imagery (reference; your key)</option>
+    <option value="bing">Bing Maps aerial (reference; your Enterprise key)</option>
+    </optgroup>
   </select></div>
+  <div class="row"><label>Layer opacity</label><input id="orthoOpacity" type="range" min="0" max="100" value="100" style="flex:1"> <span class="note" id="refInfo"></span></div>
+  <div class="row"><label>Reference overlay</label><select id="ovLayer"><option value="">None</option>
+    <option value="google">Google satellite</option><option value="bing">Bing aerial</option><option value="azure">Azure Maps imagery</option><option value="esri">Esri World Imagery</option></select>
+    <select id="ovPos"><option value="over">over free layer</option><option value="under">under free layer</option></select></div>
+  <div class="row"><label>Overlay opacity</label><input id="ovOpacity" type="range" min="0" max="100" value="60" style="flex:1"></div>
+  <div class="row"><label><input type="checkbox" id="cmpOn"> Swipe compare</label><select id="cmpLayer">
+    <option value="google">Google satellite</option><option value="bing">Bing aerial</option><option value="azure">Azure Maps imagery</option><option value="esri">Esri World Imagery</option>
+    <option value="massgis2021">MassGIS 2021</option><option value="naip">NAIP</option></select>
+    <input id="cmpPos" type="range" min="0" max="100" value="50" style="flex:1" title="Swipe position"></div>
+  <div class="row note">Compare shows a reference view left of the divider over the free, traceable layer. Tracing, dragging and snapping
+  only ever happen on the free layer; drawing is disabled while a reference layer is the main imagery.</div>
+  <details id="keysBox"><summary>Reference imagery keys (optional, stored only on this device)</summary>
+    <div class="row"><label>Google Map Tiles key</label><input id="keyGoogle" type="password" autocomplete="off" placeholder="Google Maps Platform API key"></div>
+    <div class="row"><label>Azure Maps key</label><input id="keyAzure" type="password" autocomplete="off" placeholder="Azure Maps subscription key"></div>
+    <div class="row"><label>Bing Maps key</label><input id="keyBing" type="password" autocomplete="off" placeholder="Bing Maps for Enterprise key"></div>
+    <div class="row"><button id="keysSave">Save keys</button><button id="keysClear">Clear keys</button></div>
+    <p class="note">Keys never leave this device except in the tile requests to that provider, and are never written into reports or exports.
+    Google, Microsoft and Esri imagery is shown for <b>visual reference only</b>: RoofMeasure never traces, snaps, measures or stores it
+    (their terms forbid derived content). Outlines and numbers come only from MassGIS, USGS lidar/NAIP, OSM/Overture footprints or your own trace.</p>
+  </details>
+  <h2>Tag <span class="note">(visual categorization; tap edges, interior lines or roof areas on any layer)</span></h2>
+  <div class="row"><label>Tag tool</label><select id="tagTool">
+    <option value="">Off (tap edge = toggle eave/rake)</option>
+    <option value="confirm">Confirm (tap edge or line = checked)</option>
+    <optgroup label="Outline edges"><option value="edge:eave">Eave</option><option value="edge:rake">Rake</option>
+      <option value="edge:step_flashing">Step flashing (toggle)</option><option value="edge:drip_edge">Drip edge (toggle)</option>
+      <option value="edge:wall_flashing">Wall / headwall flashing (toggle)</option><option value="edge:no_gutter">No gutter (toggle)</option>
+      <option value="edge:clear">Clear edge tags</option></optgroup>
+    <optgroup label="Interior lines"><option value="line:ridge">Ridge</option><option value="line:hip">Hip</option><option value="line:valley">Valley</option><option value="line:clear">Reset line to auto</option></optgroup>
+    <optgroup label="Roof areas / facets"><option value="area:steep">Steep-slope (shingle)</option><option value="area:low_slope">Low-slope</option>
+      <option value="area:flat">Flat</option><option value="area:deck">Deck</option><option value="area:clear">Clear area tag</option></optgroup>
+  </select></div>
+  <div class="row"><button id="confirmAllBtn" title="Mark every auto-detected edge and line as checked by you">Confirm all shown</button>
+    <label style="min-width:0"><input type="checkbox" id="hiContrast" checked> High-contrast edges + large labels</label></div>
+  <div class="row note">Edges are auto-detected only from free data (MassGIS roofprint, USGS lidar planes, facets model) and drawn over whatever layer is shown.
+  Tap an edge to confirm it, or pick a tag tool to retag it.</div>
+  <div class="row note" id="tagInfo">Tags appear in the PDF report. Edge eave/rake changes the measurements; other tags are listed with their lengths/areas.</div>
   <h2>Roof</h2>
   <div class="row"><label>Roof type</label><select id="roofType"><option value="gable">Gable</option><option value="hip">Hip (all eaves)</option><option value="flat">Flat</option></select></div>
   <div class="row"><label>Pitch</label><select id="pitch"></select><button id="lidarBtn" title="Estimate pitch + ridge from USGS 3DEP lidar (free)">Auto pitch (lidar)</button></div>
@@ -39,13 +92,22 @@
   <h2>Results</h2>
   <div id="warn" style="color:#b45309;font-weight:600"></div>
   <div id="summary"><span class="note">Pick a building to start.</span></div>
-  <div class="row"><button id="pdfBtn" title="Full roof measurement report (same format as the reference PDF); Save as PDF from the print dialog">Export PDF report</button></div>
+  <h2>Manual measurements <span class="note">(your own measurements, shown in the report as user-supplied)</span></h2>
+  <div class="row"><input id="mmLabel" type="text" placeholder="What (e.g. front eave, garage roof)" style="flex:2">
+    <input id="mmValue" type="number" step="0.1" placeholder="value" style="width:80px">
+    <select id="mmUnit"><option value="ft">ft</option><option value="LF">LF</option><option value="sq ft">sq ft</option><option value="/12">pitch /12</option><option value="count">count</option></select></div>
+  <div class="row"><select id="mmSource" style="flex:1"><option>user-entered (Google Earth ruler)</option><option>user-entered (Google Maps measure distance)</option>
+    <option>user-entered (Bing Maps measure)</option><option>user-entered (tape / laser on site)</option><option>user-entered (pitch gauge on site)</option><option>user-entered (other)</option></select>
+    <button id="mmAdd">Add</button></div>
+  <div id="mmList" class="note"></div>
+  <div class="row"><label>Report notes</label><textarea id="userNotes" rows="2" style="flex:1" placeholder="Optional notes printed in the report"></textarea></div>
+  <div class="row"><button id="pdfBtn" title="Build the report from the on-screen result, preview/edit it, then save or share the PDF">Report: preview / edit / PDF</button></div>
   <div class="row"><button id="copyBtn">Copy text</button><button id="csvBtn">CSV</button><button id="jsonBtn">JSON</button></div>
   <h2>Edges <span class="note">(click/tap an edge on map or here to toggle eave/rake; drag white vertices; drag inside the outline to move it onto the roof; shift-click an edge to add a vertex; right-click a vertex to delete)</span></h2>
   <div id="edges"></div>
   <div id="status"></div>
   <p class="note"><b>Not yet field-verified; check before ordering.</b> Eave/rake is a heuristic from the 2-D outline — verify on imagery and on site.
-  Data: MassGIS (Building Structures, 2025 orthos), Esri, USGS, © OpenStreetMap contributors (ODbL).</p>
+  Data: MassGIS (Building Structures, orthos), USGS (3DEP lidar, NAIP), © OpenStreetMap contributors (ODbL). Reference layers (Esri, Google, Microsoft) are display-only.</p>
 </div>
 <script src="vendor/maplibre-gl.js"></script>
 <script>window.ROOF_LIDAR_URL = new URL("lidar/pitch.js", document.baseURI).href;</script>
@@ -54,6 +116,7 @@
 <script src="overture.js"></script>
 <script src="lib/facets.js"></script>
 <script>window.ROOF_PYODIDE_URL = new URL("vendor/pyodide/", document.baseURI).href; window.ROOF_PY_BASE = new URL("py/", document.baseURI).href;</script>
+<script src="tags.js"></script>
 <script src="report.js"></script>
 <script src="app.js"></script>
 <script>if('serviceWorker' in navigator && /^https?:$/.test(location.protocol) && !/RoofMeasureAndroid/.test(navigator.userAgent)) navigator.serviceWorker.register('sw.js').catch(function (e) { console.warn('sw', e); });</script>

@@ -1,0 +1,212 @@
+{
+ "base": "http://127.0.0.1:39255/",
+ "www": "/workspace/roofmeasure/v017x/www",
+ "pass1": {
+  "app": {
+   "address": "15 WARD STREET, HINGHAM, MA, 02043",
+   "source": "MassGIS Building Structures (2-D) STRUCT_ID 248476_884962, source date 20110000",
+   "footprint_area_sqft": 1430.8,
+   "pitch": "12/12",
+   "pitch_source": "lidar:usgs_3dep_ept:MA_CentralEastern_1_2021",
+   "eave_lf": 96.7,
+   "rake_plan_lf": 62.7,
+   "rake_sloped_lf": 88.7,
+   "gutter_lf": 96.7,
+   "downspouts": 5,
+   "roof_area_sqft": 2023.5,
+   "struct": "248476_884962",
+   "pdfButton": true
+  },
+  "report": {
+   "summary": {
+    "slug": "15_ward_street_hingham_ma_02043",
+    "address": "15 WARD STREET, HINGHAM, MA, 02043",
+    "lat": 42.213604535079,
+    "lon": -70.912946970628,
+    "source": "MassGIS Building Structures (2-D) STRUCT_ID 248476_884962, source date 20110000",
+    "generated": "2026-11-15 04:26 EST",
+    "input": "../../tmp/rm_in/result.json",
+    "footprint_area_sqft": 1430.8,
+    "perimeter_ft": 159.4,
+    "overhang_ft": 0,
+    "overhang_source": "default:massgis_roofprint_includes_eaves",
+    "pitch": "12/12",
+    "pitch_factor": 1.4142,
+    "ridge_bearing_deg": 121.7,
+    "roof_type": "gable",
+    "core_version": "1.3.1",
+    "facets_source": "facets computeFacets 0.1.0 (in-app lib/facets.js; method gable, roof_type gable)",
+    "lines": {
+     "ridge_lf": 48.36,
+     "hip_lf": 0,
+     "valley_lf": 0,
+     "eave_lf": 96.73,
+     "rake_lf": 102.96,
+     "wall_flashing_lf": 14.3
+    },
+    "pitch_source": "lidar:usgs_3dep_ept:MA_CentralEastern_1_2021",
+    "pitch_confidence": 0.95,
+    "roof_area_sqft": 2023.5,
+    "squares": 20.23,
+    "edge_count": 6,
+    "lengths_by_type": {
+     "eave": 96.7,
+     "rake": 88.7,
+     "ridge": 48.4,
+     "hip": 0,
+     "valley": 0
+    },
+    "eave_lf": 96.7,
+    "rake_lf": 88.7,
+    "gutter_lf": 96.7,
+    "downspouts": 5,
+    "waste_table": [
+     {
+      "waste_pct": 0,
+      "area_sqft": 2023.5,
+      "squares": 20.23,
+      "squares_order": 20.33
+     },
+     {
+      "waste_pct": 5,
+      "area_sqft": 2124.7,
+      "squares": 21.25,
+      "squares_order": 21.33
+     },
+     {
+      "waste_pct": 10,
+      "area_sqft": 2225.9,
+      "squares": 22.26,
+      "squares_order": 22.33
+     },
+     {
+      "waste_pct": 15,
+      "area_sqft": 2327,
+      "squares": 23.27,
+      "squares_order": 23.33
+     },
+     {
+      "waste_pct": 20,
+      "area_sqft": 2428.2,
+      "squares": 24.28,
+      "squares_order": 24.33
+     }
+    ],
+    "squares_rounding": "ceil to next 1/3 square",
+    "materials": {
+     "starter_strip_lf": 185.4,
+     "drip_edge_lf": 199.7,
+     "drip_edge_basis": "eave_lf 96.7 + facets rake incl. step gables 103.0",
+     "ridge_cap_lf": 48.4,
+     "ridge_cap_formula": "ridge_lf 48.4 + hip_lf 0.0 = 48.4 LF",
+     "extra_rows": [
+      {
+       "key": "rake_incl_step_gables_lf",
+       "label": "Rake incl. step gables (drip edge)",
+       "lf": 102.96,
+       "source": "result.lines.rake_lf (facets, lidar ridge)"
+      },
+      {
+       "key": "wall_flashing_lf",
+       "label": "Wall flashing",
+       "lf": 14.3,
+       "source": "result.lines.wall_flashing_lf (facets, lidar ridge)"
+      }
+     ]
+    },
+    "aerial": "massgis_ortho_2025",
+    "pdf_renderer": null,
+    "diagram_source": "report/svg/diagram.py",
+    "lot": null,
+    "solar_present": false
+   },
+   "tiles": {
+    "needed": 2,
+    "loaded": 2
+   },
+   "htmlLen": 84335,
+   "measurements_csv": "field,value\naddress,\"15 WARD STREET, HINGHAM, MA, 02043\"\nlat,42.213604535079\nlon,-70.912946970628\nsource,\"MassGIS Building Structures (2-D) STRUCT_ID 248476_884962, source date 20110000\"\nfootprint_area_sqft,1430.8\nperimeter_ft,159.4\noverhang_ft,0\noverhang_source,default:massgis_roofprint_includes_eaves\npitch,12/12\npitch_factor,1.4142\npitch_source,lidar:usgs_3dep_ept:MA_CentralEastern_1_2021\npitch_confidence,0.95\nridge_bearing_deg,121.7\nroof_type,gable\nroof_area_sqft,2023.5\nsquares,20.23\neave_lf,96.7\nrake_lf,88.7\ngutter_lf,96.7\ndownspouts,5\nridge_lf,48.36\nhip_lf,0.0\nvalley_lf,0.0\nstarter_strip_lf,185.4\ndrip_edge_lf,199.7\ndrip_edge_basis,eave_lf 96.7 + facets rake incl. step gables 103.0\nrake_incl_step_gables_lf,102.96\nwall_flashing_lf,14.3\nridge_cap_lf,48.4\nsquares_order_waste_0pct,20.33\nsquares_order_waste_5pct,21.33\nsquares_order_waste_10pct,22.33\nsquares_order_waste_15pct,23.33\nsquares_order_waste_20pct,24.33\n",
+   "lines": {
+    "ridge_lf": 48.36,
+    "hip_lf": 0,
+    "valley_lf": 0,
+    "eave_lf": 96.73,
+    "rake_lf": 102.96,
+    "wall_flashing_lf": 14.3
+   },
+   "notes": [
+    "Eave/rake from ridge bearing 121.7° (edges within ±15° of ridge = eave).",
+    "MassGIS roofprint already includes eaves: overhang 0 ft by default. 2025 orthos may lean 2-6 m off the roofprint; drag to align (lengths unchanged).",
+    "Roof area = (footprint offset by 0 ft overhang) x pitch factor 1.4142 for 12/12; ignores dormers, multiple pitches, and hidden roof planes.",
+    "Pitch 12/12 from USGS 3DEP lidar (lidar:usgs_3dep_ept:MA_CentralEastern_1_2021, confidence 0.95, 867 building points); ridge bearing 121.7° (lidar_planes); lidar roof shape guess: gable.",
+    "Ridge/hip/valley lengths from the facets lane (straight-skeleton model of the 2-D roofprint, equal pitch); verify on site.",
+    "Report generated in the RoofMeasure app from the on-screen measurement (edge labels and pitch as shown at export time)."
+   ]
+  },
+  "ms_measure": 2979,
+  "ms_report_first": 1700,
+  "button_status": "Report ready: choose \"Save as PDF\" in the print dialog. Aerial tiles 2/2.",
+  "iframe_has_report": true,
+  "cdn_blocked": [],
+  "external_hosts": {
+   "tiles.arcgis.com": 24,
+   "server.arcgisonline.com": 9,
+   "arcgisserver.digital.mass.gov": 1,
+   "services1.arcgis.com": 1,
+   "s3-us-west-2.amazonaws.com": 20
+  },
+  "local_files": {
+   "/index.html": 2,
+   "/vendor/maplibre-gl.css": 2,
+   "/style.css": 2,
+   "/android.css": 2,
+   "/vendor/maplibre-gl.js": 2,
+   "/lib/roofcalc.js": 2,
+   "/sources.js": 2,
+   "/overture.js": 2,
+   "/lib/facets.js": 2,
+   "/report.js": 2,
+   "/app.js": 2,
+   "/sw.js": 1,
+   "/": 1,
+   "/icons/icon-192.png": 2,
+   "/icons/icon-512.png": 1,
+   "/icons/maskable-192.png": 1,
+   "/icons/maskable-512.png": 1,
+   "/lidar/pitch.js": 1,
+   "/manifest.json": 1,
+   "/py/report/build_report.py": 1,
+   "/py/report/svg/READY.md": 1,
+   "/py/report/svg/diagram.py": 1,
+   "/py/shared/endpoints.json": 1,
+   "/vendor/LICENSE.txt": 1,
+   "/vendor/laz-perf/laz-perf.mjs": 1,
+   "/vendor/laz-perf/laz-perf.wasm": 1,
+   "/vendor/pyodide/README.md": 1,
+   "/vendor/pyodide/package.json": 1,
+   "/vendor/pyodide/pyodide-lock.json": 1,
+   "/vendor/pyodide/pyodide.asm.js": 1,
+   "/vendor/pyodide/pyodide.asm.wasm": 1,
+   "/vendor/pyodide/pyodide.js": 1,
+   "/vendor/pyodide/python_stdlib.zip": 1
+  },
+  "errors": [],
+  "pdf": "/tmp/base15.pdf"
+ },
+ "pass2_offline": {
+  "report": {
+   "tiles": {
+    "needed": 2,
+    "loaded": 0
+   },
+   "placeholder": true,
+   "aerial": "placeholder",
+   "roof": 2023.5
+  },
+  "aborted_external_hosts": [
+   "tiles.arcgis.com",
+   "server.arcgisonline.com"
+  ],
+  "errors": []
+ }
+}

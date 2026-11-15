@@ -1,5 +1,9 @@
 <!-- SPDX-License-Identifier: MIT -->
-# RoofMeasure v0.1.7 (versionCode 7) — reconstructed source
+# RoofMeasure 0.1.7.1 (versionCode 10701)
+
+Based on the reconstructed v0.1.7 source; changes are in CHANGELOG.md. Headless test: `node tests/v0171_test.cjs <outdir>` (Playwright + Chrome, live MassGIS/USGS; Google/Azure/Bing endpoints are mocked).
+
+## Original v0.1.7 reconstruction notes
 
 License: MIT (see LICENSE). Bundled third-party code keeps its own license (www/vendor/LICENSE.txt = MapLibre BSD-3; laz-perf Apache-2.0; Pyodide MPL-2.0).
 No accuracy claims are made. Status labels: PASS / FAIL / NOT_PROVEN.
@@ -13,7 +17,7 @@ No accuracy claims are made. Status labels: PASS / FAIL / NOT_PROVEN.
 - build.sh        Gradle-free build (aapt2, javac, d8, zipalign, apksigner).
 
 ## Build
-    ANDROID_HOME=/path/to/sdk JAVA_HOME=/path/to/jdk17 ./build.sh out/
+    ANDROID_HOME=/path/to/sdk JAVA_HOME=/path/to/jdk17 ./build.sh out/   # VERSION_NAME / VERSION_CODE env override (0.1.7.x -> 10700+x)
 Needs build-tools 34.0.0 and platforms/android-34. **No keystore is included.** build.sh creates a throwaway debug key at
 ~/.roofmeasure/debug.keystore (outside this tree) unless KEYSTORE/KS_PASS/KS_ALIAS are set. A different key means Android will
 require uninstalling the old v0.1.7 before installing a rebuild.

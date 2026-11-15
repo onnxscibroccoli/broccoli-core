@@ -13,3 +13,21 @@ button{padding:5px 8px;border:1px solid #888;border-radius:4px;background:#fff;c
 .lbl{background:rgba(0,0,0,.65);color:#fff;font-size:11px;padding:1px 4px;border-radius:3px;white-space:nowrap;pointer-events:none}
 .lbl.eave{background:rgba(29,78,216,.85)}.lbl.rake{background:rgba(194,65,12,.85)}
 .note{font-size:11px;color:#555}
+/* 0.1.7.1 */
+#refBanner{position:absolute;left:8px;top:8px;z-index:5;background:#b91c1c;color:#fff;font-weight:700;font-size:12px;padding:4px 8px;border-radius:4px;pointer-events:none;max-width:60%}
+#googleLogo{position:absolute;left:8px;bottom:26px;z-index:5;font:600 16px/1 Arial,sans-serif;color:#fff;text-shadow:0 0 3px #000;pointer-events:none}
+#reportView{position:fixed;inset:0;z-index:50;background:#333;display:flex;flex-direction:column}
+#reportView[hidden]{display:none}
+#reportView .rv-bar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:6px;background:#111;color:#fff}
+#reportView .rv-bar .note{color:#ddd}
+#reportView iframe{flex:1;border:0;background:#fff;width:100%}
+#rvEdit.on{background:#15803d;color:#fff}
+.lbl.tagged{outline:2px solid #facc15}
+textarea{font:inherit}
+#map2{position:absolute;inset:0 360px 0 0;pointer-events:none;z-index:3}
+#map2[hidden],#cmpDivider[hidden]{display:none}
+#cmpDivider{position:absolute;top:0;bottom:0;width:3px;background:#facc15;z-index:4;pointer-events:none}
+@media (max-width:760px){#map2{inset:0 0 45% 0}#cmpDivider{bottom:45%}}
+body.hc .lbl{font-size:14px;padding:3px 6px;border:2px solid #000;font-weight:700}
+.lbl.line{background:rgba(17,17,17,.85)}.lbl.ridge{background:#b91c1c}.lbl.hip{background:#7e22ce}.lbl.valley{background:#0f766e}
+.lbl.ok::after{content:" ✓"}

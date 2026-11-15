@@ -1,4 +1,4 @@
-/* RoofMeasure in-app PDF report (web/report.js).
+/* RoofMeasure in-app PDF report (web/report.js). 0.1.7.1: user tags section, preview/edit, native save/share.
  * Renders the SAME report as /workspace/roofmeasure/report/build_report.py by running that exact Python file
  * (plus report/svg/diagram.py and shared/endpoints.json) inside Pyodide (CPython compiled to WebAssembly, stdlib only).
  * The live in-app result (core roofcalc.js + facets.js + lidar fields) is shaped like report/build_result.js, then
@@ -64,6 +64,9 @@
       s.onerror = function () { rej(new Error('could not load ' + src)); }; document.head.appendChild(s);
     });
   }
+  function withTimeout(p, ms, what) {
+    return Promise.race([p, new Promise(function (_, rej) { setTimeout(function () { rej(new Error(what + ' timed out after ' + Math.round(ms / 1000) + ' s')); }, ms); })]);
+  }
   function engine() {
     if (pyP) return pyP;
     pyP = (window.loadPyodide ? Promise.resolve() : loadScript(PYODIDE_URL + 'pyodide.js')).then(function () {
@@ -74,6 +77,7 @@
           .then(function (t) { var p = '/rm/' + f; py.FS.mkdirTree(p.slice(0, p.lastIndexOf('/'))); py.FS.writeFile(p, t); });
       })).then(function () { py.runPython(GLUE); return py; });
     });
+    pyP = withTimeout(pyP, 120000, 'loading the offline report engine (Pyodide)');
     pyP.catch(function () { pyP = null; });
     return pyP;
   }
@@ -110,13 +114,14 @@
     }
     if (st.geocoder) r.geocoder = st.geocoder;
     if (st.fetchedAt) r.fetched_at = st.fetchedAt;
-    var F = window.RoofFacets;
+    var F = window.RoofFacets, T = window.RoofTags, tags = st.tags || (T && T.emptyTags()), lineChanges = [];
     if (F && typeof F.computeFacets === 'function') {
       try {
-        var ridge = (document.getElementById('useRidge') || {}).checked !== false && L && L.ridge_bearing_deg != null ? L.ridge_bearing_deg : undefined;
-        var f = F.computeFacets({ type: 'Feature', geometry: r.footprint_geojson.geometry || r.footprint_geojson, properties: {} },
-          { pitch: r.pitch, roof_type: r.roof_type, ridge_bearing_deg: ridge, overhang_ft: r.overhang_ft || 0 });
+        var useR = (document.getElementById('useRidge') || {}).checked !== false;
+        var fin = T ? T.facetsInput(r, L, useR) : null, ridge = fin ? fin.ridge : undefined;
+        var f = F.computeFacets(fin.fp, fin.opts);
         if (f && f.lines && !f.unsupported) {
+          if (T) lineChanges = T.applyLineTags(f, tags, T.facetsKey(r, L, useR));
           r.lines = f.lines;
           r.facets = (f.facets || []).map(function (x) { return { id: x.id, area_sqft: x.area_sqft, plan_area_sqft: x.plan_area_sqft, pitch: x.pitch,
             edge_type: x.edge_type, edge_index: x.edge_index, downslope_bearing_deg: x.downslope_bearing_deg, polygon_lonlat: x.polygon_lonlat }; });
@@ -125,7 +130,8 @@
           r.facets_lidar_inputs = ridge != null && !!lidarUsed;
           if (f.line_counts) r.line_counts = f.line_counts;
           r.facets_source = 'facets computeFacets ' + (f.version || '') + ' (in-app lib/facets.js; method ' + String(f.method || '?').split(':')[0] + ', roof_type ' + f.roof_type + ')';
-          r.notes.push('Ridge/hip/valley lengths from the facets lane (straight-skeleton model of the 2-D roofprint, equal pitch); verify on site.');
+          r.notes.push('Ridge/hip/valley lengths from the facets lane (straight-skeleton model of the 2-D roofprint, equal pitch)' +
+            (lineChanges.length ? ', with ' + lineChanges.length + ' interior line(s) re-typed by the user' : '') + '; verify on site.');
         } else {
           r.notes.push('Facets lane returned no lines' + (f && f.unsupported ? ' (unsupported roof style)' : '') + '; ridge/hip/valley not measured.');
         }
@@ -133,6 +139,22 @@
     } else {
       r.notes.push('Facets module not loaded in the app; ridge/hip/valley not measured.');
     }
+    if (T) {
+      try {
+        r.user_tags = T.reportPayload(r, tags, lidarUsed ? L : (L && L.planes ? L : null), lineChanges);
+        if (r.user_tags.any) r.notes.push('User visual categorization: ' + r.user_tags.edge_rows.length + ' edge(s), ' + r.user_tags.line_changes.length +
+          ' interior line(s), ' + r.user_tags.area_rows.length + ' area(s) tagged (see "Visual categorization").');
+      } catch (e) { r.notes.push('Tag summary error: ' + e.message + ' (tags omitted).'); }
+    }
+    if (Array.isArray(st.manualMeas) && st.manualMeas.length) {
+      r.user_measurements = st.manualMeas.map(function (m) { return { label: m.label, value: m.value, unit: m.unit, source: m.source, entered_at: m.entered_at }; });
+      if (r.user_tags) r.user_tags.user_measurements = r.user_measurements;
+      r.notes.push(r.user_measurements.length + ' user-supplied measurement(s) recorded (see "User-supplied measurements"); not computed by RoofMeasure and not used in its totals.');
+    }
+    var refs = Object.keys(st.refLayersViewed || {});
+    if (refs.length) r.notes.push('Visual reference layers viewed in the app (display only; nothing measured, traced, snapped or stored from them): ' + refs.join(', ') + '.');
+    var un = (document.getElementById('userNotes') || {}).value;
+    if (un && String(un).trim()) String(un).trim().split(/\n+/).forEach(function (line) { r.notes.push('User note: ' + line.trim()); });
     r.notes.push('Report generated in the RoofMeasure app from the on-screen measurement (edge labels and pitch as shown at export time).');
     r.core_version = RC.VERSION || r.calc_version;
     r.slug = slugify(r.address);
@@ -165,6 +187,7 @@
         var set = py.globals.get('set_tile');
         got.forEach(function (x) { set(x[0], x[1]); });
         var out = JSON.parse(py.globals.get('render')(rjson, opt.generated || generatedStamp()));
+        if (window.RoofTags && result.user_tags) out.html = window.RoofTags.inject(out.html, window.RoofTags.sectionHtml(result.user_tags));
         out.result = result; out.tiles = { needed: need.length, loaded: got.filter(function (x) { return x[1]; }).length };
         return out;
       });
@@ -206,6 +229,53 @@
     setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
   }
 
-  window.RoofReport = { buildResult: buildResult, render: render, exportPdf: exportPdf, engine: engine, saveText: saveText,
+  /* 0.1.7.1: preview overlay (display + edit text) -> Save PDF / Share PDF. */
+  var current = null, nativeCb = {};
+  function frameHtml() {
+    var f = document.getElementById('rvFrame'), d = f && f.contentDocument;
+    if (!d || !d.documentElement) return current && current.html;
+    var ed = d.designMode === 'on'; if (ed) d.designMode = 'off';
+    var h = '<!doctype html>\n' + d.documentElement.outerHTML; if (ed) d.designMode = 'on';
+    return h;
+  }
+  function rvSay(m) { var e = document.getElementById('rvStatus'); if (e) e.textContent = m; }
+  function deliver(kind, html, name, say) {
+    var B = window.RoofBridge;
+    if (B && kind === 'share' && typeof B.sharePdf === 'function') { B.sharePdf(html, name); say('Writing PDF… the share sheet opens when it is ready.'); return; }
+    if (B && kind === 'save' && typeof B.savePdf === 'function') { B.savePdf(html, name); say('Writing PDF to Downloads…'); return; }
+    if (B && typeof B.printHtml === 'function') { B.printHtml(html, name); say('Choose "Save as PDF" in the Android print dialog.'); return; }
+    printInBrowser(html); say('Choose "Save as PDF" in the print dialog' + (kind === 'share' ? ', then share the saved file.' : '.'));
+  }
+  window.RoofReportNative = function (kind, ok, msg) { rvSay((ok ? '' : 'FAILED: ') + msg); var cb = nativeCb[kind]; if (cb) cb(ok, msg); };
+  function showPreview(out, name) {
+    var v = document.getElementById('reportView'), f = document.getElementById('rvFrame');
+    if (!v || !f) return false;
+    current = { html: out.html, name: name };
+    f.srcdoc = out.html; v.hidden = false;
+    var ed = document.getElementById('rvEdit'); ed.classList.remove('on'); ed.textContent = 'Edit text';
+    ed.onclick = function () { var d = f.contentDocument; if (!d) return; var on = d.designMode !== 'on'; d.designMode = on ? 'on' : 'off';
+      ed.classList.toggle('on', on); ed.textContent = on ? 'Editing… (tap to stop)' : 'Edit text';
+      rvSay(on ? 'Tap any text in the report to change it. Edits go into the saved/shared PDF only.' : 'Edits kept.'); };
+    document.getElementById('rvSave').onclick = function () { deliver('save', frameHtml(), name, rvSay); };
+    document.getElementById('rvShare').onclick = function () { deliver('share', frameHtml(), name, rvSay); };
+    document.getElementById('rvClose').onclick = function () { var d = f.contentDocument; if (d) d.designMode = 'off'; v.hidden = true; };
+    rvSay('Aerial tiles ' + out.tiles.loaded + '/' + out.tiles.needed + '. Review, optionally edit, then Save or Share.');
+    return true;
+  }
+  function preview(app, statusFn) {
+    var say = statusFn || function () {};
+    var result;
+    try { result = buildResult(app); } catch (e) { say(e.message); return Promise.resolve(null); }
+    say('Building report… (first time loads the offline report engine, ~5-15 s)');
+    return render(result).then(function (out) {
+      window.RoofReport.last = out;
+      var name = 'RoofMeasure_' + result.slug;
+      if (!showPreview(out, name)) deliver('save', out.html, name, say);
+      else say('Report ready (preview open).');
+      return out;
+    }).catch(function (e) { say('Report failed: ' + (e && e.message || e)); throw e; });
+  }
+
+  window.RoofReport = { buildResult: buildResult, render: render, exportPdf: exportPdf, preview: preview, frameHtml: frameHtml, deliver: deliver, nativeCb: nativeCb, engine: engine, saveText: saveText,
     printInBrowser: printInBrowser, PYODIDE_URL: PYODIDE_URL, PY_BASE: PY_BASE };
 })();

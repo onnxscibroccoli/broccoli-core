@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: MIT
-# RoofMeasure v0.1.7 debug APK build (no Gradle): aapt2 + javac + d8 + zipalign + apksigner.
+# RoofMeasure 0.1.7.x debug APK build (no Gradle): aapt2 + javac + d8 + zipalign + apksigner.
 # Usage: ANDROID_HOME=/path/sdk JAVA_HOME=/path/jdk ./build.sh [out_dir]
 # The signing keystore is NOT part of this source. A throwaway debug key is created OUTSIDE the tree
 # (default ~/.roofmeasure/debug.keystore) unless KEYSTORE / KS_PASS / KS_ALIAS are given.
 set -euo pipefail
 R=$(cd "$(dirname "$0")" && pwd)
-VC=${VERSION_CODE:-7}; VN=${VERSION_NAME:-0.1.7}
+VC=${VERSION_CODE:-10701}; VN=${VERSION_NAME:-0.1.7.1}  # 0.1.7.x -> versionCode 10700+x (above v0.2.0 = 200, so it installs over it)
 SDK=${ANDROID_HOME:?set ANDROID_HOME}; BTV=${BUILD_TOOLS:-34.0.0}; BT=$SDK/build-tools/$BTV; JAR=$SDK/platforms/android-34/android.jar
 [ -n "${JAVA_HOME:-}" ] && export PATH=$JAVA_HOME/bin:$PATH
 OUT=${1:-$R/out}; B=$(mktemp -d); mkdir -p "$B/classes" "$B/gen" "$B/assets" "$OUT"
