@@ -479,6 +479,13 @@
           if (hit) { p.lidar_match = hit.key; p.confidence = 'medium'; hit.ortho_match = p.key; } });
         result.ortho_patches = pt;
         roofFeatures(result);
+        // Experimental height-aware placement applies only in the aerial composite; geometry/totals untouched.
+        if (window.RoofFeatureLean) {
+          var L = window.RoofApp && window.RoofApp.state && window.RoofApp.state.lidar;
+          result.feature_lean = window.RoofFeatureLean.annotate(result, L, al);
+          if (result.feature_lean.applied) result.notes.push('Experimental roof-feature ortho lean (' + result.feature_lean.applied +
+            ' deck/dormer candidate(s), NOT_PROVEN): aerial overlay placement only; source geometry and quantities unchanged.');
+        }
         return al;
       });
     }).catch(function (e) { result.ortho_align = { status: 'error', error: String(e && e.message || e), applied: false }; return null; });

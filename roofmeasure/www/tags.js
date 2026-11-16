@@ -164,7 +164,11 @@
         gutter_lf_est: +p.strike_len_ft || null, confidence: p.small ? 'low' : 'medium' });
     });
     // 0.1.7.6: dormer size gate 1.5-20 m2 (16-215 sq ft plan, sum of its lidar planes), pipeline spec
-    out.forEach(function (d) { d.area_sqft = Math.round((d.planes || []).reduce(function (a, id) { return a + (+(byId[id] || {}).plan_area_sqft_approx || 0); }, 0)) || null; });
+    out.forEach(function (d) { d.area_sqft = Math.round((d.planes || []).reduce(function (a, id) { return a + (+(byId[id] || {}).plan_area_sqft_approx || 0); }, 0)) || null;
+      // Height of candidate planes for overlay-only visual correction; never used in material totals.
+      var zs = (d.planes || []).map(function (id) { return byId[id] && byId[id].z_m; }).filter(function (z) { return typeof z === 'number' && isFinite(z); });
+      d.z_m = zs.length ? Math.round(zs.reduce(function (a, z) { return a + z; }, 0) / zs.length * 100) / 100 : null;
+    });
     out = out.filter(function (d) { return d.area_sqft == null || (d.area_sqft >= 16 && d.area_sqft <= 215); });
     out = out.slice(0, 12).map(function (d, i) {
       var k = 'D' + i, e = ed[k] || {};

@@ -53,6 +53,8 @@ jobs:
           key: npm-playwright-core-1.59.1
       - name: Install playwright-core (uses the runner's Google Chrome)
         run: mkdir -p "$RUNNER_TEMP/pw" && cd "$RUNNER_TEMP/pw" && npm init -y >/dev/null && npm i --no-audit --no-fund playwright-core@1.59.1 >/dev/null
+      - name: Roof-feature lean unit tests (offline, fail-closed)
+        run: node roofmeasure/tests/featurelean_test.cjs
       - name: Headless report tests (15 Ward St Hingham, 6 Harborview Hull, 30 Lockwood Weymouth, 49 Scotland Hingham; ortho align; 3-D editor; Hull geocode; per-facet on/off; tile failure; editor)
         env:
           PW: ${{ runner.temp }}/pw/node_modules/playwright-core

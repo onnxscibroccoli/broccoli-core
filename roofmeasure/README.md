@@ -12,6 +12,16 @@ CI: `.github/workflows/roofmeasure.yml` builds the APK (throwaway CI key), runs 
 (tests/ci_emulator_smoke.sh: install, launch with `--es rm_query 'addr=...&smoke=1'` on debug builds, build the report, save the PDF), and uploads
 APK, PDFs, screenshots and logcat as artifacts. Third-party components: THIRD_PARTY.md. 3-D roof view/editor: "3-D view / edit" button (view3d.js, three.js).
 
+## Experimental feature parallax (0.1.7.6 increment 6)
+
+`www/lib/featurelean.js` estimates a **NOT_PROVEN overlay-only** displacement for lidar deck/dormer
+candidates from the shift of MassGIS imagery, USGS 3DEP near-eave points, and ground height.
+It affects **only the aerial composite**; the vector diagram, source geometry and billable
+roof quantities are unchanged. If the evidence is insufficient, the correction is skipped.
+The measured ortho offset conflates camera perspective and possible georegistration error;
+inspect the 6 Harborview deck position against its walls before treating the overlay as reliable.
+Offline test: `node tests/featurelean_test.cjs`; CI also runs headless reports and emulator smoke.
+
 ## Original v0.1.7 reconstruction notes
 
 License: MIT (see LICENSE). Bundled third-party code keeps its own license (www/vendor/LICENSE.txt = MapLibre BSD-3; laz-perf Apache-2.0; Pyodide MPL-2.0).

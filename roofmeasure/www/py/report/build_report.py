@@ -539,7 +539,7 @@ def edge_len_label(e):
     return f'{float(e["length_ft"]):.1f}\''
 
 
-def _overlay(r, P, scale_px_per_ft, casing=True, numbers=True, lengths=True, facets=True, show_cand=False):
+def _overlay(r, P, scale_px_per_ft, casing=True, numbers=True, lengths=True, facets=True, show_cand=False, aerial=False):
     """Vector roof model drawn with projection P(lon, lat) -> (x, y). Geometry from the result only (free data)."""
     C = pal(r)
     out, labels = [], []
@@ -652,13 +652,24 @@ def _overlay(r, P, scale_px_per_ft, casing=True, numbers=True, lengths=True, fac
                 best = (lx, ly, (lx - tw / 2, ly - th + 2, lx + tw / 2, ly + 4))
             placed.append(best[2])
             labels.append(_label(best[0], best[1], txt, size=11, fg="#111"))
-    return "".join(out) + _features(r, P, scale_px_per_ft, placed) + "".join(labels)
+    return "".join(out) + _features(r, P, scale_px_per_ft, placed, aerial=aerial) + "".join(labels)
 
 
-def _features(r, P, s, placed=None):
+def _features(r, P, s, placed=None, aerial=False):
     """0.1.7.5: labelled roof features (candidates): roof decks / flat sections (brown, hatched by dashes) and skylights
     (rotated rectangles at their measured size). Drawn on the diagram and the overlay pages."""
     rf = r.get("roof_features") or {}
+    def pos(p, feature):
+        # Candidate displacement only on the aerial composite, NEVER the vector/measurement diagram.
+        v = feature.get("overlay_lean") if aerial and isinstance(feature, dict) else None
+        if not isinstance(v, dict) or v.get("status") != "NOT_PROVEN":
+            return P(*p)
+        dx, dy = float(v.get("dx_m") or 0), float(v.get("dy_m") or 0)
+        lat = float(p[1])
+        if abs(dx) > 2.5 or abs(dy) > 2.5 or abs(lat) >= 85:
+            return P(*p)
+        return P(float(p[0]) + dx / (111320 * math.cos(math.radians(lat))),
+                 lat + dy / 110540)
     out = []
     # facet pitch badges sit at the facet centroids on every page (some pages draw them in a separate pass): keep labels clear of them
     placed = list(placed) if placed is not None else []
@@ -673,7 +684,7 @@ def _features(r, P, s, placed=None):
         O = d.get("outline_lonlat") or []
         if len(O) < 3:
             continue
-        pts = [P(*p) for p in O]
+        pts = [pos(p, d) for p in O]
         pp = " ".join(f"{x:.1f},{y:.1f}" for x, y in pts)
         cx, cy = sum(p[0] for p in pts) / len(pts), sum(p[1] for p in pts) / len(pts)
         out.append(f'<polygon points="{pp}" fill="#a16207" fill-opacity="0.35" stroke="#000" stroke-width="4.5"/><polygon points="{pp}" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="6 3"/>')
@@ -714,6 +725,23 @@ def _features(r, P, s, placed=None):
                 break
         pl.append((best[0] - tw / 2, best[1] - th + 2, best[0] + tw / 2, best[1] + 3))
         out.append(_label(best[0], best[1], txt, size=10.5, fg="#075985"))
+    # Dormer markers are candidate-only; additional visual lean is on the aerial composite alone.
+    for d in rf.get("dormers") or []:
+        c = d.get("centroid_lonlat")
+        if not c or d.get("source") == "user":
+            continue
+        x, y = pos(c, d)
+        label = str(d.get("key") or "D") + "?"
+        out.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="7" fill="#ffffff" fill-opacity="0.65" stroke="#7c3aed" stroke-width="2" stroke-dasharray="3 2"/>')
+        pl = placed if placed is not None else []
+        lx, ly = x + 19, y - 8
+        for tx, ty in [(x + 19, y - 8), (x - 19, y - 8), (x + 19, y + 18)]:
+            box = (tx - 15, ty - 12, tx + 15, ty + 2)
+            if not any(box[0] < b[2] and b[0] < box[2] and box[1] < b[3] and b[1] < box[3] for b in pl):
+                lx, ly = tx, ty
+                pl.append(box)
+                break
+        out.append(_label(lx, ly, label, size=9.5, fg="#6d28d9"))
     return "".join(out)
 
 
@@ -796,7 +824,7 @@ def aerial_views(r):
                             f'<title id="pc-t">Roof diagram over the aerial photo</title><desc id="pc-d">The vector roof model (edges numbered as in the tables, colour-coded by type, '
                             'interior ridge/hip/valley lines, facet pitch badges) drawn over MassGIS 2025 orthoimagery. Geometry comes from the roofprint and lidar, not from the photo.</desc>'
                             f'<svg x="0" y="0" width="{PAGE_W:.0f}" height="{PAGE_H:.0f}" viewBox="0 0 {w:.2f} {h:.2f}" preserveAspectRatio="none">{frag}</svg>'
-                            + _overlay(r, PC, px_per_ft * sx2) + _legend(r, 10, 10, cand) + _north_scale(PAGE_W, PAGE_H, px_per_ft * sx2) + '</svg>')
+                            + _overlay(r, PC, px_per_ft * sx2, aerial=True) + _legend(r, 10, 10, cand) + _north_scale(PAGE_W, PAGE_H, px_per_ft * sx2) + '</svg>')
     res["info"]["composite"] = {"tiles_loaded": ld2, "tiles_needed": nd2, "errors": er2[:6]}
     return res
 

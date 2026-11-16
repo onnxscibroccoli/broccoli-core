@@ -2,6 +2,14 @@
 # RoofMeasure changelog (0.1.7.x line — stays on 0.1.7.x until Ian verifies an improvement)
 
 ## 0.1.7.6 (versionCode 10706) — 2026-11-16
+**Increment 6 (experimental feature-parallax candidate, CI pending):** Height-relative, display-only aerial
+correction for elevated lidar deck/dormer candidates, using the MassGIS ortho alignment, USGS 3DEP ground elevation,
+and the 35th percentile of >=10 lidar roof points within 1.5 m of the eave. Candidate offset =
+ortho_shift x (feature_z - eave_z) / (eave_z - ground_z). Skips missing/weak ground or eave evidence,
+low-confidence ortho alignments, and implausible heights; never edits coordinates, outlines, dimensions,
+skylight matching or billable totals. Candidate dormer markers added to vector and aerial reports.
+New offline unit CI gate; real aerial and Android evidence NOT_PROVEN. Version remains 0.1.7.6.
+
 Guidance from docs/research (Ian's papers): lines come from fitted lidar planes; 2-D / CV detections stay outside the billable totals.
 
 - Outline vs lidar: the roofprint is compared with the lidar building mask (class-6 points within 6 m, 0.5 m grid) by IoU over

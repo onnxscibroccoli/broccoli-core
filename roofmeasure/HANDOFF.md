@@ -55,6 +55,12 @@ Read in order: this file, CODEVELOP.md (rules, build), CHANGELOG.md, docs/resear
 - Use GitHub Actions (free runners) for heavy work. Push to `feat/roofmeasure-dev` only; no merges to main or force-pushes without Ian.
 - One private internal test house is kept out of this repo. Never add private addresses.
 
+## Increment 6 continuation (pending CI and visual verification)
+- Experimental 3DEP-height-relative overlay correction for roof decks/dormers and candidate dormer markers.
+  No geometry or quantity changes. Requires lidar ground, a supported near-eave height datum,
+  and medium/high ortho confidence; skips otherwise. NOT_PROVEN until inspecting 6 Harborview PDF.
+- The ortho offset may include survey registration error; it is not purely a camera-lean measurement.
+
 ## Next steps
 1. Exact next step: lean model for features above the eaves (deck, dormers): shift x (feature height / eave height above lidar ground) so the
    6 Harborview deck lands on its walls in the overlay; then re-check 4 Oakcrest's two lidar-only skylight candidates against ortho patches
