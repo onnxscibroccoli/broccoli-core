@@ -6,7 +6,6 @@ Open-source roof measurement tools so contractors and homeowners can get accurat
 
 ## Goals
 - A free, open-source alternative to GAF QuickMeasure, EagleView and Hover for residential roof and gutter takeoffs, starting with Massachusetts.
-- License: **MIT** (see LICENSE). Third-party components and their licenses: THIRD_PARTY.md (any permissive or other license is fine; just record it there).
 - **Free data only** for anything measured: MassGIS roofprints and orthos, USGS 3DEP lidar, USDA NAIP, OSM/Overture footprints (ODbL), and the user's own trace.
 - Android app (WebView shell, no Gradle) that measures on the map, lets the user view, edit, export and share a PDF report. The report is built from the
   **live on-screen result** (the v0.1.7 approach), never from a hidden re-computation.
@@ -39,26 +38,6 @@ A throwaway debug key is created at ~/.roofmeasure/debug.keystore unless KEYSTOR
 sign with the same debug key Ian's earlier APKs used (kept outside git).
 Test: `node tests/v0171_test.cjs /tmp/out` (needs Chrome + playwright-core; set PW= and CHROME= paths).
 
-## Imagery terms of service (hard rules)
-| Layer | Use in RoofMeasure | Why |
-|---|---|---|
-| MassGIS orthos 2021/2023/2025, USGS NAIP / Imagery Only | Measure, snap, report aerial | Public / open data |
-| Google (Map Tiles API, user's key) | Display only: main layer, overlay, swipe compare | Maps ToS 3.2.3(a–c) and Map Tiles policies: no caching or scraping, no derived content (no tracing or digitizing from imagery), no image analysis or machine interpretation; Google logo and viewport attribution must be shown |
-| Microsoft Azure Maps / Bing Maps (user's key) | Display only | Attribution from Get Map Attribution / metadata must be shown; no derived data. Bing basic keys retired 2025-06-30; Enterprise keys end 2028-06-30 |
-| Esri World Imagery | Display only | ArcGIS terms; attribution required; derived data restricted |
-Concretely:
-- Free public imagery (MassGIS orthos, USGS NAIP) may be analysed in any useful way: pixel analysis, edge detection, edge snap of outline
-  vertices ("Snap to edges", gradient search), skylight/dormer candidates.
-- Never trace, snap, auto-detect, screen-capture, read pixels, or run computer vision on Google, Microsoft or Esri imagery, even composited.
-- Drawing and outline editing stay locked while any reference layer is the main layer or an overlay. Tracing happens only on the free layer
-  (swipe compare keeps the free layer interactive).
-- Visual categorization (a person tapping eave/rake/etc. while looking) is allowed. It never changes geometry, and the report records which layers were on screen.
-- Measurements the user takes in Google Earth etc. go in "Manual measurements", labelled "user-entered (Google Earth ruler)", and are never used in totals.
-- Never put Google/Microsoft/Esri tiles, URLs or keys in a report or export.
-
-Google logo: use only the unmodified official SVGs in www/icons (light on imagery). Height 16–19 dp, clear space 10 dp left/top/right and 5 dp bottom,
-alt "Google Maps". Never recolour, crop or put it in reports.
-
 ## Task list (pick one, label results PASS/FAIL/NOT_PROVEN)
 Done in 0.1.7.2 (headless PASS, on-device NOT_PROVEN): 2, 3 (opt-in), 5 (logo + session refresh; Azure attribution-on-zoom still open), 6, 7 (FEMA/ORNL USA Structures), 8 (partial: palette, big targets, aria; real TalkBack NOT_PROVEN).
 1. NOT_PROVEN: on-device test of 0.1.7.1/0.1.7.2 (Save PDF to Downloads, Share PDF, print fallback, TalkBack) on a real phone; AVD rm34 never came online headless on the box (two more retries in 0.1.7.2).
@@ -80,8 +59,6 @@ Done in 0.1.7.2 (headless PASS, on-device NOT_PROVEN): 2, 3 (opt-in), 5 (logo + 
 - Private complex-roof test cases stay outside the repo (local only).
 
 ## 0.1.7.4 notes for co-developers
-- Pixel analysis is allowed ONLY on free imagery (MassGIS 2025 orthos, NAIP). Google/Bing/Esri tiles are display-only: never read their pixels,
-  never run edge detection or photogrammetry on them, and do not add a toggle for it.
 - lib/orthoalign.js: ortho lean/offset estimate (outline + ridge/hip/valley gradient score, bounded search) and patch candidates. The report shifts
   the photo, not the measurements. Set window.RM_NO_ORTHO_ALIGN = true (or opt.noOrthoAlign) to compare with the unshifted photo.
 - view3d.js (window.Roof3D): three.js 3-D view/editor, lazy-loaded from www/vendor/three/. Edits use the tag paths (tags.lineMoves, tags.lines,
