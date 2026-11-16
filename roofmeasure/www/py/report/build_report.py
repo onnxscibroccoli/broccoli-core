@@ -1064,7 +1064,7 @@ def window_view(r, av):
         return _re.sub(r'\b(p[avc])-(t|d)\b', r'wv\1-\2', svg) if svg else '<div class="ph">not available</div>'
     _, _, mats = compute(r)
     L = r.get("lines") or {}
-    rows = [("Roof area", f'{num(r["roof_area_sqft"])} sq ft'), ("Squares", num(r["squares"], 2)), ("Pitch", str(r["pitch"])),
+    rows = [("Roof area", f'{num(r["roof_area_sqft"])} sq ft'), ("Squares", num(r["squares"], 2)), ("Pitch used for area", str(r.get("pitch_display") or r["pitch"])),
             ("Eave", f'{num(r["eave_lf"])} LF'), ("Rake (sloped)", f'{num(r["rake_lf"])} LF'), ("Ridge", f'{num(L.get("ridge_lf") or 0)} LF'),
             ("Hip", f'{num(L.get("hip_lf") or 0)} LF'), ("Valley", f'{num(L.get("valley_lf") or 0)} LF'), ("Drip edge", f'{num(mats["drip_edge_lf"])} LF'),
             ("Gutters", f'{num(r["gutter_lf"])} LF, {esc(r["downspouts"])} downspouts')] + [(a, b) for a, b in feature_rows(r)]
@@ -1285,9 +1285,11 @@ def solar_section(r):
 def build_html(r, rows, waste, mats, aerial, generated):
     addr = esc(r["address"])
     pitch_src = r.get("pitch_source")
+    display_pitch = r.get("pitch_display") or r["pitch"]
+    display_src = r.get("pitch_display_source") or pitch_src
     lidar = isinstance(pitch_src, str) and ("lidar" in pitch_src.lower() or "3dep" in pitch_src.lower())
     assumed = pitch_src == "default"
-    pitch_kind = "LiDAR-derived" if lidar else ("assumed" if assumed else ("source: " + str(pitch_src) if pitch_src else "source not stated"))
+    pitch_kind = ("source: " + str(display_src)) if r.get("pitch_basis_mode") == "per-facet" else ("LiDAR-derived" if lidar else ("assumed" if assumed else ("source: " + str(pitch_src) if pitch_src else "source not stated")))
     conf = r.get("pitch_confidence")
     H = []
     H.append(f'<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
@@ -1331,7 +1333,7 @@ def build_html(r, rows, waste, mats, aerial, generated):
     H.append('<section aria-labelledby="h-sum"><h2 id="h-sum">Summary</h2><div class="kpis">'
              f'<div class="kpi"><b>{num(r["roof_area_sqft"])} sq ft</b><span>Roof area (sloped, incl. overhang)</span></div>'
              f'<div class="kpi"><b>{num(r["squares"], 2)}</b><span>Squares (0% waste)</span></div>'
-             f'<div class="kpi"><b>{esc(r["pitch"])}</b><span>Pitch ({esc(pitch_kind)}{(", confidence " + format(float(conf), ".2f")) if is_number(conf) else ""})</span></div>'
+             f'<div class="kpi"><b>{esc(display_pitch)}</b><span>Pitch used for area ({esc(pitch_kind)}{(", confidence " + format(float(conf), ".2f")) if is_number(conf) and r.get("pitch_basis_mode") != "per-facet" else ""})</span></div>'
              f'<div class="kpi"><b>{num(w10["squares_order"], 2)}</b><span>Squares to order at 10% waste (rounded up to ⅓)</span></div>'
              '</div><div class="kpis">'
              f'<div class="kpi"><b>{num(r["eave_lf"])} LF</b><span>Eaves (level)</span></div>'
@@ -1419,8 +1421,11 @@ def build_html(r, rows, waste, mats, aerial, generated):
            ("Overhang source", r.get("overhang_source") or "not provided")]
     if is_number(r.get("roof_plan_area_sqft")):
         tot.append(("Plan area incl. overhang", f'{num(r["roof_plan_area_sqft"])} sq ft'))
-    tot += [("Pitch", str(r["pitch"])),
-            ("Pitch factor", f'{float(r["pitch_factor"]):.4f}'),
+    tot += [("Pitch used for roof area", str(display_pitch))]
+    if r.get("pitch_basis_mode") == "per-facet":
+        tot.append(("Base pitch selector (not the area basis)", str(r["pitch"])))
+        tot.append(("Facet pitch calculation source", str(display_src)))
+    tot += [("Pitch factor (base selector)", f'{float(r["pitch_factor"]):.4f}'),
             ("Pitch source", (str(pitch_src) + (" (assumed default)" if assumed else "")) if pitch_src else "not provided"),
             ("Pitch confidence", f"{float(conf):.2f}" if is_number(conf) else "not provided")]
     if is_number(r.get("ridge_bearing_deg")):
@@ -1432,7 +1437,11 @@ def build_html(r, rows, waste, mats, aerial, generated):
     tot += feature_rows(r)
     H.append('<table><caption>Totals</caption><tbody>' +
              "".join(f'<tr><th scope="row">{esc(k)}</th><td class="n">{esc(v)}</td></tr>' for k, v in tot) + '</tbody></table>')
-    H.append('<p class="formula">roof_area = plan_area_with_overhang × pitch_factor; pitch_factor = √(1 + (rise/12)²)</p></section>')
+    if r.get("pitch_basis_mode") == "per-facet":
+        H.append('<p class="formula">roof area = Σ (facet plan area × each facet pitch factor). ' +
+                 'The base pitch factor above is not applied uniformly. Any manual facet edits are NOT measured pitch.</p></section>')
+    else:
+        H.append('<p class="formula">roof_area = plan_area_with_overhang × pitch_factor; pitch_factor = √(1 + (rise/12)²)</p></section>')
 
     # waste
     H.append('<section aria-labelledby="h-waste"><h2 id="h-waste">Waste factor</h2>')

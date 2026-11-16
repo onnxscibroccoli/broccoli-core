@@ -57,6 +57,8 @@ jobs:
         run: mkdir -p "$RUNNER_TEMP/pw" && cd "$RUNNER_TEMP/pw" && npm init -y >/dev/null && npm i --no-audit --no-fund playwright-core@1.59.1 >/dev/null
       - name: Roof-feature lean unit tests (offline, fail-closed)
         run: node roofmeasure/tests/featurelean_test.cjs
+      - name: Pitch basis and provenance regression (offline)
+        run: node roofmeasure/tests/pitchbasis_test.cjs
       - name: Roof feature visual review regression (offline)
         run: node roofmeasure/tests/feature_review_test.cjs
       - name: Android alpha package isolation regression (offline)

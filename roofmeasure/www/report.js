@@ -240,7 +240,12 @@
     }
     var fpEd = (st.tags && st.tags.facetPitch) || {};
     if (st.perFacetPitch || Object.keys(fpEd).length) applyPerFacet(r, fpEd, !!st.perFacetPitch);
-    if (window.RoofFeatureReview) window.RoofFeatureReview.apply(r, st.tags);
+    if (window.RoofPitchBasis) {
+      var basis = window.RoofPitchBasis.describe(r);
+      r.pitch_display = basis.display; r.pitch_display_source = basis.source; r.pitch_basis_mode = basis.mode;
+      if (basis.mode === 'per-facet') r.notes.push('Roof pitch calculation basis: ' + basis.display +
+        ', base pitch selector ' + basis.base + ' (' + r.pitch_source + '); ' + basis.source + '. Neither is site-verified.');
+    }
     if (T) {
       try {
         r.user_tags = T.reportPayload(r, tags, lidarUsed ? L : (L && L.planes ? L : null), lineChanges);
@@ -254,7 +259,10 @@
       r.notes.push(r.user_measurements.length + ' user-supplied measurement(s) recorded (see "User-supplied measurements"); not computed by RoofMeasure and not used in its totals.');
     }
     if (st.geocodeWarning) r.notes.push(st.geocodeWarning);
-    try { roofFeatures(r); } catch (e) { /* features are optional */ }
+    try {
+      roofFeatures(r);
+      if (window.RoofFeatureReview) window.RoofFeatureReview.apply(r, st.tags);
+    } catch (e) { r.notes.push('Feature review unavailable: ' + String(e && e.message || e)); }
     if (st.edits3d && st.edits3d.n) { r.edits_3d = { n: st.edits3d.n, summary: st.edits3d.summary }; r.notes.push('User edits in the 3-D roof editor (' + st.edits3d.n + '): ' + st.edits3d.summary + '.'); }
     var refs = Object.keys(st.refLayersViewed || {});
     if (refs.length) r.reference_layers_viewed = refs;

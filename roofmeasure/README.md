@@ -22,6 +22,17 @@ The measured ortho offset conflates camera perspective and possible georegistrat
 inspect the 6 Harborview deck position against its walls before treating the overlay as reliable.
 Offline test: `node tests/featurelean_test.cjs`; CI also runs headless reports and emulator smoke.
 
+## Pitch provenance correction (0.1.7.6)
+
+If someone edits facet pitch in the 3-D editor (e.g. both facets 12/12) while
+the underlying pitch selector remains at 6/12, the PDF must **not** label a
+12/12-area calculation as 6/12. It now shows **12/12 (manual facet override)**
+as the basis and separately discloses **base selector 6/12** and its pitch
+factor. Mixed pitches are shown as mixed and per-facet geometry is listed.
+Neither manual facet adjustment nor aerial image proves physical pitch;
+on-device actual pitch remains NOT_PROVEN if there are no lidar measurements.
+Offline regression: `node tests/pitchbasis_test.cjs`.
+
 ## User roof-feature review (0.1.7.6)
 
 MassGIS ortho patches are candidates for **skylights, chimneys or vents**: a rectangular

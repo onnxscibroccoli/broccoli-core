@@ -3,6 +3,14 @@
 
 Read in order: this file, CODEVELOP.md (rules, build), CHANGELOG.md, docs/research/ (*.md notes; *.pdf + .txt reference papers from Ian: lidar structural pipeline, zero-cost measurement uncertainties).
 
+## Pitch summary/report mismatch (display correction only)
+- User PDF: base 6/12 manual selector; two user-edited facets 12/12. One
+  report calculated 2,023.5 sq ft but labelled the headline pitch 6/12.
+  `pitchbasis.js` now displays the area calculation's basis (12/12 manual
+  facets) separately from the base pitch (6/12). No quantity changes.
+- No lidar roof cloud exists in that report. Actual physical pitch is
+  NOT_PROVEN without independent rise/run or usable lidar height samples.
+
 ## User-supplied test feedback: photo feature review
 - One roof report misidentified a chimney as a skylight, a second chimney was not detected,
   and rectangular skylight depictions were reported rotated 90°. The report provided NO
