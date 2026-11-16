@@ -660,6 +660,15 @@ def _features(r, P, s, placed=None):
     (rotated rectangles at their measured size). Drawn on the diagram and the overlay pages."""
     rf = r.get("roof_features") or {}
     out = []
+    # facet pitch badges sit at the facet centroids on every page (some pages draw them in a separate pass): keep labels clear of them
+    placed = list(placed) if placed is not None else []
+    nf = len(r.get("facets") or [])
+    for fx in r.get("facets") or []:
+        ring = fx.get("polygon_lonlat")
+        if ring and len(ring) >= 4:
+            pts0 = [P(*p) for p in ring[:-1]]
+            fcx, fcy = sum(p[0] for p in pts0) / len(pts0), sum(p[1] for p in pts0) / len(pts0)
+            placed.append((fcx - 30, fcy - 11, fcx + 30, fcy + 4) if nf > 6 else (fcx - 48, fcy - 16, fcx + 48, fcy + 18))
     for d in rf.get("decks") or []:
         O = d.get("outline_lonlat") or []
         if len(O) < 3:

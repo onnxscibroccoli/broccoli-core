@@ -34,7 +34,9 @@ Read in order: this file, CODEVELOP.md (rules, build), CHANGELOG.md, docs/resear
 - 0.1.7.6 increment 2: dormer candidates used for exclusion + listed with gutter LF; deck rectangle on the house axis; decks < 5 ft wide dropped;
   facet badges join label collision avoidance. Run 43810427490 (45a573b), all green: 6 Harborview deck 183 sq ft (12.8 x 14.3 ft);
   dormer candidates: Oakcrest 1-6 = 3/1/1/3/2/3, 6 Harborview 1, 30 Lockwood 1, 49 Scotland 1, 15 Ward 0; skylight counts unchanged.
-- 0.1.7.6 increment 3: deck label placed clear of facet badges. Run: see `gh run list -R onnxscibroccoli/broccoli-core --branch feat/roofmeasure-dev`.
+- 0.1.7.6 increment 3 (87316c8): run 43810906221 all green, same numbers; the deck label still sat under the F5 badge on the overlay page
+  (badges are drawn in a separate pass there).
+- 0.1.7.6 increment 4: _features() computes the facet badge boxes itself. Run: see `gh run list -R onnxscibroccoli/broccoli-core --branch feat/roofmeasure-dev`.
 
 ## Requirements
 - Mission: open-source tools so contractors and homeowners get accurate roof measurements and can tell whether a quote is fair.
