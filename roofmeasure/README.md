@@ -22,6 +22,23 @@ The measured ortho offset conflates camera perspective and possible georegistrat
 inspect the 6 Harborview deck position against its walls before treating the overlay as reliable.
 Offline test: `node tests/featurelean_test.cjs`; CI also runs headless reports and emulator smoke.
 
+## Parallel-installable alpha APK (0.1.7.6)
+
+GitHub Actions builds a separately installable **RoofMeasure Alpha** with application ID
+`com.ian.roofmeasure.alpha`. It preserves Android version **0.1.7.6** (versionCode **10706**)
+and does not overwrite the original `com.ian.roofmeasure`, even if it is signed with a different
+certificate. The alpha has separate WebView data, a package-specific PDF content provider, and
+saves PDFs under `Downloads/RoofMeasureAlpha/`. Java class namespace remains
+`com.ian.roofmeasure` via fully qualified manifest components. Only the generated build-time
+manifest changes. No signing secrets are committed.
+
+```sh
+PACKAGE_NAME=com.ian.roofmeasure.alpha ./build.sh out/
+# out/RoofMeasure-0.1.7.6-alpha-debug.apk
+PACKAGE_NAME=com.ian.roofmeasure ./build.sh out/ # original ID; same signature needed for upgrades
+python3 -m unittest discover -s tests -p package_variant_test.py -v
+```
+
 ## Original v0.1.7 reconstruction notes
 
 License: MIT (see LICENSE). Bundled third-party code keeps its own license (www/vendor/LICENSE.txt = MapLibre BSD-3; laz-perf Apache-2.0; Pyodide MPL-2.0).

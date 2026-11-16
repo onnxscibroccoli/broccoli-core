@@ -2,6 +2,7 @@
 # RoofMeasure changelog (0.1.7.x line — stays on 0.1.7.x until Ian verifies an improvement)
 
 ## 0.1.7.6 (versionCode 10706) — 2026-11-16
+**Parallel-installable alpha packaging:** CI package ID `com.ian.roofmeasure.alpha`, launcher label RoofMeasure Alpha, unique PDF provider authority and Downloads folder. The original package remains installed despite signing-key differences. Build-time generated manifest and package-detecting emulator smoke test; offline manifest regression. Physical-phone installation NOT_PROVEN.
 **Increment 6 (experimental feature-parallax candidate, CI pending):** Height-relative, display-only aerial
 correction for elevated lidar deck/dormer candidates, using the MassGIS ortho alignment, USGS 3DEP ground elevation,
 and the 35th percentile of >=10 lidar roof points within 1.5 m of the eave. Candidate offset =

@@ -12,6 +12,7 @@ concurrency:
 env:
   VERSION_CODE: '10706'
   VERSION_NAME: '0.1.7.6'
+  PACKAGE_NAME: 'com.ian.roofmeasure.alpha'
 jobs:
   apk:
     runs-on: ubuntu-latest
@@ -33,10 +34,11 @@ jobs:
           KEYSTORE="$KS" bash roofmeasure/build.sh "$RUNNER_TEMP/apk"
           rm -f "$RUNNER_TEMP/apk/classes.dex"
           $ANDROID_HOME/build-tools/34.0.0/aapt2 dump badging "$RUNNER_TEMP/apk/"*.apk | head -3
+          $ANDROID_HOME/build-tools/34.0.0/aapt2 dump badging "$RUNNER_TEMP/apk/"*.apk | grep -F "package: name='com.ian.roofmeasure.alpha' versionCode='10706' versionName='0.1.7.6'"
           ls -l "$RUNNER_TEMP/apk"
       - uses: actions/upload-artifact@v4
         with:
-          name: roofmeasure-apk
+          name: roofmeasure-alpha-apk
           path: ${{ runner.temp }}/apk/
           retention-days: 14
   report-tests:
@@ -55,6 +57,8 @@ jobs:
         run: mkdir -p "$RUNNER_TEMP/pw" && cd "$RUNNER_TEMP/pw" && npm init -y >/dev/null && npm i --no-audit --no-fund playwright-core@1.59.1 >/dev/null
       - name: Roof-feature lean unit tests (offline, fail-closed)
         run: node roofmeasure/tests/featurelean_test.cjs
+      - name: Android alpha package isolation regression (offline)
+        run: python3 -m unittest discover -s roofmeasure/tests -p package_variant_test.py -v
       - name: Headless report tests (15 Ward St Hingham, 6 Harborview Hull, 30 Lockwood Weymouth, 49 Scotland Hingham; ortho align; 3-D editor; Hull geocode; per-facet on/off; tile failure; editor)
         env:
           PW: ${{ runner.temp }}/pw/node_modules/playwright-core
@@ -143,7 +147,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - uses: actions/download-artifact@v4
         with:
-          name: roofmeasure-apk
+          name: roofmeasure-alpha-apk
           path: apk
       - name: Enable KVM
         run: |

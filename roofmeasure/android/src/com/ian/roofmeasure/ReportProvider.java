@@ -3,6 +3,7 @@ package com.ian.roofmeasure;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
@@ -14,8 +15,10 @@ import java.io.FileNotFoundException;
 /** Read-only provider for generated report PDFs in cacheDir/reports (no androidx FileProvider needed).
  *  Not exported; share targets get a one-off grant via FLAG_GRANT_READ_URI_PERMISSION. */
 public class ReportProvider extends ContentProvider {
-    static final String AUTH = "com.ian.roofmeasure.reports";
-    static Uri uriFor(File f) { return Uri.parse("content://" + AUTH + "/" + Uri.encode(f.getName())); }
+    static Uri uriFor(Context context, File f) {
+        // Provider authority follows installed package so alpha and stable can coexist.
+        return Uri.parse("content://" + context.getPackageName() + ".reports/" + Uri.encode(f.getName()));
+    }
     File fileFor(Uri u) throws FileNotFoundException {
         String n = u.getLastPathSegment();
         if (n == null || n.contains("/") || n.contains("..") || !n.endsWith(".pdf")) throw new FileNotFoundException("bad name");

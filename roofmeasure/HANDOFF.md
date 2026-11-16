@@ -3,6 +3,14 @@
 
 Read in order: this file, CODEVELOP.md (rules, build), CHANGELOG.md, docs/research/ (*.md notes; *.pdf + .txt reference papers from Ian: lidar structural pipeline, zero-cost measurement uncertainties).
 
+## Parallel-installable 0.1.7.6 alpha
+- CI builds `com.ian.roofmeasure.alpha`, labelled **RoofMeasure Alpha**, with versionName
+  0.1.7.6/versionCode 10706 unchanged. Original `com.ian.roofmeasure` is unaffected.
+- Alpha has a unique WebView storage sandbox, PDF content-provider authority and
+  `Downloads/RoofMeasureAlpha/` output folder. The CI signing key remains throwaway.
+- Omitting `PACKAGE_NAME` from build.sh still produces the original package.
+- Actual installation on a phone NOT_PROVEN until user testing.
+
 ## Current state
 - Version 0.1.7.6 (versionCode 10706) on `feat/roofmeasure-dev`. CI: `.github/workflows/roofmeasure.yml` builds the APK, runs headless report tests
   (tests/v0176_test.cjs, with regression gates), an emulator smoke test, and the Oakcrest Rd, Hingham benchmark matrix (houses 1-6). Artifacts (APK, PDFs, JSON) per run.

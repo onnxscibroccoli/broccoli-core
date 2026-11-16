@@ -177,7 +177,7 @@ public class MainActivity extends Activity {
     }
     void sharePdfFile(File f) {
         try {
-            Uri u = ReportProvider.uriFor(f);
+            Uri u = ReportProvider.uriFor(this, f);
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("application/pdf");
             i.putExtra(Intent.EXTRA_STREAM, u);
@@ -193,7 +193,8 @@ public class MainActivity extends Activity {
             ContentValues v = new ContentValues();
             v.put(MediaStore.MediaColumns.DISPLAY_NAME, f.getName());
             v.put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf");
-            v.put(MediaStore.MediaColumns.RELATIVE_PATH, "Download/RoofMeasure");
+            final String folder = getPackageName().endsWith(".alpha") ? "RoofMeasureAlpha" : "RoofMeasure";
+            v.put(MediaStore.MediaColumns.RELATIVE_PATH, "Download/" + folder);
             Uri u = getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, v);
             if (u == null) throw new Exception("MediaStore insert returned null");
             OutputStream os = getContentResolver().openOutputStream(u);
@@ -201,7 +202,7 @@ public class MainActivity extends Activity {
             byte[] buf = new byte[65536]; int n;
             while ((n = is.read(buf)) > 0) os.write(buf, 0, n);
             is.close(); os.close();
-            notifyJs("save", true, "Saved to Downloads/RoofMeasure/" + f.getName() + " (" + (f.length() / 1024) + " KB).");
+            notifyJs("save", true, "Saved to Downloads/" + folder + "/" + f.getName() + " (" + (f.length() / 1024) + " KB).");
         } catch (Exception e) { notifyJs("save", false, "save failed: " + e + " — use Share PDF instead"); }
     }
 
