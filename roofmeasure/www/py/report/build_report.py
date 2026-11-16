@@ -548,6 +548,7 @@ def _overlay(r, P, scale_px_per_ft, casing=True, numbers=True, lengths=True, fac
     n_int = sum(1 for sg in r.get("line_segments") or [] if sg.get("coords_lonlat") and not sg.get("deleted") and (show_cand or not sg.get("unverified")) and str(sg.get("type")) in ("ridge", "hip", "valley", "wall_flashing", "eave", "rake"))
     dense = n_int > 8  # many lines: label them L<i> (lengths in the Interior lines table) to keep the page readable
     # facets with pitch badges
+    fboxes = []  # 0.1.7.6: label boxes, so skylight / edge labels avoid them
     if facets:
         for fx in r.get("facets") or []:
             ring = fx.get("polygon_lonlat")
@@ -563,9 +564,11 @@ def _overlay(r, P, scale_px_per_ft, casing=True, numbers=True, lengths=True, fac
             t2 = f'{float(pa):.0f} sq ft plan' if is_number(pa) and n_fac <= 6 else ""
             if n_fac > 6:
                 t1 = f'{fx.get("id")} {fx.get("pitch")}'
+                fboxes.append((cx - 30, cy - 11, cx + 30, cy + 4))
                 labels.append(f'<rect x="{cx-30:.1f}" y="{cy-11:.1f}" width="60" height="15" rx="4" fill="#111" fill-opacity="0.7"/>'
                               f'<text x="{cx:.1f}" y="{cy:.1f}" text-anchor="middle" font-size="9.5" font-weight="700" font-family="Arial" fill="#fff">{esc(t1)}</text>')
                 continue
+            fboxes.append((cx - 48, cy - 16, cx + 48, cy - 16 + (34 if t2 else 20)))
             labels.append(f'<rect x="{cx-48:.1f}" y="{cy-16:.1f}" width="96" height="{34 if t2 else 20}" rx="5" fill="#111" fill-opacity="0.78"/>'
                           f'<text x="{cx:.1f}" y="{cy-1:.1f}" text-anchor="middle" font-size="12" font-weight="700" font-family="Arial" fill="#fff">{esc(t1)}</text>'
                           + (f'<text x="{cx:.1f}" y="{cy+13:.1f}" text-anchor="middle" font-size="10.5" font-family="Arial" fill="#fff">{esc(t2)}</text>' if t2 else ""))
@@ -612,7 +615,7 @@ def _overlay(r, P, scale_px_per_ft, casing=True, numbers=True, lengths=True, fac
     for k in range(len(pts_all)):
         x1, y1 = pts_all[k]; x2, y2 = pts_all[(k + 1) % len(pts_all)]
         A += x1 * y2 - x2 * y1
-    placed = []
+    placed = list(fboxes)
     for e in E:  # number circles occupy space too
         a, b = P(*e["from"]), P(*e["to"])
         mx, my = (a[0] + b[0]) / 2, (a[1] + b[1]) / 2
@@ -983,7 +986,7 @@ def feature_rows(r):
         rows.append(("Roof deck / flat section (candidate, not in totals)", "; ".join(
             (f'≈{num(d.get("area_sqft"), 0)} sq ft' + (f' ({num(d.get("w_ft"), 1)}×{num(d.get("h_ft"), 1)} ft)' if d.get("w_ft") else '') + f' at {esc(d.get("pitch"))}: inspect for a rubber/membrane roof underneath') for d in dk)))
     if dm:
-        rows.append(("Dormers (candidates, not in totals)", f'{len(dm)}: ' + "; ".join(f'{esc(d.get("key") or d.get("id") or "D")} {esc(d.get("type") or "dormer")}' for d in dm) + ' — dormer gutters: inspect and clean'))
+        rows.append(("Dormers (candidates, not in totals)", f'{len(dm)}: ' + "; ".join(f'{esc(d.get("key") or d.get("id") or "D")} {esc(d.get("type") or "dormer")}' + (f' (gutter ≈{num(d.get("gutter_lf"), 0)} LF)' if is_number(d.get("gutter_lf")) else '') for d in dm) + ' — dormer gutters: inspect and clean (debris, returns)'))
     return rows
 
 

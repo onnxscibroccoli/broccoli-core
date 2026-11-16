@@ -337,7 +337,7 @@
     var tg = (window.RoofApp && window.RoofApp.state && window.RoofApp.state.tags) || {}, rm = tg.featuresRemoved || {};
     var sk = [], n = 0, c0 = (r.ortho_patches || [])[0], kx = Math.cos(((c0 && c0.centroid_lonlat[1]) || r.lat || 42) * Math.PI / 180) * 111320, ky = 110540;
     function dm(a, b) { return Math.hypot((a[0] - b[0]) * kx, (a[1] - b[1]) * ky); }
-    var dorm = (r.dormers || []).filter(function (d) { return d.kept !== false; }).map(function (d) { return d.centroid_lonlat || (d.coords_lonlat ? [(d.coords_lonlat[0][0] + d.coords_lonlat[1][0]) / 2, (d.coords_lonlat[0][1] + d.coords_lonlat[1][1]) / 2] : null); }).filter(Boolean);
+    var dorm = (r.dormers || []).filter(function (d) { return !d.deleted; }) /* 0.1.7.6: candidates too (was kept-only, so lidar dormers never excluded their window patches) */.map(function (d) { return d.centroid_lonlat || (d.coords_lonlat ? [(d.coords_lonlat[0][0] + d.coords_lonlat[1][0]) / 2, (d.coords_lonlat[0][1] + d.coords_lonlat[1][1]) / 2] : null); }).filter(Boolean);
     // 0.1.7.6: stricter skylight test. An ortho patch is counted as a skylight candidate only if
     //  - size: both sides 1.5-12 ft; contrast >= 4 x its facet's MAD; rectangularity >= 0.6;
     //  - lidar plane continuity: the points around it (a ring 0.25-1.1 m outside it) lie on ONE lidar plane (>= 65 %) and the points on it sit
@@ -368,7 +368,7 @@
     sk = sk.filter(function (k) { return !rm[k.key]; });
     sk.forEach(function (k) { k.label = 'S' + (++n); });
     r.roof_features = { skylights: sk, decks: (r.decks || []).filter(function (d) { return !rm[d.key]; }), rejected: rej,
-      dormers: (r.dormers || []).filter(function (d) { return d.kept !== false; }),
+      dormers: (r.dormers || []).filter(function (d) { return !d.deleted; }),
       counts: { skylights: sk.filter(function (k) { return k.counted; }).length, skylight_candidates_uncounted: sk.filter(function (k) { return !k.counted; }).length, patches_rejected: rej.length },
       note: 'Candidates (NOT_PROVEN). Not in the billable totals; confirm on site or in the editor.' };
     return r.roof_features;

@@ -117,6 +117,7 @@
     sg.planes.forEach(function (p) {
       if (!(p.rise_raw <= 1.5) || (p.plan_area_sqft_approx || 0) < 25 || p.inside_frac < 0.6 || !p.outline_lonlat || p.outline_lonlat.length < 3) return;
       if (tot && p.plan_area_sqft_approx > 0.6 * tot) return; // a flat ROOF, not a deck
+      if (p.rect && Math.min(p.rect.w_ft, p.rect.h_ft) < 5) return; // 0.1.7.6: a strip under 5 ft wide is a ledge / porch-roof edge, not a deck
       var A = 0, O = p.outline_lonlat, kx = Math.cos(O[0][1] * Math.PI / 180) * 364000, ky = 364000;
       for (var i = 0; i < O.length; i++) { var a = O[i], b = O[(i + 1) % O.length]; A += (a[0] * kx) * (b[1] * ky) - (b[0] * kx) * (a[1] * ky); }
       var rc = p.rect && p.rect.area_sqft > 0 ? p.rect : null; // 0.1.7.6: robust rectangle (the hull is inflated by stray edge points)

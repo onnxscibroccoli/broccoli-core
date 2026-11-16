@@ -20,7 +20,10 @@ Guidance from docs/research (Ian's papers): lines come from fitted lidar planes;
 - Roof deck outline: principal-axis rectangle from the 5-95 % extents of the flat plane's points (the convex hull was inflated by
   stray edge points). 6 Harborview: 195 sq ft (14.9 x 13.0 ft), was 223.
 - Skylight labels avoid the edge-length labels and number circles (15 Ward S3 / "EAVE 7.7" overlap).
-- Dormers (lidar candidates) are listed in the summary with "dormer gutters: inspect and clean".
+- Dormers (lidar candidates) are listed in the summary with their gutter LF and "dormer gutters: inspect and clean"; candidate
+  dormers now also exclude their window patches from the skylights (0.1.7.5 used confirmed dormers only, so none were excluded).
+- Deck rectangle is square to the house (longest roofprint edge); flat strips under 5 ft wide are not decks. Facet badges are part of
+  the label collision check.
 - Tests: tests/v0176_test.cjs; CI gates 15 Ward residual <= 0.2 ft, 15 Ward 2-4 counted skylights, 6 Harborview deck 150-210 sq ft.
 
 ## 0.1.7.5 (versionCode 10705) — 2026-11-15

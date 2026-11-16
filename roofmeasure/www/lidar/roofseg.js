@@ -45,11 +45,15 @@
   function snap(rs) { var n = Math.round(rs * 2) / 2; return (Math.abs(n - rs) <= 0.35 ? n : r1(rs)) + '/12'; }
   function conf(n, rms) { return n >= 60 && rms <= 0.08 ? 'high' : n >= 20 && rms <= 0.15 ? 'medium' : 'low'; }
 
-  function rectOf(pts, fr) {
+  // longest roofprint edge direction (decks are built square to the house; PCA of a near-square point set is unstable)
+  function ringAxis(ring) { if (!ring || ring.length < 3) return null; var best = 0, th = null;
+    for (var i = 0; i < ring.length; i++) { var a = ring[i], b = ring[(i + 1) % ring.length], L = Math.hypot(b[0] - a[0], b[1] - a[1]); if (L > best) { best = L; th = Math.atan2(b[1] - a[1], b[0] - a[0]); } }
+    return th; }
+  function rectOf(pts, fr, th0) {
     if (pts.length < 8) return null;
     var mx = 0, my = 0; pts.forEach(function (p) { mx += p[0]; my += p[1]; }); mx /= pts.length; my /= pts.length;
     var sxx = 0, syy = 0, sxy = 0; pts.forEach(function (p) { var a = p[0] - mx, b = p[1] - my; sxx += a * a; syy += b * b; sxy += a * b; });
-    var th = 0.5 * Math.atan2(2 * sxy, sxx - syy), u = [Math.cos(th), Math.sin(th)], v = [-u[1], u[0]];
+    var th = th0 != null ? th0 : 0.5 * Math.atan2(2 * sxy, sxx - syy), u = [Math.cos(th), Math.sin(th)], v = [-u[1], u[0]];
     var su = pts.map(function (p) { return (p[0] - mx) * u[0] + (p[1] - my) * u[1]; }).sort(function (a, b) { return a - b; });
     var sv = pts.map(function (p) { return (p[0] - mx) * v[0] + (p[1] - my) * v[1]; }).sort(function (a, b) { return a - b; });
     var q = function (a, f) { return a[Math.min(a.length - 1, Math.max(0, Math.round((a.length - 1) * f)))]; };
@@ -57,7 +61,7 @@
     var cx = mx + cu * u[0] + cv * v[0], cy = my + cu * u[1] + cv * v[1];
     var C = [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(function (s) { var x = cx + s[0] * hu * u[0] + s[1] * hv * v[0], y = cy + s[0] * hu * u[1] + s[1] * hv * v[1], ll = toLL(fr, x, y);
       return [Math.round(ll[0] * 1e7) / 1e7, Math.round(ll[1] * 1e7) / 1e7]; });
-    return { outline_lonlat: C, w_ft: r1(2 * hu * M2FT), h_ft: r1(2 * hv * M2FT), area_sqft: Math.round(4 * hu * hv * M2FT * M2FT), method: 'principal-axis 5-95 % extents / 0.9' };
+    return { outline_lonlat: C, w_ft: r1(2 * hu * M2FT), h_ft: r1(2 * hv * M2FT), area_sqft: Math.round(4 * hu * hv * M2FT * M2FT), method: (th0 != null ? 'house-axis' : 'principal-axis') + ' rectangle, 5-95 % extents / 0.9' };
   }
   function segment(lidar, opts) {
     opts = opts || {};
@@ -116,7 +120,7 @@
         // 0.1.7.5: outline (convex hull) of low-slope planes, for roof-deck / flat-section candidates
         // 0.1.7.6: robust rectangle of low-slope planes (principal axes, 5-95 % extents / 0.9 = full extent of an even point spread;
         // the convex hull is inflated by stray edge points, e.g. railing feet or parapet tops)
-        rect: rs <= 2 ? rectOf(pl.idx.map(function (i) { return [P[i][0], P[i][1]]; }), fr) : undefined,
+        rect: rs <= 2 ? rectOf(pl.idx.map(function (i) { return [P[i][0], P[i][1]]; }), fr, ringAxis(ring)) : undefined,
         outline_lonlat: rs <= 2 ? hull(pl.idx.map(function (i) { return [P[i][0], P[i][1]]; })).map(function (h) { var ll = toLL(fr, h[0], h[1]); return [Math.round(ll[0] * 1e7) / 1e7, Math.round(ll[1] * 1e7) / 1e7]; }) : undefined };
     });
     out.coverage = r2(totalIn / N);

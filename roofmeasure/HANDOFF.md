@@ -24,7 +24,11 @@ Read in order: this file, CODEVELOP.md (rules, build), CHANGELOG.md, docs/resear
 
 ## CI runs
 - 0.1.7.5: 43802526473 (all green; Oakcrest over-counted skylights 2-9 per house).
-- 0.1.7.6 increment 1: (filled in after the run)
+- 0.1.7.6 increment 1 (95fb691): 43809861417, all green. Counted skylights: 15 Ward 3, 6 Harborview 0, Oakcrest 1-6: 0/1/0/1/1/0
+  (0.1.7.5: 5/7/4/9/4/2), 30 Lockwood 0, 49 Scotland 1. 6 Harborview deck 195 sq ft. Dormers were never used to exclude skylight patches
+  (kept-only filter) and were missing from the summary: fixed in increment 2.
+- 0.1.7.6 increment 2: dormer candidates used for exclusion + listed with gutter LF; deck rectangle on the house axis; decks < 5 ft wide dropped;
+  facet badges join label collision avoidance. Run: (filled in after the run)
 
 ## Requirements
 - Mission: open-source tools so contractors and homeowners get accurate roof measurements and can tell whether a quote is fair.
@@ -39,6 +43,7 @@ Read in order: this file, CODEVELOP.md (rules, build), CHANGELOG.md, docs/resear
 
 ## Next steps
 1. Check the 0.1.7.6 CI artifacts (overlay pages of 15 Ward, 6 Harborview, 4 Oakcrest) visually; per-house counts are in bench-oakcrest-*/summary.txt.
-2. Dormer detection finds 0 dormers on 6 Harborview (two visible beside the deck): improve tags.dormers (minor planes beside a flat deck).
+2. Dormers: lidar finds 1 on 6 Harborview (two visible beside the deck); check after increment 2.
+   The deck outline still sits ~1 m SE of the deck walls in the photo: the deck is higher than the eaves, so it leans further (lean grows with height).
 3. Lidar lines (plane intersections) are still in the lidar frame (~1 m off the roofprint): consider moving them too, then re-check totals.
 4. 4 Oakcrest ortho shift: ambiguous; a lean model (shift proportional to lidar height) may separate eave and ridge evidence.
