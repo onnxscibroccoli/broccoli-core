@@ -1,0 +1,849 @@
+End-to-End High-Density LiDAR
+Structural Assessment Production
+Pipeline
+Achieving sub-centimeter (<10 mm) structural boundary accuracy in an automated LiDAR
+production pipeline requires coupling close-range, high-density acquisition with multi-point
+geometric primitive intersection rather than direct point-edge picking. Analytical error
+propagation across sensor platforms indicates that single-point boundary localization is
+physically capped by spatial discretization and mixed-edge beam footprint effects—modeled at
+7.6 mm on terrestrial laser scanners (TLS) at 25 m, 27.5–46.1 mm on unmanned aerial vehicle
+(UAV) LiDAR at 60 m, and 137.3–245.9 mm on airborne laser scanning (ALS) at 800–1,200 m.
+Intersecting fitted planar facets suppresses random ranging, attitude, and footprint variance
+inversely with the square root of facet point support, driving modeled relative ridge, valley, and
+intersection-line uncertainty down to 0.45 mm for TLS, 2.41 mm for mobile laser scanning
+(MLS), and 4.53–7.66 mm for UAV LiDAR (while absolute georeferencing remains bounded by
+trajectory accuracy). Public regional ALS datasets such as USGS 3D Elevation Program (3DEP)
+Quality Level 1 (QL1) and Quality Level 2 (QL2)—specified at ≤10 cm non-vegetated vertical
+RMSE, ≤4–8 cm swath-overlap RMSD, and ≥2–8 pulses/m²—cannot meet sub-centimeter
+boundary tolerances on typical roof facets because multi-decimeter laser footprints and
+multi-centimeter trajectory drift dominate the error budget.
+Operationalizing this precision across planar, curved, glazed, and open-decked structures
+requires a six-stage computational architecture: (1) Cloud Optimized Point Cloud (COPC) octree
+ingestion paired with post-processed GNSS-INS trajectory files (SBET) to recover exact
+per-pulse range and ray geometry; (2) four-stage radiometric calibration via the extended-target
+LiDAR range equation accounting for sensor gain, near-field overlap, spherical spreading,
+two-way Kruse/Kim atmospheric attenuation, and non-Lambertian Oren–Nayar incidence
+effects; (3) multi-scale octree voxelization, Weighted RANSAC, and constrained region-growing
+assembled into closed 2-manifold Boundary Representations (B-Reps) via Kinetic Shape
+Reconstruction (KSR) or integer programming; (4) Moving Least Squares (APSS/RIMLS)
+implicit modeling, Weingarten principal curvature classification, First Fundamental Form
+Gauss–Legendre area integration, and discrete developable unrolling (ABF++/LSCM) for curved
+shells; (5) hybrid semantic classification for dormers, silicate glazing, and penetrable decking;
+and (6) joint manifold topology optimization and multi-pass transient ray-carving to purge
+specular reflection ghosts.
+Two empirical evidence gaps constrain full automation and require calibration gates rather than
+fixed universal constants. First, while aerial-imagery deep learning yields a 0.59 true-positive
+rate on dormers and rolling-window LiDAR range variance detects frameless glass at 96.2%
+mean accuracy, no independent benchmark in the reviewed studies reports precision/recall for
+pure LiDAR intersection-based dormer extraction, universal multi-return porosity thresholds
+separating open-slat decking from solid flooring, or roof-specific false-positive elimination rates
+for multi-pass transient specular rejection. Second, an audit of USGS 3DEP repositories found
+that 63% of 2,529 sampled LAS files populated the system identifier field with software or
+vendor names rather than the physical instrument; whenever sensor metadata or Automatic
+Gain Control (AGC) logs are missing, absolute reflectance inversion must fall back to empirical
+swath-overlap normalization.
+
+Sensor Feasibility and Sub-Centimeter Boundary
+Error Budget
+Certifying sub-centimeter boundaries begins by decomposing the single-point error budget
+across five uncorrelated contributors: trajectory positioning (\sigma_{\text{traj}}),
+attitude/boresight uncertainty scaled by range (R \sigma_{\text{att}}), range precision
+(\sigma_{\text{range}}), mixed-edge footprint ambiguity where a finite laser spot (d_{\text{spot}}
+= d_0 + R \beta_t for exit aperture d_0 and divergence \beta_t) straddles a fascia or parapet
+(\approx 0.25 d_{\text{spot}}), and sampling discretization (\text{spacing}/\sqrt{12}). Direct edge
+picking fails even at high UAV densities because footprint averaging and discrete point spacing
+create decimeter-to-centimeter jitter.
+Modeling structural edges as the line of intersection between two fitted planar facets of N points
+meeting at dihedral angle \Delta\alpha reduces random perpendicular uncertainty proportionally
+to \sqrt{2}\sigma_{\text{rand}} / (\sqrt{N/3}\sin\Delta\alpha). Evaluating this analytical
+propagation model—parameterized with a 3 mm exit aperture, 20 m² facets meeting at a 53.13°
+dihedral angle (two 6/12 slopes), and a 0.30 intra-pass drift factor for relative
+dimensioning—separates platforms viable for sub-centimeter dimensioning from regional
+screening datasets.
+Modeled        Spot          Point           Single-Point Plane-Interse Plane-Interse Sub-Centime
+Platform       Diameter      Spacing         Edge Error ction Relative ction            ter Boundary
+Budget                                                     Error         Absolute       Viability
+(Assumed                                                                 Error
+Density /
+Range)
+TLS (2,500 11.8 mm           20.0 mm         7.6 mm        0.45 mm       1.50 mm        Absolute and
+pts/m² at 25                                                                            relative (<10
+m;                                                                                      mm)
+\sigma_{\text
+{traj}} =
+1.5\text{
+mm})
+MLS /          10.5 mm       35.4 mm         17.1 mm       2.41 mm       8.00 mm        Absolute and
+Backpack                                                                                relative (<10
+(800 pts/m²                                                                             mm)
+at 15 m;
+\sigma_{\text
+{traj}} =
+8.0\text{
+mm})
+Survey UAV 33.0 mm           63.2 mm         27.5 mm       4.53 mm       15.01 mm       Relative
+LiDAR (250                                                                              dimensional
+pts/m² at 60                                                                            accuracy
+m;                                                                                      (<10 mm)
+Modeled        Spot          Point         Single-Point Plane-Interse Plane-Interse Sub-Centime
+Platform       Diameter      Spacing       Edge Error ction Relative ction           ter Boundary
+Budget                                                   Error          Absolute     Viability
+(Assumed                                                                Error
+Density /
+Range)
+\sigma_{\text
+{traj}} =
+15.0\text{
+mm})
+Low-Cost       51.0 mm       81.6 mm       46.1 mm       7.66 mm        25.05 mm     Relative only;
+UAV LiDAR                                                                            marginal on
+(150 pts/m²                                                                          small facets
+at 60 m;
+\sigma_{\text
+{traj}} =
+25.0\text{
+mm})
+ALS QL1 (8 243.0 mm          353.6 mm      137.3 mm      18.13 mm       42.25 mm     Infeasible for
+pts/m² at 800                                                                        <10 mm
+m;                                                                                   boundaries
+\sigma_{\text
+{traj}} =
+40.0\text{
+mm})
+ALS QL2 (2 363.0 mm          707.1 mm      245.9 mm      44.23 mm       72.34 mm     Infeasible;
+pts/m² at                                                                            macro
+1,200 m;                                                                             screening
+\sigma_{\text                                                                        only
+{traj}} =
+60.0\text{
+mm})
+Table parameters represent an analytical sensitivity model rather than empirical hardware trials,
+assuming (\sigma_{\text{att}}, \sigma_{\text{range}}, \beta_t) of (0.05 mrad, 3.0 mm, 0.35 mrad)
+for TLS; (0.25 mrad, 10.0 mm, 0.50 mrad) for MLS; (0.15 mrad, 5.0 mm, 0.50 mrad) for survey
+UAV; (0.30 mrad, 20.0 mm, 0.80 mrad) for low-cost UAV; and (0.05 mrad, 15–20 mm, 0.30
+mrad) for ALS.
+Three operational constraints emerge from this error budget and empirical survey benchmarks.
+First, boresight misalignment and swath-to-swath trajectory drift act as correlated systematic
+shifts that do not average down with point count N; strip-adjustment bundle calibration is
+mandatory before facet extraction to hold intraswath repeatability near the 1.2 cm
+smooth-surface precision benchmarked on calibrated UAV LiDAR sites and well inside USGS
+QL0 limits (≤3 cm repeatability, ≤4 cm overlap RMSD). Second, airborne data at 16 pts/m² still
+exhibits 25 cm spot spacing, whereas TLS-grade registration references are typically acquired
+at ≥1,000 pts/m² and achieve 1.7–3.6 cm RMSE when benchmarked against amorphous objects
+and three-plane corners. Third, public USGS 3DEP holdings—accessible via anonymous
+s3://usgs-lidar-public/ Entwine Point Tiles (EPT) or Requester Pays s3://usgs-lidar/ raw LAZ 1.4
+buckets—serve strictly as macro context and regional terrain baselines rather than
+sub-centimeter CAD sources.
+
+Stage 1: Cloud-Native LAS/LAZ Octree Ingestion and
+Trajectory Synchronization
+Production ingestion standardizes raw LAS 1.4, LAZ, and EPT archives into Cloud Optimized
+Point Cloud (COPC 1.0) containers coupled with post-processed trajectory telemetry. A COPC
+file is a backwards-compatible, variably chunked LAZ 1.4 file embedding a clustered octree
+hierarchy inside Variable Length Records (VLRs) and Extended VLRs (EVLRs). Strict schema
+normalization is enforced at ingest: COPC requires LAS 1.4 Point Data Record Formats
+(PDRFs) 6, 7, or 8—supporting 256 classification values, extended return numbering, GPS
+timestamps, and optional RGB (PDRF 7) or RGB plus near-infrared (PDRF 8). Older LAS 1.2
+files (PDRFs 0–5) must be upgraded explicitly using untwine, PDAL writers.copc, or
+copc-converter with valid Coordinate Reference System (CRS) definitions and classification-flag
+validation.
+Deterministic out-of-core HTTP byte-range streaming proceeds through four sequential
+operations:
+    1.​ Header and Info VLR Prefetch: Because the 160-byte copc-info VLR is fixed as the first
+        VLR starting at byte offset 375 immediately following the LAS 1.4 header, workers issue a
+        single 0–535 byte HTTP Range request to retrieve global bounding coordinates, octree
+        spacing, and the root hierarchy page pointer.
+    2.​ In-Memory Octree Traversal: Workers fetch the root hierarchy page and walk the
+        clustered octree—where level 1 divides the bounding box into 8 octants and level 2 into
+        64 sub-cubes, typically extending to levels 6–8 for urban datasets—culling nodes outside
+        parcel bounds or below the requested Level-of-Detail resolution parameter.
+    3.​ Chunk Decoding and Local Staging: Surviving octree nodes map directly to the LAZ
+        chunk table for parallel range fetching (typically capped near PDAL's default of 15
+        concurrent HTTP request threads so network I/O does not outpace decompression and
+        inflate memory). While COPC dramatically cuts selective transfer costs—reading 4.1 MB
+        in five requests for a 100 m square at medium resolution from a 2.6 GB file, or retrieving
+        41 thousand, 620 thousand, and 4.1 million points across 10 m, 2 m, and 0.5 m
+        resolutions over 1 km²—FOSS4G-NA 2026 benchmarks comparing LAS versus COPC
+        report that once files are cached locally or query windows are large, local LAS
+        outperforms remote COPC. Production workers therefore leverage COPC (which shrinks
+        raw LAS by up to 4×) for discovery and bounding-box triage, then stage target building
+        clips in local NVMe or memory before iterative geometric fitting.
+    4.​ Trajectory Synchronization: Because COPC provides no ept-sources.json per-file
+        metadata index, ingestion preserves PointSourceId (flight-line or scan-station ID) and
+        GpsTime (optionally indexed via COPC's temporal EVLR specification) to link points with
+        Applanix Smoothed Best Estimate of Trajectory (SBET) binary files. SBET files store
+        post-processed GNSS-INS trajectories calibrated for lever arms and boresight alignment
+        (reported by practitioners as unprojected WGS84 coordinates in radians). Interpolating
+        instantaneous sensor position \mathbf{S}(t_i) at each point's GPS timestamp recovers
+        exact slant range R_i = \Vert{}\mathbf{p}_i - \mathbf{S}(t_i)\Vert{}_2 and incident ray
+        direction \mathbf{v}_i = (\mathbf{S}(t_i) -
+        \mathbf{[span_104](start_span)[span_104](end_span)[span_105](start_span)[span_105](
+      end_span)p}_i)/R_i.
+
+Stage 2: Multi-Stage Radiometric Calibration via the
+LiDAR Range Equation
+Raw LiDAR intensity values conflate surface material properties with spherical spreading,
+hardware gain, near-field beam geometry, atmospheric extinction, and surface orientation.
+Under the extended-target LiDAR range equation—valid when the target facet exceeds the
+laser footprint—received optical power P_r depends on transmitted power P_t, receiver aperture
+diameter D_r, system optical transmission \eta_{\text{sys}}, near-field overlap function \eta(R),
+one-way atmospheric transmission T(R) (entering squared for the two-way path), range R,
+incidence angle \alpha, and target reflectance \rho:
+P_r(R, \alpha, \rho) = \frac{P_t D_r^2}{4 R^2} \eta_{\text{sys}} \, \eta(R) \, T^2(R) \, \rho \,
+f_{\text{BRDF}}(\alpha)
+Following the Level 0 (raw digital number) to Level 1 (intensity correction) to Level 3 (absolute
+radiometric calibration) framework, normalization proceeds across four stages.
+
+Hardware Gain, Near-Field Overlap, and Spherical Range
+Normalization
+Sensors equipped with Automatic Gain Control (AGC) dynamically adjust amplifier gain G_c to
+keep detector output near a nominal setpoint across large input signal swings (documented in
+closed-loop lidar designs to maintain ±10% output stability across ~150% input variability). Level
+1 models invert G_c explicitly where recorded; where proprietary AGC logs or hardware
+identifiers are absent, the pipeline executes relative strip-overlap matching across overlapping
+flight lines or terrestrial stations. Next, close-range terrestrial and mobile scans apply an
+empirical near-field overlap curve \eta(R) below the scanner's full-crossover range—typically 6
+m on short-range spinning units and leveling out above 15 m on close-range terrestrial
+scanners—before multiplying extended-target intensities by R^2. Multi-return pulses caused by
+beam splitting across roof edges or vegetation are flagged and adjusted using overlap-driven or
+cumulative-energy normalization.
+
+Two-Way Atmospheric Attenuation
+Two-way atmospheric loss enters exponentially as T^2(R) =
+e^{-2\alpha_{\text{[span_126](start_span)[span_126](end_span)[span_127](start_span)[span_1
+27](end_span)Np/m}} R}. Under the empirical Kruse and Kim visibility-based models for
+wavelengths \lambda (commonly 905 nm or 1550 nm) relative to 550 nm, specific attenuation
+\alpha_{\text{dB/km}} under a 5% contrast threshold (13/V) converts to Napierian units via
+\alpha_{\text{Np/m}} = \alpha_{\text{dB/km}} / (1000 \cdot
+10\lo[span_131](start_span)[span_131](end_span)g_{10} e):
+\alpha_{\text{dB/km}}(\lambda, V) = \frac{13}{V} \left( \frac{\lambda}{550\text{ nm}} \right)^{-q}
+Evaluating Kim's piecewise particle-size exponent (q = 1.6 for V > 50 km; 1.3 for 6 < V \le 50
+km; 0.16V + 0.34 for 1 < V \le 6 km; V - 0.5 for 0.5 < V \le 1 km; and q = 0 for V
+\l[span_132](start_span)[span_132](end_span)[span_133](start_span)[span_133](end_span)e
+0.5 km) quantifies wavelength-dependent signal loss across survey ranges:
+Atmospheric     \alpha at 905     \alpha at 1550 Two-Way T^2 Two-Way T^2 Operational
+Regime          nm (dB/km)        nm (dB/km)      at 100 m (905 / at 1,000 m (905 Guidance
+(Visibility V)                                    1550 nm)          / 1550 nm)
+Clear Air (23.0 0.30              0.15            0.9865 / 0.9933 0.8726 / 0.9346 Negligible at
+km, q = 1.3)                                                                      TLS range;
+                                                                                  ~7–13% loss in
+                                                                                  ALS
+Light Haze (5.0 1.47              0.80            0.9344 / 0.9639 0.5073 / 0.6925 Significant 905
+km, q = 1.14)                                                                     nm vs. 1550
+                                                                                  nm divergence
+                                                                                  at 1,000 m
+Mist / Heavy    6.49              4.75            0.7416 / 0.8035 0.0503 / 0.1121 ~20–26% loss
+Haze (1.5 km,                                                                     even at 100 m
+q = 0.58)                                                                         UAV range
+Dense Fog (0.3 43.33              43.33           0.1359 / 0.1359 <0.0001 /       Wavelength-ne
+km, Kim q =                                                         <0.0001       utral model
+0.0)                                                                              plateau; abort
+                                                                                  survey
+Atmospheric visibility models carry important empirical limits: field measurements show Kim's
+formulation can underestimate attenuation below 1 km visibility and contradict measured
+wavelength dependence below 15 m, distinct advection versus radiation fog microphysics
+(modeled in Al Naboulsi / French Telecom formulations) yield markedly higher losses, water
+vapor absorption differentially affects 1550 nm, and active rain degrades returns by an average
+of 54.1% and up to 90.4% over 1 km.
+
+Incidence Angle from Local Normals and Oren–Nayar BRDF
+Local surface normals \mathbf{n}_i are computed from best-fit tangent planes over k-nearest
+neighbors (using ≥10 points for covariance stability) or inherited from segmented structural
+planes, yielding incidence angle \cos\alpha_i = \vert{}\mathbf{n}_i
+\cdo[span_144](start_span)[span_144](end_span)[span_145](start_span)[span_145](end_span)
+[span_146](start_span)[span_146](end_span)t \mathbf{v}_i\vert{}. Treating rough architectural
+finishes (asphalt shingles, concrete, timber) as ideal Lambertian surfaces
+(f_{\text{BRDF}}(\alpha) = \cos\alpha) systematically over-corrects oblique returns. For
+monostatic LiDAR where illumination and viewing rays coincide (\theta_i = \theta_r = \alpha,
+relative azimuth \Delta\phi = 0), the Oren–Nayar rough-surface microfacet BRDF simplifies to a
+backscatter model parameterized by microfacet slope standard deviation \sigma_r \in
+[span_151](start_span)[span_151](end_span)[span_152](start_span)[span_152](end_span)[spa
+n_153](start_span)[span_153](end_span)(0, \pi/2) in radians:
+f_{\text{ON}}(\alpha; \sigma_r) = A \cos\alpha + B \sin^2\alpha, \qquad A = 1 -
+0.5\frac{\sigma_r^2}{\sigma_r^2 + 0.33}, \qquad B = 0.45\frac{\sigma_r^2}{\sigma_r^2 + 0.09}
+Normalized to \alpha = 0^\circ, modeled rough-surface backscatter departs sharply from ideal
+Lambertian \cos\alpha scaling above 30° incidence:
+Incidence      Lambertian        Oren–Nayar       Oren–Nayar       Oren–Nayar       Naive
+Angle (\alpha) (\cos\alpha)      (\sigma_r =      (\sigma_r =      (\sigma_r =      \sec\alpha
+                                 10^\circ)        20^\circ)        30^\circ)        Over-Correctio
+                                                                                    n (\sigma_r =
+                                                                                    20^\circ)
+0°              1.0000           1.0000           1.0000           1.0000           +0.0%
+15°             0.9659           0.9739           0.9860           0.9953           +2.1%
+30°             0.8660           0.8957           0.9408           0.9756           +8.6%
+45°             0.7071           0.7665           0.8567           0.9262           +21.2%
+60°             0.5000           0.5891           0.7244           0.8287           +44.9%
+75°             0.2588           0.3697           0.5379           0.6677           +107.8%
+Absolute Reflectance Inversion
+Level 3 radiometric calibration converts corrected intensity I_{\text{corr}} into absolute surface
+reflectance \rho \in [0, 1] via empirical reference targets (Spectralon panels, calibrated tarps, or
+homogeneous sand/gravel). Because physical receivers exhibit nonlinear dynamic compression
+across range, logarithmic parametric fitting of the form \hat{\rho} =
+\frac{1}{f_{\text{BRDF}}(\alpha)} \exp\big((I_{\text{corr}} - p_2(R))/p_1(R)\big) was demonstrated
+in terrestrial scanner trials to hold residual reflectance deviation to 6.1% on a 905 nm scanner
+(2–22 m, 0°–50° incidence), while capturing material spectral divergence between
+wavelengths—where a nominal 0.40 reference target calibrated to 0.467 at 905 nm versus
+0.528 at 1550 nm (5–90 m, 0°–72° incidence).
+
+Stage 3: Multi-Scale Planar Segmentation and
+Closed-Loop Watertight Topology
+High-density point clouds cause single-scale planar region growing to fracture. Benchmark
+evaluations comparing 4 pts/m² and 40 pts/m² datasets show that while local PCA eigenvalue
+coplanarity succeeds at low density, shrinking neighborhoods at 40 pts/m² expose micro-relief
+on roof tiles, corrugated metal, and vertical ranging noise, destabilizing point normals and
+fragmenting planar patches. Conversely, unweighted RANSAC produces spurious bridging
+planes across adjacent slopes sharing similar heights or normal orientations.
+Production segmentation resolves both pathologies through a three-stage coarse-to-fine
+workflow:
+   1.​ Coarse Octree Voxelization and Seed Clustering: Partition the point cloud into an
+       octree; fit a least-squares plane inside each voxel and recursively subdivide into eight
+       sub-voxels wherever maximum point-to-plane residual d_{\max} exceeds threshold, down
+       to a minimum leaf scale d_s calibrated to smooth micro-texture (e.g., 0.25–0.50 m,
+       ensuring ≥10 points per seed cell over an assumed minimum structural plane area
+       [span_166](start_span)[span_166](end_span)[span_167](start_span)[span_167](end_spa
+       n)[span_168](start_span)[span_168](end_span)a_p = 1.0\text{ m}^2). Merge adjacent
+       planar voxels via agglomerative hierarchical clustering ordered by minimum merging
+       Mean Squared Error (MSE) until MSE exceeds
+       \e[span_169](start_span)[span_169](end_span)psilon_{\text{merge}}.
+   2.​ Weighted RANSAC and Footprint Alignment: Over residual complex junctions, replace
+       unweighted inlier counting with Weighted RANSAC—down-weighting inliers continuously
+       by both perpendicular residual d_i and normal angular deviation \theta_i to suppress
+       spurious cross-slope planes—or MLESAC log-likelihood maximization. Accelerated
+       hypothesis evaluation using randomized sequential pre-testing achieves 2.8–10×
+       speedups over standard RANSAC and up to 4× over standard Randomized RANSAC with
+       test. Where reliable wall footprints are available, constraining hypothesis normals to align
+       orthogonally (or at 45° for hips) to dominant footprint edge vectors further suppresses
+       false planes.
+   3.​ Constrained Region Growing and Boundary Relabeling: Sort merged patches by
+       descending point count and grow across the full-resolution point cloud under tight
+       perpendicular distance thresholds (d_i \le d_t, typically scaled to
+       2\sigma_{\text{range}}\text{–}3\sigma_{\text{range}}) and angular thresholds (\theta_i \le
+       \theta_t, chosen below the shallowest structural slope break, e.g., ~9.5° for a 2/12 pitch
+       change). Follow immediately with boundary relabeling, iteratively reassigning edge-zone
+       points to the neighboring facet yielding minimum point-to-plane distance so facet seams
+       align cleanly with true ridges and valleys.
+Monte Carlo plane-fitting simulations (2,000 trials on a 6/12 or 26.57° slope with vertical noise
+\sigma_z scaled from 0.06 m at 1 pt/m² to 0.02 m at 25 pts/m²) confirm that pitch and bearing
+accuracy depend strongly on both point density and facet size:
+Point           Main 5×10 m Main Pitch Main Bearing Dormer               Dormer Pitch Dormer
+Spacing /       (n pts)       RMSE (95th RMSE              2.5×3 m (n RMSE (95th Bearing
+Density                       %)                           pts)          %)            RMSE
+(Assumed
+\sigma_z)
+1.00 m / 1      50            0.28° (0.55°) 0.34°          9             1.11° (2.19°) 2.86°
+pt/m² (0.06
+m)
+0.71 m / 2      120           0.12° (0.24°) 0.17°          20            0.63° (1.26°) 1.22°
+pts/m² (0.05
+m)
+0.50 m / 4      200           0.09° (0.18°) 0.11°          30            0.49° (0.95°) 0.96°
+pts/m² (0.04
+m)
+0.35 m / 8      435           0.04° (0.09°) 0.05°          72            0.20° (0.40°) 0.44°
+pts/m² (0.03
+m)
+0.20 m / 25 1,250             0.02° (0.03°) 0.02°          195           0.09° (0.17°) 0.19°
+pts/m² (0.02
+m)
+Closed-Loop Watertight Topology and Edge Classification
+Transforming disconnected planar patches into a closed-loop, watertight 3D B-Rep solid relies
+on global arrangement optimization rather than local polygon stitching. Three production
+formulations govern the trade-off between architectural regularity and primitive scalability.
+PolyFit intersects detected planes (plus vertical contour discontinuity planes) into candidate
+polygonal faces and selects a closed manifold subset via Mixed-Integer Linear Programming
+(MILP) balancing data fitting, surface coverage, and model simplicity, achieving 0.27 m RMSE
+on benchmark reconstructions; however, combinatorial complexity makes PolyFit
+computationally prohibitive above ~100 planar primitives. Kinetic Shape Reconstruction
+(KSR) extracts 2D boundary segments via alpha-shapes, grows polygonal faces kinetically
+through collision state transitions to partition 3D space into polyhedral cells, and extracts a
+strictly watertight, intersection-free mesh via graph min-cut inside/outside labeling—scaling
+smoothly past PolyFit's 100-plane ceiling. SimpliCity takes a footprint-constrained route,
+building a 2D polygonal partition regularized for orthogonality, parallelism, and collinearity before
+extruding cells to 3D under global vertex-z planarity optimization.
+Every edge in the closed B-Rep is labeled deterministically from incident face geometry. Interior
+edges shared by two upward-facing roof planes whose normals diverge away from the
+intersection line (convex exterior dihedral angle <180°) represent ridges when near-horizontal
+(\vert{}\Delta z / L_{\text{horiz}}\vert{} \le 1^\circ) and hips when sloped toward eaves. Interior
+edges where adjacent roof planes slope inward toward the seam (concave exterior dihedral
+angle >180°) define valleys. Perimeter boundary edges separating a roof plane from a vertical
+fascia/wall discontinuity or overhang drop are eaves when level with the ground (carrying
+gutters and drip edge) and rakes (verge/barge edges) when sloped from eave to ridge along
+gable end walls.
+Critically, structural takeoffs must trace the physical roof drip edge rather than wall lines or
+external 2D footprint polygons. An illustrative roofing calculation shows that on a 56 × 28 ft
+ranch house with 18 in eave overhangs and 12 in rake overhangs, plan area expands from
+1,568 sq ft at the walls to 1,798 sq ft at the roof edge (+14.7%), adding 249 sq ft (~2.5 roofing
+squares) of sloped surface at a 5/12 pitch and 10.5 ft of drip edge. Relying on third-party ML
+building footprints introduces substantial structural error: a commercial vendor evaluation by
+EarthDefine claims Microsoft US Building Footprints (129.6M), FEMA USA Structures (135.3M),
+and Overture Maps (158.4M) miss 33%, 30%, and 19% of structures relative to EarthDefine's
+194.6M count; independent case testing in Vitré, France found Microsoft footprints matched only
+25% of cadastral buildings at IoU > 0.5 (versus 83%–84% for OpenStreetMap/Overture)
+because 447 Microsoft polygons merged 2,114 terraced buildings; peer-reviewed validation
+confirmed Microsoft omits small structures (<100 m²) despite 98.2%–99.5% precision on large
+buildings in Denver, New York, and Los Angeles; and an audit in Western Australia found
+~15,000 Microsoft footprints sitting on farm dams (99% false positives in a 100-polygon manual
+sample). Furthermore, imagery-derived footprints rectified only to bare-earth DTMs suffer radial
+building lean—reaching 1.87–5.77 m of horizontal offset for 4–10 m tall buildings viewed
+25°–30° off-nadir. LiDAR B-Reps extract the true 3D eave/rake outline directly and recover
+setback wall lines via vertical facade intersection where terrestrial/oblique scans exist.
+
+Stage 4: Differential Geometry and Isometric Unrolling
+for Curved Roofs
+Curved architectural shells—barrel vaults, domes, conoids, and hyperbolic
+paraboloids—fracture into spurious facets under planar RANSAC and must route to a
+continuous differential-geometry solver whenever plane-fitting residuals exceed d_t with
+spatially coherent normal gradients.
+
+Moving Least Squares Surface Projection and Bandwidth Selection
+Curved clusters are projected onto a continuous implicit manifold via Moving Least Squares
+(MLS). Algebraic Point Set Surfaces (APSS) fit local weighted algebraic spheres rather than
+tangent planes, preserving circular/elliptic vault curvature, while Robust Implicit Moving Least
+Squares (RIMLS) apply iterative reweighting on spatial and normal residuals to preserve sharp
+C^0 crease edges where curved shells meet vertical parapets or standing-seam ribs. Kernel
+support radius h is initialized at 2–3× the local point spacing and refined via Least-Squares
+Cross-Validation (h_{\text{LSCV}}) minimizing asymptotic Integrated Squared Error
+(\text{ISE}) so surface smoothing suppresses range jitter without flattening tight arches.
+
+Principal Curvature Tensors and Gaussian Classification
+At each projected manifold sample, computing the First Fundamental Form (g_{ij}) and Second
+Fundamental Form (h_{ij}) via Weingarten relations (stabilized by randomized corrected
+curvature measures where discrete noise persists) yields principal curvatures \kappa_1,
+\kappa_2 and principal directions, from which Gaussian curvature K = \kappa_1 \kappa_2 and
+Mean curvature H =
+\frac{1}{2}(\ka[span_228](start_span)[span_228](end_span)[span_229](start_span)[span_229](e
+nd_span)[span_230](start_span)[span_230](end_span)ppa_1 + \kappa_2) follow directly:
+Curvature Class Principal                 Curvature          Architectural Roof Sheet-Material
+                    Curvature             Invariants         Forms               Developability
+                    Condition
+Planar              \Vert{}\kappa_1\Ve K \approx 0, \, H Gable, hip, flat        Flat; exact 2D
+                    rt{} \le \tau_\kappa, \approx 0          slabs               polygon
+                    \,
+                    \Vert{}\kappa_2\Ve
+                    rt{} \le \tau_\kappa
+Parabolic           \min(\Vert{}\kappa K \approx 0, \, H Barrel vaults,          Developable (K =
+                    _1\Vert{},            \neq 0             Quonset arches, 0); flattens without
+                    \Vert{}\kappa_2\Ve                       cones               stretching
+                    rt{}) \le
+                    \tau_\kappa, \,
+                    \max >
+                    \tau_\kappa
+Elliptic            \kappa_1              K > 0, \, H \neq 0 Spherical/ellipsoid Non-developable;
+                    \kappa_2 > \tau_K                        al domes            requires
+                    (same sign)                                                  gore/seam cutting
+Hyperbolic          \kappa_1              K<0                Saddle roofs,       Non-developable
+                    \kappa_2 <                               hyperbolic          (even when
+                    -\tau_K (opposite                        paraboloids         straight-ruled)
+                    signs)
+First Fundamental Form Area Integration
+Computing curved surface areas from planar triangle meshes introduces systematic chordal
+error. Parameterizing smooth MLS patches locally as \mathbf{r}(u, v) = (u, v, z(u, v)) yields E = 1
++ z_u^2, F = z_u z_v, and G = 1 + z_v^2, allowing exact surface area integration via 2D
+composite 4-point Gauss–Legendre quadrature:
+A = \iint_\Omega \sqrt{EG - F^2} \, du \, dv = \iint_\Omega \sqrt{1 + z_u^2 + z_v^2} \, du \, dv
+Numerical benchmarking against analytical integrals confirms quadrature precision: on a
+parabolic barrel vault (z = 3(1 - (u/6)^2) over [-6, 6] \times [0, 12] m; exact analytical area =
+72(\sqrt{2} + \operatorname{arsinh}(1)) = 165.282275\text{ m}^2), a 16×16 4-point
+Gauss–Legendre grid recovers 165.282275 m² (0.000000% error), whereas triangulated
+meshes systematically underestimate area by -0.6452% at 4×4 (3.0 m step), -0.1607% at 8×8
+(1.5 m), and -0.0401% at 16×16 (0.75 m). Conversely, on a hyperbolic paraboloid saddle (z =
+2.5 uv / 36 over [-6, 6] \times [-6, 6] m; quadrature reference 152.024332 m²), 8×8 quadrature
+matches to 0.000000%, while triangulated meshes overestimate area by +0.6180% at 4×4,
++0.1545% at 8×8, and +0.0386% at 16×16.
+
+Numerical Isometric Unrolling for Developable Surfaces
+Flattening 3D curved roofs into flat CNC sheet-metal or sheathing patterns without stretching or
+tearing requires enforcing discrete developability. Zero vertex angle defect (\Omega_i = 2\pi -
+\sum_{t \ni i} \theta_{i,t} = 0) guarantees local flattenability alone, not physical sheet-metal
+bendability; true discrete developability simultaneously requires locally ruled hinge structure
+where consecutive face normals in each vertex star collapse onto a curve on the Gauss sphere
+(quantified by driving the smallest eigenvalue \lambda_i of the vertex-star normal covariance
+matrix toward zero).
+Unrolling executes in three sequential steps:
+   1.​ Variational Developable Decomposition: Regions exhibiting |K| > \tau_K are partitioned
+       along curvature-aligned seam curves via variational Gauss-image covariance energy
+       minimization into piecewise developable islands.
+   2.​ Isometric Ruling Unfolding: Strictly parabolic islands (K \approx 0) are unfolded
+       sequentially across ruling edges by rigid 2D planar rotation, preserving exact edge
+       lengths and surface areas.
+   3.​ Quasi-Developable Parameterization: Where slight compound curvature remains, UV
+       flattening uses Angle-Based Flattening (ABF++) rather than linear Least Squares
+       Conformal Maps (LSCM). While LSCM solves discrete Cauchy–Riemann equations
+       rapidly via linear algebra, it permits large peripheral area distortion and triangle foldovers
+       on poor seams; ABF++ optimizes interior angles directly via Sequential Linearly
+       Constrained Programming (SLCP), compressing the Hessian fivefold (up to 10× faster
+       than original ABF) while guaranteeing bijective, flip-free flattening with low stretch.
+       Edge-length strain and area ratios are logged per panel to flag any stretch exceeding
+       material tolerances.
+
+Stage 5: Hybrid Semantic Classification
+Semantic parsing discriminates superstructures, transparent glazing, and porous decking from
+solid structural roof planes by combining intersection geometry, Fresnel optics, and multi-return
+penetration physics.
+
+Intersection-Based Dormer Extraction
+No independent benchmark in the reviewed literature reports precision or recall for pure LiDAR
+geometric intersection-based dormer extraction, whereas 2D aerial-imagery convolutional
+networks achieve only a 0.59 true-positive rate on dormers and 0.60 on chimneys (compared to
+0.75 on solar modules). A three-step hybrid rule enforces geometric watertightness first:
+  1.​ Host Facet Residual Isolation: Subtract every primary roof plane \pi_{\text{host}}
+      identified in Stage 3 and isolate above-plane connected components whose horizontal
+      hulls lie strictly interior to the host roof polygon.
+  2.​ Sub-Facet Segmentation and Manifold Truncation: Apply fine-resolution
+      RANSAC/region growing to extract the dormer's sub-roof facets and vertical cheek/front
+      wall planes. Valid dormers must close via intersection valleys/apron seams onto
+      \pi_{\text{host}}, with vertical walls extruded cleanly to the base polygon intersection line.
+  3.​ Commercial-Safe Visual Cross-Check (Optional): When co-registered imagery is
+      ingested, confirm window/trim context using Apache-2.0-licensed inference graphs free of
+      AGPL-3.0 copyleft contamination—specifically MobileSAM (9.66M parameters, 10.5 MB
+      quantized / 35 MB float ONNX), SAM 2.1 Hiera-Tiny (155.9 MB PyTorch checkpoint;
+      ~148 MB encoder / ~15 MB decoder ONNX) [chap 70, 73, 77 -> cite: 70, 73, 77], or
+      Baidu's RT-DETR from lyuwenyu/RT-DETR (avoiding Ultralytics' AGPL-3.0 wrapper).
+      (While YOLOX code and weights carry Apache-2.0 terms, its repository has been inactive
+      since mid-2025 with an unresolved March 2026 licensing thread on pretrained weights.)
+
+Bayesian Silicate Glass Identification with Sub-Surface Validation
+Intensity peaks alone fail to reliably classify skylights or glazed curtain walls because specular
+echoes occur only at near-normal incidence (easily disrupted by platform tilt or vibration),
+weaken sharply with distance and scan angle, and mix with backscatter from opaque objects
+behind the glass. Evaluating exact single-interface Fresnel reflectance for air (n_1 = 1.0) to
+silicate glass (n_2 = 1.52) demonstrates why:
+Incidence Angle s-Polarized (R_s) p-Polarized (R_p) Unpolarized                    Physical LiDAR
+(\alpha)                                                       Reflectance (R)     Signature
+                     0.0°                 4.26%                4.26%               4.26%
+15.0°                4.66%                3.87%                4.27%               Weak surface
+                                                                                   reflection; interior
+                                                                                   echoes dominate
+30.0°                6.12%                2.71%                4.41%               Strong laser
+                                                                                   transmission
+                                                                                   through pane
+45.0°                9.67%                0.94%                5.30%               Minimal
+                                                                                   p-polarized return
+56.7° (Brewster      15.70%               0.00%                7.85%               Exact R_p = 0
+\theta_B)                                                                          extinction for
+                                                                                   in-plane polarized
+                                                                                   emitters
+70.0°                30.79%               4.15%                17.47%              Rising grazing
+                                                                                   specular reflection
+80.0°                54.64%               23.55%               39.09%              Strong off-axis
+                                                                                   mirror deflection
+85.0°                73.77%               49.22%               61.49%              Grazing specular
+                                                                                   reflection and
+                                                                                   multipath ghosts
+Conversely, measuring rolling-window neighboring range variation (capturing sharp range
+discontinuities between glass frames/curbs and through-glass interior walls) achieved 96.2%
+mean accuracy on single- and double-glazed glass in 16-channel LiDAR experiments without
+relying on intensity peaks. Adapting Bayesian mirror-detection frameworks into a glass classifier
+evaluates posterior probability
+P(\tex[span_38](start_span)[span_38](end_span)[span_46](start_span)[span_46](end_span)t{G
+lass} \mid \mathbf{x}) over rectangular apertures embedded in roof or wall planes (e.g.,
+standard rough skylight openings from 14.5×30.5 in to 46.5×46.5 in, 2× lumber curbs, or IRC
+≥5.7 sq ft egress openings):
+P(\text{Glass} \mid \mathbf{x}) \propto P(\text{Glass}) \cdot \mathcal{L}(I_{\text{corr}}, \alpha)
+\cdot \mathcal{L}(\sigma_R, f_{\text{dual}}) \cdot
+\mathcal{L}_{\text{sub}}(\mathcal{P}_{\text{behind}})
+Here \mathcal{L}(I_{\text{corr}}, \alpha) rewards narrow specular spikes strictly near \alpha
+\approx 0^\circ coupled with intermediate-angle dropouts; \mathcal{L}(\sigma_R, f_{\text{dual}})
+scores elevated rolling-window range variance \sigma_R and dual returns (weak first echo on
+glass, strong second echo inside); and \mathcal{L}_{\text{sub}}(\mathcal{P}_{\text{behind}})
+performs mandatory sub-surface geometric validation by confirming that unbent rays cast
+from \mathbf{S}(t_i) through the aperture strike physical points behind the plane (lightwell
+shafts, ceiling drywall, or interior floors). Confirmed glazing openings are deducted from solid
+roofing takeoffs while preserving curb perimeters for flashing estimates; baseline priors
+P(\text{Glass}) require calibration per sensor wavelength and glazing low-emissivity coating.
+
+Return Density Analysis for Penetrable Decking vs. Solid Flooring
+Reviewed infrastructure inspection literature relies predominantly on Ground Penetrating Radar
+(1.2–2.6 GHz) for concrete delamination and rebar mapping alongside macro LiDAR
+bridge-deck displacement screening (ASPRS Class 17), leaving an explicit empirical gap: no
+standardized benchmark in the reviewed studies establishes universal first-to-last return
+ratio cutoffs distinguishing open-grating or spaced-plank decking from solid flooring.
+Operationally, classification relies on physical pulse-footprint interaction rules calibrated to scan
+geometry. On solid opaque floors (concrete, asphalt overlays, continuous plywood), pulses
+terminate completely at the top surface (N_{\text{returns}} = 1, z_{\text{first}} \approx
+z_{\text{last}}) with zero valid sub-surface returns directly underneath along the direct sightline.
+On penetrable decking (steel grating or spaced planks), whenever beam spot diameter
+d_{\text{spot}} straddles board edges, pulses split into multiple discrete returns
+(N_{\text{returns}} \ge 2) while centered gap rays penetrate directly to sub-deck joists, water, or
+ground (z_{\text{last}} < z_{\text{first}} - \Delta z_{\text{deck}}). Computing local sub-surface
+transmission gap fraction P_{\text{gap}} = N_{\text{sub}} / N_{\text{ray}} jointly with
+multi-return fraction and periodic intensity striation cleanly separates porous decking from solid
+slabs whenever sub-deck clearance exceeds 3\sigma_{\text{range}} and is validated against the
+survey's footprint-to-gap ratio.
+
+Stage 6: Structural Topology Optimization and
+Multi-Pass Transient Specular Rejection
+Specular architectural reflectors—glazed skylights, curtain walls, standing-seam metal roofs,
+and ponding water—deflect laser beams onto nearby parapets, chimneys, or walls, injecting
+virtual "ghost" points behind the reflective plane. Experiments on modern interference-mitigated
+LiDARs confirm that even a single planar mirror can induce up to 6.03 m of SLAM localization
+drift and severe false-structure injection. Eliminating these artifacts combines exact reflection
+kinematics, multi-pass visibility checking, and global manifold topology optimization.
+
+Mirror Kinematics and Multi-Bounce Ray Unfolding
+For every smooth planar candidate (glass or low-roughness metal) parameterized by centroid
+\mathbf{C} and sensor-facing unit normal \mathbf{n} satisfying (\mathbf{S} - \mathbf{C}) \cdot
+\mathbf{n} > 0, specular reflection behaves as if observed from a mirrored virtual sensor
+\mathbf{S}_v, mapping any real diffuse obstacle \mathbf{p} onto a ghost coordinate
+g(\mathbf{p}) behind the plane:
+\mathbf{S}_v = \mathbf{S} - 2\big((\mathbf{S} - \mathbf{C}) \cdot \mathbf{n}\big)\mathbf{n},
+\qquad g(\mathbf{p}) = \mathbf{p} - 2\big((\mathbf{p} - \mathbf{C}) \cdot
+\mathbf{n}\big)\mathbf{n}
+For any point \mathbf{p}_{\text{cand}} lying on the far side of a candidate reflector, the pipeline
+evaluates the observation ray \mathbf{S} + u\mathbf{d} (u = 0 at sensor, u = 1 at
+\mathbf{p}_{\text{cand}}) and checks whether 0 <
+[span_286](start_span)[span_286](end_span)u \le 1 intersects inside the finite 3D polygon
+boundary of the reflector. Because planar reflection is an involution (g(g(\mathbf{p})) =
+\mathbf{p}), projecting \mathbf{p}_{\text{cand}} back across the mirror plane via
+g(\mathbf{p}_{\text{cand}}) enables two-bounce ray tracing: whenever
+g(\mathbf{p}_{\text{cand}}) coincides with a verified physical structure observed along
+unobstructed direct sightlines, \mathbf{p}_{\text{cand}} is flagged as a specular ghost and
+purged or unfolded back to its true object.
+
+Multi-Pass Transient Consistency and Joint Manifold Optimization
+No published benchmark in the reviewed studies quantifies standalone false-positive rejection
+rates for multi-pass transient filtering on roofs; the workflow integrates multi-station mirror
+tracking, physics-guided ray unfolding, and visibility carving across overlapping flight swaths or
+TLS setups in three steps:
+   1.​ Cross-Pass Pose-Invariance Filtering: Static diffuse structures remain fixed in world
+       coordinates across all scanner poses \mathbf{S}_k, whereas reflections off slightly curved
+       metal panels, wind-rippled ponding water, or misaligned glazing shift apparent positions
+       \mathb[span_287](start_span)[span_287](end_span)[span_288](start_span)[span_288](e
+       nd_span)f{p}_{\text{refl}}(\mathbf{S}_k) across passes indexed by PointSourceId.
+       Clustering sub-surface points by pass identifies pose-dependent drift as transient
+       multipath noise rather than fixed architecture.
+   2.​ Cross-Pass Free-Space Ray Carving: Any candidate sub-surface voxel traversed
+       cleanly by an unobstructed direct ray from an alternate scan station \mathbf{S}_{k'}
+       terminating on a solid diffuse target beyond it violates free-space visibility and is pruned.
+   3.​ Joint Manifold Topology Optimization: Remaining points pass to the global KSR graph
+       min-cut or PolyFit MILP solver. Even if occluded single-sided reflections escape ray
+       carving, isolated sub-surface ghost clusters lack closed watertight adjacency to the outer
+       roof/wall shell, carry inverted visibility normals, and fail minimum support
+       thresholds—preventing the global B-Rep from instantiating phantom faces in the final
+       structural CAD export.
+End-to-End Production Orchestration Summary
+Deploying the six-stage pipeline in repeatable commercial production requires enforcing strict
+input contracts, algorithmic parameters, and pass/fail quality gates at every stage boundary:
+| Pipeline Stage | Required Inputs | Core Solvers & Formulations | Operational Parameterization
+| Mandatory QC / Rejection Gate | | :--- | :--- | :--- | :--- | :--- | | 1. Octree Ingestion & Sync | LAS
+1.4 (PDRF 6/7/8) or COPC 1.0 + Applanix SBET | Byte 0–535 VLR prefetch; GPS-time SBET
+origin
+\mathb[span_291](start_span)[span_291](end_span)[span_292](start_span)[span_292](end_sp
+an)f{S}(t_i) | Retain PointSourceId & GpsTime; stage clips to local NVMe | Valid CRS;
+repeatability ≤3 cm (QL0/QL1; ~1.2 cm UAV site) | | 2. Radiometric Calibration | Raw I, R_i,
+\mathbf{v}_i, PCA normals, visibility V | AGC/overlap \eta(R) norm; Kim T^2(R); Oren–Nayar
+BRDF; log-linear \rho | Kim q(V) at 905/1550 nm; Oren–Nayar \sigma_r | Calibration residual
+~6% target; abort if V \le 0.5 km | | 3. Planar & Watertight B-Rep | Calibrated cloud (≥150–2,500
+pts/m² for <10 mm) | Octree voxelization; Weighted RANSAC; region growing; KSR/PolyFit |
+Coarse d_s = 0.25\text{–}0.5[span_304](start_span)[span_304](end_span) m (≥10 pts/cell); fine
+d_t \l[span_43](start_span)[span_43](end_span)[span_51](start_span)[span_51](end_span)e
+3\sigma_R | Watertight 2-manifold check; modeled dormer pitch RMSE ≤0.09°–0.20° | | 4.
+Curved Roof Diff. Geometry | High-residual non-planar clusters | APSS/RIMLS
+(h[span_305](start_span)[span_305](end_span)[span_306](start_span)[span_306](end_span)[s
+pan_307](start_span)[span_307](end_span)[span_308](start_span)[span_308](end_span)_{\tex
+t{LSCV}}); Weingarten \mathbf{S}; 4-pt Gauss–Legendre; ABF++/LSCM | Bandwidth h \approx
+2\text{–}3\times spacing; Gauss-image \Omega_i \to 0 | Bijective flip-free UV unroll; strain within
+sheet ductility limits | | 5. Hybrid Semantic Extraction | Watertight B-Rep, calibrated \rho,
+multi-returns, optional RGB | Host-plane subtraction; Fresnel + \sigma_R Bayesian glass test;
+P_{\text{gap}} decking test | Brewster \theta_B =
+56.7^[span_311](start_span)[span_311](end_span)\circ (n=1.52); Apache-2.0 ML | Direct-ray
+sub-surface glass validation; closed dormer seams | | 6. Specular Ghost Elimination | Multi-pass
+clouds, \mathbf{S}_k(t_i), mirror/glass planes | Virtual sensor \mathbf{S}_v; 0 < u
+\l[span_221](start_span)[span_221](end_span)e 1 ray test; ray-carving; KSR min-cut |
+Cross-swath pose invariance; two-bounce diffuse snap check | Zero free-space visibility
+conflicts; all virtual ghosts purged before CAD export |
+
+Works cited
+
+1. Theory and practice on Terrestrial Laser Scanning,
+https://pointclouds.eu/Downloads/01_Documents/Leonardo_Tutorial_Final_vers5_ENGLISH.pdf
+2. USGS 3DEP Lidar Quality Levels QL0–QL3 Explained - SANMUD,
+https://sanmud.us/resources/usgs-3dep-lidar-quality-levels.html 3. LiDAR Quality and Density -
+Kinetics Geospatial, https://kineticsgeo.com/lidar-density/ 4. (PDF) Absolute Accuracy
+Assessment of Lidar Point Cloud Using,
+https://www.researchgate.net/publication/363881005_Absolute_Accuracy_Assessment_of_Lidar
+_Point_Cloud_Using_Amorphous_Objects 5. COPC: Cloud Optimized Point Clouds for
+Streaming LiDAR, https://obedmacallums.com/posts/copc-cloud-optimized-point-clouds/ 6.
+Applanix POSPac Assure, https://applanix.trimble.com/en/services/applanix-pospac-assure 7.
+Correction of Incidence Angle and Distance Effects on TLS Intensity,
+https://www.mdpi.com/2072-4292/8/3/251 8. Impact of Reduced Visibility Conditions on
+Laser-Based DP Sensors,
+https://dynamic-positioning.com/proceedings/dp2014/Sensors_mcknight.pdf 9. From Ad Hoc
+Intensity Correction to Rigorous Radiometric Calibration,
+https://pmc.ncbi.nlm.nih.gov/articles/PMC4701271/ 10. Terrestrial Laser Scanning Intensity
+Correction by Piecewise Fitting, https://www.mdpi.com/2072-4292/9/11/1090 11. Roof Plane
+Segmentation from Airborne LiDAR Data Using ... - MDPI,
+https://www.mdpi.com/2072-4292/12/9/1363 12. Investigation on the Weighted RANSAC
+Approaches for Building, https://www.mdpi.com/2072-4292/8/1/5 13. Hierarchical Space
+Partition for Surface Reconstruction - OpenReview,
+https://openreview.net/pdf/ee1ffa0ee01691fc281084c447498ede2e3c27f4.pdf 14.
+Reconstructing Buildings with Simple Regularized 3D Models,
+https://openaccess.thecvf.com/content/CVPR2024W/USM/papers/Bauchet_SimpliCity_Reconstr
+ucting_Buildings_with_Simple_Regularized_3D_Models_CVPRW_2024_paper.pdf 15.
+meshlab-ts/README.md at main · yuyakinjo/meshlab-ts · GitHub,
+https://github.com/yuyakinjo/meshlab-ts/blob/main/README.md 16. SURFACE DENOISING
+BASED ON THE VARIATION OF ... - Refubium,
+https://refubium.fu-berlin.de/bitstream/handle/fub188/22984/Dissertation_Yadav.pdf;jsessionid=1
+B306B9262D9F960C9CD4E11703CB353?sequence=4 17. arXiv:2111.01636v2 [math.DG] 27
+Nov 2021, https://arxiv.org/pdf/2111.01636 18. ABF++: Fast and Robust Angle Based Flattening
+Temporary version, https://www.cs.ubc.ca/~sheffa/papers/abf_plus_plus.pdf 19. Developability
+of Triangle Meshes - Carnegie Mellon University,
+https://www.cs.cmu.edu/~kmcrane/Projects/DiscreteDevelopable/paper.pdf 20. MirrorDrift:
+Actuated Mirror-Based Attacks on LiDAR SLAM - arXiv, https://arxiv.org/html/2603.11364v1 21.
+Detection and mapping of specular surfaces using multibounce,
+https://www.researchgate.net/publication/366350243_Detection_and_mapping_of_specular_sur
+faces_using_multibounce_LiDAR_returns 22. ruixv/NLOS_Overview: Recent Advances on
+Non-Line-of-Sight, https://github.com/ruixv/NLOS_Overview 23. DEEP LEARNING FOR
+SEMANTIC 3D CITY MODEL EXTENSION,
+https://artefacts-discovery.researcher.life/full_text/DA-2/b9/b9b3fabc216e3a2b95299367237ef86
+d/full_text/70045db93e6bdf5662897e03592ebe16.pdf 24. LiDAR-Based Glass Detection for
+Improved Occupancy Grid Mapping,
+https://www.researchgate.net/publication/350379689_LiDAR-Based_Glass_Detection_for_Impr
+oved_Occupancy_Grid_Mapping 25. The Accuracy and Consistency of 3D Elevation Program
+Data - MDPI, https://www.mdpi.com/2072-4292/14/4/940 26. Combination of overlap-driven
+adjustment and Phong model for,
+https://www.researchgate.net/publication/258791297_Combination_of_overlap-driven_adjustme
+nt_and_Phong_model_for_LIDAR_intensity_correction 27. An evaluation of TLS-based glacier
+change assessment in the,
+https://www.tandfonline.com/doi/full/10.1080/17538947.2024.2375527 28. Unsupervised
+Clustering Method for Complexity Reduction of, https://www.mdpi.com/2072-4292/10/1/133 29.
+LiDAR Point Cloud Quality Control - Microdrones,
+https://www.microdrones.com/en/content/lidar-point-cloud-quality-control-automating-accuracy-a
+nd-precision-testing/ 30. USGS 3DEP LiDAR Point Clouds | AWS Marketplace - Amazon.com,
+https://aws.amazon.com/marketplace/pp/prodview-647e3hzk3b3jc 31. Topographic Data Quality
+Levels (QLs) | U.S. Geological Survey,
+https://www.usgs.gov/3d-elevation-program/topographic-data-quality-levels-qls 32. LiDAR
+Accuracy: RMSE, Check Points and ASPRS Standards, https://lidarvisor.com/lidar-accuracy/ 33.
+COPC: Cloud-Optimized Storage for LiDAR Point Clouds - OSM2CDR,
+https://osm2cdr.com/en/blog/format-copc-deep-dive/ 34. What Is a COPC File? (Point Cloud
+Format) - Lidar News, https://lidarnews.com/what-is-a-copc-file-point-cloud-format/ 35. COPC
+and Cloud-Native Point Cloud Formats - Python LiDAR,
+https://www.pythonlidar.com/point-cloud-data-standards-fundamentals/copc-and-cloud-native-for
+mats/ 36. GitHub - 360-geo/copc-converter, https://github.com/360-geo/copc-converter 37.
+Benchmarking Cloud-Optimized Point Clouds (COPC) for Scientific,
+https://talks.osgeo.org/foss4g-na-2026/talk/E9HX7Q/ 38. Process Raw Trajectory Data - Trimble
+Field Systems Help Portal, https://help.fieldsystems.trimble.com/tbc/25943.htm 39. IMU
+Trajectory Batch Processing - Measur Help,
+https://help.measur.ca/portal/en/kb/articles/imu-trajectory-batch-processing 40. Identifying SBET
+coordinate system and reprojecting it with PDAL?,
+https://gis.stackexchange.com/questions/230577/identifying-sbet-coordinate-system-and-reproje
+cting-it-with-pdal 41. arXiv:2401.01439v1 [cs.CV] 2 Jan 2024, https://arxiv.org/pdf/2401.01439
+42. (PDF) Reflectance modelling using terrestrial LiDAR intensity data,
+https://www.researchgate.net/publication/284440462_Reflectance_modelling_using_terrestrial_
+LiDAR_intensity_data 43. Development and Test of a Automatic Gain Controller for a Lidar,
+https://elib.dlr.de/203479/1/Masters_Thesis_DLR_final.pdf 44. 3 AGC Components - How
+Automatic Gain Control Works - Novotech,
+https://novotech.com/pages/automatic-gain-control-agc 45. Absolute Radiometric Calibration of
+ALS Intensity Data - MDPI, https://www.mdpi.com/1424-8220/11/11/10586 46.
+isprs-archives-XLI-B3-155-2016.pdf,
+https://isprs-archives.copernicus.org/articles/XLI-B3/155/2016/isprs-archives-XLI-B3-155-2016.p
+df 47. Estimation of a lidar's overlap function and its calibration by,
+https://pubmed.ncbi.nlm.nih.gov/22858954/ 48. Can Automated Vehicles "See" in Minnesota?
+Ambient Particle, https://mdl.mndot.gov/index.php/_flysystem/fedora/2023-01/202203.pdf 49.
+Simulation of real-time Lidar sensor in non-ideal environments,
+https://www.diva-portal.org/smash/get/diva2:1866513/FULLTEXT01.pdf 50. Experimental Study
+of Atmospheric Visibility and Optical Wave,
+https://www.ursi.org/proceedings/procGA08/papers/F06p5.pdf 51. The wavelength dependent
+model of extinction in fog and haze for,
+https://www.semanticscholar.org/paper/The-wavelength-dependent-model-of-extinction-in-fog-G
+r%C3%A1bner-Kvicera/39585632e1aa54b5998b4df0905bcb369d3e3ae7 52. Effects of fog
+attenuation on LIDAR data in urban environment,
+https://www.researchgate.net/publication/323347113_Effects_of_fog_attenuation_on_LIDAR_da
+ta_in_urban_environment 53. Oren–Nayar reflectance model - Wikipedia,
+https://en.wikipedia.org/wiki/Oren%E2%80%93Nayar_reflectance_model 54. Oren-Nayar
+Reflectance Model — CAVE,
+https://cave.cs.columbia.edu/projects/categories/project?cid=Physics-Based+Vision&pid=Oren-
+Nayar+Reflectance+Model 55. Automatic Segmentation of Raw LIDAR Data for Extraction of,
+https://www.isprs.org/resources/datasets/benchmarks/UrbanSemLab/results/papers/MON_remo
+tesensing-06-03716c.pdf 56. RANSAC for Robotic Applications: A Survey - PMC,
+https://pmc.ncbi.nlm.nih.gov/articles/PMC9824669/ 57. RANSAC for Aligned Planes with
+Application to Roof Plane,
+https://www.hs-niederrhein.de/fileadmin/dateien/FB03/Personen/goebbels/Publikationen/preprint
+_grapp2020.pdf 58. RoofSeg: An edge-aware transformer-based network for end ... - arXiv,
+https://arxiv.org/html/2508.19003v1 59. Hierarchical Space Partition for Surface Reconstruction -
+arXiv, https://arxiv.org/html/2606.04891v1 60. PolyFit: Polygonal Surface Reconstruction from
+Point Clouds,
+https://www.researchgate.net/publication/318726301_PolyFit_Polygonal_Surface_Reconstructio
+n_from_Point_Clouds 61. Parametric Point Cloud Completion for Polygonal Surface,
+https://www.researchgate.net/publication/394618118_Parametric_Point_Cloud_Completion_for_
+Polygonal_Surface_Reconstruction 62. Optimal Model Fitting for Building Reconstruction From
+Point Clouds,
+https://engineering.purdue.edu/~jshan/publications/2021/JSTARS3110429%20Optimal_Model_
+Fitting_for_Building_Reconstruction_from_Point_Clouds%20Final%20published%20version%20
+20210928.pdf 63. Roof Eave vs Rake | Key Differences Explained (2026),
+https://roofpitch.net/roof-eave-vs-rake/ 64. Rake Edge vs Eave: What's the Difference? | Rooftop
+Relief, https://rooftoprelief.com/know-your-roof/flashing-and-edge/rake-edge 65. What Is the
+Edge of a Roof Called? Eaves, Rakes & Fascia,
+https://www.cardenroofing.com/what-is-the-edge-of-a-roof-called 66. Understanding the Rake of
+a Roof: A Comprehensive Guide,
+https://kangaroof.com/understanding-the-rake-of-a-roof-a-comprehensive-guide/ 67. Hip vs.
+Gable Roof: A Complete Comparison (With Pictures),
+https://www.tulsaprotech.com/hip-vs-gable-roof/ 68. Measuring roof eaves and overhangs:
+length, depth and squares,
+https://roofstruct.com/blog/measuring-overhangs-and-eaves-from-aerial-imagery 69. Building
+Footprints: Roof Outline or Real Area? - MapUtopia,
+https://maputopia.com/what-satellite-data-measures-when-it-maps-a-building 70. A Buyer's
+Guide: How to Choose a US Building Footprint Dataset,
+https://www.earthdefine.com/evaluate/buildings-buyers-guide/ 71. Microsoft Building Footprints
+vs Google vs Overture, Tested - TerraLab,
+https://terra-lab.ai/blog/building-footprint-datasets-compared 72. Does the Microsoft US Building
+Footprints database actually have a,
+https://www.reddit.com/r/gis/comments/1bhq52u/does_the_microsoft_us_building_footprints/ 73.
+[Buildings] ~15,000 Microsoft ML footprints on farm dams in Western,
+https://github.com/OvertureMaps/data/issues/580 74. Apparent Spatial Errors & Orthophoto
+Building Lean | Pima County, AZ,
+https://www.pima.gov/apparent-spatial-errors-orthophoto-building-lean 75. A Moving Least
+Square Reproducing Kernel Particle Method for,
+https://cg.cs.tsinghua.edu.cn/papers/SIGASIA-2020-fluid.pdf 76. A Lightweight Neural Network
+for Fast and Interactive Edge ... - arXiv, https://arxiv.org/html/2011.01630v4 77. Interpolatory
+point set surfaces—convexity and Hermite data,
+https://www.researchgate.net/publication/220184710_Interpolatory_point_set_surfaces-convexit
+y_and_Hermite_data 78. Bandwidth Selection for Weighted Kernel Density Estimation - arXiv,
+https://www.arxiv.org/pdf/0709.1616v2 79. Tutorial on kernel estimation of continuous spatial
+and ... - arXiv, https://arxiv.org/pdf/1707.06888 80. A Review of Kernel Density Estimation with
+Applications to ... - arXiv, https://arxiv.org/pdf/1212.2812 81. Lightweight Curvature Estimation
+on Point Clouds with Randomized,
+https://www.researchgate.net/publication/373161667_Lightweight_Curvature_Estimation_on_Po
+int_Clouds_with_Randomized_Corrected_Curvature_Measures 82. curvature estimates for
+weingarten hypersurfaces in riemannian,
+https://archive.ymsc.tsinghua.edu.cn/pacm_download/92/1060-weingarten.pdf 83. Use different
+unwrap methods (angle-based/conformal) conceptually,
+https://www.varsitytutors.com/practice/subjects/blender/lessons/use-different-unwrap-methods-a
+ngle-based-conformal-conceptually-intro 84. Dormer Flashing Details: Avoid Roof Transition
+Leaks, https://gocityside.com/dormer-flashing-details-avoiding-traps-at-wall-to-roof-transitions/
+85. Is YOLO Free for Commercial Use? Licenses Explained - Rizwan AI,
+https://www.rizwanai.com/licensing 86. Object Detection Models: Licenses, Years and Accuracy,
+https://robotinaction.tech/model-licenses.html 87. vietanhdev/segment-anything-onnx-models -
+Hugging Face, https://huggingface.co/vietanhdev/segment-anything-onnx-models 88. GitHub -
+ChaoningZhang/MobileSAM: This is the official code for,
+https://github.com/chaoningzhang/mobilesam 89. RT-DETR/LICENSE at main - lyuwenyu -
+GitHub, https://github.com/lyuwenyu/RT-DETR/blob/main/LICENSE 90. Issue #1915 ·
+Megvii-BaseDetection/YOLOX - GitHub,
+https://github.com/Megvii-BaseDetection/YOLOX/issues/1915 91. Every YOLO License,
+Explained: v1 to YOLO26 (2026 Guide),
+https://www.libreyolo.com/articles/yolo-licenses-explained 92. Reconstructing scenes with mirror
+and glass surfaces - ResearchGate,
+https://www.researchgate.net/publication/326727910_Reconstructing_scenes_with_mirror_and_
+glass_surfaces 93. Skylight Installation Codes: Key Requirements - Old World Roofing,
+https://oldworldroofing.com/skylight-installation-codes-requirements/ 94. Measure Your Skylight
+Correctly - Columbia Skylights,
+https://www.columbiaskylights.com/technical-info/measure-your-skylight-correctly/ 95. Self
+Flashing Skylight Installation Instructions - Roofing Direct,
+https://cdn.roofingdirect.com/2020/07/Self-Flashing-Skylight-Installation-1.pdf 96. Standard
+Skylight Installation Guide 0.51 0.35 0.62 57 - CrystaLite, Inc.,
+https://crystaliteinc.com/_files/skylights/INSTALL_skylight.pdf 97. Ground Penetrating Radar
+Testing for Bridge Decks - Ltbp Protocol,
+https://www.fhwa.dot.gov/publications/research/infrastructure/structures/ltbp/16007/034.cfm 98.
+Ground Penetrating Radar GPR Bridge Deck Evaluation Methods,
+https://ifactoryapp.com/industries/infrastructure-management/ground-penetrating-radar-bridge-d
+eck-evaluation 99. Data Fusion of Non-destructive Testing Methods for Bridge Deck,
+https://opentransportationjournal.com/VOLUME/16/ELOCATOR/e187444782211210/ 100.
+LIDAR BASED BRIDGE EVALUATION,
+https://www.ugpti.org/smartse/research/citations/downloads/Liu-LiDAR_Based_Bridge_Evaluati
+on-2010.pdf 101. Bridge Deck Surface Profile Evaluation for Rapid Screening and,
+https://cait.rutgers.edu/wp-content/uploads/2021/05/cait-utc-reg52-final.pdf 102. An Evaluation
+of Ghost Objects in Automotive Radar Data,
+https://www.researchgate.net/publication/357106290_The_Radar_Ghost_Dataset_-_An_Evalua
+tion_of_Ghost_Objects_in_Automotive_Radar_Data 103. cstr/sam2.1-hiera-tiny-ONNX -
+Hugging Face, https://huggingface.co/cstr/sam2.1-hiera-tiny-ONNX
+

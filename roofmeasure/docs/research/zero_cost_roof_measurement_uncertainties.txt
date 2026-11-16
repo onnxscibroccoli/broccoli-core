@@ -1,0 +1,914 @@
+Resolving Technical Uncertainties in
+Zero-Cost Residential Roof
+Measurement
+Producing estimator-grade residential roof reports at zero end-user cost is technically viable for
+primary facet areas, dominant pitches, and main ridge bearings wherever public airborne lidar
+(USGS 3DEP Quality Level 2 or better) overlaps high-resolution leaf-off state or local
+orthoimagery at 15 cm resolution. Where either input is absent—particularly in jurisdictions
+restricted to 0.3–0.6 m summer NAIP imagery or lacking lidar coverage—automated pipelines
+cannot reliably separate gable ends from hip ends, measure roof overhangs, recover dormer or
+skylight curb heights within ±0.5 m, or isolate small outbuildings from terrain clutter without
+human verification. An estimator-grade zero-cost system must therefore enforce a strict
+provenance boundary: 3-D lidar plane intersections and user-verified geometry drive billable
+takeoff totals, while unverified 2-D geometric extrapolations and computer-vision feature
+detections remain segregated from material quantities.
+Across all 14 technical uncertainties, open datasets introduce systematic biases that break
+naive CAD-style assumptions. Public building footprints (Overture Maps, Microsoft, FEMA) trace
+outer roof edges rather than exterior walls in imagery-derived areas, while a vendor benchmark
+by EarthDefine reports that these datasets omit 19–33% of U.S. structures (concentrated
+among garages and sheds under 100 m²). Meanwhile, terrain-rectified 15 cm orthophotos
+routinely display 2–6 m of radial building lean that must never be interpreted as overhang.
+Lightweight Apache-2.0 neural models—specifically MobileSAM, SAM 2.1 Hiera-Tiny, and Depth
+Anything V2 Small—execute completely offline in browsers and on mobile devices, yet serve
+reliably only as guided mask refiners or relative-relief cues rather than standalone metric 3-D
+reconstructors.
+
+Zero-Cost Data Sources, Endpoints, and Coverage
+Gaps
+Zero-cost constraints eliminate commercial aerial providers, paid parcel aggregators, and
+key-gated APIs whose terms bar multi-user redistribution or reserve high-resolution layers for
+paid subscribers. AWS Requester Pays buckets (s3://usgs-lidar/ raw LAZ and
+s3://naip-visualization/, naip-analytic/, and naip-source/) bill egress transfer to the caller, and
+OpenTopography limits 1 m USGS 3DEP raster API access to academic (.edu) or paid OT+
+users ($30/month or $330/year) while capping free non-academic accounts at 50 calls per 24
+hours and barring shared application keys. Additionally, a November 2026 GIS industry analysis
+reported that USDA permanently retired its Geospatial Data Gateway on March 31, 2026,
+shifting zero-cost NAIP access to USDA Box county mosaics, USGS EarthExplorer, Microsoft
+Planetary Computer, non-key USGS National Map REST services (capped at 4,000 × 4,000 px
+per request), and state GIS hubs—while national NAIP cloud catalogs still lagged behind 2025
+state flights up to 2023.
+Data Layer          Recommended         Zero-Cost Access Resolution and         Critical Coverage
+                    Free Source         Path             Vintage                Gaps and
+                                                                                Constraints
+Lidar Point Clouds USGS 3DEP          s3://usgs-lidar-publ QL2 baseline (≥2 Projects missing
+                    Entwine (EPT)     ic/ (us-west-2,      pts/m², ≤10 cm       complete CRS
+                                      --no-sign-request) RMSEz); QL1            metadata are
+                                                           urban/state (≥8      excluded from
+                                                           pts/m²)              EPT; Class 6
+                                                                                (building) is not
+                                                                                mandatory in
+                                                                                3DEP; Alaska
+                                                                                relies largely on 5
+                                                                                m IfSAR (QL5)
+Seamless Ground USGS 3DEP             Direct USGS S1M 1 m S1M (10×10 S1M nationwide
+DEMs                Seamless          COG / National       km COGs, rollout rollout incomplete;
+                                      Map                  since mid-2025); 3DEP seamless
+                                                           10 m & 30 m          DEMs are
+                                                           CONUS                bare-earth terrain
+                                                                                models (DTMs)
+                                                                                excluding
+                                                                                buildings, useful
+                                                                                only as ground
+                                                                                baselines (H_roof -
+                                                                                DTM) rather than
+                                                                                roof pitch
+State & Regional State Portals (e.g., Direct state tile    7.5–15 cm GSD, Patchwork
+High-Res Orthos MassGIS, VCGI, portals,                    4-band RGB-IR        geographic
+                    KyFromAbove,      WMS/WMTS,            (e.g., MassGIS       availability; absent
+                    Indiana GIO)      AWS Open Data 2025 leaf-off;              in states without
+                                                           VCGI even years public ortho
+                                                           leaf-off; Indiana 15 programs
+                                                           cm leaf-on)
+National Orthos     USDA NAIP         USDA Box,            0.6 m standard       Leaf-on summer
+                                      EarthExplorer,       since 2018; 0.3 m canopy hides
+                                      Planetary            in 22 states;        eaves; ≤6 m
+                                      Computer,            4-band RGB-NIR; horizontal
+                                      National Map         2–3 yr cycle         tolerance (95%);
+                                      REST (avoid                               ≤10% cloud;
+                                      Requester Pays                            national catalogs
+                                      S3)                                       stop at 2023 as of
+                                                                                late 2026 while
+                                                                                some states host
+                                                                                2025 flights locally
+Building Footprints Overture Maps / S3/Azure               Overture 158.4M Vendor analysis
+                    FEMA USA          --no-sign-request US (73% heights); (EarthDefine) finds
+                    Structures /      GeoParquet           FEMA 135.3M          19–33% missing
+                    Microsoft         (Overture); public (24% lidar heights structures; MS
+Data Layer         Recommended         Zero-Cost Access Resolution and     Critical Coverage
+                   Free Source         Path             Vintage            Gaps and
+                                                                           Constraints
+                                    bulk download       in 133 cities); MS misses <100 m²,
+                                                        129.6M (0 heights) FEMA misses
+                                                                           <450 sq ft;
+                                                                           Overture/OSM
+                                                                           carry ODbL
+                                                                           share-alike
+                                                                           obligations (MS
+                                                                           Global uses
+                                                                           CDLA-P-2.0)
+Parcel Boundaries State Aggregators Direct state/county Municipal tax-map No free nationwide
+                  & County GIS      downloads &         polygons           standardized US
+                                    REST (e.g., NC      (Shapefile,        parcel layer;
+                                    OneMap, Utah        GeoJSON,           digitized tax lines
+                                    UGRC, Maryland, GeoPackage)            often shift several
+                                    MassGIS)                               feet across roofs
+                                                                           and streets
+1. Eave vs. Rake Classification from 2-D Outlines
+Roof eaves are horizontal lower perimeter edges that carry gutters and ice barriers, whereas
+rakes are sloped gable-end edges climbing from eave to ridge without gutters. When only a 2-D
+roofprint and a dominant ridge bearing are known, the most reliable geometric rule combines
+ridge-line side testing with vector alignment relative to the ridge unit vector \hat{r}: edges
+parallel to \hat{r} (minimum |\hat{e} \times \hat{r}|, e.g., within ±10–15°) whose vertices remain
+on one side of the ridge axis are labeled candidate eaves, while edges crossing or running
+orthogonal to the ridge line are labeled candidate rakes. Using a cross-product side-of-ridge-line
+test outperforms simple distance or aspect-ratio thresholds on near-square footprints.
+Nevertheless, 2-D outlines cannot verify whether an orthogonal end edge terminates in a
+vertical gable wall or a sloped hip facet: in a study of LiDAR-free LoD1.3-to-LoD2.2
+reconstruction across 41 Dutch 3DBAG tiles restricted to rectangular flat, gabled, and hipped
+buildings, classification reached only 75.31% under cross-validation and 68.10% on held-out
+tiles, identifying gable-versus-hip confusion as the dominant failure ceiling even when building
+heights and neighbor context were supplied.
+Single-ridge, per-wing, and aspect-based heuristics exhibit distinct failure profiles across roof
+shapes. A single-ridge rule accurately labels two eaves and four half-span rakes on pure
+rectangular gables, but fails completely on pure hip roofs—which have eaves on all four sides
+and zero rakes—causing a 2:1 rectangular hip to lose one-third of its gutter footage and acquire
+four phantom rakes. A per-wing decomposition splits L-, T-, U-, and H-shaped footprints into
+rectangular sections assuming each wing's ridge runs along its local major axis, resolving
+perpendicular cross-gables that a global bearing inverts; however, it still misclassifies square
+wings, front-facing cross-gables running along the minor axis, clipped-gable (jerkinhead) ends,
+and Dutch gables. A pure 2-D aspect-based method built solely from outward polygon normals
+collapses into an unweighted straight-skeleton hip roof (all eaves, no rakes). True aspect
+classification requires an elevation gradient \nabla z (lidar or stereo DSM), where eaves satisfy
+\nabla z \parallel \hat{n}_e (gradient perpendicular to the level edge) and rakes satisfy \nabla z
+\perp \hat{n}_e (gradient parallel to the sloped edge), solving mixed gable/hip roofs reliably.
+On L-shaped and multi-ridge houses, the most frequent failure modes occur at re-entrant
+corners, attached-garage step-backs, and short facade recesses, where an edge parallel to a
+ridge actually abuts vertical siding (requiring apron or step flashing rather than a free-draining
+eave) or where flying/prow gables extend the ridge beyond the eave line.
+Recommended Low-Confidence Default: When elevation gradients or visual/user gable
+confirmations are unavailable, label perimeter edges Unclassified Perimeter (Eave/Rake
+Unverified), report total perimeter linear footage without splitting gutter LF from rake trim, or
+render a provisional hip-default outline locked until the user toggles confirmed gable ends.
+
+2. Pitch and Ridge Extraction from Public Lidar
+Because USGS 3DEP minimum specifications do not require building classification (Class 6),
+extraction pipelines must isolate non-ground returns (Class != 2, excluding noise Classes 7 and
+18) inside a buffered footprint and strip canopy returns via height consistency and multi-return
+filtering. Classical Hough Transform plane extraction underperforms Random Sample
+Consensus (RANSAC) in both computational efficiency and segmentation accuracy, while
+standard unweighted RANSAC routinely generates spurious cross-ridge planes bridging shallow
+adjacent facets.
+Two zero-cost, offline geometric algorithms deliver the highest confidence on residential point
+clouds: footprint-aligned Weighted RANSAC / MLESAC refined with orthogonal-distance
+Principal Component Analysis (PCA), and octree/voxel region growing with hierarchical
+clustering and boundary relabeling. Constraining RANSAC hypothesis normals to be
+orthogonal (or at 45° hip angles) to dominant footprint vectors suppresses off-axis tilt artifacts on
+noisy roofs, while distance- and normal-weighted consensus scoring (Weighted
+RANSAC/MLESAC) eliminates bridging planes. Note that at very dense spacing (e.g., 40
+pts/m²), shingle, tile, or corrugated-metal micro-relief and ranging jitter make tight-neighborhood
+PCA normals noisy; resampling seed neighborhoods to 0.5 m spacing (~4 pts/m²) stabilizes
+coplanar seed selection while preserving small 1 m² facets. Ridges, hips, and valleys should be
+computed analytically as 3-D plane–plane intersection lines trimmed to adjacent inlier hulls
+rather than extracted from gridded raster crests.
+No published benchmark in the reviewed literature directly quantifies empirical suburban pitch
+RMSE across 1.0 m, 0.5 m, and denser 3DEP clouds against field measurements. However,
+USGS 3DEP smooth-surface repeatability bounds (RMSDz ≤ 0.12 m for QL3, ≤0.08 m for QL2,
+≤0.03 m intraswath for QL1/QL0) and industry PCA minimums (≥10 points per cell, ≥4 pts/m²
+practical density) enable direct Monte Carlo error propagation. Simulating 2,000 ordinary
+least-squares plane fits on a 6/12 (26.57°) slope under idealized single-swath Gaussian vertical
+noise (\sigma_z) aligned to 3DEP repeatability (excluding tree occlusion and interswath offsets)
+defines the theoretical precision floor below:
+Point Spacing & Assumed                  Main Facet (5×10 Small Facet             Practical Suburban
+Regime                Single-Swath       m): Pts / Pitch      (2.5×3.0 m): Pts / Operational
+                      Noise (\sigma_z) RMSE (95%) /           Pitch RMSE (95%) Assessment
+                                         Bearing RMSE         / Bearing RMSE
+1.0 m (1 pt/m²,       0.06 m             50 pts / ±0.28°      9 pts / ±1.11°      Below <10-pt PCA
+legacy QL3)                              (±0.55°) / ±0.34° (±2.19°) / ±2.86° minimum on small
+                                                                                  hips/dormers; risky
+                                                                                  for complex
+Point Spacing &    Assumed             Main Facet (5×10     Small Facet         Practical Suburban
+Regime             Single-Swath        m): Pts / Pitch      (2.5×3.0 m): Pts / Operational
+                   Noise (\sigma_z)    RMSE (95%) /         Pitch RMSE (95%) Assessment
+                                       Bearing RMSE         / Bearing RMSE
+                                                                                residential roofs.
+0.71 m (2 pts/m², 0.05 m                120 pts / ±0.12°    20 pts / ±0.63°     Resolves main
+3DEP QL2 min)                           (±0.24°) / ±0.17° (±1.26°) / ±1.22° facets within
+                                                                                ±0.25/12, though
+                                                                                swath-overlap
+                                                                                steps (≤0.08 m)
+                                                                                can bias small
+                                                                                facets.
+0.50 m (4 pts/m², 0.04 m                200 pts / ±0.09°    30 pts / ±0.49°     Meets ≥4 pts/m²
+typical 3DEP QL2)                       (±0.18°) / ±0.11° (±0.95°) / ±0.96° floor; contractors
+                                                                                average ~2×
+                                                                                nominal QL2
+                                                                                density in 3DEP
+                                                                                (though sample
+                                                                                tiles below 2
+                                                                                pts/m² occur).
+0.35 m (8           0.03 m              435 pts / ±0.04°    72 pts / ±0.20°     Resolves small 7.5
+pts/[span_131](sta                      (±0.09°) / ±0.05° (±0.40°) / ±0.44° m² hips/dormers
+rt_span)[span_131                                                               within ±0.5°; swath
+](end_span)m²,                                                                  alignment and
+3DEP QL1)                                                                       trees dominate
+                                                                                error.
+0.20 m (25 pts/m², 0.02 m               1,250 pts / ±0.02° 195 pts / ±0.09°     High accuracy;
+dense urban)                            (±0.03°) / ±0.02° (±0.17°) / ±0.19° requires ~0.5 m
+                                                                                seed resampling to
+                                                                                damp
+                                                                                roof-covering
+                                                                                texture noise.
+Real-world failure modes center on interswath calibration differences (up to 0.08 m RMSDz in
+QL1/QL2), which can split a single flat plane into two parallel overlapping planes, as well as
+dense overhanging canopy creating steep false vegetation facets and legacy tiles dipping below
+2 pts/m². To prevent multi-plane fragmentation from inflating linear footage, merge
+near-coplanar segments (<5° normal difference and <0.10 m step), enforce non-overlapping 2-D
+partition ownership across the roofprint, and demote unmerged or weak hypotheses (<10–15
+points or RMSE >0.08 m) to an appendix excluded from linear totals.
+Recommended Low-Confidence Default: Exclude unverified plane-intersection segments
+from Ridge, Hip, and Valley totals; assign any under-sampled facet (<10 points or RMSE >0.12
+m) the structure's area-weighted median verified pitch tagged Pitch Estimated — Low Lidar
+Support.
+
+3. Overhang Estimation from Ortho vs. Roofprint
+Mismatch
+Apparent 2–6 m offsets between lean-corrected roofprints and 15 cm orthophotos reflect radial
+building lean and orthorectification error, not roof overhangs. Because standard orthos are
+projected onto a bare-earth DTM rather than a DSM, elevated eaves shift radially outward by
+\Delta r = h \tan\theta relative to their true planimetric position. Modeling this geometry confirms
+why multi-meter offsets are common: a 7 m tall two-story house imaged at 20°–30° off-nadir
+shifts 2.55–4.04 m, and a 10 m tall roof at 25°–30° shifts 4.66–5.77 m—before accounting for
+NAIP's 6 m (95%) horizontal contract tolerance. By contrast, roofing industry guides place
+typical suburban overhangs at 12–24 in (0.30–0.61 m) on eaves and 6–16 in (0.15–0.41 m) on
+rakes. Furthermore, imagery-derived footprints (Microsoft, Overture ML fills, EarthDefine, and
+typical aerial traces) already capture the outer fascia edge including overhangs, whereas
+tax-assessor records and municipal cadastres often describe ground walls. On a 56 × 28 ft
+(1,568 sq ft) ranch at 5/12 pitch, adding 18 in eaves and 12 in rakes increases plan area by 230
+sq ft (+14.7%, or 249 sq ft / 2.5 squares sloped) and adds 10.5 ft of drip edge—highlighting why
+mistaking a 3 m lean offset for overhang would severely distort a bid.
+Automated zero-cost methods cannot reliably extract true overhang depth from
+ortho-versus-roofprint mismatch alone:
+   1.​ Roof-and-facade semantic segmentation: Dual segmentation of roof and exposed
+       siding (demonstrated by PMC8749658) recovers the lean vector and wall base along the
+       camera-facing elevation, yet leaves the far wall occluded beneath the roof, preventing
+       full-perimeter overhang estimation.
+   2.​ Multi-date / multi-angle imagery: Comparing two public ortho vintages (e.g., MassGIS
+       2021 vs. 2025 or NAIP vs. state imagery) reveals opposing roof-lean directions over
+       invariant ground curbs. While this verifies lean direction and stabilizes roof registration,
+       both orthos trace the outer roof edge rather than the hidden interior wall plate.
+   3.​ Under-eave shadow and fascia cues: Under-eave shadow bands on sunlit walls and
+       fascia tone shifts mark the outer shingle stop on crisp 15 cm orthos, but vanish near nadir,
+       conflate with projecting gutter lips, and require manual interpretation.
+   4.​ Assessor wall footprint vs. QL1 lidar differencing: Actual overhang can be
+       approximated automatically only when an explicitly wall-only municipal footprint is paired
+       with dense QL1 lidar (≤0.35 m spacing); standard QL2 spacing (0.71 m) exceeds typical
+       eave depth.
+Recommended Low-Confidence Default: Default strictly to 0.0 m (0 in) added overhang
+whenever (a) the input footprint comes from an aerial/ML roof-edge source (Overture, Microsoft,
+FEMA, OSM aerial trace), (b) observed image-to-polygon shift exceeds 0.9 m (36 in) (indicating
+lean/registration drift rather than residential overhang), (c) imagery GSD exceeds 15 cm, or (d)
+lidar spacing is ≥0.5 m. Apply non-zero overhang defaults (12–18 in) only when the user
+confirms a wall-only tax footprint or enters site-taped overhang depths.
+
+4. Facet and Interior-Line Reconstruction from 2-D
+Polygons
+Unweighted straight skeletons propagate 2-D footprint edges inward at uniform speed along
+angle bisectors, guaranteeing a watertight, runoff-monotone hip-roof topology. Multiplicatively
+weighted straight skeletons assign edge speeds \sigma(e) proportional to
+1/[span_34](start_span)[span_34](end_span)[span_37](start_span)[span_37](end_span)\tan(\te
+xt{pitch}_e) to model unequal slopes meeting at an offset ridge, while additively weighted
+skeletons delay edge propagation to represent stepped eave heights.
+No controlled benchmark in the reviewed literature measures the linear-foot percentage
+accuracy of straight-skeleton ridge, hip, and valley lengths against lidar or field measurements
+on suburban homes. Available empirical evidence on LiDAR-free LoD1.3-to-LoD2.2
+reconstruction (using ML-predicted roof types and ridge ratios plus deterministic geometry on
+rectangular 3DBAG buildings) showed that once roof type was correctly predicted, ridge-height
+MAE stayed below 0.31 m (>92% within 1 m and >93% within 20% volume error), but overall
+classification accuracy stopped at 68.10–75.31% due to gable-vs.-hip mislabeling. On pure,
+uniform-pitch hip roofs, unweighted straight skeletons match true ridge and hip geometry
+closely. Conversely, on gable, cross-gable, asymmetric-pitch, and split-eave homes, raw straight
+skeletons introduce severe systematic errors: gable ends become fictitious hips that shorten the
+ridge, and tiny 0.1–0.3 m vertex jitters in ML-derived footprints spawn spurious interior valleys
+and micro-hips.
+Regularizing the 2-D polygon prior to skeletonization (e.g., Douglas-Peucker simplification plus
+right-angle/dominant-bearing snapping) suppresses vertex noise, while three structural rules
+keep complex features from corrupting linear totals:
+   1.​ Mixed pitches: Apply multiplicative straight-skeleton weights only when 3DEP lidar
+       planes confirm distinct pitches on opposing eaves; never extrapolate asymmetrical ridge
+       offsets from 2-D shapes alone.
+   2.​ Dormers: Although CGAL's straight-skeleton solver supports simple polygons with holes,
+       punching dormer outlines as interior holes causes the wavefront to propagate outward
+       from the hole boundary and create phantom courtyard valleys/hips around the dormer.
+       Model dormers exclusively as overlaid child building_part geometries.
+   3.​ Step gables and split eaves: Straight skeletons assume coplanar eave heights along
+       every perimeter edge. Where footprints exhibit deep step-backs or garage wings without
+       lidar confirmation of equal eave elevation, decompose the footprint into rectangular
+       sub-sections or omit unverified cross-wing valleys.
+Recommended Low-Confidence Default: Render any straight-skeleton ridge, hip, or valley
+uncorroborated by 3DEP lidar plane intersections or verified gable/hip edge tags as a dashed
+Hypothetical 2-D Topology overlay, and exclude it completely from Ridge LF, Hip LF, and
+Valley LF totals.
+
+5. Detached-Structure Detection on a Parcel
+Because digitized county parcel polygons frequently shift several feet relative to aerial imagery
+and cut across roofs, footprint-to-parcel association should use areal overlap fraction (≥50%
+footprint intersection within a 1–2 m buffered parcel) rather than strict containment or single
+centroid lookup. Even after clean parcel joins, free national footprint datasets miss many
+residential outbuildings: a peer-reviewed evaluation (cited in GIS community documentation)
+showed Microsoft's model fails to detect small buildings under 100 m² (~1,076 sq ft) despite
+98.2–99.5% overall precision, FEMA USA Structures omits structures under 450 sq ft (~41.8
+m²), and Overture Maps filters out ML detections below 10 m² (~108 sq ft)—contributing to
+EarthDefine's vendor estimate of 19–33% missing U.S. structures.
+No independent study in the reviewed literature reports formal precision/recall or false-positive
+rates for separating houses, detached garages, sheds, decks, and swimming pools purely from
+parcel geometry without tax use codes. Where footprints are available (or detected from 15 cm
+imagery), domain heuristics partition candidate structures into three tiers: the primary house
+(largest intersecting footprint ≥75–85 m², typically nearest the street frontage or parcel address
+point), detached garages (25–90 m², within 2–25 m of the primary house or driveway,
+rectangularity Area / MBB ≥ 0.80, and height ≥2.2 m above ground when lidar or footprint height
+exists), and sheds/outbuildings (6–25 m², typically set back behind the primary structure).
+Documented false positives fall into three failure classes. First, optical footprint extractors
+confuse dark water surfaces with roofs: an Overture data-quality audit in Western Australia
+found 2.3% (15,109 of [span_64](start_span)[span_64](end_span)646,522) Microsoft ML
+footprints fell at least 50% inside mapped farm dams, with 99% of a manual 100-footprint
+sample confirmed as non-buildings (while dropping all heightless footprints to fix it would discard
+15 real buildings for every false dam). Second, while specific residential false-positive rates for
+decks and backyard pools were not quantified in the reviewed literature, flat patios, decks, and
+pools share identical 2-D rectangularity with garages and sheds, requiring either 3DEP
+DSM–DTM height checks (H ≥ 2.0 m) or 4-band NIR water/vegetation screening (NDWI/NDVI
+from NAIP or state orthos). Third, topological merging and splitting distort structure counts: a
+French cadastre comparison found 447 Microsoft polygons merged 2,114 attached buildings,
+and multi-material attached garages collapse into one house polygon, whereas overhanging
+tree canopy can fracture a single roof into separate nearby segments.
+Recommended Low-Confidence Default: Auto-include only the verified primary dwelling
+(largest valid polygon ≥75 m², H ≥ 2.2 m if elevation exists) in main roof squares. Route all
+secondary structures (<85 m², detached by >1.5 m, or lacking height validation) to an unbilled
+Optional Parcel Structures toggle list requiring explicit user selection before adding squares.
+
+6. Solar Exposure Indexing from Facet Azimuth and
+Pitch
+When external irradiance APIs are omitted for zero-cost offline execution, a normalized Relative
+Solar Exposure Index (0–100 or 0.00–1.00) can be integrated across the solar year using only
+site latitude, facet azimuth, and facet tilt via clear-sky atmospheric transmittance paired with the
+Liu–Jordan isotropic sky model (\text{POA} = \text{DNI}\cos(\text{AOI}) +
+\text{DHI}(1+\cos\beta)/2 + \text{GHI}\cdot\rho(1-\cos\beta)/2). According to an engineering
+solar-calculator methodology check, Liu–Jordan agrees with NREL PVWatts v8 and PVGIS 5.2
+(which run the anisotropic Perez transposition model) within ±3% for tilts ≤60° and azimuths
+within ±90° of equator-facing when given identical meteorological inputs. Even between
+anisotropic sky models (Hay–Davies vs. Perez), annual POA energy differs by slightly over 1%,
+and uncertainty in ground albedo (0.1 vs. 0.3, or winter snow cover 0.55–0.85 above 40°N lifting
+60°-tilt winter POA by 8–15%) routinely outweighs transposition model differences.
+To evaluate how strongly a geometry-only index correlates with realistic regional annual
+irradiance across tilts (0°–45°) and full orientations (0°–360° in 15° steps), a synthetic
+solar-geometry simulation comparing Meinel clear-sky + Liu–Jordan integration against a
+Hay–Davies anisotropic model under varying cloud regimes shows high rank-order correlation
+across unobstructed skies:
+   ●​ Sunny arid climate (lat 33.4°, annual diffuse fraction 0.22, mild 5% PM cloud bias): r
+        = 0.9991 (R^2 = 0.9982), mean relative index difference 0.51%, max 1.38%.
+   ●​ Temperate cloudy climate with symmetric clouds (lat 42.2°, diffuse 0.42, 0% PM
+        bias): r = 0.9985 (R^2 = 0.9969), mean difference 3.82%, max 8.67% (high diffuse share
+       elevates steep north-facing facets slightly above clear-sky predictions).
+   ●​ Asymmetric afternoon convective/coastal cloudiness (lat 42.2°, diffuse 0.45, 22%
+       PM attenuation): r = 0.9745 (R^2 = 0.9496), mean difference 5.43%, max 13.60%
+       (east-facing facets outperform geometrically symmetric west facets).
+While unobstructed facet geometry explains 95–99.8% of relative orientation variance in
+simulation, near-field horizon and tree shading represents the major unmodeled failure
+mode—frequently cutting actual output on an ideal south slope by tens of percent. Local 3DEP
+DSM ray-casting captures structural and evergreen shading where lidar exists, though leaf-off
+lidar misses summer deciduous foliage.
+When a full irradiance service is omitted, four mandatory disclaimers must appear in the report:
+   1.​ Relative comparison only: Index scores (0–100) rank facets solely within the property
+       and do not represent absolute irradiance (kWh/m²/yr) or energy yield, which span 1.7× in
+       GHI and 2× in DNI across the lower 48 states and vary ±10% in single-year weather vs.
+       TMY3.
+   2.​ Unshaded assumption: Calculations ignore tree canopies, adjacent buildings, and
+       chimney/dormer shadows unless flagged as DSM-shaded.
+   3.​ Isotropic clear-sky simplification: Omits morning-vs.-afternoon cloud biases (up to
+       ~10–14% east/west skew) and seasonal snow-albedo reflections.
+   4.​ Non-engineering notice: Unsuitable for PV electrical sizing, inverter loading, or financial
+       return modeling; validate with NREL PVWatts or PVGIS.
+Recommended Low-Confidence Default: Suppress numeric solar scores—or mark Indicative
+Only — Unverified Facet Geometry—whenever facet pitch uncertainty exceeds ±5° or
+azimuth uncertainty exceeds ±10°.
+
+7. Scale and Distortion Control in Browser and Mobile
+Map Views
+Web Mercator (EPSG:3857) map tiles preserve angles locally but stretch horizontal distances
+by k(\phi) = 1/\cos(\phi) and plan areas by \sec^2(\phi). Critically, zooming in (zoom 19–22)
+increases display pixel density without reducing Mercator projection distortion: measuring
+directly in EPSG:3857 coordinates or unscaled screen tile meters introduces large positive bias
+across every U.S. latitude:
+Representative       Latitude (\phi)    Linear Scale         Raw Mercator         Raw Mercator
+City                                    Factor (k)           Linear Error         Area Error
+Miami, FL            25.76° N           1.1103               +11.0%               +23.3%
+Los Angeles, CA 34.05° N                1.2069               +20.7%               +45.7%
+Denver, CO           39.74° N           1.3005               +30.0%               +69.1%
+Boston, MA           42.36° N           1.3533               +35.3%               +83.1%
+Seattle, WA          47.61° N           1.4833               +48.3%               +120.0%
+Anchorage, AK        61.22° N           2.0771               +107.7%              +331.4%
+Keeping reported measurements within a fraction of a percent of true ground
+dimensions—online or offline—requires decoupling display projection from metric computation.
+Store all roof vertices in geographic coordinates (EPSG:4326). On every user click or geometry
+query, unproject screen coordinates to EPSG:4326 and project locally onto a parcel-centered
+WGS84 Local Tangent Plane (East–North–Up) or the matching UTM zone (standard GIS
+best practice for area calculations). Both local projections execute client-side with zero external
+libraries and keep linear error below 0.1% across any residential parcel (even applying a local
+\cos(\phi_0) scale correction to EPSG:3857 segment lengths holds error under 0.35% across
+CONUS because latitude varies negligibly over a 30 m lot).
+Scale recovery breaks down under three conditions: (1) an offline raster or user-imported image
+lacks GeoTIFF ModelPixelScale, World File, or XYZ tile bounds; (2) MapLibre/mobile viewports
+enter tilted 3-D camera mode (pitch > 0°) without terrain-plane ray intersection; or (3) unrectified
+oblique aerial photos have spatially varying scale.
+Recommended Low-Confidence Default: Whenever georeferencing, tile zoom bounds, or
+nadir rectification (pitch = 0°) cannot be verified, disable all linear foot, meter, and
+square-foot exports, display a persistent Scale Uncalibrated — Physical Units Locked
+warning, and allow only dimensionless ratios until the user restores tile metadata or calibrates
+one known ground edge (User-Calibrated Scale).
+
+8. Report Length and Information Density
+No published standard in the reviewed literature prescribes a fixed page layout for aerial roof
+reports; however, keeping a production report within 6–8 pages while accommodating
+multi-plane lidar noise requires fixed-budget pages 1–6 for verified takeoff data and a capped
+conditional appendix on pages 7–8:
+Page Slot                         Content Scope                       Low-Confidence & Multi-Plane
+                                                                      Handling
+Page 1 (Core)                     Executive Property Summary: Aggregates verified lines only;
+                                  total squares, waste table,         prints status banner if
+                                  dominant pitch, verified linear low-confidence lines were
+                                  totals, confidence badge            excluded or user overrides exist
+Page 2 (Core)                     Annotated Orthophoto: primary Overlays confirmed outline;
+                                  roof outline, scale bar, north      marks [EST-CV]
+                                  arrow, imagery vintage/GSD, skylight/dormer pins without
+                                  tax-line shift note                 modifying squares
+Page 3 (Core)                     Labeled Roof Diagram: facet Collapses coplanar facets (<5°
+                                  IDs (F1..Fn), slope/azimuth         normal delta, <0.10 m step);
+                                  arrows, color-coded verified        draws hypothetical 2-D
+                                  edges                               skeleton lines dashed/muted
+Page 4 (Core)                     Facet & Edge Breakdown              Omits rejected RANSAC planes
+                                  Tables: facet areas, pitches,       and micro-facets (<1.0 m² or
+                                  solar index, verified linear totals <10 pts); totals strictly verified
+                                                                      edges
+Page 5 (Core)                     Materials & Penetrations            Separates confirmed quantities
+                                  Takeoff: drip edge, starter, ridge from Suggested Add-Ons
+                                  cap, ice barrier, flashing,         Pending Confirmation
+                                  penetrations                        ([EST-CV])
+Page 6 (Core)                     Accuracy Notes, Disclaimers & Reports exact excluded-plane
+                                  Audit Log: 3DEP QL/density,         counts and confidence
+                                  ortho vintage/lean note, solar downgrades
+                                  disclaimers, user-edit log
+Pages 7–8 (Appendix)              Conditional Diagnostic              Inset map + grouped table of
+                                  Appendix (rendered only when rejected/competing lidar planes
+Page Slot                        Content Scope                    Low-Confidence & Multi-Plane
+                                                                  Handling
+                                >14 facets, detached              (pts, RMSE cm, pitch, exclusion
+                                structures, or lidar conflicts    reason, potential LF delta)
+                                exist)
+Recommended Low-Confidence Default: Merge coplanar lidar patches upstream, keep the
+main diagram capped to verified primary facets, and route rejected or ambiguous multi-plane
+hypotheses into the conditional 2-page diagnostic appendix so Page 1–5 totals remain compact
+and uninflated.
+
+9. In-App Correction Propagation
+Pre-export user edits must traverse a deterministic client-side Directed Acyclic Graph
+(Overhang/Polygon Offset → Edge Type & Pitch Assignment → 3-D Facet & Interior Line Solver
+→ Linear & Area Totals → Waste, Materials & Solar Index) synchronously before PDF
+rendering. Overhang adjustments require directional polygon offsetting rather than uniform
+scaling: as illustrated by RoofStruct's rectangular ranch calculation, changing a rake overhang
+pushes adjacent eaves outward at both ends (altering both Eave LF and Area), whereas
+changing an eave overhang lengthens sloped Rake LF, Hip/Valley LF, and Area without altering
+horizontal gable eave length.
+User Override Action              Minimal Dependent Values           Unchanged Quantities
+                                  That Must Recompute
+Toggle Edge Type (Eave ↔          Eave LF, Rake LF (convert          Plan Area, Facet Azimuth,
+Rake ↔ Wall Flashing)             between 2-D horizontal and 3-D Solar Index (unless topology
+                                  sloped length                      changes)
+                                  \sqrt{1+\tan^2\theta}), Gutter LF
+                                  (eaves only), Step/Apron
+                                  Flashing LF (wall intersections),
+                                  Ice & Water Shield, Drip Edge /
+                                  Starter LF, and Adjacent Interior
+                                  Topology (when gable-vs-hip
+                                  toggle extends ridge or
+                                  removes hips)
+Override Pitch (global or         Sloped Facet Area                  Plan Area, Horizontal Eave LF,
+per-facet \theta)                 (A_{\text{2D}}/\cos\theta), Total Gutter LF
+                                  Squares, Sloped Rake LF,
+                                  Sloped Hip/Valley LF
+                                  (\sqrt{L_{\text{2D}}^2+\Delta
+                                  z^2}), Weighted Ridge Position
+                                  (if asymmetric mixed pitch
+                                  shifts ridge off-center), Relative
+                                  Solar Exposure Index,
+                                  Minimum-Slope Material
+                                  Warning (e.g., 2.5/12 metal
+                                  drainage threshold), and Waste
+                                  / Materials
+                                  Or[span_200](start_span)[span
+User Override Action               Minimal Dependent Values          Unchanged Quantities
+                                   That Must Recompute
+                                   _200](end_span)der
+Adjust Overhang (\Delta            Offset Perimeter Polygon, Plan Pitch, Facet Azimuth, Per-m²
+w_{\text{eave}}, \Delta            Area, Sloped Area / Squares, Solar Index
+w_{\text{rake}})                   Eave LF & Gutter LF (driven by
+                                   \Delta w_{\text{rake}}), Sloped
+                                   Rake LF (driven by \Delta
+                                   w_{\text{eave}}), Hip/Valley LF,
+                                   Ridge Length (if asymmetric
+                                   offset alters aspect ratio), Drip
+                                   Edge / Starter, and Materials
+                                   Takeoff
+To preserve auditability in generated PDFs, mark edited versus automated values across three
+layers: inline source tags ([U] in blue next to edited figures, [A-LiDAR] or [A-2D] on automated
+figures), highlighted edge strokes in the Pages 2–3 diagrams, and a Page 6 User Override
+Audit Table comparing Original Automated Value against User Value paired with a Page 1
+Contains User Overrides badge.
+Recommended Low-Confidence Default: Re-run the full dependency graph on every edit; if a
+user overrides pitch or edge classification on one wing while leaving an adjoining ambiguous
+wing unedited, flag the unedited wing Pending Matching Confirmation.
+
+10. Offline and Low-Connectivity Operation
+Android and Progressive Web App clients operating offline should pair PMTiles (v3) for static
+basemap tiles with GeoPackage or FlatGeobuf for queryable/editable vector features. PMTiles
+consolidates a full raster or MVT vector tile pyramid into one single-file archive accessed by
+byte-range reads, requiring only a ~10 KB JavaScript client (versus ~1 MB SQLite WASM for
+MBTiles) and demonstrating access latency and throughput equal to or faster than cloud
+S3/CloudFront deployments during offline Raspberry Pi field benchmarks (UNVT Portable).
+MVT vector encoding also runs 5–10× smaller than equivalent GeoJSON. Crucially, mobile
+devices should never download raw 3DEP EPT point clouds at town scale (covering 100 km²
+at 8 pts/m² QL1 involves 800 million pulses, roughly 2.5–5 GB even compressed); instead,
+precompute compact per-building lidar summaries (~1–5 KB per structure encoding plane
+equations, confidence, and ridge/hip/valley segments) bundled alongside parcels and footprints
+into town-scale MVT PMTiles or GeoPackage.
+Raster ortho caching dictates nearly the entire offline storage footprint. Computing RGB tile
+pyramid size (\text{Area}/\text{GSD}^2 \times 1.333 pyramid factor) across 1.2 bits/pixel
+(WebP/JPEG q80) to 2.5 bits/pixel (high quality) illustrates the storage-versus-resolution
+trade-off:
+Spatial Scale        15 cm GSD (q80 / 30 cm GSD (q80 / 60 cm GSD (q80 / Accuracy &
+                     HQ)               HQ)                   HQ)                 Feature Capability
+                                                                                 Trade-Off
+Parcel + Context 0.20 MB / 0.42 MB 0.05 MB / 0.10 MB 0.01 MB / 0.03 MB 15 cm resolves
+(150×150 m,                                                                      fascia lines,
+0.0225 km²)                                                                      skylights, and
+                                                                                 dormers; 50 job
+Spatial Scale       15 cm GSD (q80 / 30 cm GSD (q80 / 60 cm GSD (q80 / Accuracy &
+                    HQ)                HQ)               HQ)                 Feature Capability
+                                                                             Trade-Off
+                                                                             parcels prefetch in
+                                                                             <25 MB.
+Neighborhood (1 8.89 MB / 18.51 2.22 MB / 4.63 MB 0.56 MB / 1.16 MB Feasible for
+km²)                MB                                                       ad-hoc field
+                                                                             neighborhood
+                                                                             caching over weak
+                                                                             cellular links.
+Town (10×10 km, 888.7 MB / 1,851 222.2 MB / 462.9 55.5 MB / 115.7            30 cm (~222 MB)
+100 km²)            MB                 MB                MB                  fits cleanly on
+                                                                             mobile storage as
+                                                                             a town basemap;
+                                                                             60 cm (~56 MB)
+                                                                             cannot resolve
+                                                                             small penetrations
+                                                                             or crisp fascia
+                                                                             edges.
+Offline neural model weights—such as quantized MobileSAM (10.5 MB) and Depth Anything V2
+Small INT8 (26.6 MB) or FP32 ONNX (94.5 MB)—are cached once (<40–110 MB total) in
+browser Cache Storage or app assets.
+Recommended Low-Confidence Default: Cache town-scale vector parcels, footprints, and
+precomputed lidar summaries plus a 30 cm town raster PMTiles basemap (~222 MB),
+prefetching 15 cm ortho patches for scheduled job parcels (~0.2–0.4 MB each). When offline
+with only 30–60 cm tiles and no lidar summary, disable penetration detectors and widen report
+area/length tolerances to ±5–10%.
+
+11. High-Contrast Edge Detection and Free Models for
+Skylights and Dormers
+On 15 cm orthos, common self-flashing skylights span roughly 14.5×30.5 in (~2.5×5 px) to
+46.5×46.5 in (~8×8 px), chimneys span ~4–8 px, and dormers span ~10–27 px, sitting right
+alongside 1–3 px vents and 12–16 in (~2–2.7 px) standing-seam ribs. Classical edge operators
+perform poorly here: Canny relies on Gaussian smoothing, gradient magnitude, non-maximum
+suppression, and dual-threshold hysteresis, which extracts clean borders on simple uniform
+roofs yet fails across varied roof brightness because no single hysteresis threshold generalizes
+across buildings. Laplacian of Gaussian (LoG) highlights closed zero-crossing loops around
+small rectangular skylight curbs at a tuned scale \sigma, but second-order differentiation
+amplifies shingle granule noise worse than Canny unless heavily smoothed, blurring 2.5 px
+skylight frames into surrounding shingles. Adaptive thresholding (Otsu/KMeans) collapses
+whenever DSM elevation contrast is absent or shingle tones vary. Crucially, all three classical
+methods produce unlabeled edges that fire indiscriminately on tree-shadow borders, standing
+seams, and ridge vents.
+Free pre-trained deep learning detectors and segmenters suppress background clutter far better
+than classical edge maps, though strict licensing and semantic gaps constrain zero-cost
+deployment. Ultralytics YOLO models (v8/11/26) carry AGPL-3.0 licenses (triggered by
+network/SaaS use unless source-disclosed), YOLOv9 and YOLO-World carry GPL-3.0, and
+YOLO-NAS weights bar commercial production. Meanwhile, generic foundation segmenters
+(MobileSAM, SAM 2.1) lack semantic roof classes without prompts or fine-tuning, and a
+published roof-superstructure CNN benchmark (using the Krapf et al. dataset) achieved
+true-positive rates of only 0.59 for dormers and 0.60 for chimneys (compared to 0.75 for solar
+panels). No controlled benchmark in the reviewed literature directly compares Canny/LoG
+against MobileSAM or SAM 2.1 specifically on 15 cm residential skylights.
+Free Model           License            Approximate         Offline Runtime    Role and
+(Permissive /                           Weight Size                            Operational
+Offline)                                                                       Constraint
+MobileSAM            Apache-2.0         9.66M params; 35 Yes (ONNX             Fast zero-shot
+(TinyViT + SAM                          MB FP32 ONNX Runtime,                  mask refiner
+decoder)                                (10.5 MB            CPU/mobile; ~12 (mIoU ~0.73–0.74)
+                                        quantized zip; 23.7 ms GPU, ~3 s Mac prompted by
+                                        MB float decoder) i5 CPU)              classical/edge
+                                                                               candidate boxes;
+                                                                               needs separate
+                                                                               classification.
+SAM 2.1              Apache-2.0         ~148 MB encoder Yes                    Outperforms
+Hiera-Tiny (Image                       + ~15–20.7 MB       (WebGPU/WASM SAM1/MobileSAM
+ONNX)                                   decoder             via                on fine dormer
+                                        (~163–169 MB        transformers.js/OR roof/cheek
+                                        split ONNX)         T, native          boundaries;
+                                                            mobile/Rust)       requires point/box
+                                                                               prompts.
+YOLOX (Nano / S) Apache-2.0 code Lightweight edge Yes (ONNX                    Permissive
+                     & Megvii repo      ONNX                Runtime, mobile one-stage
+                     (note: weight      (yolox_nano.onnx, CPU/GPU)             detector; must be
+                     bundling inquiry   yolox_s.onnx;                          fine-tuned on
+                     remains            exact MB varies,                       aerial
+                     unanswered)        not listed in                          roof-superstructure
+                                        reviewed docs)                         labels (e.g., Krapf
+                                                                               et al.).
+Baidu RT-DETR Apache-2.0 (avoid Lightweight                 Yes (ONNX          High-precision
+(lyuwenyu/RT-DET Ultralytics package transformer ONNX Runtime)                 permissive box
+R) & RF-DETR         → AGPL-3.0;        (exact MB varies                       detector once
+(Nano–Medium) avoid RF-DETR by variant, not                                    fine-tuned on roof
+                     XL/2XL →           listed in reviewed                     superstructures.
+                     PML-1.0)           docs)
+A zero-cost hybrid detector outperforms standalone classical edges by running four
+preprocessing steps—(1) inward 0.3 m (2 px) roof-mask erosion to exclude gutters; (2) bilateral
+smoothing + CLAHE instead of heavy Gaussian blur; (3) 4-band NIR NDVI vegetation masking
+plus CIELAB shadow-region masking to suppress trees and tree shadows; and (4) directional
+morphological filtering along the slope axis to damp parallel metal ribs—before proposing
+bounding boxes to MobileSAM or a fine-tuned Apache-2.0 detector. Retained candidates should
+pass geometric gating heuristics calibrated to residential hardware norms: axis alignment
+within ±10° of parent ridge/eave bearing; area gates of 0.30–3.5 m² (width ≥ 0.35 m, capturing
+IRC egress skylights ≥5.7 sq ft and standard units while dropping 1–2 px vents) for skylights,
+1.5–20 m² (width ≥ 0.9 m) for dormers, and 0.25–2.5 m² for chimneys; and rectangularity Area
+/ MBB ≥ 0.78 with aspect ratios 1:1 to 1:3.5.
+Recommended Low-Confidence Default: Never commit raw Canny/LoG segments or
+unconfirmed model detections directly to takeoff tables. Surface gated proposals as toggleable
+[EST-CV] visual pins requiring user confirmation before export.
+
+12. Shadow and Geometric Cues for 3-D Roof
+Reconstruction from 2-D Imagery
+Recovering vertical heights from a single orthophoto relies on shadow-length triangulation, H
+= L_{\text{shadow}} \tan\theta_{\text{sun}} (modified on sloped roofs when a dormer or chimney
+shadow lands along roof pitch \beta). However, peer-reviewed and thesis evaluations confirm
+that shadow triangulation falls far short of a ±0.5 m residential accuracy target: monocular
+remote-sensing benchmarks report 3.84 m RMSE across 42 cities and ±4.66 m global accuracy
+against lidar, while Byrnside (2022) found only ~60% of buildings within 10 ft (~3 m) and
+concluded shadow estimates are unsuitable for downstream quantitative calculations (with
+sub-meter 0.53 m mean error cited only on sharp urban high-rise/block benchmarks in 0.6 m
+QuickBird imagery). Even under ideal flat-yard assumptions on 15 cm orthos, a modest ±2–4 px
+(±0.30–0.60 m) shadow-tip uncertainty from penumbra and gutters propagates via \Delta H =
+\Delta L \tan\theta_{\text{sun}} into ±0.14–0.28 m at 25° sun elevation, ±0.30–0.60 m at 45°, and
+±0.43–1.29 m at 55°–65° summer sun angles. Consequently, skylight curbs (~0.09–0.18 m tall
+from 2×4 to 2×8 framing) cast ~1 px shadows that vanish beneath ortho blur, and interior ridges
+cast no ground shadow at typical midday acquisitions. Vanishing-point analysis also fails
+because DTM orthorectification eliminates perspective convergence.
+Free monocular depth models add relative structural ranking rather than metric accuracy. Depth
+Anything V2 Small (24.8M params) carries an Apache-2.0 license (whereas Base, Large, and
+Giant are CC-BY-NC-4.0 non-commercial), occupies 26.6 MB INT8 PTE (mobile CPU), ~50 MB
+FP16, or 94.5 MB FP32 ONNX (q8 fallback roughly a quarter as large), and runs completely
+offline in browsers via transformers.js (WebGPU/WASM) and mobile devices. However, it
+outputs relative 0–1 disparity, not real-world meters. Where raw overlapping multi-angle aerial
+frames with camera poses (5°–70° intersection, ≥60% overlap) are freely available, stereo /
+plane-sweep matching generates DSMs at ~5× image GSD, cutting multi-meter shadow errors
+toward sub-meter/meter scales (though photogrammetric DSMs remain significantly noisier on
+roofs than airborne lidar). In practice, free state and NAIP portals distribute pre-mosaicked
+orthos without raw frame orientation metadata, and multi-date orthos (2–3 yr cadence) introduce
+leaf and reroofing mismatches. Shadow triangulation degrades severely under high sun (>55°),
+sloped ground (a 3.22 m terrain drop across 120 m heavily skewed shadow height in a
+published evaluation), dark asphalt, tree occlusion, and ortho seamlines.
+Recommended Low-Confidence Default: Never output shadow-length or monocular-depth
+heights as metric ridge, dormer, or skylight dimensions; rely exclusively on 3DEP lidar heights
+where present, or tag missing vertical dimensions Unverified — Lidar Absent for manual input.
+
+13. Integration of Detected Features into the
+Measurement Pipeline
+Automatically detected skylights and dormers must be integrated as non-destructive overlays
+rather than Boolean voids punched into the primary 2-D roof polygon, which would destabilize
+straight-skeleton interior ridges and valleys:
+   1.​ Skylight Openings (Annotate vs. Subtract): Standard residential skylights span roughly
+       3–15 sq ft (14.5×30.5 in to 46.5×46.5 in), and installation instructions require cutting
+       roofing back ~2 in around the curb perimeter for step, apron, and head flashing. Because
+       shingle cutting waste around small curbs offsets saved material (<1–2% of roof area),
+       default to annotating skylight locations and tallying flashing/curb kit counts without
+       deducting area from gross squares, reserving net deduction strictly as an informational
+       footnote for user-confirmed apertures >16 sq ft (1.5 m²).
+   2.​ Dormer Sidewalls (Wall-Flashing and Rake Totals): Treat confirmed dormers as
+       separate child building_part elements above the parent facet. Do not cut the dormer
+       footprint out of parent squares unless the dormer's own sloped roof facets are
+       reconstructed and added back. Compute Sidewall Step-Flashing LF along both lateral
+       cheeks scaled by the parent slope (L_{\text{step}} = L_{\text{cheek,2D}} /
+       \cos\theta_{\text{main}}), add Front Apron/Closure Flashing LF, and include Dormer
+       Rake LF and Dormer Valley LF only when gable-dormer geometry is confirmed by lidar
+       or the user (given 0.59 automated CNN dormer true-positive rates).
+   3.​ Confidence Flagging: Tag every area, flashing, or rake delta introduced by image-based
+       detection with [EST-CV] ("Estimated — 2-D Computer Vision, Unverified by
+       Lidar/User"), displaying detector score and exact linear/area delta.
+Recommended Low-Confidence Default: Plot unverified skylight and dormer outlines visually
+on Pages 2–3, omit all [EST-CV] flashing, rake, and net-area edits from Page 1 and Page 4
+totals, and list them separately in Page 5's Suggested Add-Ons Pending Confirmation.
+
+14. Validation Without Ground-Truth 3-D
+Cross-validating independent data layers before PDF export intercepts major geometric errors
+even without ground-truth measurements. Five internal consistency checks enforce estimator
+safety:
+  1.​ Lidar-to-Footprint Alignment & Ridge Continuity: Compare lidar facet normal azimuths
+      against dominant footprint edges (the Goebbels orthogonality prior); discrepancies >5–10°
+      flag twisted footprints or tree contamination. Adjacent 3-D facets must meet along shared
+      ridges within ≤0.20 m (2× 3DEP QL2 0.10 m RMSEz) to detect swath offsets or missing
+      split-level planes.
+  2.​ Lidar Density & Return-Structure QA: Reject automated plane fitting if facet points drop
+      below 10–15 (<4 pts/m² practical floor), plane residual RMSE exceeds 0.08–0.10 m, or
+      multi-return pulses indicate foliage rather than solid decking.
+  3.​ Anti-Solar Shadow Verification: Confirm candidate eave, dormer, and chimney
+      shadows project opposite sun azimuth (sun_az + 180° ± 15°) in plausible proportion to
+      \tan\theta_{\text{sun}}, rejecting bright patches or vents misclassified as curbs.
+  4.​ Temporal & Spectral Canopy Screening: Compare footprint SourceDate (noting most
+      Microsoft and FEMA polygons predate 2018–2020) against ortho vintage, flag NDVI >
+      0.30 across >15% of the roofprint (using 4-band NAIP or state RGB-IR) as tree overhang
+      or demolished roof, and flag multi-date ortho IoU <0.85 as remodeling or severe lean.
+   5.​ Model Confidence Calibration: Because segmentation confidence correlates with mask
+       IoU (verified in SAM3 NAIP evaluations), enforce strict confidence cutoffs (≥0.70 to
+       surface as
+       [ES[span_208](start_span)[span_208](end_span)[span_210](start_span)[span_210](end_
+       span)T-CV], ≥0.85 for primary candidate pin) paired with rectangularity and axis-alignment
+       filters.
+Consistency Failure Mode         Recommended Fail-Safe Gate Report Behavior and User
+                                                                  Impact
+Unverified straight-skeleton     Omit from Primary Totals         Excluded from Squares,
+lines, sparse/noisy lidar planes                                  Ridge/Hip/Valley LF, and
+(<10 pts or RMSE >0.12 m), or                                     Flashing LF; documented in
+<0.70 CV detections                                               Appendix or Pending
+                                                                  Confirmation list so bids are
+                                                                  never inflated.
+Moderate canopy (15–30%          Mark Estimated                   Retained with visible badge
+NDVI), fallback median pitch on                                   (Pitch Estimated ±1–2/12,
+small facets, or 2–6 m DTM                                        Canopy-Occluded, DTM Lean
+ortho lean                                                        Offset) and widened tolerance
+                                                                  bands on Pages 1 & 6.
+Uncalibrated viewport/image      Require User Confirmation Locks metric takeoff PDF
+scale, >30% NDVI / missing                                        export until the user calibrates
+building mismatch, or >25%                                        scale, confirms active outline,
+unverified gable/hip perimeter                                    or verifies gable vs. hip
+                                                                  perimeter edges.
+Recommended Low-Confidence Default: Apply the three-tier fail-safe gate automatically
+prior to every export—omitting speculative linear hypotheses, labeling fallback estimates with
+explicit error bands, and blocking bid-ready metric export whenever scale calibration, roof
+existence, or perimeter edge type fails validation.
+
+Works cited
+
+1. USGS 3DEP Lidar Quality Levels QL0–QL3 Explained - SANMUD,
+https://sanmud.us/resources/usgs-3dep-lidar-quality-levels.html 2. LiDAR Quality and Density -
+Kinetics Geospatial, https://kineticsgeo.com/lidar-density/ 3. MassGIS Data: 2025 Aerial
+Imagery - Mass.gov, https://www.mass.gov/info-details/massgis-data-2025-aerial-imagery 4.
+Imagery Program - Vermont Center for Geographic Information,
+https://vcgi.vermont.gov/data-and-programs/imagery-program 5. NAIP Imagery in 2026: What It
+Is and How to Download It, https://geopera.com/blog/naip-imagery 6. [Buildings] ~15,000
+Microsoft ML footprints on farm dams in Western,
+https://github.com/OvertureMaps/data/issues/580 7. Automatic Refinement of 3D Building
+Models from LOD1.3 to LOD2.2,
+https://www.diva-portal.org/smash/record.jsf?pid=diva2:2084398 8. Buildings Guide - Overview |
+Overture Documentation, https://docs.overturemaps.org/guides/buildings/ 9. Building Footprints:
+Roof Outline or Real Area? - MapUtopia,
+https://maputopia.com/what-satellite-data-measures-when-it-maps-a-building 10. Does the
+Microsoft US Building Footprints database actually have a,
+https://www.reddit.com/r/gis/comments/1bhq52u/does_the_microsoft_us_building_footprints/ 11.
+A Buyer's Guide: How to Choose a US Building Footprint Dataset,
+https://www.earthdefine.com/evaluate/buildings-buyers-guide/ 12. Apparent Spatial Errors &
+Orthophoto Building Lean | Pima County, AZ,
+https://www.pima.gov/apparent-spatial-errors-orthophoto-building-lean 13. Measuring roof eaves
+and overhangs: length, depth and squares,
+https://roofstruct.com/blog/measuring-overhangs-and-eaves-from-aerial-imagery 14. [NeurIPS
+2024] Depth Anything V2. A More Capable ... - GitHub,
+https://github.com/DepthAnything/Depth-Anything-V2 15. Depth Anything V2 Small — depth
+estimation running in your browser,
+https://ai.hjlabs.in/models/onnx-community/depth-anything-v2-small 16.
+vietanhdev/segment-anything-onnx-models - Hugging Face,
+https://huggingface.co/vietanhdev/segment-anything-onnx-models 17.
+cstr/sam2.1-hiera-tiny-ONNX - Hugging Face,
+https://huggingface.co/cstr/sam2.1-hiera-tiny-ONNX 18. OpenTopography for Developers,
+https://opentopography.org/developers 19. OpenTopography: Lidar Data Access and Citation -
+CASRAI, https://casrai.org/guides/opentopography 20. What is Parcel Data? APNs, Boundaries,
+Sources - Wherobots, https://wherobots.com/discover/parcel-data/ 21. USGS 3DEP LiDAR
+Point Clouds | AWS Marketplace - Amazon.com,
+https://aws.amazon.com/marketplace/pp/prodview-647e3hzk3b3jc 22. NAIP on AWS - Registry
+of Open Data on AWS, https://registry.opendata.aws/naip/ 23. NAIP on AWS by Esri | AWS
+Marketplace, https://aws.amazon.com/marketplace/pp/prodview-cedhkcjocmfs4 24.
+OpenTopography Subscriptions, https://opentopography.org/about/subscriptions 25. Getting
+Started - OpenTopography, https://opentopography.org/start 26. Roof Eave vs Rake | Key
+Differences Explained (2026), https://roofpitch.net/roof-eave-vs-rake/ 27. Rake Edge vs Eave:
+What's the Difference? | Rooftop Relief,
+https://rooftoprelief.com/know-your-roof/flashing-and-edge/rake-edge 28. What Is the Edge of a
+Roof Called? Eaves, Rakes & Fascia,
+https://www.cardenroofing.com/what-is-the-edge-of-a-roof-called 29. GitHub -
+venkata3204sai/LoD1-to-LoD2-roof-reconstruction,
+https://github.com/venkata3204sai/LoD1-to-LoD2-roof-reconstruction 30. Understanding the
+Rake of a Roof: A Comprehensive Guide,
+https://kangaroof.com/understanding-the-rake-of-a-roof-a-comprehensive-guide/ 31. Straight
+Skeletons with Additive and Multiplicative Weights and Their,
+https://arxiv.org/html/1604.03362v1 32. Reconstruction of LoD-2 Building Models Guided by
+Façade ... - MDPI, https://www.mdpi.com/2072-4292/15/2/400 33. Hip vs. Gable Roof: A
+Complete Comparison (With Pictures), https://www.tulsaprotech.com/hip-vs-gable-roof/ 34.
+RANSAC for Aligned Planes with Application to Roof Plane,
+https://www.hs-niederrhein.de/fileadmin/dateien/FB03/Personen/goebbels/Publikationen/preprint
+_grapp2020.pdf 35. Dormer Flashing Details: Avoid Roof Transition Leaks,
+https://gocityside.com/dormer-flashing-details-avoiding-traps-at-wall-to-roof-transitions/ 36.
+Automatic Segmentation of Raw LIDAR Data for Extraction of,
+https://www.isprs.org/resources/datasets/benchmarks/UrbanSemLab/results/papers/MON_remo
+tesensing-06-03716c.pdf 37. Roof Plane Segmentation from Airborne LiDAR Data Using ... -
+MDPI, https://www.mdpi.com/2072-4292/12/9/1363 38. RoofSeg: An edge-aware
+transformer-based network for end ... - arXiv, https://arxiv.org/html/2508.19003v1 39.
+Investigation on the Weighted RANSAC Approaches for Building,
+https://www.mdpi.com/2072-4292/8/1/5 40. LiDAR Point Cloud Quality Control - Microdrones,
+https://www.microdrones.com/en/content/lidar-point-cloud-quality-control-automating-accuracy-a
+nd-precision-testing/ 41. RANSAC for Robotic Applications: A Survey - PMC,
+https://pmc.ncbi.nlm.nih.gov/articles/PMC9824669/ 42. EXTENDED RANSAC ALGORITHM
+FOR AUTOMATIC DETECTION,
+https://www.semanticscholar.org/paper/EXTENDED-RANSAC-ALGORITHM-FOR-AUTOMATIC-
+DETECTION-Tarsha-Kurdi-Landes/3cb375e24704322454b05291c2e8943e9dee5170 43. The
+Accuracy and Consistency of 3D Elevation Program Data - MDPI,
+https://www.mdpi.com/2072-4292/14/4/940 44. Create elevation data using the Ortho mapping
+DEMs wizard,
+https://doc.esri.com/en/arcgis-pro/latest/help/data/imagery/generate-elevation-data-using-the-de
+ms-wizard.html 45. Extracting Rectified Building Footprints from Traditional Orthophotos,
+https://pmc.ncbi.nlm.nih.gov/articles/PMC8749658/ 46. EarthDefine Building Footprints 3D:
+Technical Specification, https://www.earthdefine.com/evaluate/buildings-tech-spec/ 47. Building
+Footprints vs Roof Areas: Best Practices 2024+ - General talk,
+https://community.openstreetmap.org/t/building-footprints-vs-roof-areas-best-practices-2024/111
+539 48. CGAL 6.2.1 - 2D Straight Skeleton and Polygon Offsetting,
+https://doc.cgal.org/latest/Straight_skeleton_2/index.html 49. Polygon with a
+multiplicatively-weighted straight skeleton and,
+https://www.researchgate.net/figure/Polygon-with-a-multiplicatively-weighted-straight-skeleton-a
+nd-corresponding-offsets-The_fig2_301879720 50. Multi-Modal Transformer-Based 3D Building
+Wireframe Reconstruction,
+https://www.researchgate.net/publication/408462885_LoD2-Former_Multi-Modal_Transformer-B
+ased_3D_Building_Wireframe_Reconstruction 51. LoD-2 Building Reconstruction from Satellite
+Imagery using Spatial, https://elib.dlr.de/218534/1/3rd_Journal_Paper.pdf 52. Microsoft Building
+Footprints vs Google vs Overture, Tested - TerraLab,
+https://terra-lab.ai/blog/building-footprint-datasets-compared 53.
+tyrerodr/roof-mapping-from-aerial-imagery: Roof Segmentation from,
+https://github.com/tyrerodr/roof-mapping-from-aerial-imagery 54. SAM3 vs Overture: Building
+Footprint Detection on Imagery,
+https://wherobots.com/blog/sam3-aerial-imagery-building-footprints/ 55. Solar Irradiance
+Calculator — GHI, DNI, DHI to POA Converter,
+https://solarcalculatorhq.com/calculators/solar-irradiance-calculator/ 56. Evaluation of Global
+Horizontal Irradiance to Plane of Array ... - OSTI, https://www.osti.gov/servlets/purl/1235343 57.
+On the Ability of Ground Based Global Horizontal Irradiance,
+https://www.cleanpower.com/wp-content/uploads/43PVSC_Evaluation_Manuscript_Full_6-5-16.
+pdf 58. Mbtiles vs. geopackage for a simple offline vector tile server - Reddit,
+https://www.reddit.com/r/gis/comments/1ppbi6w/mbtiles_vs_geopackage_for_a_simple_offline_
+vector/ 59. 6.6 Cloud-Native Vector Formats — FlatGeobuf, GeoParquet, PMTiles,
+https://atlas.co/courses/gis-basics/cloud-native-formats-pmtiles/ 60. GIS Data Loading: Files,
+Tiles & PMTiles - GeoDataViewer, https://geodataviewer.com/blog/evolution-of-gis-data-loading/
+61. Performance Comparison of an Offline PMTiles-Powered Map,
+https://talks.osgeo.org/foss4g-2025/talk/TCZTK7/ 62. Depth Anything V2 Small INT8 | Arm AI
+Portal,
+https://developer.arm.com/ai/models/hugging-face/Arm/depth-anything-v2-small-int8-xnnpack-ex
+ecutorch-vivo-x300/depth-anything-v2-small-int8-pte 63. Self Flashing Skylight Installation
+Instructions - Roofing Direct,
+https://cdn.roofingdirect.com/2020/07/Self-Flashing-Skylight-Installation-1.pdf 64. Standard
+Details for Metal Roofing & Siding, https://www.afence.com/mm5/graphics/pdf/fabralparts.pdf
+65. Canny Edge Detection in Computer Vision - Roboflow,
+https://roboflow.com/blog/canny-edge-detection 66. Canny Edge Detection in 5 Minutes -
+Towards Data Science,
+https://towardsdatascience.com/canny-edge-detection-in-5-minutes-27236af71ce2/ 67. Canny
+Edge Detection: Computer Vision Classics - Medium,
+https://medium.com/@kdwaMachineLearning/canny-edge-detection-computer-vision-classics-d
+9c95922f806 68. The Extraction of Roof Feature Lines of Traditional Chinese Village,
+https://www.mdpi.com/2075-5309/14/4/1180 69. This figure shows the application of Canny
+edge detection (center,
+https://www.researchgate.net/figure/This-figure-shows-the-application-of-Canny-edge-detection-
+center-and-contour-detection_fig11_298898718 70. Is YOLO Free for Commercial Use?
+Licenses Explained - Rizwan AI, https://www.rizwanai.com/licensing 71. Object Detection
+Models: Licenses, Years and Accuracy, https://robotinaction.tech/model-licenses.html 72. Every
+YOLO License, Explained: v1 to YOLO26 (2026 Guide),
+https://www.libreyolo.com/articles/yolo-licenses-explained 73. DEEP LEARNING FOR
+SEMANTIC 3D CITY MODEL EXTENSION,
+https://artefacts-discovery.researcher.life/full_text/DA-2/b9/b9b3fabc216e3a2b95299367237ef86
+d/full_text/70045db93e6bdf5662897e03592ebe16.pdf 74. Skylight Installation Codes: Key
+Requirements - Old World Roofing,
+https://oldworldroofing.com/skylight-installation-codes-requirements/ 75. Building Height
+Estimation Using Shadow Length in Satellite Imagery, https://www.alphaxiv.org/abs/2411.09411
+76. Estimation of Height of Building Using High Resolution Satellite Image,
+https://www.scitepress.org/Papers/2024/127316/127316.pdf 77. Estimating Cloud Base Height
+via Shadow-Based Remote Sensing,
+https://ntrs.nasa.gov/api/citations/20260000089/downloads/remote%20sensing-18-00147%20up
+dated.pdf 78. The Use of Deep Learning Methods for Object Height Estimation in,
+https://pmc.ncbi.nlm.nih.gov/articles/PMC10575158/ 79. "Shadow-Based Automatic Building
+Height Estimation From High, https://bearworks.missouristate.edu/theses/3768/ 80. (PDF) Using
+shadows in high-resolution imagery to determine,
+https://www.researchgate.net/publication/263536543_Using_shadows_in_high-resolution_imag
+ery_to_determine_building_height 81. Measure Your Skylight Correctly - Columbia Skylights,
+https://www.columbiaskylights.com/technical-info/measure-your-skylight-correctly/ 82. Standard
+Skylight Installation Guide 0.51 0.35 0.62 57 - CrystaLite, Inc.,
+https://crystaliteinc.com/_files/skylights/INSTALL_skylight.pdf 83. Depth Anything V2 - Luxonis
+Model Zoo,
+https://models.luxonis.com/luxonis/depth-anything-v2/c5bf9763-d29d-4b10-8642-fbd032236383
+84. Clarification on dataset license risk for Depth-Anything-V2-Small,
+https://github.com/DepthAnything/Depth-Anything-V2/issues/320 85. onnx-models / Depth
+Anything V2 Small - BlobHub, https://blobhub.io/onnx-models/depth-anything-v2-small 86.
+onnx-community/depth-anything-v2-small-ONNX - Hugging Face,
+https://huggingface.co/onnx-community/depth-anything-v2-small-ONNX 87. (PDF) Extraction of
+Roof Planes from Different Point Clouds Using,
+https://www.researchgate.net/publication/341756606_Extraction_of_Roof_Planes_from_Differen
+t_Point_Clouds_Using_RANSAC_Algorithm 88. Extraction of Roof Planes from Different Point
+Clouds Using, https://oaji.net/pdfs.html?n=2020/5261-1603760681.pdf 89. MassGIS Data: 2021
+Aerial Imagery - Mass.gov, https://www.mass.gov/info-details/massgis-data-2021-aerial-imagery
+90. Multi-Scene Building Height Estimation Method Based on Shadow,
+https://www.mdpi.com/2072-4292/13/15/2862
+

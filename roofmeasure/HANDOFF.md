@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: MIT -->
 # RoofMeasure handoff (state as of 0.1.7.5, 2026-11-15)
 
-Read in order: this file, CODEVELOP.md (rules, build), CHANGELOG.md, docs/research/*.md.
+Read in order: this file, CODEVELOP.md (rules, build), CHANGELOG.md, docs/research/ (*.md notes; *.pdf + .txt reference papers from Ian: lidar structural pipeline, zero-cost measurement uncertainties).
 
 ## Current state
 - Version 0.1.7.5, commit 3c6d9af on `feat/roofmeasure-dev`. CI: `.github/workflows/roofmeasure.yml` builds the APK, runs headless report tests
