@@ -205,6 +205,10 @@
           r.skylights = skyL.map(function (k, i) { return Object.assign({ key: 'S' + i }, k); }).filter(function (k) { return !skyDel[k.key]; })
             .concat(skyU.map(function (k, i) { return { key: 'U' + i, centroid_lonlat: k.centroid_lonlat || null, approx_w_ft: +k.w_ft || null, approx_h_ft: +k.h_ft || null, approx_area_sqft: (+k.w_ft && +k.h_ft) ? Math.round(k.w_ft * k.h_ft) : null,
               evidence: ['user'], confidence: 'user-entered', status: 'user-entered', source: 'user', note: k.note || '' }; }));
+          // 0.1.7.6: register the roofprint to the lidar building mask; lidar-derived 2-D features (decks, dormers, lidar skylights)
+          // are moved into the roofprint frame so they land on the roof in the diagram and overlay. Lines / totals are untouched.
+          var LO = L ? lidarOutline(L) : null;
+          if (LO) { r.lidar_outline = LO; if (LO.applied) shiftFeatures(r, -LO.dx_m, -LO.dy_m); }
           if (f.line_candidates) r.line_candidates = f.line_candidates;
           if (f.added_lines && f.added_lines.length) r.added_lines = f.added_lines;
           r.lines = f.lines;
@@ -298,26 +302,130 @@
      tiles already fetched for the aerial pages. Sets result.ortho_align and result.ortho_patches. */
   /* 0.1.7.5: labelled roof features for the diagram / overlay / summary: skylights (ortho patches sized 1.3-6 ft a side,
    * plus lidar candidates and user skylights) and roof decks / flat sections (lidar flat planes). All candidates (NOT_PROVEN). */
+  /* 0.1.7.6: lidar probe at a roofprint-frame lon/lat: dominant plane of the points in a 0.4-1.8 m ring around it, and the
+   * height of the points on the patch relative to a local fit of that plane. -> fn(ll, halfSizeM) -> null | {ok, why, note} */
+  function lidarProbe(r) {
+    var A = window.RoofApp, L = A && A.state && A.state.lidar, T = window.RoofTags;
+    if (!L || !L.points_full || !L.frame || !T || !T.lidarSeg) return null;
+    var sg = T.lidarSeg(L), pid = sg && sg.point_plane; if (!pid) return null;
+    var fr = L.frame, R = 6378137, D = Math.PI / 180, P = L.points_full, lo = r.lidar_outline && r.lidar_outline.applied ? r.lidar_outline : { dx_m: 0, dy_m: 0 };
+    function loc(ll) { var mx = ll[0] * D * R, my = Math.log(Math.tan(Math.PI / 4 + ll[1] * D / 2)) * R; return [(mx - fr.ox) * fr.k + lo.dx_m, (my - fr.oy) * fr.k + lo.dy_m]; }
+    return function (ll, hs) {
+      var c = loc(ll), r0 = hs + 0.25, r1 = hs + 1.1, ring = [], on = [], cnt = {};
+      for (var i = 0; i < P.length; i++) { var d = Math.hypot(P[i][0] - c[0], P[i][1] - c[1]);
+        if (d <= hs) on.push(P[i]); else if (d >= r0 && d <= r1) { ring.push(i); if (pid[i] >= 0) cnt[pid[i]] = (cnt[pid[i]] || 0) + 1; } }
+      if (ring.length < 8) return null;
+      var top = Object.keys(cnt).sort(function (a, b) { return cnt[b] - cnt[a]; })[0], frac = top == null ? 0 : cnt[top] / ring.length;
+      if (frac < 0.65) return { ok: false, why: 'straddles lidar planes (' + Math.round(frac * 100) + ' % on one plane: ridge / hip / valley / dormer edge)' };
+      var Q = ring.filter(function (i) { return String(pid[i]) === top; }).map(function (i) { return P[i]; });
+      // local LSQ plane z = a x + b y + c
+      var n = Q.length, sx = 0, sy = 0, sz = 0, sxx = 0, syy = 0, sxy = 0, sxz = 0, syz = 0;
+      Q.forEach(function (p) { var x = p[0] - c[0], y = p[1] - c[1]; sx += x; sy += y; sz += p[2]; sxx += x * x; syy += y * y; sxy += x * y; sxz += x * p[2]; syz += y * p[2]; });
+      var M = [[sxx, sxy, sx], [sxy, syy, sy], [sx, sy, n]], v = [sxz, syz, sz];
+      function det(m) { return m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0]) + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]); }
+      var dt = det(M); if (Math.abs(dt) < 1e-9) return null;
+      function rep(k) { return M.map(function (row, i) { return row.map(function (x, j) { return j === k ? v[i] : x; }); }); }
+      var a = det(rep(0)) / dt, b = det(rep(1)) / dt, c0 = det(rep(2)) / dt;
+      if (!on.length) return { ok: true, note: 'no returns on the patch (glass), on plane P' + (+top + 1) };
+      var dz = on.map(function (p) { return p[2] - (a * (p[0] - c[0]) + b * (p[1] - c[1]) + c0); }).sort(function (x, y) { return x - y; }), med = dz[dz.length >> 1];
+      if (med > 0.45) return { ok: false, why: 'raised ' + med.toFixed(2) + ' m above its lidar plane (dormer / chimney / vent box)' };
+      if (med < -0.25) return { ok: false, why: 'sunk ' + (-med).toFixed(2) + ' m below its lidar plane (opening / lower roof)' };
+      return { ok: true, note: 'on plane P' + (+top + 1) + ', ' + on.length + ' returns ' + (med >= 0 ? '+' : '') + med.toFixed(2) + ' m (flush / curb)' };
+    };
+  }
   function roofFeatures(r) {
     var tg = (window.RoofApp && window.RoofApp.state && window.RoofApp.state.tags) || {}, rm = tg.featuresRemoved || {};
     var sk = [], n = 0, c0 = (r.ortho_patches || [])[0], kx = Math.cos(((c0 && c0.centroid_lonlat[1]) || r.lat || 42) * Math.PI / 180) * 111320, ky = 110540;
     function dm(a, b) { return Math.hypot((a[0] - b[0]) * kx, (a[1] - b[1]) * ky); }
     var dorm = (r.dormers || []).filter(function (d) { return d.kept !== false; }).map(function (d) { return d.centroid_lonlat || (d.coords_lonlat ? [(d.coords_lonlat[0][0] + d.coords_lonlat[1][0]) / 2, (d.coords_lonlat[0][1] + d.coords_lonlat[1][1]) / 2] : null); }).filter(Boolean);
+    // 0.1.7.6: stricter skylight test. An ortho patch is counted as a skylight candidate only if
+    //  - size: both sides 1.5-12 ft; contrast >= 4 x its facet's MAD; rectangularity >= 0.6;
+    //  - lidar plane continuity: the points around it (a ring 0.25-1.1 m outside it) lie on ONE lidar plane (>= 65 %) and the points on it sit
+    //    within -0.25 / +0.45 m of that plane (flush glass or a low curb; dormers, chimneys, vents and plane edges fail);
+    //  - not on a roof deck, not within 2.5 m of a dormer, not in a cluster of 3+ patches.
+    // Patches without enough lidar points around them are kept as "lidar not checked" candidates but not counted.
+    var rej = [], LP = lidarProbe(r);
     (r.ortho_patches || []).forEach(function (p) {
-      if (p.approx_w_ft < 1.3 || p.approx_h_ft < 1.0 || p.approx_w_ft > 8.5) return;
-      if ((r.decks || []).some(function (d) { return d.outline_lonlat && (pipLL(p.centroid_lonlat, d.outline_lonlat.concat([d.outline_lonlat[0]])) || d.outline_lonlat.some(function (q) { return dm(q, p.centroid_lonlat) < 1.0; })); })) { p.excluded = 'on a roof deck (railing / boards)'; return; }
-      if (dorm.some(function (q) { return dm(q, p.centroid_lonlat) < 2.5; })) { p.excluded = 'at a dormer (dormer window / trim)'; return; }
-      if ((r.ortho_patches || []).filter(function (o) { return o !== p && dm(o.centroid_lonlat, p.centroid_lonlat) < 2.0; }).length >= 2) { p.excluded = 'cluster of 3+ patches (dormer window, trim or railing, not a skylight)'; return; } // smaller = vent / pipe, larger = not a skylight
-      sk.push({ key: p.key, centroid_lonlat: p.centroid_lonlat, w_ft: p.approx_w_ft, h_ft: p.approx_h_ft, angle_deg: p.angle_deg || 0, source: p.source + (p.lidar_match ? ' + lidar' : ''),
-        evidence: p.polarity + ' patch on its facet, contrast ' + p.contrast, confidence: p.confidence });
+      var why = null, w = p.approx_w_ft, h = p.approx_h_ft;
+      if (w < 1.5 || h < 1.5) why = 'smaller than 1.5 ft (vent / pipe / trim)';
+      else if (w > 12 || h > 12) why = 'larger than 12 ft (not a skylight)';
+      else if ((p.contrast || 0) < 4) why = 'weak ortho contrast (' + p.contrast + ')';
+      else if ((p.rectangularity || 0) < 0.6) why = 'not rectangular (' + p.rectangularity + ')';
+      else if ((r.decks || []).some(function (d) { return d.outline_lonlat && (pipLL(p.centroid_lonlat, d.outline_lonlat.concat([d.outline_lonlat[0]])) || d.outline_lonlat.some(function (q) { return dm(q, p.centroid_lonlat) < 1.0; })); })) why = 'on a roof deck (railing / boards)';
+      else if (dorm.some(function (q) { return dm(q, p.centroid_lonlat) < 2.5; })) why = 'at a dormer (dormer window / trim)';
+      else if ((r.ortho_patches || []).filter(function (o) { return o !== p && dm(o.centroid_lonlat, p.centroid_lonlat) < 2.0; }).length >= 2) why = 'cluster of 3+ patches (dormer window, trim or railing)';
+      var lc = !why && LP ? LP(p.centroid_lonlat, Math.max(w, h) / 3.2808 / 2) : null;
+      if (!why && lc && lc.ok === false) why = lc.why;
+      if (why) { p.excluded = why; rej.push({ key: p.key, w_ft: w, h_ft: h, reason: why, centroid_lonlat: p.centroid_lonlat }); return; }
+      sk.push({ key: p.key, centroid_lonlat: p.centroid_lonlat, w_ft: w, h_ft: h, angle_deg: p.angle_deg || 0, source: p.source + (p.lidar_match ? ' + lidar' : ''),
+        evidence: p.polarity + ' patch on its facet, contrast ' + p.contrast + (lc ? '; lidar: ' + lc.note : '; lidar not checked'), confidence: lc ? (p.lidar_match ? 'medium' : 'low') : 'low',
+        counted: !!lc, lidar_check: lc ? lc.note : 'not checked (too few lidar points)' });
     });
     (r.skylights || []).forEach(function (k) { if (k.ortho_match || !k.centroid_lonlat) return;
       sk.push({ key: k.key || ('L' + sk.length), centroid_lonlat: k.centroid_lonlat, w_ft: k.approx_w_ft || k.w_ft || null, h_ft: k.approx_h_ft || k.h_ft || null, angle_deg: 0,
-        source: k.source === 'user' ? 'user' : (k.source || 'lidar'), confidence: k.source === 'user' ? 'user' : (k.confidence || 'low') }); });
+        source: k.source === 'user' ? 'user' : (k.source || 'lidar'), confidence: k.source === 'user' ? 'user' : (k.confidence || 'low'), counted: k.source === 'user',
+        lidar_check: k.source === 'user' ? 'user-entered' : 'lidar-only (no matching ortho patch): not counted' }); });
     sk = sk.filter(function (k) { return !rm[k.key]; });
     sk.forEach(function (k) { k.label = 'S' + (++n); });
-    r.roof_features = { skylights: sk, decks: (r.decks || []).filter(function (d) { return !rm[d.key]; }) };
+    r.roof_features = { skylights: sk, decks: (r.decks || []).filter(function (d) { return !rm[d.key]; }), rejected: rej,
+      dormers: (r.dormers || []).filter(function (d) { return d.kept !== false; }),
+      counts: { skylights: sk.filter(function (k) { return k.counted; }).length, skylight_candidates_uncounted: sk.filter(function (k) { return !k.counted; }).length, patches_rejected: rej.length },
+      note: 'Candidates (NOT_PROVEN). Not in the billable totals; confirm on site or in the editor.' };
     return r.roof_features;
+  }
+  /* 0.1.7.6: roofprint vs lidar building mask in the lidar's local metres (class-6 points within 6 m, 0.5 m cells, closed
+   * one cell). Best integer-cell translation (±4 m) by IoU; applied to lidar features only when it raises the IoU by >= 0.03 and
+   * is not on the search limit. Also the lidar building area farther than 1.5 m outside the roofprint (current-house check). */
+  function lidarOutline(L) {
+    var ring = L.ring_local, P = (L.points_bbox || []).filter(function (p) { return p[3] === 6; });
+    if (!ring || ring.length < 3 || P.length < 30) return null;
+    var c = 0.5, x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    P.forEach(function (p) { x0 = Math.min(x0, p[0]); y0 = Math.min(y0, p[1]); x1 = Math.max(x1, p[0]); y1 = Math.max(y1, p[1]); });
+    ring.forEach(function (p) { x0 = Math.min(x0, p[0]); y0 = Math.min(y0, p[1]); x1 = Math.max(x1, p[0]); y1 = Math.max(y1, p[1]); });
+    x0 -= 6; y0 -= 6; var GW = Math.ceil((x1 + 6 - x0) / c), GH = Math.ceil((y1 + 6 - y0) / c); if (GW * GH > 2e6) return null;
+    var occ = new Uint8Array(GW * GH); P.forEach(function (p) { occ[Math.floor((p[1] - y0) / c) * GW + Math.floor((p[0] - x0) / c)] = 1; });
+    function morph(a, dil) { var b = new Uint8Array(GW * GH); for (var y = 1; y < GH - 1; y++) for (var x = 1; x < GW - 1; x++) { var i = y * GW + x;
+      b[i] = dil ? (a[i] | a[i - 1] | a[i + 1] | a[i - GW] | a[i + GW]) : (a[i] & a[i - 1] & a[i + 1] & a[i - GW] & a[i + GW]); } return b; }
+    occ = morph(morph(occ, true), false);
+    function pip(x, y) { var ins = false; for (var i = 0, j = ring.length - 1; i < ring.length; j = i++) { var a = ring[i], b = ring[j];
+      if ((a[1] > y) !== (b[1] > y) && x < (b[0] - a[0]) * (y - a[1]) / (b[1] - a[1]) + a[0]) ins = !ins; } return ins; }
+    var rc = [], occN = 0; for (var y = 0; y < GH; y++) for (var x = 0; x < GW; x++) { if (occ[y * GW + x]) occN++; if (pip(x0 + (x + 0.5) * c, y0 + (y + 0.5) * c)) rc.push([x, y]); }
+    if (rc.length < 20) return null;
+    function iou(sx, sy) { var h = 0; rc.forEach(function (p) { var X = p[0] + sx, Y = p[1] + sy; if (X >= 0 && Y >= 0 && X < GW && Y < GH && occ[Y * GW + X]) h++; }); return h / (rc.length + occN - h); }
+    var best = { v: -1, x: 0, y: 0 }, R = 8;
+    for (var sy = -R; sy <= R; sy++) for (var sx = -R; sx <= R; sx++) { var v = iou(sx, sy) - 0.002 * Math.hypot(sx, sy); if (v > best.v) best = { v: v, x: sx, y: sy }; }
+    var i0 = iou(0, 0), i1 = iou(best.x, best.y), lim = Math.abs(best.x) >= R || Math.abs(best.y) >= R;
+    var inR = new Uint8Array(GW * GH); rc.forEach(function (p) { var X = p[0] + best.x, Y = p[1] + best.y; if (X >= 0 && Y >= 0 && X < GW && Y < GH) inR[Y * GW + X] = 1; });
+    for (var t = 0; t < 3; t++) inR = morph(inR, true);
+    var out = 0; for (var q = 0; q < occ.length; q++) if (occ[q] && !inR[q]) out++;
+    var F = 10.7639;
+    // ring frame -> lidar frame shift in metres (east +, north +); local y is north-up (Web Mercator y), scale k ~ 1
+    return { dx_m: best.x * c, dy_m: best.y * c, shift_m: Math.round(Math.hypot(best.x, best.y) * c * 100) / 100, iou0: Math.round(i0 * 1000) / 1000, iou: Math.round(i1 * 1000) / 1000,
+      at_limit: lim, applied: !lim && i1 - i0 >= 0.03, lidar_area_sqft: Math.round(occN * c * c * F), roofprint_area_sqft: Math.round(rc.length * c * c * F), outside_area_sqft: Math.round(out * c * c * F),
+      method: 'class-6 lidar points within 6 m on a 0.5 m grid (closed one cell) vs the roofprint: IoU over ±4 m translations; lidar building area > 1.5 m outside the roofprint' };
+  }
+  function shiftFeatures(r, dxm, dym) {
+    var lat = r.lat || ((r.decks || [])[0] && r.decks[0].centroid_lonlat[1]) || 42.2, kx = Math.cos(lat * Math.PI / 180) * 111320, ky = 110540;
+    function mv(p) { return p ? [Math.round((p[0] + dxm / kx) * 1e7) / 1e7, Math.round((p[1] + dym / ky) * 1e7) / 1e7] : p; }
+    (r.decks || []).forEach(function (d) { d.centroid_lonlat = mv(d.centroid_lonlat); if (d.outline_lonlat) d.outline_lonlat = d.outline_lonlat.map(mv); d.lidar_registered = true; });
+    (r.dormers || []).forEach(function (d) { if (d.source === 'user') return; if (d.centroid_lonlat) d.centroid_lonlat = mv(d.centroid_lonlat); if (d.coords_lonlat) d.coords_lonlat = d.coords_lonlat.map(mv); d.lidar_registered = true; });
+    (r.skylights || []).forEach(function (k) { if (k.source === 'user' || !k.centroid_lonlat) return; k.centroid_lonlat = mv(k.centroid_lonlat); k.lidar_registered = true; });
+  }
+  /* 0.1.7.6: lidar roof-plane cells (0.5 m, labelled by roofseg plane) in mosaic pixels for the ortho region score, and the
+   * roofprint vs lidar building-mask comparison (IoU, best translation, lidar building area outside the roofprint). */
+  function lidarCells(m, ring, lo) {
+    var A = window.RoofApp, L = A && A.state && A.state.lidar, O = window.RoofOrtho, T = window.RoofTags;
+    if (!L || !L.points_full || !L.frame || !T || !T.lidarSeg) return null;
+    var sg = T.lidarSeg(L), pid = sg && sg.point_plane; if (!pid) return null;
+    var fr = L.frame, R = 6378137, D = Math.PI / 180;
+    function ll(p) { var mx = p[0] / fr.k + fr.ox, my = p[1] / fr.k + fr.oy; return [mx / R / D, (2 * Math.atan(Math.exp(my / R)) - Math.PI / 2) / D]; }
+    function px(p) { var q = ll(p), w = O.world(q[0], q[1], m.z); return [w[0] - m.ox, w[1] - m.oy]; }
+    var res = O.mpp(ll(L.points_full[0])[1], m.z), c = 0.5 / res, cell = {}, ox = lo && lo.applied ? -lo.dx_m / res : 0, oy = lo && lo.applied ? lo.dy_m / res : 0; // into the roofprint frame
+    function px0(p) { var q = px(p); return [q[0] + ox, q[1] + oy]; }
+    L.points_full.forEach(function (p, i) { if (pid[i] < 0) return; var q = px0(p); cell[Math.floor(q[0] / c) + ',' + Math.floor(q[1] / c)] = pid[i]; });
+    var cells = Object.keys(cell).map(function (k) { var a = k.split(',').map(Number); return [(a[0] + 0.5) * c, (a[1] + 0.5) * c, cell[k]]; });
+    var out = { cells: cells.length >= 60 ? cells : null };
+    return out;
   }
   function orthoStep(result, need, opt) {
     var O = window.RoofOrtho;
@@ -331,7 +439,7 @@
       var lines = (result.line_segments || []).filter(function (g) { return /^(ridge|hip|valley)$/.test(g.type) && !g.deleted && !g.unverified && g.coords_lonlat && g.coords_lonlat.length === 2; })
         .map(function (g) { return g.coords_lonlat; });
       O._last = { m: m, ring: ring, lines: lines };
-      var al = O.align(ring, m, { apply: !opt.noOrthoAlign && !window.RM_NO_ORTHO_ALIGN, lines: lines });
+      var LC = lidarCells(m, ring, result.lidar_outline), al = O.align(ring, m, { apply: !opt.noOrthoAlign && !window.RM_NO_ORTHO_ALIGN, lines: lines, cells: LC && LC.cells });
       al.ms = Date.now() - t0; al.source = 'MassGIS 2025 ortho z' + z;
       result.ortho_align = al;
       // 0.1.7.5: skylight / vent patches at z20 (7.5 cm/px world grid of the 15 cm orthos) with a per-facet background

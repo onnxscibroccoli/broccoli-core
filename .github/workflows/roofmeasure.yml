@@ -10,8 +10,8 @@ concurrency:
   group: roofmeasure-${{ github.ref }}
   cancel-in-progress: true
 env:
-  VERSION_CODE: '10705'
-  VERSION_NAME: '0.1.7.5'
+  VERSION_CODE: '10706'
+  VERSION_NAME: '0.1.7.6'
 jobs:
   apk:
     runs-on: ubuntu-latest
@@ -57,10 +57,10 @@ jobs:
         env:
           PW: ${{ runner.temp }}/pw/node_modules/playwright-core
           CHROME: /usr/bin/google-chrome
-        run: node roofmeasure/tests/v0175_test.cjs "$RUNNER_TEMP/report-out"
+        run: node roofmeasure/tests/v0176_test.cjs "$RUNNER_TEMP/report-out"
       - name: Fail on page errors / missing aerial
         run: |
-          python3 - "$RUNNER_TEMP/report-out/v0175_test.json" <<'PY'
+          python3 - "$RUNNER_TEMP/report-out/v0176_test.json" <<'PY'
           import json, sys
           r = json.load(open(sys.argv[1])); bad = []
           for k, h in r["houses"].items():
@@ -72,6 +72,11 @@ jobs:
               if oa.get("status") != "ok": bad.append(f"{k}: ortho align {oa}")
               v = h.get("view3d") or {}
               if v.get("error") or not (v.get("edit") or {}).get("edits_3d") or not v.get("report_mentions_edit"): bad.append(f"{k}: 3-D editor {str(v)[:300]}")
+              x = h.get("pf_off", {}); f = x.get("features") or {}; c = f.get("counts") or {}
+              if k == "15_ward_st_hingham":
+                  if ((x.get("model_fit") or {}).get("median_ft") or 9) > 0.2: bad.append(f"15 Ward lidar residual regressed: {x.get('model_fit')}")
+                  if not 2 <= (c.get("skylights") or 0) <= 4: bad.append(f"15 Ward skylight count {c}")
+              if k == "6_harborview_rd_hull" and not any(150 <= (d[0] or 0) <= 210 for d in f.get("decks") or []): bad.append(f"6 Harborview deck area {f.get('decks')}")
           for g in r["hull_geocode"][:2]:
               if g["result"] or "not found in HULL" not in g["status"]: bad.append(f"Hull geocode should be not-found: {g}")
           if not r["hull_geocode"][2]["result"]: bad.append(f"6 Harborview Hull not found: {r['hull_geocode'][2]}")
@@ -109,17 +114,18 @@ jobs:
           CHROME: /usr/bin/google-chrome
           RM_ONLY_HOUSES: '1'
           RM_HOUSES: '[{"slug":"${{ matrix.num }}_oakcrest_rd_hingham","addr":"${{ matrix.num }} Oakcrest Road, Hingham, MA 02043"}]'
-        run: node roofmeasure/tests/v0175_test.cjs "$RUNNER_TEMP/bench-out"
+        run: node roofmeasure/tests/v0176_test.cjs "$RUNNER_TEMP/bench-out"
       - name: Summary
         if: always()
         run: |
-          python3 - "$RUNNER_TEMP/bench-out/v0175_test.json" <<'PY' | tee "$RUNNER_TEMP/bench-out/summary.txt"
+          python3 - "$RUNNER_TEMP/bench-out/v0176_test.json" <<'PY' | tee "$RUNNER_TEMP/bench-out/summary.txt"
           import json, sys
           r = json.load(open(sys.argv[1]))
           for k, h in r["houses"].items():
               x = h.get("pf_off", {}); f = x.get("features") or {}
               print(k, "roof", x.get("roof"), "sq", x.get("squares"), "pitch", x.get("pitch"), "eave", x.get("eave"), "rake", x.get("rake_sloped"),
-                    "model", x.get("model"), "skylights", f.get("skylights"), "decks", f.get("decks"), "dormers", x.get("dormers"), "errors", h.get("errors"))
+                    "model", x.get("model"), "counts", f.get("counts"), "skylights", f.get("skylights"), "decks", f.get("decks"), "dormers", f.get("dormers"),
+                    "lidar_outline", {k: (x.get("lidar_outline") or {}).get(k) for k in ("dx_m", "dy_m", "iou0", "iou", "applied", "outside_area_sqft")}, "ortho", {k: (x.get("ortho") or {}).get(k) for k in ("dx_m", "dy_m", "confidence")}, "errors", h.get("errors"))
           PY
       - uses: actions/upload-artifact@v4
         if: always()

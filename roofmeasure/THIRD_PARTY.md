@@ -1,4 +1,4 @@
-# Third-party components in RoofMeasure 0.1.7.5
+# Third-party components in RoofMeasure 0.1.7.6
 
 | Component | Version | Where | License |
 |---|---|---|---|

@@ -1,10 +1,10 @@
 <!-- SPDX-License-Identifier: MIT -->
-# RoofMeasure 0.1.7.5 (versionCode 10705)
+# RoofMeasure 0.1.7.6 (versionCode 10706)
 
 **Mission:** open-source roof measurement tools so contractors and homeowners can get accurate measurements from free public data
 and check whether a roofing quote is fair. Every number is traceable to its free data source and labelled; nothing is claimed as verified.
 
-Based on the reconstructed v0.1.7 source; changes are in CHANGELOG.md. Headless test: `node tests/v0175_test.cjs <outdir>`
+Based on the reconstructed v0.1.7 source; changes are in CHANGELOG.md. Headless test: `node tests/v0176_test.cjs <outdir>`
 (older tests kept as tests/v0171_test.cjs … v0174_test.cjs) (Playwright + Chrome, live MassGIS/USGS; reference-imagery endpoints are blocked/mocked).
 Test houses: 15 Ward St Hingham, 6 Harborview Rd Hull, 30 Lockwood Dr Weymouth, 49 Scotland St Hingham (30 Lockwood Drive and 49 Scotland
 Street are not in Hull in any free source; the test checks the Hull spellings are reported not found) (override with RM_HOUSES='[{"slug":..,"addr":..}]').

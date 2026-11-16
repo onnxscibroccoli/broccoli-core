@@ -119,7 +119,9 @@
       if (tot && p.plan_area_sqft_approx > 0.6 * tot) return; // a flat ROOF, not a deck
       var A = 0, O = p.outline_lonlat, kx = Math.cos(O[0][1] * Math.PI / 180) * 364000, ky = 364000;
       for (var i = 0; i < O.length; i++) { var a = O[i], b = O[(i + 1) % O.length]; A += (a[0] * kx) * (b[1] * ky) - (b[0] * kx) * (a[1] * ky); }
-      out.push({ key: 'K' + out.length, plane: p.id, outline_lonlat: O, area_sqft: Math.round(Math.abs(A) / 2), points_area_sqft: p.plan_area_sqft_approx, pitch: p.pitch, z_m: p.z_m,
+      var rc = p.rect && p.rect.area_sqft > 0 ? p.rect : null; // 0.1.7.6: robust rectangle (the hull is inflated by stray edge points)
+      out.push({ key: 'K' + out.length, plane: p.id, outline_lonlat: rc ? rc.outline_lonlat : O, area_sqft: rc ? rc.area_sqft : Math.round(Math.abs(A) / 2), hull_area_sqft: Math.round(Math.abs(A) / 2),
+        w_ft: rc ? rc.w_ft : null, h_ft: rc ? rc.h_ft : null, outline_method: rc ? rc.method : 'convex hull', points_area_sqft: p.plan_area_sqft_approx, pitch: p.pitch, z_m: p.z_m,
         n_points: p.n_points, centroid_lonlat: p.centroid_lonlat, type: 'roof deck / flat section', confidence: p.small ? 'low' : 'medium',
         inspect: 'Possible rubber (EPDM) or membrane roof under the deck or flat section: inspect seams, drains and flashing; replace with the roof if worn.',
         source: 'USGS 3DEP lidar low-slope plane ' + p.id });

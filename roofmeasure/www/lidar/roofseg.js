@@ -8,7 +8,7 @@
  * Everything is an estimate from free USGS 3DEP data; nothing here is verified (NOT_PROVEN). */
 (function (root, factory) { var m = factory(); if (typeof module === 'object' && module.exports) module.exports = m; else root.RoofSeg = m; })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
-  var VERSION = '0.1.7.5-roofseg-3', M2FT = 3.280839895, R = 6378137, D2R = Math.PI / 180;
+  var VERSION = '0.1.7.6-roofseg-4', M2FT = 3.280839895, R = 6378137, D2R = Math.PI / 180;
   function r2(v) { return Math.round(v * 100) / 100; } function r1(v) { return Math.round(v * 10) / 10; }
   function grid(P, cs) { var g = new Map(); P.forEach(function (p, i) { var k = Math.floor(p[0] / cs) + ',' + Math.floor(p[1] / cs); var a = g.get(k); if (!a) g.set(k, a = []); a.push(i); }); return g; }
   function near(P, g, cs, i, rad) { var p = P[i], cx = Math.floor(p[0] / cs), cy = Math.floor(p[1] / cs), n = Math.ceil(rad / cs), out = [], r2_ = rad * rad;
@@ -45,6 +45,20 @@
   function snap(rs) { var n = Math.round(rs * 2) / 2; return (Math.abs(n - rs) <= 0.35 ? n : r1(rs)) + '/12'; }
   function conf(n, rms) { return n >= 60 && rms <= 0.08 ? 'high' : n >= 20 && rms <= 0.15 ? 'medium' : 'low'; }
 
+  function rectOf(pts, fr) {
+    if (pts.length < 8) return null;
+    var mx = 0, my = 0; pts.forEach(function (p) { mx += p[0]; my += p[1]; }); mx /= pts.length; my /= pts.length;
+    var sxx = 0, syy = 0, sxy = 0; pts.forEach(function (p) { var a = p[0] - mx, b = p[1] - my; sxx += a * a; syy += b * b; sxy += a * b; });
+    var th = 0.5 * Math.atan2(2 * sxy, sxx - syy), u = [Math.cos(th), Math.sin(th)], v = [-u[1], u[0]];
+    var su = pts.map(function (p) { return (p[0] - mx) * u[0] + (p[1] - my) * u[1]; }).sort(function (a, b) { return a - b; });
+    var sv = pts.map(function (p) { return (p[0] - mx) * v[0] + (p[1] - my) * v[1]; }).sort(function (a, b) { return a - b; });
+    var q = function (a, f) { return a[Math.min(a.length - 1, Math.max(0, Math.round((a.length - 1) * f)))]; };
+    var cu = (q(su, 0.05) + q(su, 0.95)) / 2, cv = (q(sv, 0.05) + q(sv, 0.95)) / 2, hu = (q(su, 0.95) - q(su, 0.05)) / 0.9 / 2, hv = (q(sv, 0.95) - q(sv, 0.05)) / 0.9 / 2;
+    var cx = mx + cu * u[0] + cv * v[0], cy = my + cu * u[1] + cv * v[1];
+    var C = [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(function (s) { var x = cx + s[0] * hu * u[0] + s[1] * hv * v[0], y = cy + s[0] * hu * u[1] + s[1] * hv * v[1], ll = toLL(fr, x, y);
+      return [Math.round(ll[0] * 1e7) / 1e7, Math.round(ll[1] * 1e7) / 1e7]; });
+    return { outline_lonlat: C, w_ft: r1(2 * hu * M2FT), h_ft: r1(2 * hv * M2FT), area_sqft: Math.round(4 * hu * hv * M2FT * M2FT), method: 'principal-axis 5-95 % extents / 0.9' };
+  }
   function segment(lidar, opts) {
     opts = opts || {};
     var P = lidar && lidar.points_full, fr = lidar && lidar.frame, ring = lidar && lidar.ring_local;
@@ -84,6 +98,7 @@
     var pid = new Int32Array(N).fill(-1);
     planes.forEach(function (pl, k) { pl.k = k; pl.idx.forEach(function (i) { var p = P[i]; if (Math.abs(p[2] - zAt(pl, p[0], p[1])) <= 0.25) pid[i] = k; }); pl.idx = pl.idx.filter(function (i) { return pid[i] === k; }); });
     var totalIn = 0; planes.forEach(function (pl) { totalIn += pl.idx.length; });
+    Object.defineProperty(out, 'point_plane', { value: pid, enumerable: false }); // 0.1.7.6: plane index per points_full point (-1 = none)
     // plan area of each plane: occupied 0.5 m cells
     out.planes = planes.map(function (pl, k) {
       var cells = new Set(); pl.idx.forEach(function (i) { cells.add(Math.floor(P[i][0] / 0.5) + ',' + Math.floor(P[i][1] / 0.5)); });
@@ -99,6 +114,9 @@
         plan_area_sqft_approx: Math.round(area), inside_frac: r2(ins / pl.idx.length), small: small, confidence: small ? 'low' : conf(pl.idx.length, pl.rms), centroid_lonlat: toLL(fr, c[0], c[1]), z_m: r2(c[2]),
         strike_len_ft: r1(strike * M2FT), dip_len_ft: r1(dip * M2FT),
         // 0.1.7.5: outline (convex hull) of low-slope planes, for roof-deck / flat-section candidates
+        // 0.1.7.6: robust rectangle of low-slope planes (principal axes, 5-95 % extents / 0.9 = full extent of an even point spread;
+        // the convex hull is inflated by stray edge points, e.g. railing feet or parapet tops)
+        rect: rs <= 2 ? rectOf(pl.idx.map(function (i) { return [P[i][0], P[i][1]]; }), fr) : undefined,
         outline_lonlat: rs <= 2 ? hull(pl.idx.map(function (i) { return [P[i][0], P[i][1]]; })).map(function (h) { var ll = toLL(fr, h[0], h[1]); return [Math.round(ll[0] * 1e7) / 1e7, Math.round(ll[1] * 1e7) / 1e7]; }) : undefined };
     });
     out.coverage = r2(totalIn / N);

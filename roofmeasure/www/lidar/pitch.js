@@ -265,7 +265,7 @@ export async function estimatePitch(footprintGeoJSON, opts = {}) {
   const ctx = prepare(footprintGeoJSON);
   if (!ctx) return result({ notes: ['no polygon in input; default 6/12'] });
   const { ringM, ringLocal, k, ox, oy, longAxis, baseKw } = ctx; const inset = opts.insetM ?? 0.6;
-  const xs = ringM.map(p => p[0]), ys = ringM.map(p => p[1]), pad = 1.5 / k;
+  const xs = ringM.map(p => p[0]), ys = ringM.map(p => p[1]), pad = (opts.padM ?? 6) / k; // 0.1.7.6: 6 m (was 1.5) for outline registration + ground
   const bbox = [Math.min(...xs) - pad, Math.min(...ys) - pad, Math.max(...xs) + pad, Math.max(...ys) + pad];
   const notes = []; let pts = null, used = null;
   for (const ds of opts.datasets || DEFAULT_DATASETS) {
@@ -300,6 +300,9 @@ export async function estimatePitch(footprintGeoJSON, opts = {}) {
     .filter(Boolean);
   Object.defineProperty(out, 'points_full', { value: PF, enumerable: false });
   Object.defineProperty(out, 'ring_local', { value: ringLocal, enumerable: false });
+  // 0.1.7.6: every building / elevated point in the padded bbox (outline registration vs the roofprint, lidar building extent)
+  Object.defineProperty(out, 'points_bbox', { value: L.filter(p => p[3] === 6 || (![2, 7, 9, 18].includes(p[3]) && gz != null && p[2] > gz + 2)).map(p => [p[0], p[1], p[2], p[3]]), enumerable: false });
+  Object.defineProperty(out, 'ground_points', { value: L.filter(p => p[3] === 2).map(p => [p[0], p[1], p[2]]), enumerable: false });
   Object.defineProperty(out, 'class_counts', { value: L.reduce((m, p) => (m[p[3]] = (m[p[3]] || 0) + 1, m), {}), enumerable: false });
   return out;
 }

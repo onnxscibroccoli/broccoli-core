@@ -649,10 +649,10 @@ def _overlay(r, P, scale_px_per_ft, casing=True, numbers=True, lengths=True, fac
                 best = (lx, ly, (lx - tw / 2, ly - th + 2, lx + tw / 2, ly + 4))
             placed.append(best[2])
             labels.append(_label(best[0], best[1], txt, size=11, fg="#111"))
-    return "".join(out) + _features(r, P, scale_px_per_ft) + "".join(labels)
+    return "".join(out) + _features(r, P, scale_px_per_ft, placed) + "".join(labels)
 
 
-def _features(r, P, s):
+def _features(r, P, s, placed=None):
     """0.1.7.5: labelled roof features (candidates): roof decks / flat sections (brown, hatched by dashes) and skylights
     (rotated rectangles at their measured size). Drawn on the diagram and the overlay pages."""
     rf = r.get("roof_features") or {}
@@ -678,7 +678,19 @@ def _features(r, P, s):
         out.append(f'<g transform="translate({x:.1f},{y:.1f}) rotate({a:.1f})"><rect x="{-w/2:.1f}" y="{-h/2:.1f}" width="{w:.1f}" height="{h:.1f}" fill="#38bdf8" fill-opacity="0.45" stroke="#000" stroke-width="3.5"/>'
                    f'<rect x="{-w/2:.1f}" y="{-h/2:.1f}" width="{w:.1f}" height="{h:.1f}" fill="none" stroke="#e0f2fe" stroke-width="1.5"/></g>')
         sz = f' {num(k.get("w_ft"), 1)}×{num(k.get("h_ft"), 1)} ft' if k.get("w_ft") else ''
-        out.append(_label(x, y - max(w, h) / 2 - 5, f'{k.get("label", "S")}{sz}', size=10.5, fg="#075985"))
+        txt = f'{k.get("label", "S")}{sz}' + ('' if k.get("counted", True) else '?')
+        # 0.1.7.6: label collision avoidance against the edge-length labels / number circles (and earlier skylight labels)
+        tw, th, r0 = 5.9 * len(txt), 13, max(w, h) / 2
+        cand = [(x, y - r0 - 5), (x, y + r0 + 14), (x + r0 + tw / 2 + 4, y + 4), (x - r0 - tw / 2 - 4, y + 4), (x, y - r0 - 20), (x, y + r0 + 29)]
+        pl = placed if placed is not None else []
+        best = cand[0]
+        for lx, ly in cand:
+            box = (lx - tw / 2, ly - th + 2, lx + tw / 2, ly + 3)
+            if not any(box[0] < b2[2] and b2[0] < box[2] and box[1] < b2[3] and b2[1] < box[3] for b2 in pl):
+                best = (lx, ly)
+                break
+        pl.append((best[0] - tw / 2, best[1] - th + 2, best[0] + tw / 2, best[1] + 3))
+        out.append(_label(best[0], best[1], txt, size=10.5, fg="#075985"))
     return "".join(out)
 
 
@@ -814,6 +826,21 @@ def ortho_appendix(r):
                  f'Residual per edge after the shift: median {num(oa.get("residual_median_m"), 2)} m, max {num(oa.get("residual_max_m"), 2)} m'
                  + (f'; {esc(oa.get("edges_no_clear_edge"))} edge(s) with no clear photo edge within ±2 m (shown —)' if oa.get("edges_no_clear_edge") else '') + ' '
                  '(what one translation cannot explain: lean differs with roof height, or the roofprint differs from the roof). Measurements use the roofprint, not the photo.</p>')
+        rg = oa.get("region") if isinstance(oa.get("region"), dict) else None
+        if rg:
+            H.append(f'<p class="note">Cross-check (not used for the shift): brightness separation of the {esc(rg.get("labels"))} lidar roof planes in the photo, eta² {num(rg.get("eta0"), 3)} at no shift → {num(rg.get("eta"), 3)} at the shift.</p>')
+        lo = r.get("lidar_outline") if isinstance(r.get("lidar_outline"), dict) else None
+        if lo and lo.get("iou") is not None:
+            H.append('<h3>Roofprint vs lidar building outline</h3><p class="note">' + esc(lo.get("method")) +
+                     f'. Overlap (IoU) {num(lo.get("iou0"), 3)} as given → {num(lo.get("iou"), 3)} after {num(lo.get("dx_m"), 2)} m east, {num(lo.get("dy_m"), 2)} m north'
+                     f'{" (" + "applied to the lidar features: decks, dormers, lidar skylights" + ")" if lo.get("applied") else " (not applied)"}. '
+                     f'Lidar building {num(lo.get("lidar_area_sqft"), 0)} sq ft vs roofprint {num(lo.get("roofprint_area_sqft"), 0)} sq ft (plan, incl. overhangs); '
+                     f'{num(lo.get("outside_area_sqft"), 0)} sq ft of lidar building lies more than 1.5 m outside the roofprint'
+                     + (' — the roofprint may not cover the whole current house: check.' if float(lo.get("outside_area_sqft") or 0) >= 150 else '.') + '</p>')
+        rj = (r.get("roof_features") or {}).get("rejected") or []
+        if rj:
+            H.append('<table class="compact"><caption>Ortho patches rejected as skylights (why)</caption><thead><tr><th scope="col">Patch</th><th scope="col">Size ft</th><th scope="col">Reason</th></tr></thead><tbody>'
+                     + "".join(f'<tr><td>{esc(k.get("key"))}</td><td class="n">{num(k.get("w_ft"), 1)}×{num(k.get("h_ft"), 1)}</td><td>{esc(k.get("reason"))}</td></tr>' for k in rj[:20]) + '</tbody></table>')
         rs = oa.get("residuals") or []
         if rs:
             H.append('<table class="compact"><thead><tr><th scope="col">Edge</th>' + "".join(f'<th scope="col" class="n">{esc(x.get("edge"))}</th>' for x in rs[:24]) +
@@ -941,11 +968,22 @@ def lidar_seg_section(r):
 
 
 def feature_rows(r):
+    """0.1.7.6: roof features are CANDIDATES (2-D ortho / lidar detections, NOT_PROVEN) and never part of the billable totals."""
     rf = r.get("roof_features") or {}
-    sk, dk = rf.get("skylights") or [], rf.get("decks") or []
-    rows = [("Skylights (candidates, NOT_PROVEN)", (f'{len(sk)}: ' + "; ".join(f'{k.get("label")} {num(k.get("w_ft"), 1)}×{num(k.get("h_ft"), 1)} ft' if k.get("w_ft") else str(k.get("label")) for k in sk)) if sk else "none detected")]
+    sk, dk, dm = rf.get("skylights") or [], rf.get("decks") or [], rf.get("dormers") or []
+    cs = [k for k in sk if k.get("counted", True)]
+    un = [k for k in sk if not k.get("counted", True)]
+    def lab(k):
+        return f'{k.get("label")} {num(k.get("w_ft"), 1)}×{num(k.get("h_ft"), 1)} ft' if k.get("w_ft") else str(k.get("label"))
+    txt = (f'{len(cs)}: ' + "; ".join(lab(k) for k in cs)) if cs else "none passed the checks"
+    if un:
+        txt += f' (+{len(un)} unchecked: ' + "; ".join(lab(k) + "?" for k in un) + ')'
+    rows = [("Skylights (candidates, not in totals)", txt)]
     if dk:
-        rows.append(("Roof deck / flat section (candidate)", "; ".join(f'≈{num(d.get("area_sqft"), 0)} sq ft at {esc(d.get("pitch"))} — inspect for rubber/membrane roof underneath' for d in dk)))
+        rows.append(("Roof deck / flat section (candidate, not in totals)", "; ".join(
+            (f'≈{num(d.get("area_sqft"), 0)} sq ft' + (f' ({num(d.get("w_ft"), 1)}×{num(d.get("h_ft"), 1)} ft)' if d.get("w_ft") else '') + f' at {esc(d.get("pitch"))}: inspect for a rubber/membrane roof underneath') for d in dk)))
+    if dm:
+        rows.append(("Dormers (candidates, not in totals)", f'{len(dm)}: ' + "; ".join(f'{esc(d.get("key") or d.get("id") or "D")} {esc(d.get("type") or "dormer")}' for d in dm) + ' — dormer gutters: inspect and clean'))
     return rows
 
 
@@ -1378,7 +1416,7 @@ def build_html(r, rows, waste, mats, aerial, generated):
              "".join(f"<li>{esc(a)}</li>" for a in attributions(r, aerial[0])) + "</ul></section>")
     H.append('<section aria-labelledby="h-disc"><h2 id="h-disc" class="sr-only">Note</h2><p class="disclaimer"><b>For estimating; verify on site.</b></p></section>')
     H.append(appendix_section(r))
-    H.append(f'<footer>RoofMeasure 0.1.7.5 report · {addr} · generated {esc(generated)} · RoofMeasure (MIT)</footer></main></body></html>')
+    H.append(f'<footer>RoofMeasure 0.1.7.6 report · {addr} · generated {esc(generated)} · RoofMeasure (MIT)</footer></main></body></html>')
     return "".join(H)
 
 

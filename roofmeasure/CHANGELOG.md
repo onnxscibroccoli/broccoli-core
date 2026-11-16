@@ -1,6 +1,28 @@
 <!-- SPDX-License-Identifier: MIT -->
 # RoofMeasure changelog (0.1.7.x line — stays on 0.1.7.x until Ian verifies an improvement)
 
+## 0.1.7.6 (versionCode 10706) — 2026-11-16
+Guidance from docs/research (Ian's papers): lines come from fitted lidar planes; 2-D / CV detections stay outside the billable totals.
+
+- Outline vs lidar: the roofprint is compared with the lidar building mask (class-6 points within 6 m, 0.5 m grid) by IoU over
+  ±4 m translations (lidar/pitch.js now fetches a 6 m pad and keeps `points_bbox` / `ground_points`). All three test houses show
+  the same ~1.1 m roofprint-vs-lidar offset (15 Ward 0.5 E/1.0 S, 6 Harborview 1.5 E/1.0 S, 4 Oakcrest 1.0 E/0.5 S), so lidar
+  features (decks, dormers, lidar skylights) are now moved into the roofprint frame before they are drawn or matched with photo
+  patches. Lines, facets and totals are not moved. Appendix: IoU before/after and lidar building area outside the roofprint.
+- Ortho offset: the edge-gradient search is unchanged (it is right on 15 Ward and 6 Harborview). A region score (brightness
+  separation of the lidar roof planes in the photo, eta²) was tried as a factor and moved 6 Harborview 5 m off the roof, so it is
+  reported as a cross-check only. 4 Oakcrest: shift unchanged (2.68 E / 2.19 S); the photo there is ambiguous by about 1 m
+  (house shadow, porch edge) and the earlier "visibly offset" read was largely the house's shadow.
+- Stricter skylights: both sides 1.5-12 ft, contrast >= 4 MAD, rectangularity >= 0.6, the ring 0.25-1.1 m around the patch on
+  ONE lidar plane (>= 65 %), lidar returns on the patch within -0.25/+0.45 m of that plane (flush glass or a low curb), not on a
+  deck, near a dormer or in a 3+ cluster. Lidar-only candidates (void / dip) are listed but not counted. Rejected patches and
+  their reasons are in the Appendix. Totals/summary rows say "candidates, not in totals".
+- Roof deck outline: principal-axis rectangle from the 5-95 % extents of the flat plane's points (the convex hull was inflated by
+  stray edge points). 6 Harborview: 195 sq ft (14.9 x 13.0 ft), was 223.
+- Skylight labels avoid the edge-length labels and number circles (15 Ward S3 / "EAVE 7.7" overlap).
+- Dormers (lidar candidates) are listed in the summary with "dormer gutters: inspect and clean".
+- Tests: tests/v0176_test.cjs; CI gates 15 Ward residual <= 0.2 ft, 15 Ward 2-4 counted skylights, 6 Harborview deck 150-210 sq ft.
+
 ## 0.1.7.5 (versionCode 10705) — 2026-11-15
 Same rules (free data only; Google/Bing/Esri display-only; candidates NOT_PROVEN; MIT).
 
