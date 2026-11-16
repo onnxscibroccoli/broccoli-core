@@ -12,15 +12,19 @@ Read in order: this file, CODEVELOP.md (rules, build), CHANGELOG.md, docs/resear
 - Roof features (skylights, decks, dormers) are CANDIDATES and are not in the billable totals (provenance boundary).
 - 3-D view/editor: www/view3d.js (three.js r187, MIT).
 
-## Status by test house (PASS / FAIL / NOT_PROVEN)  — CI run: see "CI runs" below
-- 15 Ward St, Hingham: lidar residual median 0.05 ft PASS. Skylights: 3 counted (7.1x5.0 NE, 4.4x2.0 SW, 3.9x1.8 SW), doubtful 3.2x1.6 rejected
-  (not rectangular) NOT_PROVEN. Ortho shift unchanged (3.68 E / 0.71 S). Ian approved the report.
-- 6 Harborview Rd, Hull: roof deck 195 sq ft (14.9 x 13.0 ft rectangle, was 223 hull), flat, "inspect: possible rubber/membrane" NOT_PROVEN
-  (visual ~180). Lidar features moved 1.5 m W / 1.0 m N into the roofprint frame. 0 counted skylights (dormer-window patches rejected).
-  Residual median 0.24-3.42 ft per facet FAIL (unchanged; model is an assumed hip around the deck).
-- 4 Oakcrest Rd, Hingham: skylights 9 -> 1 counted (+2 lidar-only, not counted) NOT_PROVEN. Ortho shift unchanged; photo ambiguous ~1 m.
-- 1-3, 5, 6 Oakcrest Rd: see the benchmark summary in the CI run.
-- 30 Lockwood Dr, Weymouth and 49 Scotland St, Hingham: public test houses.
+## Status by test house (PASS / FAIL / NOT_PROVEN), CI run 43810427490
+| House | Lidar residual (median) | Counted skylights | Deck | Dormers (cand.) | Status |
+|---|---|---|---|---|---|
+| 15 Ward St, Hingham | 0.05 ft PASS | 3 (7.1x5.0 NE, 4.4x2.0 SW, 3.9x1.8 SW) | none | 0 | residual PASS; skylights NOT_PROVEN (on the photo patches) |
+| 6 Harborview Rd, Hull | 1.68 ft FAIL (per facet 0.24-3.42) | 0 (+1 lidar-only) | 183 sq ft, 12.8x14.3 ft, flat, inspect rubber/membrane | 1 | deck NOT_PROVEN (visual ~180; drawn ~1 m SE of the deck walls: lean) |
+| 1 Oakcrest Rd | 0.48 ft | 0 (+1) | none | 3 | NOT_PROVEN |
+| 2 Oakcrest Rd | 4.13 ft FAIL | 1 (9.8x4.5, doubtful) (+1) | none | 1 | NOT_PROVEN |
+| 3 Oakcrest Rd | 0.42 ft | 0 | none | 1 | NOT_PROVEN |
+| 4 Oakcrest Rd | 3.89 ft FAIL | 1 (+2 lidar-only on the two small squares on the north face) | none | 3 | NOT_PROVEN; was 9 |
+| 5 Oakcrest Rd | 0.32 ft | 0 (+2) | none | 2 | NOT_PROVEN |
+| 6 Oakcrest Rd | 0.84 ft | 0 (+2) | none | 3 | NOT_PROVEN |
+| 30 Lockwood Dr, Weymouth | 1.52 ft | 0 | 81 sq ft | 1 | NOT_PROVEN |
+| 49 Scotland St, Hingham | 0.04 ft PASS | 1 (3.1x2.3) | none (27x1.7 ft strip dropped) | 1 | NOT_PROVEN |
 
 ## CI runs
 - 0.1.7.5: 43802526473 (all green; Oakcrest over-counted skylights 2-9 per house).
@@ -28,7 +32,9 @@ Read in order: this file, CODEVELOP.md (rules, build), CHANGELOG.md, docs/resear
   (0.1.7.5: 5/7/4/9/4/2), 30 Lockwood 0, 49 Scotland 1. 6 Harborview deck 195 sq ft. Dormers were never used to exclude skylight patches
   (kept-only filter) and were missing from the summary: fixed in increment 2.
 - 0.1.7.6 increment 2: dormer candidates used for exclusion + listed with gutter LF; deck rectangle on the house axis; decks < 5 ft wide dropped;
-  facet badges join label collision avoidance. Run: (filled in after the run)
+  facet badges join label collision avoidance. Run 43810427490 (45a573b), all green: 6 Harborview deck 183 sq ft (12.8 x 14.3 ft);
+  dormer candidates: Oakcrest 1-6 = 3/1/1/3/2/3, 6 Harborview 1, 30 Lockwood 1, 49 Scotland 1, 15 Ward 0; skylight counts unchanged.
+- 0.1.7.6 increment 3: deck label placed clear of facet badges. Run: see `gh run list -R onnxscibroccoli/broccoli-core --branch feat/roofmeasure-dev`.
 
 ## Requirements
 - Mission: open-source tools so contractors and homeowners get accurate roof measurements and can tell whether a quote is fair.

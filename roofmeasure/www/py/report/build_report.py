@@ -668,8 +668,19 @@ def _features(r, P, s, placed=None):
         pp = " ".join(f"{x:.1f},{y:.1f}" for x, y in pts)
         cx, cy = sum(p[0] for p in pts) / len(pts), sum(p[1] for p in pts) / len(pts)
         out.append(f'<polygon points="{pp}" fill="#a16207" fill-opacity="0.35" stroke="#000" stroke-width="4.5"/><polygon points="{pp}" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="6 3"/>')
-        out.append(_label(cx, cy - 4, f'DECK ≈{num(d.get("area_sqft"), 0)} sq ft', size=11, fg="#7c2d12"))
-        out.append(_label(cx, cy + 10, 'inspect: rubber/membrane?', size=9.5, fg="#7c2d12"))
+        # 0.1.7.6: two-line label placed clear of the facet badges / edge labels (centre, then above / below / beside the deck)
+        pl = placed if placed is not None else []
+        ys = [p[1] for p in pts]; xs = [p[0] for p in pts]
+        tw = 150
+        best = (cx, cy)
+        for lx, ly in [(cx, cy), (cx, min(ys) - 22), (cx, max(ys) + 14), (max(xs) + tw / 2 + 6, cy), (min(xs) - tw / 2 - 6, cy)]:
+            box = (lx - tw / 2, ly - 15, lx + tw / 2, ly + 13)
+            if not any(box[0] < b2[2] and b2[0] < box[2] and box[1] < b2[3] and b2[1] < box[3] for b2 in pl):
+                best = (lx, ly)
+                break
+        pl.append((best[0] - tw / 2, best[1] - 15, best[0] + tw / 2, best[1] + 13))
+        out.append(_label(best[0], best[1] - 4, f'DECK ≈{num(d.get("area_sqft"), 0)} sq ft', size=11, fg="#7c2d12"))
+        out.append(_label(best[0], best[1] + 10, 'inspect: rubber/membrane?', size=9.5, fg="#7c2d12"))
     for k in rf.get("skylights") or []:
         c = k.get("centroid_lonlat")
         if not c:
