@@ -1,9 +1,12 @@
 <!-- SPDX-License-Identifier: MIT -->
 # RoofMeasure: co-development guide (Grok Bot + ChatGPT + Ian)
 
+## Mission
+Open-source roof measurement tools so contractors and homeowners can get accurate measurements and check whether a quote is fair.
+
 ## Goals
 - A free, open-source alternative to GAF QuickMeasure, EagleView and Hover for residential roof and gutter takeoffs, starting with Massachusetts.
-- License: **MIT** (see LICENSE). Bundled third-party code keeps its own license (MapLibre BSD-3, laz-perf Apache-2.0, Pyodide MPL-2.0).
+- License: **MIT** (see LICENSE). Third-party components and their licenses: THIRD_PARTY.md (any permissive or other license is fine; just record it there).
 - **Free data only** for anything measured: MassGIS roofprints and orthos, USGS 3DEP lidar, USDA NAIP, OSM/Overture footprints (ODbL), and the user's own trace.
 - Android app (WebView shell, no Gradle) that measures on the map, lets the user view, edit, export and share a PDF report. The report is built from the
   **live on-screen result** (the v0.1.7 approach), never from a hidden re-computation.
@@ -26,7 +29,7 @@ Every claim in a handoff, test or report is **PASS** (shown by a test or evidenc
 - `www/` app (index.html, app.js, sources.js, overture.js, tags.js, report.js, lib/roofcalc.js, lib/facets.js, lidar/pitch.js, py/report/*.py, vendor/)
 - `android/` AndroidManifest.xml, MainActivity.java (WebView + RoofBridge), ReportProvider.java, android/print/RmPdfWriter.java, res/
 - `web-dev/` browser/dev variants of the v0.1.7 web files (reference only; www/ is authoritative)
-- `tests/v0171_test.cjs` headless end-to-end test (15 Ward St Hingham)
+- `tests/v0171_test.cjs`, `tests/v0172_test.cjs`, `tests/v0173_test.cjs` headless end-to-end tests (15 Ward St Hingham, 30 Lockwood Dr Weymouth, 49 Scotland St Hingham, 6 Harborview Rd Hull; override with RM_HOUSES)
 
 ## Build
     export ANDROID_HOME=/path/to/android-sdk JAVA_HOME=/path/to/jdk17   # build-tools 34.0.0, platforms/android-34
@@ -44,6 +47,8 @@ Test: `node tests/v0171_test.cjs /tmp/out` (needs Chrome + playwright-core; set 
 | Microsoft Azure Maps / Bing Maps (user's key) | Display only | Attribution from Get Map Attribution / metadata must be shown; no derived data. Bing basic keys retired 2025-06-30; Enterprise keys end 2028-06-30 |
 | Esri World Imagery | Display only | ArcGIS terms; attribution required; derived data restricted |
 Concretely:
+- Free public imagery (MassGIS orthos, USGS NAIP) may be analysed in any useful way: pixel analysis, edge detection, edge snap of outline
+  vertices ("Snap to edges", gradient search), skylight/dormer candidates.
 - Never trace, snap, auto-detect, screen-capture, read pixels, or run computer vision on Google, Microsoft or Esri imagery, even composited.
 - Drawing and outline editing stay locked while any reference layer is the main layer or an overlay. Tracing happens only on the free layer
   (swipe compare keeps the free layer interactive).
@@ -62,3 +67,14 @@ Done in 0.1.7.2 (headless PASS, on-device NOT_PROVEN): 2, 3 (opt-in), 5 (logo + 
 4. Azure Maps: re-query Get Map Attribution on zoom/move end.
 5. National parcels/assessor outside MA (county registries; see research/RESEARCH.md); Overture/Microsoft footprints as a second fallback.
 6. Structures on lot outside MA (FEMA) and lidar pitch per detached structure.
+
+## 0.1.7.3 notes for co-developers
+- Roof model (lib/roofmodel.js): simple gable / wings / hip / flat chosen by per-facet lidar plane fits (lidar/facetfit.js); without lidar the model is
+  ASSUMED and hips/valleys are UNVERIFIED candidates that are not counted until confirmed. The user can pick the model and add, delete or re-type lines.
+- Whole-roof lidar (lidar/roofseg.js): region growing over all building points (no inset, +1.2 m buffer), robust plane refit, coplanar merge,
+  small planes kept and flagged, plane adjacency -> ridge/hip/valley lines, height jumps -> upper-plane eave/rake or wall flashing (only where a wall
+  rises above a lower roof plane), skylight candidates (voids/dips/low intensity). Lidar wins where confident; the footprint model fills gaps.
+- Rakes are SLOPED everywhere a length is shown (plan × √(1+(rise/12)²), per-facet pitch when opted in); eaves are level.
+- Report: three full pages (aerial + parcel, vector diagram, diagram over aerial), robust aerial (session tile cache, retries, grey tile on failure).
+- CI does the heavy work (APK, headless tests, emulator smoke); keep box runs light.
+- Private complex-roof test cases stay outside the repo (local only).

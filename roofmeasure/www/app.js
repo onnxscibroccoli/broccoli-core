@@ -32,7 +32,10 @@
     var o = { pitch: $('pitch').value, roofType: $('roofType').value, overhangFt: numOrNull('overhang'),
       gutterEndExtFt: numOrNull('gext'), ftPerDownspout: +$('ftds').value || 35, wastePct: +$('waste').value || 0,
       sourceType: state.sourceType, pitchSource: state.pitchSource, pitchConfidence: state.pitchConfidence };
-    if ($('useRidge').checked && state.lidar && state.lidar.ridges && state.lidar.ridges.length) o.ridgeBearingsDeg = state.lidar.ridges;
+    // 0.1.7.3: eave/rake method. 'single' (default) = edges parallel to the one dominant lidar ridge are eaves;
+    // 'perwing' = per-wing geometry constrained to every lidar ridge bearing (L/T/cross-gables).
+    var em = ($('eaveMethod') || {}).value || 'single';
+    if ($('useRidge').checked && em === 'perwing' && state.lidar && state.lidar.ridges && state.lidar.ridges.length) o.ridgeBearingsDeg = state.lidar.ridges;
     else if ($('useRidge').checked && state.lidar && state.lidar.ridge_bearing_deg != null) o.ridgeBearingDeg = state.lidar.ridge_bearing_deg;
     return o;
   }
@@ -251,8 +254,8 @@
     map.addLayer({ id: 'facets-fill', type: 'fill', source: 'facets', paint: { 'fill-opacity': ['case', ['has', 'tag'], 0.35, 0],
       'fill-color': ['match', ['get', 'tag'], 'deck', '#a16207', 'flat', '#64748b', 'low_slope', '#0891b2', 'steep', '#16a34a', '#000000'] } });
     map.addLayer({ id: 'facets-line', type: 'line', source: 'facets', paint: { 'line-color': '#ffffff', 'line-width': 0.6, 'line-opacity': 0.5 } });
-    map.addLayer({ id: 'lines', type: 'line', source: 'lines', paint: { 'line-width': ['case', ['get', 'user'], 5, 4],
-      'line-color': ['match', ['get', 'type'], 'ridge', '#dc2626', 'hip', '#9333ea', 'valley', '#0d9488', 'rake', '#ea580c', 'wall_flashing', '#64748b', '#ffffff'] } });
+    map.addLayer({ id: 'lines', type: 'line', source: 'lines', paint: { 'line-opacity': ['case', ['get', 'cand'], 0.45, 1], 'line-width': ['case', ['get', 'user'], 5, 4],
+      'line-color': ['match', ['get', 'type'], 'ridge', '#dc2626', 'hip', '#9333ea', 'valley', '#0d9488', 'rake', '#ea580c', 'wall_flashing', '#64748b', 'eave', '#2563eb', '#ffffff'] } });
     map.addLayer({ id: 'lines-case', type: 'line', source: 'lines', paint: { 'line-width': 7, 'line-color': '#000000', 'line-opacity': 0.8 } });
     map.addLayer({ id: 'edges-case', type: 'line', source: 'edges', paint: { 'line-width': 8, 'line-color': '#000000', 'line-opacity': 0.8 } });
     map.addLayer({ id: 'edges-hit', type: 'line', source: 'edges', paint: { 'line-width': 16, 'line-opacity': 0 } });
@@ -266,6 +269,7 @@
     map.addLayer({ id: 'verts', type: 'circle', source: 'verts', paint: { 'circle-radius': 5, 'circle-color': '#fff', 'circle-stroke-color': '#111', 'circle-stroke-width': 1.5 } });
     map.addLayer({ id: 'drawing', type: 'line', source: 'drawing', paint: { 'line-color': '#22c55e', 'line-width': 2 } });
     window.RoofApp.ready = true;
+    if (params.get('smoke') === '1') smokeRun();
     if (params.get('addr')) { $('addr').value = params.get('addr'); findAddress(); }
     else if (params.get('lat') && params.get('autopick') !== '0') pickAt(center);
   });
@@ -274,10 +278,17 @@
   function render() {
     labelMarkers.forEach(function (m) { m.remove(); }); labelMarkers = [];
     if (!state.ring) { ['fp', 'edges', 'verts'].forEach(function (s) { map.getSource(s).setData(emptyFC()); }); return; }
-    var r;
-    try { r = RC.computeRoof(Object.assign(opts(), { ring: state.ring, overrides: state.overrides, source: state.source, address: state.address,
-      lat: state.click && state.click[1], lon: state.click && state.click[0], simplifyFt: 0 })); }
-    catch (e) { status('Geometry error: ' + e.message); return; }
+    var r, core = function () { return RC.computeRoof(Object.assign(opts(), { ring: state.ring, overrides: state.overrides, source: state.source, address: state.address,
+      lat: state.click && state.click[1], lon: state.click && state.click[0], simplifyFt: 0 })); };
+    try {
+      // 0.1.7.3 roof model: user pick, else lidar-verified (per-facet plane fits), else assumed (no invented hips/valleys)
+      var mi = resolveModel(core);
+      if (mi) $('roofType').value = window.RoofModel.coreRoofType(mi.model);
+      r = core();
+      if (mi) { r.roof_model = mi.model; r.roof_model_info = mi; }
+    } catch (e) { status('Geometry error: ' + e.message); return; }
+    if (mi) { $('modelInfo').textContent = 'Roof model: ' + mi.label + ' — ' + (mi.source === 'assumed' ? 'ASSUMED' : mi.source) + '. ' + mi.reason + '.';
+      $('modelInfo').classList.toggle('warnc', mi.source === 'assumed'); }
     state.result = r; window.RoofApp.result = r;
     $('ohSrc').textContent = $('overhang').value === '' ? '(auto: ' + r.overhang_ft + ' ft)' : '';
     $('pitchInfo').textContent = 'pitch_source: ' + r.pitch_source + (r.pitch_confidence != null ? ' · confidence ' + r.pitch_confidence : '') +
@@ -294,8 +305,10 @@
     r.edges.forEach(function (e) {
       var tg = state.tags && state.tags.edges[e.i], ab = tg ? Object.keys(tg).map(function (k) { return { step_flashing: 'SF', drip_edge: 'DE', wall_flashing: 'WF', no_gutter: 'NG' }[k] || ''; }).join(' ') : '';
       var el = document.createElement('div'); el.className = 'lbl ' + e.type + (ab ? ' tagged' : '') + (state.tags && state.tags.confirmed['E' + e.i] ? ' ok' : '');
-      el.textContent = e.type.toUpperCase() + ' ' + e.length_ft.toFixed(1) + "'" + (ab ? ' ' + ab : '');
-      el.setAttribute('role', 'img'); el.setAttribute('aria-label', 'Edge ' + e.i + ', ' + e.type + ', ' + e.length_ft.toFixed(1) + ' feet' + (ab ? ', tags ' + ab : '') + (state.tags && state.tags.confirmed['E' + e.i] ? ', confirmed' : ''));
+      var rk = e.type === 'rake' && e.sloped_length_ft != null, shown = rk ? e.sloped_length_ft : e.length_ft;
+      el.textContent = e.type.toUpperCase() + ' ' + shown.toFixed(1) + "'" + (rk ? ' sl' : '') + (ab ? ' ' + ab : '');
+      el.title = rk ? 'Rake ' + e.sloped_length_ft.toFixed(1) + ' ft sloped (plan ' + e.length_ft.toFixed(1) + ' ft)' : 'Eave ' + e.length_ft.toFixed(1) + ' ft (level)';
+      el.setAttribute('role', 'img'); el.setAttribute('aria-label', 'Edge ' + e.i + ', ' + e.type + ', ' + shown.toFixed(1) + ' feet' + (rk ? ' sloped, plan ' + e.length_ft.toFixed(1) + ' feet' : '') + (ab ? ', tags ' + ab : '') + (state.tags && state.tags.confirmed['E' + e.i] ? ', confirmed' : ''));
       labelMarkers.push(new maplibregl.Marker({ element: el }).setLngLat([(e.from[0] + e.to[0]) / 2, (e.from[1] + e.to[1]) / 2]).addTo(map));
     });
     renderFacets(r);
@@ -304,15 +317,47 @@
       ['Pitch factor', r.pitch + ' → ×' + r.pitch_factor], ['Overhang', r.overhang_ft + ' ft <span class="note">(' + r.overhang_source + ')</span>'],
       ['Eave/rake method', '<span class="note">' + r.eave_rake_method + (r.ridge_bearings_deg.length ? ' ' + r.ridge_bearings_deg.join('°, ') + '°' : '') + '</span>'], ['Roof area', r.roof_area_sqft.toLocaleString() + ' sq ft'],
       ['Squares', r.squares + ' (' + r.squares_with_waste + ' w/ ' + r.waste_pct + '%)'], ['Eaves', r.eave_lf + ' LF'],
-      ['Rake (sloped, drip-edge length)', r.rake_sloped_lf + ' LF'], ['Gutter', r.gutter_lf + ' LF'], ['Downspouts', r.downspouts],
+      ['Rake (sloped, drip-edge length)', r.rake_sloped_lf + ' LF <span class="note">(plan ' + r.rake_plan_lf + ')</span>'], ['Gutter', r.gutter_lf + ' LF'], ['Downspouts', r.downspouts],
       ['Source', '<span class="note">' + (r.source || 'manual') + '</span>']
     ].map(function (x) { return '<tr><td>' + x[0] + '</td><td>' + x[1] + '</td></tr>'; }).join('') + '</table>';
-    $('edges').innerHTML = '<table><tr><th>#</th><th>ft</th><th>bearing</th><th>type</th></tr>' + r.edges.map(function (e) {
-      return '<tr data-i="' + e.i + '" tabindex="0" role="button" aria-label="Edge ' + e.i + ', ' + e.length_ft.toFixed(1) + ' feet, ' + e.type + (e.auto ? '' : ', set by you') + '. Press Enter to toggle eave or rake." style="cursor:pointer"><td>' + e.i + '</td><td>' + e.length_ft.toFixed(1) + '</td><td>' + e.bearing_deg.toFixed(0) +
+    $('edges').innerHTML = '<table><tr><th>#</th><th>ft (rake sloped)</th><th>plan ft</th><th>bearing</th><th>type</th></tr>' + r.edges.map(function (e) {
+      var sh = e.type === 'rake' && e.sloped_length_ft != null ? e.sloped_length_ft : e.length_ft;
+      return '<tr data-i="' + e.i + '" tabindex="0" role="button" aria-label="Edge ' + e.i + ', ' + sh.toFixed(1) + ' feet' + (e.type === 'rake' ? ' sloped, plan ' + e.length_ft.toFixed(1) : '') + ', ' + e.type + (e.auto ? '' : ', set by you') + '. Press Enter to toggle eave or rake." style="cursor:pointer"><td>' + e.i + '</td><td>' + sh.toFixed(1) + '</td><td>' + e.length_ft.toFixed(1) + '</td><td>' + e.bearing_deg.toFixed(0) +
         '°</td><td class="' + e.type + '">' + e.type + (e.auto ? '' : ' ✎') + '</td></tr>';
     }).join('') + '</table>';
     Array.prototype.forEach.call($('edges').querySelectorAll('tr[data-i]'), function (tr) { tr.onclick = function () { toggleEdge(+tr.dataset.i); };
       tr.onkeydown = function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); toggleEdge(+tr.dataset.i); setTimeout(function () { var n = $('edges').querySelector('tr[data-i="' + tr.dataset.i + '"]'); if (n) n.focus(); }, 0); } }; });
+  }
+  function resolveModel(core) {
+    var RMd = window.RoofModel, T = window.RoofTags; if (!RMd || !T) return null;
+    var user = $('roofModel').value;
+    if (user && user !== 'auto') return RMd.choose(null, null, user);
+    var L = state.lidar, useR = $('useRidge').checked;
+    var key = JSON.stringify([state.ring, $('pitch').value, numOrNull('overhang'), useR, L ? [L.ridge_bearing_deg, L.samples_n, !!L.points_local] : null]);
+    if (state.modelAuto && state.modelAutoKey === key) return state.modelAuto;
+    $('roofType').value = 'gable';
+    var r0 = core(), fin = T.facetsInput(r0, L, useR);
+    var m = RMd.choose(fin, L && L.points_local ? L : null, 'auto', RC.extractRing(r0.footprint_geojson));
+    state.modelAuto = m; state.modelAutoKey = key; window.RoofApp.roofModel = m;
+    return m;
+  }
+  /* 0.1.7.3 CI smoke test (debug builds pass ?smoke=1 via an intent extra): wait for a result, run lidar, build the report,
+     save the PDF through the native bridge and log RM_SMOKE lines (read from logcat by the CI emulator job). */
+  function smokeRun() {
+    var log = function (m) { try { console.log('RM_SMOKE ' + m); } catch (e) {} };
+    var t0 = Date.now(), iv = setInterval(function () {
+      if (!state.result) { if (Date.now() - t0 > 120000) { clearInterval(iv); log('FAIL no result'); } return; }
+      clearInterval(iv); log('result ' + state.result.source);
+      Promise.resolve(autoPitch()).then(function () {
+        state.perFacetPitch = params.get('perfacet') === '1';
+        return window.RoofReport.preview(window.RoofApp, function (m) { log('status ' + m); });
+      }).then(function (out) {
+        var r = out.result; log('report ' + JSON.stringify({ roof: r.roof_area_sqft, eave: r.eave_lf, rake_sloped: r.rake_lf, rake_plan: r.rake_plan_lf, pitch: r.pitch,
+          model: r.roof_model_info && r.roof_model_info.model + '/' + r.roof_model_info.source, tiles: r.aerial_diag, aerial_missing: /AERIAL IMAGE NOT AVAILABLE/.test(out.html), pages: (out.html.match(/class="fullpage pb"/g) || []).length }));
+        window.RoofReport.nativeCb.save = function (ok, msg) { log('save ' + (ok ? 'OK ' : 'FAIL ') + msg); };
+        window.RoofReport.deliver('save', out.html, 'RoofMeasure_' + r.slug + (state.perFacetPitch ? '_pf_on' : '_pf_off'), function (m) { log('deliver ' + m); });
+      }).catch(function (e) { log('FAIL ' + (e && e.message || e)); });
+    }, 1000);
   }
   // ------------------------------------------------------------ live facets / interior lines (same inputs as the report)
   function renderFacets(r) {
@@ -324,15 +369,20 @@
     state.facetsLive = f; state.facetsKey = key; window.RoofApp.facetsLive = f;
     var segs = f && f.line_segments || [];
     map.getSource('lines').setData({ type: 'FeatureCollection', features: segs.map(function (s, i) {
-      return s.coords_lonlat ? { type: 'Feature', properties: { i: i, type: s.type, user: !!s.user_tagged }, geometry: { type: 'LineString', coordinates: s.coords_lonlat } } : null; }).filter(Boolean) });
+      return s.coords_lonlat && !s.deleted ? { type: 'Feature', properties: { i: i, type: s.type, user: !!s.user_tagged, cand: !!s.unverified, lidar: s.source === 'lidar' }, geometry: { type: 'LineString', coordinates: s.coords_lonlat } } : null; }).filter(Boolean) });
     segs.forEach(function (s2, i) {
-      if (!s2.coords_lonlat || window.RoofTags.LINE_TYPES.indexOf(s2.type) < 0 || s2.length_ft < 2) return;
+      if (!s2.coords_lonlat || s2.deleted || (window.RoofTags.LINE_TYPES.indexOf(s2.type) < 0 && s2.source !== 'lidar') || s2.length_ft < 2) return;
       var c = s2.coords_lonlat, el = document.createElement('div');
-      el.className = 'lbl line ' + s2.type + (state.tags.confirmed['L' + i] ? ' ok' : '');
-      el.textContent = s2.type.toUpperCase() + ' ' + (+s2.length_ft).toFixed(1) + "'";
-      el.setAttribute('role', 'img'); el.setAttribute('aria-label', 'Line ' + i + ', ' + s2.type + ', ' + (+s2.length_ft).toFixed(1) + ' feet');
+      el.className = 'lbl line ' + s2.type + (state.tags.confirmed['L' + i] ? ' ok' : '') + (s2.unverified ? ' cand' : '');
+      el.textContent = (s2.source === 'lidar' ? 'L:' : '') + s2.type.replace('_flashing', ' fl').toUpperCase() + (s2.unverified ? '?' : '') + ' ' + (+s2.length_ft).toFixed(1) + "'";
+      el.setAttribute('role', 'img'); el.setAttribute('aria-label', 'Line ' + i + ', ' + s2.type.replace('_', ' ') + (s2.source === 'lidar' ? ', detected from lidar' : '') + ', ' + (+s2.length_ft).toFixed(1) + ' feet' + (s2.unverified ? ', unverified candidate, not counted until you confirm it' : ''));
       labelMarkers.push(new maplibregl.Marker({ element: el }).setLngLat([(c[0][0] + c[1][0]) / 2, (c[0][1] + c[1][1]) / 2]).addTo(map));
     });
+    var SG = T.lidarSeg ? T.lidarSeg(state.lidar) : null;
+    ((SG && SG.skylights) || []).forEach(function (k, i) { if (state.tags.skylightsDeleted && state.tags.skylightsDeleted['S' + i]) return;
+      var el = document.createElement('div'); el.className = 'lbl line sky cand'; el.textContent = 'SKY? S' + i;
+      el.setAttribute('role', 'img'); el.setAttribute('aria-label', 'Skylight candidate S' + i + ' from lidar (' + k.source + '), about ' + k.approx_w_ft + ' by ' + k.approx_h_ft + ' feet, not proven');
+      labelMarkers.push(new maplibregl.Marker({ element: el }).setLngLat(k.centroid_lonlat).addTo(map)); });
     map.getSource('facets').setData({ type: 'FeatureCollection', features: (f && f.facets || []).map(function (x) {
       var t = state.tags.areas[x.id] || state.tags.areas.ALL, pr = { id: x.id }; if (t) pr.tag = t.tag;
       return x.polygon_lonlat ? { type: 'Feature', properties: pr, geometry: { type: 'Polygon', coordinates: [x.polygon_lonlat] } } : null; }).filter(Boolean) });
@@ -341,7 +391,7 @@
   function nearestLine(p) {
     var f = state.facetsLive, best = null, t = tol(lastPointerType).edge;
     (f && f.line_segments || []).forEach(function (s, i) {
-      if (!s.coords_lonlat || window.RoofTags.LINE_TYPES.indexOf(s.type) < 0) return;
+      if (!s.coords_lonlat || (window.RoofTags.LINE_TYPES.indexOf(s.type) < 0 && !s.deleted && s.source !== 'lidar')) return;
       var a = map.project(s.coords_lonlat[0]), b = map.project(s.coords_lonlat[1]), d = segDist(p, [a.x, a.y], [b.x, b.y]);
       if (d <= t && (!best || d < best.d)) best = { i: i, d: d };
     });
@@ -367,8 +417,10 @@
     }
     if (kind === 'line') {
       var li = nearestLine(p); if (li == null) { status('Tap an interior ridge/hip/valley line (red/purple/teal) to re-type it.'); return true; }
+      var sgl = state.facetsLive && state.facetsLive.line_segments && state.facetsLive.line_segments[li];
+      if (['wall_flashing', 'eave', 'rake'].indexOf(v) >= 0 && !(sgl && sgl.source === 'lidar')) { status('Wall flashing / eave / rake re-typing applies to lidar-detected lines (L:) only; use the edge tools for outline edges.'); return true; }
       if (v === 'clear') delete T.lines[li]; else T.lines[li] = { type: v, layer: lab };
-      render(); status('Interior line ' + li + ' → ' + (v === 'clear' ? 'auto' : v) + '.'); return true;
+      render(); status('Interior line ' + li + ' → ' + (v === 'clear' ? 'auto' : v === 'none' ? 'deleted (not counted)' : v) + '.'); return true;
     }
     if (kind === 'area') {
       var fx = window.RoofTags.facetAt(state.facetsLive, ll), id = fx ? fx.id : (state.facetsLive && state.facetsLive.facets && state.facetsLive.facets.length ? null : 'ALL');
@@ -390,7 +442,7 @@
   function applyPalette() {
     var P = PAL[$('palette').value] || PAL.std; document.body.classList.toggle('cb', $('palette').value === 'cb');
     if (map.getLayer('edges')) map.setPaintProperty('edges', 'line-color', ['match', ['get', 'type'], 'eave', P.eave, P.rake]);
-    if (map.getLayer('lines')) map.setPaintProperty('lines', 'line-color', ['match', ['get', 'type'], 'ridge', P.ridge, 'hip', P.hip, 'valley', P.valley, 'rake', P.rake, 'wall_flashing', P.wall_flashing, '#ffffff']);
+    if (map.getLayer('lines')) map.setPaintProperty('lines', 'line-color', ['match', ['get', 'type'], 'ridge', P.ridge, 'hip', P.hip, 'valley', P.valley, 'rake', P.rake, 'wall_flashing', P.wall_flashing, 'eave', P.eave, '#ffffff']);
   }
   $('palette').onchange = applyPalette; onMapReady( applyPalette);
   $('bigTargets').onchange = function () { var m = this.checked ? 1.6 : 1; TOL.touch = { vert: 22 * m, edge: 20 * m }; TOL.pen = { vert: 14 * m, edge: 14 * m }; TOL.mouse = { vert: 8 * m, edge: 8 * m };
@@ -410,8 +462,8 @@
     state.ring = RC.normalizeRing(ring); state.overrides = {}; if (state.tags) { state.tags.edges = {}; state.tags.layers = {}; state.tags.confirmed = {}; state.tags.lengths = {}; } state.source = source || state.source; render();
   }
   window.RoofApp.setRing = setRing; window.RoofApp.render = function () { render(); };
-  ['pitch', 'roofType', 'overhang', 'gext', 'ftds', 'waste', 'useRidge'].forEach(function (id) { $(id).addEventListener('change', function () {
-    if (id === 'roofType' || id === 'useRidge') state.overrides = {};
+  ['pitch', 'roofModel', 'overhang', 'gext', 'ftds', 'waste', 'useRidge', 'eaveMethod'].forEach(function (id) { $(id).addEventListener('change', function () {
+    if (id === 'roofModel' || id === 'useRidge' || id === 'eaveMethod') { state.overrides = {}; state.modelAuto = null; }
     if (id === 'pitch') { state.pitchSource = 'manual'; state.pitchConfidence = null; }
     render();
   }); });
@@ -628,14 +680,14 @@
     if (!state.ring) { status('Pick a building first.'); return Promise.resolve(); }
     status('Estimating pitch from USGS 3DEP lidar (≈1-3 s, ~20 small LAZ requests) …');
     var load = lidarMod ? Promise.resolve(lidarMod) : import(window.ROOF_LIDAR_URL || '../lidar/pitch.js').then(function (m) { lidarMod = m; return m; });
-    return load.then(function (m) { return m.estimatePitch(RC.toGeoJSON(state.ring)); }).then(function (r) {
+    var job = load.then(function (m) { return m.estimatePitch(RC.toGeoJSON(state.ring)); }).then(function (r) {
       state.lidar = r; window.RoofApp.lidar = r;
       var p = r.pitch;
       if (!Array.prototype.some.call($('pitch').options, function (o) { return o.value === p; })) {
         var op = document.createElement('option'); op.value = op.textContent = p; $('pitch').appendChild(op);
       }
       $('pitch').value = p; state.pitchSource = r.pitch_source; state.pitchConfidence = r.pitch_confidence;
-      if (r.roof_shape_guess === 'hip' || r.roof_shape_guess === 'flat' || r.roof_shape_guess === 'gable') $('roofType').value = r.roof_shape_guess;
+      state.modelAuto = null; // 0.1.7.3: the roof model is re-chosen from the per-facet lidar fits (lib/roofmodel.js)
       state.overrides = {};
       render();
       status('Lidar: ' + r.pitch + ' (' + (r.pitch_deg != null ? r.pitch_deg.toFixed(1) + '°' : '?') + '), ridge ' + r.ridge_bearing_deg + '° [' + r.ridge_source + '], shape ' +
@@ -643,6 +695,9 @@
         (r.ridges && r.ridges.length > 1 ? '\nRidges per wing: ' + r.ridges.map(function (x) { return x.bearing_deg + '°'; }).join(', ') : '') +
         (r.notes && r.notes.length ? '\n' + r.notes.join('\n') : '') + '\nYou can still change pitch/roof type/edges manually.');
     }).catch(function (e) { status('Lidar pitch unavailable: ' + e.message + ' — choose pitch manually.'); });
+    // 0.1.7.3: a report started while lidar is still running waits for it (no half-updated state in the PDF)
+    state.lidarPending = job; job.then(function () { if (state.lidarPending === job) state.lidarPending = null; });
+    return job;
   }
   window.RoofApp.autoPitch = autoPitch;
   $('lidarBtn').onclick = autoPitch;

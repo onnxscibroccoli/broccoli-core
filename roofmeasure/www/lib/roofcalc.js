@@ -12,7 +12,7 @@
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  var VERSION = '1.3.1';
+  var VERSION = '1.3.2';
   var M_TO_FT = 3.280839895013123;
   var WGS84_A = 6378137.0, WGS84_F = 1 / 298.257223563, WGS84_B = WGS84_A * (1 - WGS84_F);
   var WGS84_E2 = WGS84_F * (2 - WGS84_F);
@@ -476,7 +476,10 @@
       squares_with_waste: round(roofArea * (1 + o.wastePct / 100) / 100, 2),
       waste_pct: o.wastePct,
       edges: edges.map(function (e, i) {
-        return { i: i, length_ft: round(e.length_ft, 2), bearing_deg: round(e.bearing_deg, 1), type: types[i],
+        // 0.1.7.3: per-edge sloped length (contract ruling: rake in the UI is SLOPED). Rake = (plan span + 2 x overhang) x pitch
+        // factor, same formula as rake_sloped_lf; eaves are level, so sloped = plan.
+        var sl = types[i] === 'rake' ? (e.length_ft + 2 * o.overhangFt) * pf : e.length_ft;
+        return { i: i, length_ft: round(e.length_ft, 2), plan_length_ft: round(e.length_ft, 2), sloped_length_ft: round(sl, 2), bearing_deg: round(e.bearing_deg, 1), type: types[i],
           auto: overrides[i] == null, auto_type: autoTypes[i], from: e.from, to: e.to };
       }),
       eave_lf: round(g.eave_lf, 1),

@@ -229,7 +229,7 @@ function decodeLaz(LP, buf, bbox) { // returns array of [x,y,z,cls] in bbox (EPS
         if (x < bbox[0] || x > bbox[2] || y < bbox[1] || y > bbox[3]) continue;
         const z = v.getInt32(8, true) * sz + ozz;
         const cls = fmt >= 6 ? v.getUint8(16) : v.getUint8(15) & 0x1f;
-        out.push([x, y, z, cls]);
+        out.push([x, y, z, cls, v.getUint16(12, true)]); // intensity (uint16, offset 12 in all LAS point formats)
       }
     } finally { LP._free(pp); }
   } finally { laszip.delete(); LP._free(filePtr); }
@@ -277,7 +277,7 @@ export async function estimatePitch(footprintGeoJSON, opts = {}) {
     } catch (e) { notes.push(`${ds}: fetch/decode failed: ${e.message || e}`); }
   }
   if (!pts) return result({ ...baseKw, notes: [...notes, 'no lidar points; default 6/12'] });
-  const L = pts.map(([x, y, z, c]) => [(x - ox) * k, (y - oy) * k, z, c]);
+  const L = pts.map(([x, y, z, c, it]) => [(x - ox) * k, (y - oy) * k, z, c, it]);
   const inside = L.filter(([x, y]) => pointInRing(x, y, ringLocal) && distToRing(x, y, ringLocal) >= inset);
   const ground = L.filter(p => p[3] === 2).map(p => p[2]).sort((a, b) => a - b);
   const gz = ground.length ? ground[ground.length >> 1] : null;
@@ -288,6 +288,18 @@ export async function estimatePitch(footprintGeoJSON, opts = {}) {
   const dataUrl = `${EPT_BASE}/${used}/ept.json`;
   if (P.length < 25) return result({ ...baseKw, samples_n: P.length, data_url: dataUrl, notes: [...notes, 'too few roof points; default 6/12'] });
   const r = estimatePitchFromPoints(P, footprintGeoJSON, `lidar:usgs_3dep_ept:${used}`);
-  if (r.pitch_source === 'default') return { ...r, data_url: dataUrl, notes: [...notes, ...r.notes] };
-  return { ...r, data_url: dataUrl, ground_z_m: gz, notes: [...notes, ...r.notes] };
+  const out = r.pitch_source === 'default' ? { ...r, data_url: dataUrl, notes: [...notes, ...r.notes] } : { ...r, data_url: dataUrl, ground_z_m: gz, notes: [...notes, ...r.notes] };
+  // 0.1.7.3: keep the roof points (local metres) and the frame for per-facet plane fits (lidar/facetfit.js).
+  // Non-enumerable so they never end up in JSON exports or reports.
+  Object.defineProperty(out, 'points_local', { value: P, enumerable: false });
+  Object.defineProperty(out, 'frame', { value: { ox, oy, k, merc: true }, enumerable: false });
+  // 0.1.7.3: full roof cloud for lidar/roofseg.js: building points with NO inset, plus a 1.2 m buffer outside the
+  // footprint (eave overhangs / narrow lower strips), with class and intensity: [x, y, z, cls, intensity, insideFootprint].
+  const PF = L.filter(p => p[3] === 6 || (P.length < 30 && ![2, 7, 9, 18].includes(p[3]) && (gz == null || p[2] > gz + 2)))
+    .map(p => { const ins = pointInRing(p[0], p[1], ringLocal); return (ins || distToRing(p[0], p[1], ringLocal) <= 1.2) ? [p[0], p[1], p[2], p[3], p[4] || 0, ins ? 1 : 0] : null; })
+    .filter(Boolean);
+  Object.defineProperty(out, 'points_full', { value: PF, enumerable: false });
+  Object.defineProperty(out, 'ring_local', { value: ringLocal, enumerable: false });
+  Object.defineProperty(out, 'class_counts', { value: L.reduce((m, p) => (m[p[3]] = (m[p[3]] || 0) + 1, m), {}), enumerable: false });
+  return out;
 }

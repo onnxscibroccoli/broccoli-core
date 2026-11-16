@@ -20,7 +20,7 @@ function png(r, g, b) { // 256x256 solid PNG (mock reference tile)
   const ih = Buffer.alloc(13); ih.writeUInt32BE(W, 0); ih.writeUInt32BE(W, 4); ih[8] = 8; ih[9] = 2;
   return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), ch('IHDR', ih), ch('IDAT', zlib.deflateSync(raw)), ch('IEND', Buffer.alloc(0))]);
 }
-const HOUSES = [{ slug: '15_ward_st_hingham', addr: '15 Ward St, Hingham, MA 02043' }];
+const HOUSES = process.env.RM_HOUSES ? JSON.parse(process.env.RM_HOUSES) : [{ slug: '15_ward_st_hingham', addr: '15 Ward St, Hingham, MA 02043' }, { slug: '30_lockwood_dr_weymouth', addr: '30 Lockwood Dr, Weymouth, MA 02190' }, { slug: '49_scotland_st_hingham', addr: '49 Scotland Street, Hingham, MA 02043' }, { slug: '6_harborview_rd_hull', addr: '6 Harborview Road, Hull, MA 02045' }];
 (async () => {
   await new Promise((r) => srv.listen(0, '127.0.0.1', r));
   const base = 'http://127.0.0.1:' + srv.address().port + '/';

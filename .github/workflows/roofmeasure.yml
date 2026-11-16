@@ -1,0 +1,128 @@
+name: RoofMeasure APK, report tests, emulator smoke
+on:
+  push:
+    branches: [feat/roofmeasure-dev]
+    paths: ['roofmeasure/**', '.github/workflows/roofmeasure.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: roofmeasure-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  VERSION_CODE: '10703'
+  VERSION_NAME: '0.1.7.3'
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Android SDK build-tools 34 / platform 34
+        run: |
+          SDKM=$(ls $ANDROID_HOME/cmdline-tools/*/bin/sdkmanager | head -1)
+          [ -d "$ANDROID_HOME/build-tools/34.0.0" ] && [ -d "$ANDROID_HOME/platforms/android-34" ] || yes | "$SDKM" "build-tools;34.0.0" "platforms;android-34" >/dev/null
+      - name: Build debug APK (throwaway CI keystore, never committed)
+        run: |
+          KS="$RUNNER_TEMP/ci-debug.keystore"
+          keytool -genkeypair -keystore "$KS" -storepass android -keypass android -alias roofdebug -keyalg RSA -keysize 2048 -validity 30 -dname "CN=RoofMeasure CI Debug" >/dev/null 2>&1
+          KEYSTORE="$KS" bash roofmeasure/build.sh "$RUNNER_TEMP/apk"
+          rm -f "$RUNNER_TEMP/apk/classes.dex"
+          $ANDROID_HOME/build-tools/34.0.0/aapt2 dump badging "$RUNNER_TEMP/apk/"*.apk | head -3
+          ls -l "$RUNNER_TEMP/apk"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: roofmeasure-apk
+          path: ${{ runner.temp }}/apk/
+          retention-days: 14
+  report-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-playwright-core-1.59.1
+      - name: Install playwright-core (uses the runner's Google Chrome)
+        run: mkdir -p "$RUNNER_TEMP/pw" && cd "$RUNNER_TEMP/pw" && npm init -y >/dev/null && npm i --no-audit --no-fund playwright-core@1.59.1 >/dev/null
+      - name: Headless report tests (15 Ward St Hingham + Hull, MA houses; per-facet on/off; tile failure; editor)
+        env:
+          PW: ${{ runner.temp }}/pw/node_modules/playwright-core
+          CHROME: /usr/bin/google-chrome
+        run: node roofmeasure/tests/v0173_test.cjs "$RUNNER_TEMP/report-out"
+      - name: Fail on page errors / missing aerial
+        run: |
+          python3 - "$RUNNER_TEMP/report-out/v0173_test.json" <<'PY'
+          import json, sys
+          r = json.load(open(sys.argv[1])); bad = []
+          for k, h in r["houses"].items():
+              if h.get("errors"): bad.append(f"{k}: page errors {h['errors'][:2]}")
+              for m in ("pf_off", "pf_on"):
+                  x = h.get(m, {}).get("html", {})
+                  if x.get("aerial_missing") or x.get("fullpages") != 3: bad.append(f"{k} {m}: aerial/full pages {x}")
+          for run in r["tile_failure"]["runs"]:
+              if run["missing"] or not run["has_aerial_svg"]: bad.append(f"tile failure run {run}")
+          print("\n".join(bad) or "report tests OK"); sys.exit(1 if bad else 0)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: roofmeasure-report-tests
+          path: ${{ runner.temp }}/report-out/
+          retention-days: 14
+  emulator-smoke:
+    needs: apk
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/download-artifact@v4
+        with:
+          name: roofmeasure-apk
+          path: apk
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
+      - uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-34-google_apis-x86_64-v1
+      - name: Create AVD snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: echo "AVD snapshot created"
+      - name: Install, launch, generate report, save PDF
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: bash roofmeasure/tests/ci_emulator_smoke.sh "$(ls apk/*.apk | head -1)" smoke-out
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: roofmeasure-emulator-smoke
+          path: smoke-out/
+          retention-days: 14

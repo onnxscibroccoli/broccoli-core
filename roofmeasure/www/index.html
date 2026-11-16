@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0d1418">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<title>RoofMeasure 0.1.7.2 — free roof &amp; gutter estimator (MA)</title>
+<title>RoofMeasure 0.1.7.3 — free roof &amp; gutter estimator (MA)</title>
 <link rel="stylesheet" href="vendor/maplibre-gl.css">
 <link rel="stylesheet" href="style.css">
 <link rel="icon" href="icons/icon-192.png">
@@ -63,6 +63,10 @@
     Google, Microsoft and Esri imagery is shown for <b>visual reference only</b>: RoofMeasure never traces, snaps, measures or stores it
     (their terms forbid derived content). Outlines and numbers come only from MassGIS, USGS lidar/NAIP, OSM/Overture footprints or your own trace.</p>
   </details>
+  <details id="aboutBox"><summary>About RoofMeasure 0.1.7.3</summary>
+    <p class="note">RoofMeasure 0.1.7.3 — free roof &amp; gutter estimator. MIT License, © 2026 Ian Cossette (see LICENSE).
+    Third-party components keep their own licenses (THIRD_PARTY.md). Measurements use free public data only; estimates are not verified.</p>
+  </details>
   <h2>Tag <span class="note">(visual categorization; tap edges, interior lines or roof areas on any layer)</span></h2>
   <div class="row"><label>Tag tool</label><select id="tagTool">
     <option value="">Off (tap edge = toggle eave/rake)</option>
@@ -71,7 +75,7 @@
       <option value="edge:step_flashing">Step flashing (toggle)</option><option value="edge:drip_edge">Drip edge (toggle)</option>
       <option value="edge:wall_flashing">Wall / headwall flashing (toggle)</option><option value="edge:no_gutter">No gutter (toggle)</option>
       <option value="edge:clear">Clear edge tags</option></optgroup>
-    <optgroup label="Interior lines"><option value="line:ridge">Ridge</option><option value="line:hip">Hip</option><option value="line:valley">Valley</option><option value="line:clear">Reset line to auto</option></optgroup>
+    <optgroup label="Interior lines"><option value="line:ridge">Ridge</option><option value="line:hip">Hip</option><option value="line:valley">Valley</option><option value="line:wall_flashing">Wall flashing (lidar lines)</option><option value="line:eave">Eave (lidar lines)</option><option value="line:rake">Rake (lidar lines)</option><option value="line:none">Delete line (not counted)</option><option value="line:clear">Reset line to auto</option></optgroup>
     <optgroup label="Roof areas / facets"><option value="area:steep">Steep-slope (shingle)</option><option value="area:low_slope">Low-slope</option>
       <option value="area:flat">Flat</option><option value="area:deck">Deck</option><option value="area:clear">Clear area tag</option></optgroup>
   </select></div>
@@ -83,7 +87,9 @@
   Tap an edge to confirm it, or pick a tag tool to retag it.</div>
   <div class="row note" id="tagInfo">Tags appear in the PDF report. Edge eave/rake changes the measurements; other tags are listed with their lengths/areas.</div>
   <h2>Roof</h2>
-  <div class="row"><label>Roof type</label><select id="roofType"><option value="gable">Gable</option><option value="hip">Hip (all eaves)</option><option value="flat">Flat</option></select></div>
+  <div class="row"><label for="roofModel">Roof model</label><select id="roofModel" aria-describedby="modelInfo"><option value="auto">Auto (lidar-verified, else assumed)</option><option value="simple">Gable, one ridge</option><option value="wings">Gable with wings / cross-gables</option><option value="hip">Hip (all eaves)</option><option value="flat">Flat</option></select>
+    <select id="roofType" hidden aria-hidden="true" tabindex="-1"><option value="gable">Gable</option><option value="hip">Hip (all eaves)</option><option value="flat">Flat</option></select></div>
+  <div class="row note" id="modelInfo" role="note">Roof model: pick a building.</div>
   <div class="row"><label>Pitch</label><select id="pitch"></select><button id="lidarBtn" title="Estimate pitch + ridge from USGS 3DEP lidar (free)">Auto pitch (lidar)</button></div>
   <div class="row note" id="pitchInfo">pitch_source: manual</div>
   <div class="row"><label>Overhang (ft)</label><input id="overhang" type="number" step="0.5" min="0" placeholder="auto"> <span id="ohSrc" class="note"></span></div>
@@ -92,6 +98,8 @@
   <div class="row"><label>Waste %</label><input id="waste" type="number" step="1" min="0" value="10"></div>
   <div class="row"><label style="min-width:0"><input type="checkbox" id="perFacet"> Use per-facet lidar pitch in roof area (opt-in, NOT_PROVEN)</label></div>
   <div class="row"><button id="resetBtn">Re-run auto eave/rake</button><label style="min-width:0"><input type="checkbox" id="useRidge" checked> use lidar ridge</label></div>
+  <div class="row"><label for="eaveMethod">Eave/rake method</label><select id="eaveMethod" aria-label="Eave and rake classification method">
+    <option value="single" selected>Single dominant lidar ridge (default)</option><option value="perwing">Per wing (each lidar ridge, L/T/cross-gables)</option></select></div>
   <h2>Results</h2>
   <div id="warn" style="color:#b45309;font-weight:600"></div>
   <div id="summary"><span class="note">Pick a building to start.</span></div>
@@ -118,6 +126,9 @@
 <script src="sources.js"></script>
 <script src="overture.js"></script>
 <script src="lib/facets.js"></script>
+<script src="lidar/facetfit.js"></script>
+<script src="lidar/roofseg.js"></script>
+<script src="lib/roofmodel.js"></script>
 <script>window.ROOF_PYODIDE_URL = new URL("vendor/pyodide/", document.baseURI).href; window.ROOF_PY_BASE = new URL("py/", document.baseURI).href;</script>
 <script src="lib/structures.js"></script>
 <script src="lib/solar-est.js"></script>

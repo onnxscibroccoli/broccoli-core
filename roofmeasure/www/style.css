@@ -29,7 +29,7 @@ textarea{font:inherit}
 #cmpDivider{position:absolute;top:0;bottom:0;width:3px;background:#facc15;z-index:4;pointer-events:none}
 @media (max-width:760px){#map2{inset:0 0 45% 0}#cmpDivider{bottom:45%}}
 body.hc .lbl{font-size:14px;padding:3px 6px;border:2px solid #000;font-weight:700}
-.lbl.line{background:rgba(17,17,17,.85)}.lbl.ridge{background:#b91c1c}.lbl.hip{background:#7e22ce}.lbl.valley{background:#0f766e}
+.lbl.line{background:rgba(17,17,17,.85)}.lbl.ridge{background:#b91c1c}.lbl.hip{background:#7e22ce}.lbl.valley{background:#0f766e}.lbl.wall_flashing{background:#475569}.lbl.eave{background:#1d4ed8}.lbl.rake{background:#c2410c}.lbl.sky{background:#0369a1}
 .lbl.ok::after{content:" ✓"}
 #rvEditor{background:#fff;max-height:45vh;overflow:auto;padding:8px;border-bottom:2px solid #111}
 #rvEditor[hidden]{display:none}#rvEditor table{border-collapse:collapse;margin:6px 0}#rvEditor td,#rvEditor th{padding:2px 6px;border-bottom:1px solid #ddd}

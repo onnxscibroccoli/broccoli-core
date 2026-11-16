@@ -58,7 +58,7 @@ public class MainActivity extends Activity {
         s.setAllowFileAccess(false);
         s.setAllowContentAccess(false);
         s.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
-        s.setUserAgentString(s.getUserAgentString() + " RoofMeasureAndroid/0.1.7.2");
+        s.setUserAgentString(s.getUserAgentString() + " RoofMeasureAndroid/0.1.7.3");
         web.setWebViewClient(new WebViewClient() {
             @Override public WebResourceResponse shouldInterceptRequest(WebView v, WebResourceRequest r) {
                 Uri u = r.getUrl();
@@ -94,7 +94,11 @@ public class MainActivity extends Activity {
             }
         });
         web.addJavascriptInterface(new Bridge(), "RoofBridge");
-        if (b != null) web.restoreState(b); else web.loadUrl(START);
+        // debug builds only: CI smoke test passes the page query (e.g. addr=...&smoke=1) as an intent extra
+        String q = null;
+        if ((getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0 && getIntent() != null) q = getIntent().getStringExtra("rm_query");
+        if (q != null && q.matches("[A-Za-z0-9=&%._,+-]{1,300}")) web.loadUrl(START + "?" + q);
+        else if (b != null) web.restoreState(b); else web.loadUrl(START);
     }
 
     /** window.RoofBridge.save(name, text): WebView ignores blob downloads, so hand exports to the share sheet
@@ -112,7 +116,7 @@ public class MainActivity extends Activity {
                 if (Build.VERSION.SDK_INT < 29) { printReport(html, jobName); notifyJs("save", true, "Android < 10: use Save as PDF in the print dialog"); return; }
                 makePdf(html, jobName, "save"); } });
         }
-        @JavascriptInterface public String version() { return "0.1.7.2"; }
+        @JavascriptInterface public String version() { return "0.1.7.3"; }
         @JavascriptInterface public void save(final String name, final String text) {
             runOnUiThread(new Runnable() { public void run() {
                 Intent i = new Intent(Intent.ACTION_SEND);

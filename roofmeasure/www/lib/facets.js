@@ -345,7 +345,7 @@
       return finishRidgeSplit(ring, frame, rb, rise, {
         notes: notes, method: method, rtSource: rtSource, rtConf: rtConf, pitchSource: pitchSource, rbSource: rbSource,
         footprintArea: footprintArea, planArea: planArea, overhang: overhang, units: units, planes: lidarPlanes, ppf: opts.pitch_per_facet,
-        why: 'gable_method=ridge_split' });
+        ridgePoint: opts.ridge_point_lonlat || null, why: 'gable_method=ridge_split' });
     }
     if (rt === 'flat' || rise === 0) {
       return { facets: [{ id: 'F0', area_sqft: r2(planArea), plan_area_sqft: r2(planArea), pitch: '0/12' }],
@@ -513,6 +513,9 @@
   function finishRidgeSplit(ring, frame, rb, rise, ctx) {
     var n = ring.length, d = [Math.sin(rb * D2R), Math.cos(rb * D2R)], nrm = [d[1], -d[0]];
     var pr = ring.map(function (p) { return dot(nrm, p); }), lo = Math.min.apply(null, pr), hi = Math.max.apply(null, pr), c = (lo + hi) / 2;
+    // 0.1.7.3: place the ridge on the lidar-detected ridge line when given (asymmetric gables), else mid-extent
+    var ridgePlaced = 'mid-extent';
+    if (ctx.ridgePoint && frame) { var rp = dot(nrm, frame.toXY(ctx.ridgePoint)); if (rp > lo + 0.15 * (hi - lo) && rp < hi - 0.15 * (hi - lo)) { c = rp; ridgePlaced = 'lidar ridge line'; } }
     var k = rise / 12, pf = pitchFactorRise(rise);
     // ridge length = length of line n.p=c inside polygon
     var ts = [];
@@ -545,7 +548,7 @@
     Object.keys(lines).forEach(function (kk) { lines[kk] = r2(lines[kk]); });
     var tot = facets.reduce(function (s, f) { return s + f.area_sqft; }, 0);
     var notes = ctx.notes.concat([
-      'ridge-split gable (' + ctx.why + '): one ridge along ' + rb.toFixed(1) + ' deg through the middle of the roofprint\'s across-ridge extent; 2 planes; edges within 45 deg of the ridge = eave, others = rake (sloped)',
+      'ridge-split gable (' + ctx.why + '): one ridge along ' + rb.toFixed(1) + ' deg placed at ' + (ridgePlaced === 'mid-extent' ? 'the middle of the roofprint\'s across-ridge extent' : 'the lidar-detected ridge line (asymmetric gable)') + '; 2 planes; edges within 45 deg of the ridge = eave, others = rake (sloped)',
       'off-centre notches/bump-outs are absorbed into the two planes (eave heights may differ); no hips or valleys modelled in this mode',
       'heuristic from the 2-D roofprint with an equal-pitch assumption; accuracy vs EagleView/measured reports is unproven']);
     if (ctx.planes.length) notes.push('lidar planes[]: facet pitch matched by aspect (within 30 deg)');
@@ -553,7 +556,7 @@
       method: ctx.method.concat(['gable (ridge-split)']).join('; '), roof_type: 'gable', roof_type_source: ctx.rtSource,
       roof_type_confidence: ctx.rtConf || (ctx.rtSource === 'input' ? 'input' : 'medium'), pitch: pitchStr(rise), pitch_source: ctx.pitchSource,
       pitch_factor: r4(pf), ridge_bearing_deg: r2(rb), ridge_bearing_source: ctx.rbSource, footprint_area_sqft: r2(ctx.footprintArea),
-      plan_area_sqft: r2(ctx.planArea), overhang_ft: ctx.overhang, total_area_sqft: r2(tot), squares: r2(tot / 100), units_in: ctx.units, notes: notes, version: VERSION };
+      plan_area_sqft: r2(ctx.planArea), overhang_ft: ctx.overhang, total_area_sqft: r2(tot), squares: r2(tot / 100), units_in: ctx.units, notes: notes, version: VERSION, ridge_placement: ridgePlaced };
   }
   /** Heuristic assessor-style -> roof_type prior. Returns null for unknown styles. */
   function stylePrior(style) {

@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: MIT
- * RoofMeasure 0.1.7.1 — visual categorization (user tags) + per-facet lidar plane pitch cross-check.
+ * RoofMeasure 0.1.7.3 — visual categorization (user tags) + per-facet lidar plane pitch cross-check.
  * Pure helpers shared by app.js (live map) and report.js (PDF). Globals: window.RoofTags.
  * Tags are a human's visual categorization; they never change geometry. Only edge eave/rake (core overrides) and interior
  * ridge/hip/valley line types change report numbers; every other tag is listed with its own LF / area.
@@ -9,7 +9,9 @@
   var EDGE_TAGS = { step_flashing: 'Step flashing', drip_edge: 'Drip edge', wall_flashing: 'Wall / headwall flashing', no_gutter: 'No gutter' };
   var AREA_TAGS = { steep: 'Steep-slope (shingle)', low_slope: 'Low-slope', flat: 'Flat', deck: 'Deck' };
   var LINE_TYPES = ['ridge', 'hip', 'valley'];
-  function emptyTags() { return { edges: {}, lines: {}, linesKey: null, areas: {}, layers: {}, confirmed: {}, lengths: {} }; }
+  var EXTRA_TYPES = ['wall_flashing', 'eave', 'rake']; // lidar-detected step edges (dormers, raised sections); user-retypable
+  var ALL_TYPES = LINE_TYPES.concat(EXTRA_TYPES);
+  function emptyTags() { return { edges: {}, lines: {}, linesKey: null, areas: {}, layers: {}, confirmed: {}, lengths: {}, added: [], skylights: [], skylightsDeleted: {} }; }
   function r1(x) { return Math.round(x * 10) / 10; }
   function r2(x) { return Math.round(x * 100) / 100; }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
@@ -22,7 +24,76 @@
   function facetsInput(r, lidar, useRidge) {
     var ridge = useRidge !== false && lidar && lidar.ridge_bearing_deg != null ? lidar.ridge_bearing_deg : undefined;
     return { fp: { type: 'Feature', geometry: r.footprint_geojson.geometry || r.footprint_geojson, properties: {} },
-      opts: { pitch: r.pitch, roof_type: r.roof_type, ridge_bearing_deg: ridge, overhang_ft: r.overhang_ft || 0 }, ridge: ridge };
+      opts: Object.assign({ pitch: r.pitch, roof_type: r.roof_type, ridge_bearing_deg: ridge, overhang_ft: r.overhang_ft || 0 },
+        r.roof_model && window.RoofModel ? window.RoofModel.facetOpts(r.roof_model) : {}, ridgePointOpt(lidar, ridge)), ridge: ridge };
+  }
+  /* 0.1.7.3: whole-roof lidar segmentation (lidar/roofseg.js), computed once per lidar result. */
+  function lidarSeg(lidar) {
+    if (!lidar || !lidar.points_full || !window.RoofSeg) return null;
+    if (!lidar._seg) { var sg; try { sg = window.RoofSeg.segment(lidar); } catch (e) { sg = { status: 'error', error: String(e && e.message || e), planes: [], lines: [], steps: [], skylights: [], notes: [] }; }
+      Object.defineProperty(lidar, '_seg', { value: sg, enumerable: false, configurable: true }); }
+    return lidar._seg;
+  }
+  /* the longest confident lidar ridge parallel to the ridge bearing places the ridge-split ridge (asymmetric gables) */
+  function ridgePointOpt(lidar, ridge) {
+    var sg = lidarSeg(lidar); if (!sg || ridge == null) return {};
+    var best = null;
+    (sg.lines || []).forEach(function (l) { if (l.type !== 'ridge' || l.confidence !== 'high') return;
+      var a = l.coords_lonlat[0], b = l.coords_lonlat[1], k = Math.cos(a[1] * Math.PI / 180), br = (Math.atan2((b[0] - a[0]) * k, b[1] - a[1]) * 180 / Math.PI + 360) % 180;
+      var d = Math.abs(br - ((ridge % 180) + 180) % 180); d = Math.min(d, 180 - d); if (d > 10) return;
+      if (!best || l.plan_length_ft > best.plan_length_ft) best = l; });
+    return best ? { ridge_point_lonlat: [(best.coords_lonlat[0][0] + best.coords_lonlat[1][0]) / 2, (best.coords_lonlat[0][1] + best.coords_lonlat[1][1]) / 2] } : {};
+  }
+  /* Reconcile the footprint model with lidar lines: lidar wins where confident (confirms or retypes a model line),
+   * the model fills gaps; lidar lines the model lacks (dormer ridges, raised-section steps) are appended as segments
+   * with source 'lidar' (counted when confidence is high and no plane is a flagged small plane; otherwise candidates). */
+  function reconcileLidar(f, lidar) {
+    var sg = lidarSeg(lidar); if (!f || !sg || sg.status !== 'ok' || !Array.isArray(f.line_segments)) return null;
+    var lat0 = null; (f.line_segments[0] && f.line_segments[0].coords_lonlat || sg.lines.concat(sg.steps).map(function (l) { return l.coords_lonlat[0]; })).some(function (p) { lat0 = p[1]; return true; });
+    if (lat0 == null) return null;
+    var kx = Math.cos(lat0 * Math.PI / 180) * 364567.2, ky = 364567.2, lon0 = null;
+    function xy(p) { if (lon0 == null) lon0 = p[0]; return [(p[0] - lon0) * kx, (p[1] - lat0) * ky]; }
+    function seg2(c) { return [xy(c[0]), xy(c[1])]; }
+    function dps(p, a, b) { var dx = b[0] - a[0], dy = b[1] - a[1], L = dx * dx + dy * dy, t = L ? ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / L : 0; t = Math.max(0, Math.min(1, t)); return Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy); }
+    function brg(s) { return (Math.atan2(s[1][0] - s[0][0], s[1][1] - s[0][1]) * 180 / Math.PI + 360) % 180; }
+    function overlap(s, l) { // fraction of s within 3.3 ft of l, directions within 15 deg
+      var d = Math.abs(brg(s) - brg(l)); d = Math.min(d, 180 - d); if (d > 20) return 0; var hit = 0;
+      for (var t = 0; t <= 10; t++) { var p = [s[0][0] + (s[1][0] - s[0][0]) * t / 10, s[0][1] + (s[1][1] - s[0][1]) * t / 10]; if (dps(p, l[0], l[1]) <= 6) hit++; }
+      return hit / 11; }
+    var small = {}; (sg.planes || []).forEach(function (p) { small[p.id] = p.small; });
+    var polys = (f.facets || []).map(function (x) { return x.polygon_lonlat ? ringOf(x.polygon_lonlat).map(xy) : null; }).filter(Boolean);
+    function inRoof(p) { if (!polys.length) return true; for (var k = 0; k < polys.length; k++) { var P = polys[k]; if (pointInRing(p, P)) return true;
+      for (var j = 0; j + 1 < P.length; j++) if (dps(p, P[j], P[j + 1]) <= 0.5) return true; } return false; }
+    function clipToRoof(sg2) { var N = 40, best = null, run = null;
+      for (var t = 0; t <= N; t++) { var p = [sg2[0][0] + (sg2[1][0] - sg2[0][0]) * t / N, sg2[0][1] + (sg2[1][1] - sg2[0][1]) * t / N];
+        if (inRoof(p)) { if (!run) run = [t, t]; else run[1] = t; if (!best || run[1] - run[0] > best[1] - best[0]) best = run.slice(); } else run = null; }
+      if (!best) return null; var fr = (best[1] - best[0]) / N; if (fr * Math.hypot(sg2[1][0] - sg2[0][0], sg2[1][1] - sg2[0][1]) < 2) return null;
+      var A = [sg2[0][0] + (sg2[1][0] - sg2[0][0]) * best[0] / N, sg2[0][1] + (sg2[1][1] - sg2[0][1]) * best[0] / N], B = [sg2[0][0] + (sg2[1][0] - sg2[0][0]) * best[1] / N, sg2[0][1] + (sg2[1][1] - sg2[0][1]) * best[1] / N];
+      return [A, B, fr]; }
+    var model = f.line_segments.filter(function (s) { return s.coords_lonlat && LINE_TYPES.indexOf(s.type) >= 0; });
+    var added = 0, confirmed = 0, retyped = 0;
+    sg.lines.concat(sg.steps.filter(function (s) { return !s.on_footprint; })).forEach(function (l) {
+      var L2 = seg2(l.coords_lonlat), strong = l.confidence === 'high' && !(l.planes || [l.upper, l.lower]).some(function (id) { return small[id]; });
+      var hit = null, best = 0;
+      model.forEach(function (s) { var o = Math.max(overlap(seg2(s.coords_lonlat), L2), overlap(L2, seg2(s.coords_lonlat))); if (o > best) { best = o; hit = s; } });
+      if (hit && best >= 0.35) {
+        if (strong) { hit.lidar_support = l.type;
+          // lidar wins on TYPE and confirmation; the footprint-snapped model keeps its length/position (lidar line ends are trimmed
+          // where gable-end points thin out, e.g. 15 Ward St ridge 45.4 lidar vs 48.4 roofprint gable to gable)
+          if (hit.type === l.type) { hit.lidar_confirmed = true; confirmed++; }
+          else if (LINE_TYPES.indexOf(l.type) >= 0 && !hit.user_tagged && f.roof_model_info && f.roof_model_info.verified) { hit.auto_type = hit.auto_type || hit.type; hit.type = l.type; hit.lidar_retyped = true; hit.lidar_confirmed = true; retyped++; } }
+        return; }
+      // clip to the roofprint (+0.5 ft): lidar lines can run past it where the cloud buffer or a porch/neighbour continues
+      var cl = clipToRoof(L2); if (!cl) return;
+      var c0 = [lon0 + cl[0][0] / kx, lat0 + cl[0][1] / ky], c1 = [lon0 + cl[1][0] / kx, lat0 + cl[1][1] / ky];
+      l = Object.assign({}, l, { coords_lonlat: [c0, c1], length_ft: r2(l.length_ft * cl[2]), plan_length_ft: r2(l.plan_length_ft * cl[2]), clipped: cl[2] < 0.999 });
+      f.line_segments.push({ type: l.type, auto_type: l.type, length_ft: l.length_ft, plan_length_ft: l.plan_length_ft, coords_lonlat: l.coords_lonlat, weight: 1,
+        source: 'lidar', lidar_source: l.source + (l.subtype ? ' — ' + l.subtype : ''), lidar_conf: l.confidence, lidar_strong: strong, drop_ft: l.drop_ft, planes: l.planes || [l.upper, l.lower] });
+      added++;
+    });
+    f.lidar_seg_summary = { version: sg.version, n_planes: sg.planes.length, n_small: sg.planes.filter(function (p) { return p.small; }).length, coverage: sg.coverage,
+      lines_added: added, model_lines_confirmed: confirmed, model_lines_retyped: retyped, skylight_candidates: (sg.skylights || []).length };
+    return f.lidar_seg_summary;
   }
   function facetsKey(r, lidar, useRidge) {
     var i = facetsInput(r, lidar, useRidge); return JSON.stringify([i.fp.geometry.coordinates, i.opts]);
@@ -30,25 +101,53 @@
   function liveFacets(r, lidar, useRidge) {
     var F = window.RoofFacets; if (!F || typeof F.computeFacets !== 'function' || !r) return null;
     var i = facetsInput(r, lidar, useRidge);
-    try { var f = F.computeFacets(i.fp, i.opts); return f && !f.unsupported ? f : null; } catch (e) { return null; }
+    try { var f = F.computeFacets(i.fp, i.opts); if (f && !f.unsupported) { f.roof_model_info = r.roof_model_info || null; if (r.use_lidar_lines !== false) reconcileLidar(f, lidar); return f; } return null; } catch (e) { return null; }
   }
-  /* Apply user interior-line types; recompute ridge/hip/valley LF from the segments. Returns list of changes. */
+  /* Apply user interior-line types; recompute ridge/hip/valley LF from the segments. Returns list of changes.
+   * 0.1.7.3: type 'none' = deleted by the user (not counted); hips/valleys of an ASSUMED wings/hip model are unverified
+   * candidates (not counted) unless the user confirmed or retyped them; user-added lines (tags.added) are counted. */
   function applyLineTags(f, tags, key) {
     var changes = [];
-    if (!f || !Array.isArray(f.line_segments) || !tags || tags.linesKey !== key) return changes;
-    var segs = f.line_segments;
-    Object.keys(tags.lines).forEach(function (k) {
-      var s = segs[+k], t = tags.lines[k]; if (!s || !t || LINE_TYPES.indexOf(t.type) < 0) return;
-      if (LINE_TYPES.indexOf(s.type) < 0) return; // never re-type rake/wall arcs of the skeleton
-      if (s.type !== t.type) changes.push({ i: +k, from: s.type, to: t.type, length_ft: s.length_ft, layer: t.layer });
-      s.auto_type = s.type; s.type = t.type; s.user_tagged = true;
+    if (!f || !Array.isArray(f.line_segments)) return changes;
+    var segs = f.line_segments, conf = (tags && tags.confirmed) || {};
+    if (tags && tags.linesKey === key) Object.keys(tags.lines).forEach(function (k) {
+      var s = segs[+k], t = tags.lines[k]; if (!s || !t || (ALL_TYPES.indexOf(t.type) < 0 && t.type !== 'none')) return;
+      if (LINE_TYPES.indexOf(s.auto_type || s.type) < 0 && s.source !== 'lidar') return; // never re-type rake/wall arcs of the skeleton
+      if (s.source !== 'lidar' && EXTRA_TYPES.indexOf(t.type) >= 0) return;
+      if ((s.auto_type || s.type) !== t.type) changes.push({ i: +k, from: s.auto_type || s.type, to: t.type === 'none' ? 'deleted' : t.type, length_ft: s.length_ft, layer: t.layer });
+      if (!s.auto_type) s.auto_type = s.type; s.type = t.type; s.user_tagged = true; s.deleted = t.type === 'none';
     });
-    if (changes.length && f.lines) {
+    var mi = f.roof_model_info, unver = mi && !mi.verified && (mi.model === 'wings' || mi.model === 'hip');
+    var verified = !!(mi && mi.verified);
+    var cand = { hip_lf: 0, valley_lf: 0, n: 0 };
+    segs.forEach(function (s, i) {
+      // lidar lines count only when confident, not wall flashing, and (the roof model is lidar-verified, or it is a ridge: a confident
+      // plane-intersection ridge needs ridge cap whatever the model)
+      // (flashing needs a person to confirm that a sidewall really rises above the roof plane); otherwise candidates
+      if (s.source === 'lidar') s.unverified = !!(!(s.lidar_strong && s.type !== 'wall_flashing' && (verified || s.type === 'ridge')) && !s.user_tagged && !conf['L' + i]);
+      else s.unverified = !!(unver && !s.user_tagged && !conf['L' + i] && (s.type === 'hip' || s.type === 'valley'));
+      if (s.unverified && !s.deleted) { cand[s.type + '_lf'] = (cand[s.type + '_lf'] || 0) + s.length_ft; cand.n++; }
+    });
+    var added = (tags && Array.isArray(tags.added)) ? tags.added.filter(function (a) { return a && ALL_TYPES.indexOf(a.type) >= 0 && +a.length_ft > 0; }) : [];
+    if (f.lines) {
       LINE_TYPES.forEach(function (t) { f.lines[t + '_lf'] = 0; });
       var cnt = {}; LINE_TYPES.forEach(function (t) { cnt[t] = 0; });
-      segs.forEach(function (s) { if (LINE_TYPES.indexOf(s.type) >= 0) { f.lines[s.type + '_lf'] += s.length_ft; cnt[s.type] += (s.weight == null ? 1 : s.weight); } });
+      if (f.lines._wf_base == null) Object.defineProperty(f.lines, '_wf_base', { value: f.lines.wall_flashing_lf || 0, enumerable: false, writable: true });
+      EXTRA_TYPES.forEach(function (t) { f.lines['lidar_' + t + '_lf'] = 0; });
+      segs.forEach(function (s) { if (s.unverified || s.deleted) return;
+        if (LINE_TYPES.indexOf(s.type) >= 0) { f.lines[s.type + '_lf'] += s.length_ft; cnt[s.type] += (s.weight == null ? 1 : s.weight); }
+        else if (s.source === 'lidar' && EXTRA_TYPES.indexOf(s.type) >= 0) f.lines['lidar_' + s.type + '_lf'] += s.length_ft; });
+      EXTRA_TYPES.forEach(function (t) { f.lines['lidar_' + t + '_lf'] = r2(f.lines['lidar_' + t + '_lf']); });
+      // facets-model wall flashing (skeleton step walls) only counts when the model is verified; otherwise it is a candidate
+      var wfBase = verified ? f.lines._wf_base : 0;
+      if (!verified && f.lines._wf_base) { cand.wall_flashing_model_lf = (cand.wall_flashing_model_lf || 0) + f.lines._wf_base; }
+      f.lines.wall_flashing_lf = r2(wfBase + f.lines.lidar_wall_flashing_lf);
+      added.forEach(function (a) { if (LINE_TYPES.indexOf(a.type) >= 0) { f.lines[a.type + '_lf'] += +a.length_ft; cnt[a.type] += 1; } else { f.lines['lidar_' + a.type + '_lf'] = r2(f.lines['lidar_' + a.type + '_lf'] + +a.length_ft); if (a.type === 'wall_flashing') f.lines.wall_flashing_lf = r2(f.lines.wall_flashing_lf + +a.length_ft); } });
       LINE_TYPES.forEach(function (t) { f.lines[t + '_lf'] = r2(f.lines[t + '_lf']); if (f.line_counts) f.line_counts[t] = cnt[t]; });
     }
+    f.line_candidates = { n: cand.n }; Object.keys(cand).forEach(function (k) { if (k !== 'n') f.line_candidates[k] = r2(cand[k]); });
+    if (f.line_candidates.hip_lf == null) f.line_candidates.hip_lf = 0; if (f.line_candidates.valley_lf == null) f.line_candidates.valley_lf = 0;
+    f.added_lines = added.map(function (a) { return { type: a.type, length_ft: r2(+a.length_ft), note: a.note || '', source: a.source || 'user-entered' }; });
     return changes;
   }
   function ringOf(poly) { return Array.isArray(poly && poly[0] && poly[0][0]) ? poly[0] : poly; }
@@ -88,13 +187,14 @@
   function reportPayload(r, tags, lidar, lineChanges) {
     tags = tags || emptyTags(); var conf = tags.confirmed || {};
     var pf = +r.pitch_factor || 1;
+    var sl = function (e) { return e.sloped_length_ft != null ? +e.sloped_length_ft : (e.type === 'rake' ? e.length_ft * pf : e.length_ft); };
     var edgeRows = [], tagLf = {};
     Object.keys(EDGE_TAGS).forEach(function (k) { tagLf[k] = { plan: 0, sloped: 0, n: 0, edges: [] }; });
     (r.edges || []).forEach(function (e) {
       var t = tags.edges[e.i]; var keys = t ? Object.keys(t).filter(function (k) { return EDGE_TAGS[k]; }) : [];
       var manual = e.auto === false || e.length_source === 'user edit';
       if (!keys.length && !manual) return;
-      var sloped = e.type === 'rake' ? e.length_ft * pf : e.length_ft;
+      var sloped = sl(e);
       keys.forEach(function (k) { var a = tagLf[k]; a.plan += e.length_ft; a.sloped += sloped; a.n++; a.edges.push(e.i); });
       edgeRows.push({ i: e.i, type: e.type, auto_type: e.auto_type, manual: manual, plan_ft: r2(e.length_ft), sloped_ft: r2(sloped),
         tags: keys.map(function (k) { return EDGE_TAGS[k]; }), layer: keys.map(function (k) { return t[k]; }).filter(Boolean)[0] || (tags.layers['edge-type:' + e.i] || '') });
@@ -127,20 +227,28 @@
     var sources = (r.edges || []).map(function (e) {
       var retag = e.auto === false, c = conf['E' + e.i];
       var le = e.length_source === 'user edit';
-      return { kind: 'edge', id: 'E' + e.i, type: e.type, length_ft: r2(e.type === 'rake' ? e.length_ft * pf : e.length_ft), length_basis: e.type === 'rake' ? 'sloped (plan × pitch factor ' + pf + ')' : 'plan',
+      return { kind: 'edge', id: 'E' + e.i, type: e.type, length_ft: r2(sl(e)), length_basis: e.type === 'rake' ? 'sloped (' + (e.sloped_basis || 'plan × pitch factor ' + pf) + ')' : 'plan (eaves are level)',
         length_source: le ? 'user edit (auto ' + (+e.length_ft_auto).toFixed(1) + ' ft plan)' : lenSrc, type_source: retag ? 'user retag (auto ' + e.auto_type + ')' : typeSrc,
         status: retag || le ? 'user-set' : (c ? 'confirmed by user' : 'auto (unconfirmed)') };
     });
     (r.line_segments || []).forEach(function (sg, i) {
-      if (LINE_TYPES.indexOf(sg.type) < 0) return;
+      if (sg.unverified || sg.deleted) return; // candidates/deleted lines are listed in the report appendix, not here
+      if (LINE_TYPES.indexOf(sg.type) < 0 && sg.source !== 'lidar') return;
       var c = conf['L' + i];
-      sources.push({ kind: 'line', id: 'L' + i, type: sg.type, length_ft: r2(sg.length_ft), length_basis: 'sloped 3-D (facets model)',
-        length_source: 'facets straight-skeleton of roofprint at ' + r.pitch + (r.facets_lidar_inputs ? ' with lidar ridge' : ''),
-        type_source: sg.user_tagged ? 'user retag (auto ' + sg.auto_type + ')' : 'facets model', status: sg.user_tagged ? 'user-set' : (c ? 'confirmed by user' : 'auto (unconfirmed)') });
+      var mi = r.roof_model_info || {};
+      var lid = sg.source === 'lidar';
+      sources.push({ kind: 'line', id: 'L' + i, type: sg.type, length_ft: r2(sg.length_ft), length_basis: lid ? 'lidar line (3-D)' : 'sloped 3-D (facets model)',
+        length_source: lid ? 'USGS 3DEP lidar segmentation' : 'facets model "' + (mi.label || r.roof_model || '?') + '" (' + (mi.source || '?') + ')',
+        type_source: sg.user_tagged ? 'user retag (auto ' + sg.auto_type + ')' : (lid ? 'lidar' : sg.lidar_confirmed ? 'facets model, lidar-confirmed' : 'facets model'),
+        status: sg.user_tagged ? 'user-set' : (sg.unverified ? 'UNVERIFIED candidate (not counted)' : (c ? 'confirmed by user' : 'auto (unconfirmed)')) });
     });
-    var nConf = sources.filter(function (x) { return x.status !== 'auto (unconfirmed)'; }).length;
+    (r.added_lines || []).forEach(function (a, j) {
+      sources.push({ kind: 'line', id: 'U' + j, type: a.type, length_ft: a.length_ft, length_basis: 'as entered', length_source: 'user-entered' + (a.note ? ' (' + a.note + ')' : ''),
+        type_source: 'user', status: 'user-set' });
+    });
+    var nConf = sources.filter(function (x) { return x.status !== 'auto (unconfirmed)' && !/^UNVERIFIED/.test(x.status); }).length;
     return { per_facet_used: !!r.per_facet_pitch_used, sources: sources, n_checked: nConf, pitch_source: r.pitch_source, edge_rows: edgeRows, tag_lf: tagLf, line_changes: lineChanges || [], area_rows: areaRows, area_by_category: byCat,
-      stale_area_tags: stale, plane_rows: planeRows, layers_used: Object.keys(layersUsed),
+      stale_area_tags: stale, plane_rows: planeRows, facet_fit: r.facet_fit || null, layers_used: Object.keys(layersUsed),
       any: edgeRows.length > 0 || (lineChanges || []).length > 0 || areaRows.length > 0 };
   }
 
@@ -151,7 +259,7 @@
     else {
       H.push('<p class="note">Tags are a person\'s visual categorization made in the app. Geometry and lengths come only from free sources ' +
         '(MassGIS / USGS / footprint or manual trace). Layers on screen while tagging: ' + esc(p.layers_used.join(', ') || 'not recorded') +
-        '. Google, Microsoft and Esri layers are visual reference only and none of their imagery is in this report.</p>');
+        '.</p>');
       if (p.edge_rows.length) {
         H.push('<table><thead><tr><th scope="col">Edge</th><th scope="col">Type</th><th scope="col">Plan ft</th><th scope="col">Sloped ft</th><th scope="col">Tags</th></tr></thead><tbody>');
         p.edge_rows.forEach(function (e) {
@@ -178,27 +286,30 @@
       }
       if (p.stale_area_tags.length) H.push('<p class="note">Dropped ' + p.stale_area_tags.length + ' area tag(s) whose facets no longer exist after edits.</p>');
     }
+    H.push('<!--RM-DETAIL-->');
     if (p.sources && p.sources.length) {
-      H.push('<h3>Measurement data sources (per edge / line)</h3><p class="note">All edges and lines were auto-detected from free data only (roofprint/outline, USGS 3DEP lidar, facets model); ' +
-        'no measurement comes from Google, Microsoft or Esri imagery. Pitch: ' + esc(p.pitch_source) + '. Checked by user: ' + p.n_checked + ' of ' + p.sources.length + '.</p>');
-      H.push('<table><thead><tr><th scope="col">ID</th><th scope="col">Type</th><th scope="col">Length ft</th><th scope="col">Length source</th><th scope="col">Type source</th><th scope="col">Status</th></tr></thead><tbody>');
+      H.push('<h3>Measurement data sources (per edge / line)</h3><p class="note">Auto-detected from the roofprint/outline, USGS 3DEP lidar and the facets model. ' +
+        'Uncounted candidates are in the Appendix. Pitch: ' + esc(p.pitch_source) + '. Checked by user: ' + p.n_checked + ' of ' + p.sources.length + '.</p>');
+      H.push('<table class="compact"><thead><tr><th scope="col">ID</th><th scope="col">Type</th><th scope="col">Length ft</th><th scope="col">Length source</th><th scope="col">Type source</th><th scope="col">Status</th></tr></thead><tbody>');
       p.sources.forEach(function (x) { H.push('<tr><th scope="row">' + esc(x.id) + '</th><td>' + esc(x.type) + '</td><td class="n">' + (+x.length_ft).toFixed(1) + ' <span class="note">' + esc(x.length_basis) +
         '</span></td><td>' + esc(x.length_source) + '</td><td>' + esc(x.type_source) + '</td><td>' + esc(x.status) + '</td></tr>'); });
       H.push('</tbody></table>');
     }
-    if (p.plane_rows.length) {
-      H.push('<h3>Per-facet pitch from lidar planes (cross-check, NOT_PROVEN)</h3><p class="note">Each modelled facet is matched to the largest USGS 3DEP ' +
-        'lidar RANSAC plane whose downslope direction is within 35° of the facet\'s. ' + (p.per_facet_used ? 'OPT-IN ON: the report roof area above is the per-facet sum below.' : 'The report totals above still use the single pitch shown in the Summary.') + '</p>');
-      H.push('<table><thead><tr><th scope="col">Facet</th><th scope="col">Model pitch</th><th scope="col">Lidar plane pitch</th><th scope="col">Aspect Δ°</th><th scope="col">Plane pts</th><th scope="col">Plan sq ft</th><th scope="col">Roof sq ft (lidar pitch)</th></tr></thead><tbody>');
-      var tot = 0, ok = true;
-      p.plane_rows.forEach(function (x) {
-        if (x.lidar_area_sqft == null) ok = false; else tot += x.lidar_area_sqft;
-        H.push('<tr><th scope="row">' + esc(x.id) + '</th><td>' + esc(x.model_pitch) + '</td><td>' + (x.lidar_pitch ? esc(x.lidar_pitch) + ' (' + x.lidar_slope_deg.toFixed(1) + '°)' : 'no matching plane') +
-          '</td><td class="n">' + (x.aspect_diff_deg != null ? x.aspect_diff_deg.toFixed(0) : '—') + '</td><td class="n">' + (x.plane_points || '—') + '</td><td class="n">' + (+x.plan_area_sqft).toFixed(1) +
-          '</td><td class="n">' + (x.lidar_area_sqft != null ? x.lidar_area_sqft.toFixed(1) : '—') + '</td></tr>');
+    var ff = p.facet_fit;
+    if (ff && ff.facets && ff.facets.length) {
+      H.push('<h3>Per-facet lidar plane fits (NOT_PROVEN)</h3><p class="note">' + esc(ff.method) + '. Confidence: high = ≥60 inlier points, RMS ≤ 0.08 m, rise s.e. ≤ 0.3, aspect within 20° of the facet; ' +
+        'medium = ≥25 points, RMS ≤ 0.15 m, s.e. ≤ 0.6, aspect within 30°. Only high/medium fits are used. ' +
+        (p.per_facet_used ? 'OPT-IN ON: the roof area and rake above use these pitches.' : 'Opt-in is OFF: the totals above use the single pitch in the Summary.') + '</p>');
+      H.push('<table class="compact"><thead><tr><th scope="col">Facet</th><th scope="col">Plan sq ft</th><th scope="col">Points (inliers)</th><th scope="col">RMS m</th><th scope="col">Rise raw ± s.e.</th><th scope="col">Snapped</th><th scope="col">Aspect Δ°</th><th scope="col">Confidence</th><th scope="col">Used</th></tr></thead><tbody>');
+      ff.facets.forEach(function (x) {
+        H.push('<tr><th scope="row">' + esc(x.id) + '</th><td class="n">' + (x.plan_area_sqft != null ? (+x.plan_area_sqft).toFixed(1) : '—') + '</td><td class="n">' + (x.n_points != null ? x.n_points : '—') + (x.n_inliers != null ? ' (' + x.n_inliers + ')' : '') +
+          '</td><td class="n">' + (x.rms_m != null ? x.rms_m.toFixed(3) : '—') + '</td><td class="n">' + (x.rise_raw != null ? x.rise_raw.toFixed(2) + ' ± ' + x.se_rise.toFixed(2) : '—') + '</td><td>' + esc(x.pitch_snapped || '—') +
+          '</td><td class="n">' + (x.aspect_diff_deg != null ? x.aspect_diff_deg.toFixed(0) : '—') + '</td><td>' + esc(x.confidence || x.status) + '</td><td>' + (x.usable ? esc(x.pitch_used) : 'no (' + esc(x.status) + ')') + '</td></tr>');
       });
-      H.push('</tbody></table><p class="note">' + (ok ? 'Sum at per-facet lidar pitch: ' + tot.toFixed(1) + ' sq ft.' : 'Some facets had no matching plane; no per-facet total is given.') + '</p>');
+      H.push('</tbody></table>');
+      if (ff.groups && ff.groups.length) H.push('<p class="note">Coplanar facet groups (one physical plane split by the model): ' + ff.groups.map(function (g) { return esc(g.facets.join('+')) + ' ' + esc(g.pitch_snapped || '?') + ' (' + g.n_points + ' pts)'; }).join('; ') + '.</p>');
     }
+    H.push('<!--/RM-DETAIL-->');
     if (p.user_measurements && p.user_measurements.length) {
       H.push('<h3>User-supplied measurements</h3><p class="note">Entered by the user from their own measurement (for example the Google Earth ruler or a tape on site). ' +
         'RoofMeasure did not compute or verify these and does not use them in any total above.</p><table><thead><tr><th scope="col">What</th><th scope="col">Value</th><th scope="col">Source</th><th scope="col">Entered (UTC)</th></tr></thead><tbody>');
@@ -210,11 +321,21 @@
   }
   function inject(html, section) {
     if (!section) return html;
+    // per-edge source table and per-facet fit table go to the appendix (end of report), the rest before Notes
+    var d0 = section.indexOf('<!--RM-DETAIL-->'), d1 = section.indexOf('<!--/RM-DETAIL-->');
+    if (d0 >= 0 && d1 > d0) {
+      var detail = section.slice(d0 + 16, d1); section = section.slice(0, d0) + section.slice(d1 + 17);
+      if (detail.replace(/\s/g, '')) {
+        detail = '<section aria-labelledby="h-det"><h2 id="h-det">Appendix — measurement sources and per-facet lidar fits</h2>' + detail + '</section>';
+        var ft = html.lastIndexOf('<footer');
+        html = ft < 0 ? html + detail : html.slice(0, ft) + detail + html.slice(ft);
+      }
+    }
     var at = html.indexOf('<section aria-labelledby="h-notes">');
     if (at < 0) at = html.lastIndexOf('</body>');
     return at < 0 ? html + section : html.slice(0, at) + section + html.slice(at);
   }
   window.RoofTags = { EDGE_TAGS: EDGE_TAGS, AREA_TAGS: AREA_TAGS, LINE_TYPES: LINE_TYPES, emptyTags: emptyTags, liveFacets: liveFacets, facetsKey: facetsKey,
     facetsInput: facetsInput, applyLineTags: applyLineTags, facetAt: facetAt, matchPlanes: matchPlanes, reportPayload: reportPayload, sectionHtml: sectionHtml,
-    inject: inject, pointInRing: pointInRing, esc: esc };
+    inject: inject, pointInRing: pointInRing, esc: esc, EXTRA_TYPES: EXTRA_TYPES, ALL_TYPES: ALL_TYPES, lidarSeg: lidarSeg, reconcileLidar: reconcileLidar };
 })();
