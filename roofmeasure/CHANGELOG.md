@@ -42,6 +42,8 @@ Root causes (compared with the Gemini bug spec):
     candidate diagram); tap a candidate on the map and Confirm, or set it in the report editor, to count it.
   - Condensed export: tables may break across pages (rows kept whole), smaller table text; lidar plane/step tables, skylight candidates,
     the per-edge measurement-source table and the per-facet fit table moved to the Appendix; the three full-page visuals stay.
+  - Drip edge uses the facets-model rake (with step-gable ends) only when the roof model is lidar-verified or user-picked; with an ASSUMED
+    model it uses the footprint rake (private complex house: 564.4 → 404.9 LF).
   - Per-facet squares are rounded from the unrounded facet areas, like core (15 Ward St per-facet on: 20.24 → 20.23).
 - Report cleanup: one short "For estimating; verify on site." note replaces the disclaimer block; the repeated imagery/tracing wording and
   per-note "verify"/"NOT_PROVEN" tails are gone (data attributions stay). Candidate and "?" lines are never on the main diagrams.

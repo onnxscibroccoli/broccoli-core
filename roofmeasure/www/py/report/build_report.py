@@ -175,10 +175,12 @@ def compute(r):
     if l_eave or l_rake:
         extra.append({"key": "lidar_eave_lf", "label": "Eave of raised sections (lidar, level)", "lf": round(l_eave, 1), "source": "result.lines.lidar_eave_lf (lidar step edges, NOT_PROVEN)"})
         extra.append({"key": "lidar_rake_lf", "label": "Rake of raised sections (lidar, sloped)", "lf": round(l_rake, 1), "source": "result.lines.lidar_rake_lf (lidar step edges, NOT_PROVEN)"})
-    if f_rake is not None:
+    mi_ = r.get("roof_model_info") if isinstance(r.get("roof_model_info"), dict) else {}
+    model_ok = (not mi_) or mi_.get("verified") or mi_.get("source") == "user-selected"
+    if f_rake is not None and model_ok:
         drip, drip_basis = round(eave + f_rake + l_eave + l_rake, 1), f"eave_lf {num(eave)} + facets-model rake (sloped) {num(f_rake)}"
     else:
-        drip, drip_basis = round(eave + rake + l_eave + l_rake, 1), f"eave_lf {num(eave)} + core rake_lf (sloped) {num(rake)}"
+        drip, drip_basis = round(eave + rake + l_eave + l_rake, 1), f"eave_lf {num(eave)} + core rake_lf (sloped) {num(rake)}" + ("" if f_rake is None else " (roof model ASSUMED, so its step-gable rakes are not used)")
     if l_eave or l_rake:
         drip_basis += f" + lidar raised-section eave {num(l_eave)} + rake {num(l_rake)}"
     ridge_cap = None if (ridge is None and hip is None) else round((ridge or 0) + (hip or 0), 1)
