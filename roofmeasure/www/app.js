@@ -401,6 +401,13 @@
   function applyTag(p, ll) {
     var tool = state.tagTool; if (!tool || !state.result) return false;
     var kind = tool.split(':')[0], v = tool.split(':')[1], T = state.tags, lab = layerLabel() + (state.overlay ? ' + overlay ' + BASEMAPS[state.overlay].label + ' (visual reference only)' : '');
+    if (kind === 'feature') {
+      if (['chimney', 'skylight', 'vent'].indexOf(v) < 0) return false;
+      // User-placed markers are visual, without invented size or confidence.
+      T.featuresAdded = T.featuresAdded || [];
+      T.featuresAdded.push({ type: v, centroid_lonlat: [ll.lng != null ? ll.lng : ll[0], ll.lat != null ? ll.lat : ll[1]], source: 'user map tap' });
+      render(); status('Added ' + v + ' marker by visual review. Edit measurements → Roof feature candidates to reclassify detections.'); return true;
+    }
     if (kind === 'confirm') {
       var hc = hitTest(p, lastPointerType), lc = hc.edge == null ? nearestLine(p) : null;
       if (hc.edge != null) { var ke = 'E' + hc.edge; if (T.confirmed[ke]) delete T.confirmed[ke]; else T.confirmed[ke] = lab; render(); status('Edge ' + hc.edge + (T.confirmed[ke] ? ' confirmed.' : ' unconfirmed.')); return true; }

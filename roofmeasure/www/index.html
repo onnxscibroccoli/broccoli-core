@@ -78,6 +78,7 @@
       <option value="edge:wall_flashing">Wall / headwall flashing (toggle)</option><option value="edge:no_gutter">No gutter (toggle)</option>
       <option value="edge:clear">Clear edge tags</option></optgroup>
     <optgroup label="Interior lines"><option value="line:ridge">Ridge</option><option value="line:hip">Hip</option><option value="line:valley">Valley</option><option value="line:wall_flashing">Wall flashing (lidar lines)</option><option value="line:eave">Eave (lidar lines)</option><option value="line:rake">Rake (lidar lines)</option><option value="line:none">Delete line (not counted)</option><option value="line:clear">Reset line to auto</option></optgroup>
+    <optgroup label="User-placed roof feature markers"><option value="feature:chimney">Add chimney (tap roof)</option><option value="feature:skylight">Add skylight (tap roof)</option><option value="feature:vent">Add vent (tap roof)</option></optgroup>
     <optgroup label="Roof areas / facets"><option value="area:steep">Steep-slope (shingle)</option><option value="area:low_slope">Low-slope</option>
       <option value="area:flat">Flat</option><option value="area:deck">Deck</option><option value="area:clear">Clear area tag</option></optgroup>
   </select></div>
@@ -138,6 +139,7 @@
 <script src="lib/structures.js"></script>
 <script src="lib/solar-est.js"></script>
 <script src="tags.js"></script>
+<script src="lib/feature-review.js"></script>
 <script src="report.js"></script>
 <script src="app.js"></script>
 <script>if('serviceWorker' in navigator && /^https?:$/.test(location.protocol) && !/RoofMeasureAndroid/.test(navigator.userAgent)) navigator.serviceWorker.register('sw.js').catch(function (e) { console.warn('sw', e); });</script>

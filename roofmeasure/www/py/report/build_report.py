@@ -725,6 +725,17 @@ def _features(r, P, s, placed=None, aerial=False):
                 break
         pl.append((best[0] - tw / 2, best[1] - th + 2, best[0] + tw / 2, best[1] + 3))
         out.append(_label(best[0], best[1], txt, size=10.5, fg="#075985"))
+    # Distinct annotation for user-identified chimneys/vents; never draw them as skylights.
+    for kind, col in (("chimneys", "#b45309"), ("vents", "#64748b")):
+        for f in rf.get(kind) or []:
+            c = f.get("centroid_lonlat")
+            if not c:
+                continue
+            x, y = P(*c)
+            # A circle-with-cross marks location without inventing an outline or roof opening size.
+            out.append(f'<g transform="translate({x:.1f},{y:.1f})"><circle r="8" fill="white" fill-opacity="0.8" stroke="{col}" stroke-width="2"/>' +
+                       f'<path d="M-4,-4 L4,4 M4,-4 L-4,4" stroke="{col}" stroke-width="1.5"/></g>')
+            out.append(_label(x + 15, y - 12, str(f.get("label") or kind[:1].upper()) + ' ' + kind[:-1].upper() + ' (user)', size=9.5, fg=col))
     # Dormer markers are candidate-only; additional visual lean is on the aerial composite alone.
     for d in rf.get("dormers") or []:
         c = d.get("centroid_lonlat")
@@ -1030,6 +1041,14 @@ def feature_rows(r):
     if un:
         txt += f' (+{len(un)} unchecked: ' + "; ".join(lab(k) + "?" for k in un) + ')'
     rows = [("Skylights (candidates, not in totals)", txt)]
+    chim = rf.get("chimneys") or []
+    vents = rf.get("vents") or []
+    if chim:
+        rows.append(("Chimneys (user-identified; size not proven)", str(len(chim)) + ": " +
+                     "; ".join(esc(c.get("label") or "C") + " user-marked location" for c in chim)))
+    if vents:
+        rows.append(("Vents (user-identified; size not proven)", str(len(vents)) + ": " +
+                     "; ".join(esc(c.get("label") or "V") + " user-marked location" for c in vents)))
     if dk:
         rows.append(("Roof deck / flat section (candidate, not in totals)", "; ".join(
             (f'≈{num(d.get("area_sqft"), 0)} sq ft' + (f' ({num(d.get("w_ft"), 1)}×{num(d.get("h_ft"), 1)} ft)' if d.get("w_ft") else '') + f' at {esc(d.get("pitch"))}: inspect for a rubber/membrane roof underneath') for d in dk)))

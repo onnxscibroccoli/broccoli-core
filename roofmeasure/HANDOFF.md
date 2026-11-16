@@ -3,6 +3,17 @@
 
 Read in order: this file, CODEVELOP.md (rules, build), CHANGELOG.md, docs/research/ (*.md notes; *.pdf + .txt reference papers from Ian: lidar structural pipeline, zero-cost measurement uncertainties).
 
+## User-supplied test feedback: photo feature review
+- One roof report misidentified a chimney as a skylight, a second chimney was not detected,
+  and rectangular skylight depictions were reported rotated 90°. The report provided NO
+  lidar roof cloud and pitch remained manual. Do not embed the user's private house
+  location, screenshot or PDFs in git.
+- Candidate review controls: type and 90° rotation in report editor, mark unseen chimneys
+  using Tag tool on map. Review is user-supplied visual evidence, not survey ground truth.
+- Real pitch NOT_PROVEN by these screenshots; the 12/12 override is a visualization
+  workaround, NOT a measured roof slope.
+- Next: check pitch provenance and report consistency; verify the revised alpha on device.
+
 ## Parallel-installable 0.1.7.6 alpha
 - CI builds `com.ian.roofmeasure.alpha`, labelled **RoofMeasure Alpha**, with versionName
   0.1.7.6/versionCode 10706 unchanged. Original `com.ian.roofmeasure` is unaffected.

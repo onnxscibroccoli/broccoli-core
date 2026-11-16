@@ -22,6 +22,19 @@ The measured ortho offset conflates camera perspective and possible georegistrat
 inspect the 6 Harborview deck position against its walls before treating the overlay as reliable.
 Offline test: `node tests/featurelean_test.cjs`; CI also runs headless reports and emulator smoke.
 
+## User roof-feature review (0.1.7.6)
+
+MassGIS ortho patches are candidates for **skylights, chimneys or vents**: a rectangular
+bright/dark patch alone cannot identify the structure. In the report preview choose
+**Edit measurements → Roof feature candidates**. Every candidate, including automatic
+rejections, supports **Automatic / Skylight / Chimney / Vent / Hide** and **Rotate 90°**.
+A visually confirmed chimney is moved out of the skylight list. On the map use
+**Tag tool → Add chimney** to mark a missed chimney's location (no fictitious size).
+The PDF includes visually distinct C/V markers; edits do not change roof area/pitch.
+No imagery or user correction is uploaded as telemetry. These confirmations establish
+**user visual classification**, not field-measured dimensions. Test:
+`node tests/feature_review_test.cjs`.
+
 ## Parallel-installable alpha APK (0.1.7.6)
 
 GitHub Actions builds a separately installable **RoofMeasure Alpha** with application ID

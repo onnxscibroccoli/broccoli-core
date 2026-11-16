@@ -11,7 +11,7 @@
   var LINE_TYPES = ['ridge', 'hip', 'valley'];
   var EXTRA_TYPES = ['wall_flashing', 'eave', 'rake']; // lidar-detected step edges (dormers, raised sections); user-retypable
   var ALL_TYPES = LINE_TYPES.concat(EXTRA_TYPES);
-  function emptyTags() { return { edges: {}, lines: {}, linesKey: null, areas: {}, layers: {}, confirmed: {}, lengths: {}, added: [], skylights: [], skylightsDeleted: {}, dormers: {}, dormersAdded: [], facetPitch: {}, lineMoves: {} }; }
+  function emptyTags() { return { edges: {}, lines: {}, linesKey: null, areas: {}, layers: {}, confirmed: {}, lengths: {}, added: [], skylights: [], skylightsDeleted: {}, dormers: {}, dormersAdded: [], featureReviews: {}, featuresAdded: [], facetPitch: {}, lineMoves: {} }; }
   function r1(x) { return Math.round(x * 10) / 10; }
   function r2(x) { return Math.round(x * 100) / 100; }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }

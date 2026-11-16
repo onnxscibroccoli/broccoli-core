@@ -240,6 +240,7 @@
     }
     var fpEd = (st.tags && st.tags.facetPitch) || {};
     if (st.perFacetPitch || Object.keys(fpEd).length) applyPerFacet(r, fpEd, !!st.perFacetPitch);
+    if (window.RoofFeatureReview) window.RoofFeatureReview.apply(r, st.tags);
     if (T) {
       try {
         r.user_tags = T.reportPayload(r, tags, lidarUsed ? L : (L && L.planes ? L : null), lineChanges);
@@ -479,6 +480,7 @@
           if (hit) { p.lidar_match = hit.key; p.confidence = 'medium'; hit.ortho_match = p.key; } });
         result.ortho_patches = pt;
         roofFeatures(result);
+        if (window.RoofFeatureReview) window.RoofFeatureReview.apply(result, window.RoofApp && window.RoofApp.state && window.RoofApp.state.tags);
         // Experimental height-aware placement applies only in the aerial composite; geometry/totals untouched.
         if (window.RoofFeatureLean) {
           var L = window.RoofApp && window.RoofApp.state && window.RoofApp.state.lidar;
@@ -578,7 +580,7 @@
   function showPreview(out, name, app, statusFn) {
     var v = document.getElementById('reportView'), f = document.getElementById('rvFrame');
     if (!v || !f) return false;
-    current = { html: out.html, name: name };
+    current = { html: out.html, name: name, result: out.result };
     f.srcdoc = out.html; v.hidden = false;
     var ed = document.getElementById('rvEdit'); ed.classList.remove('on'); ed.textContent = 'Edit text';
     ed.onclick = function () { var d = f.contentDocument; if (!d) return; var on = d.designMode !== 'on'; d.designMode = on ? 'on' : 'off';
@@ -668,12 +670,36 @@
     H.push('</tbody></table><button type="button" id="me-addline">Add a line</button><br>');
     // skylights: lidar candidates (remove) + user-entered (add/remove)
     if (!Array.isArray(tg.skylights)) tg.skylights = []; if (!tg.skylightsDeleted) tg.skylightsDeleted = {};
+    if (!tg.featureReviews) tg.featureReviews = {}; if (!tg.featuresAdded) tg.featuresAdded = [];
     var skyL = (st.lidar && T.lidarSeg && T.lidarSeg(st.lidar) && T.lidarSeg(st.lidar).skylights) || [];
     H.push('<h4>Skylights (lidar candidates are NOT_PROVEN; keep, remove, or add your own)</h4><table><thead><tr><th>#</th><th>Size ft (w × h)</th><th>Evidence</th><th>Keep</th></tr></thead><tbody id="me-sky">');
     skyL.forEach(function (k, i) { H.push('<tr><th scope="row">S' + i + '</th><td>' + k.approx_w_ft + ' × ' + k.approx_h_ft + '</td><td class="note">' + E(k.source) + ' (' + E(k.confidence) + ')</td><td><input type="checkbox" data-me-skyl="S' + i + '" aria-label="Keep skylight candidate S' + i + '"' + (tg.skylightsDeleted['S' + i] ? '' : ' checked') + '></td></tr>'); });
     var skyRow = function (k, j) { return '<tr data-me-skyu="' + j + '"><th scope="row">U' + j + '</th><td><input type="number" step="0.1" min="0" aria-label="Skylight ' + j + ' width ft" value="' + (k.w_ft || '') + '" style="width:60px"> × <input type="number" step="0.1" min="0" aria-label="Skylight ' + j + ' height ft" value="' + (k.h_ft || '') + '" style="width:60px"></td><td><input type="text" aria-label="Skylight ' + j + ' note / location" value="' + E(k.note || '') + '" placeholder="e.g. rear plane, near ridge"></td><td><button type="button" data-me-del="sky' + j + '">Remove</button></td></tr>'; };
     tg.skylights.forEach(function (k, j) { H.push(skyRow(k, j)); });
     H.push('</tbody></table><button type="button" id="me-addsky">Add a skylight</button><br>');
+    // Every orthophoto patch is reviewable, including rejected candidates and suspected chimneys.
+    // Do NOT hide uncertain patches: users can classify and rotate their depiction by 90 degrees.
+    var reviewed = (current && current.result && current.result.ortho_patches) || [];
+    var lidarList = (current && current.result && current.result.skylights || []).filter(function (k) { return !k.ortho_match && k.centroid_lonlat; });
+    var candidates = reviewed.concat(lidarList.filter(function (k) { return !reviewed.some(function (p) { return p.key === k.key; }); }));
+    if (candidates.length) {
+      H.push('<h4>Roof feature candidates — correct skylight / chimney / vent and orientation</h4>' +
+        '<p class="note">Use the aerial page and local knowledge to review every patch, including rejected patches. ' +
+        'A 90° turn changes its drawing only. Manual identification does NOT prove its dimensions, pitch, or roof area.</p>' +
+        '<table><thead><tr><th>Patch</th><th>Size (ft)</th><th>Automatic evidence</th><th>Type (your review)</th><th>Rotate 90°</th></tr></thead><tbody>');
+      candidates.forEach(function (k) {
+        var v = tg.featureReviews[k.key] || {}, kind = v.kind || 'auto';
+        var excluded = k.excluded || (k.source || '');
+        H.push('<tr data-me-frev="' + E(k.key) + '"><th scope="row">' + E(k.key) + '</th><td>' +
+          E(k.approx_w_ft || k.w_ft || '?') + ' × ' + E(k.approx_h_ft || k.h_ft || '?') + '</td><td class="note">' + E(excluded) +
+          '</td><td><select aria-label="Classify patch ' + E(k.key) + '">' +
+          ['auto','skylight','chimney','vent','ignore'].map(function (t) { return '<option value="' + t + '"' +
+            (t === kind ? ' selected' : '') + '>' + ({auto:'Automatic (unverified)',skylight:'Skylight',chimney:'Chimney',vent:'Vent',ignore:'Hide'}[t]) + '</option>'; }).join('') +
+          '</select></td><td><input type="checkbox" aria-label="Rotate patch ' + E(k.key) + ' 90 degrees"' +
+            (v.rotate90 ? ' checked' : '') + '></td></tr>');
+      });
+      H.push('</tbody></table>');
+    }
     // dormers (0.1.7.4): lidar candidates (keep to count their gutters) + user-entered; returns yes/no; inspect & clean
     if (!tg.dormers) tg.dormers = {}; if (!Array.isArray(tg.dormersAdded)) tg.dormersAdded = [];
     var dmL = (st.lidar && T.lidarSeg && T.dormers) ? T.dormers(T.lidarSeg(st.lidar), { dormers: tg.dormers }) : [];
@@ -695,7 +721,7 @@
     var nDor = tg.dormersAdded.length;
     document.getElementById('me-adddorm').onclick = function () { document.getElementById('me-dorm').insertAdjacentHTML('beforeend', dRow({}, nDor++)); };
     box.addEventListener('click', function (ev) { var b = ev.target.closest && ev.target.closest('[data-me-del]'); if (b) { var tr = b.closest('tr'); if (tr) tr.remove(); } });
-    document.getElementById('me-reset').onclick = function () { tg.lengths = {}; st.overrides = {}; tg.lines = {}; tg.added = []; tg.skylights = []; tg.skylightsDeleted = {}; tg.dormers = {}; tg.dormersAdded = []; box.hidden = true; app.render && app.render(); preview(app, statusFn); };
+    document.getElementById('me-reset').onclick = function () { tg.lengths = {}; st.overrides = {}; tg.lines = {}; tg.added = []; tg.skylights = []; tg.skylightsDeleted = {}; tg.featureReviews = {}; tg.featuresAdded = []; tg.dormers = {}; tg.dormersAdded = []; box.hidden = true; app.render && app.render(); preview(app, statusFn); };
     document.getElementById('me-apply').onclick = function () {
       var lab = 'report editor';
       var mv = document.getElementById('me-model').value;
@@ -713,6 +739,11 @@
       Array.prototype.forEach.call(q('[data-me-skyl]'), function (el) { if (el.checked) delete tg.skylightsDeleted[el.dataset.meSkyl]; else tg.skylightsDeleted[el.dataset.meSkyl] = lab; });
       tg.skylights = Array.prototype.map.call(q('[data-me-skyu]'), function (tr) { var ins = tr.querySelectorAll('input');
         return { w_ft: +ins[0].value || null, h_ft: +ins[1].value || null, note: ins[2].value, source: 'user-entered (report editor)' }; }).filter(function (k) { return k.w_ft || k.h_ft || k.note; });
+      Array.prototype.forEach.call(q('[data-me-frev]'), function (tr) {
+        var kind = tr.querySelector('select').value, rotate90 = tr.querySelector('input').checked;
+        if (kind === 'auto' && !rotate90) delete tg.featureReviews[tr.dataset.meFrev];
+        else tg.featureReviews[tr.dataset.meFrev] = { kind: kind, rotate90: rotate90, source: 'user visual review' };
+      });
       Array.prototype.forEach.call(q('[data-me-dorl]'), function (tr) { var ins = tr.querySelectorAll('input'), sel = tr.querySelector('select');
         tg.dormers[tr.dataset.meDorl] = { keep: ins[1].checked, gutter_lf: +ins[0].value || null, returns: sel.value, layer: lab }; });
       tg.dormersAdded = Array.prototype.map.call(q('[data-me-doru]'), function (tr) { var ins = tr.querySelectorAll('input'), sel = tr.querySelector('select');
