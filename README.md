@@ -1,5 +1,8 @@
 # Broccoli Core
 
+
+> **For technical reviewers:** [Source-linked capability evidence, executable checks and current limitations](docs/PORTFOLIO_READINESS.md) · [prioritized remediation issue](https://github.com/onnxscibroccoli/broccoli-core/issues/103). This is an experimental/software evidence portfolio, not an attestation of production operation or employment history.
+
 **Status:** Active historical automation platform / experimental runtime  
 **Repository:** `onnxscibroccoli/broccoli-core`  
 **Documentation snapshot:** 2026-09-28 23:12 EDT
