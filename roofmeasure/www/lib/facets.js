@@ -484,14 +484,25 @@
     if (isRectangle(pts)) return brg.map(function (b, j) { return axisDiff(b, rb) > 45 ? j : -1; }).filter(function (j) { return j >= 0; });
     var scale = Math.max.apply(null, lens), eps = 1e-6 * scale, tol = 1e-6 * scale, convex = [], out = [];
     for (i = 0; i < n; i++) convex.push(cross(sub(pts[i], pts[(i - 1 + n) % n]), sub(pts[(i + 1) % n], pts[i])) > 0);
+    // 0.1.7.5: an arm end cap (gable end) must be a real wall, not a jog or a bump-out: at least 6 ft (or 6 % of the longest
+    // edge) and both neighbouring edges (the arm's sides) at least half its length. A cross wing (end cap parallel to the main
+    // ridge) turns off the "perpendicular to the input ridge" rule, which otherwise made the cross wing's long sides gable ends.
+    var minLen = Math.max(6, 0.06 * scale);
+    function capOK(j) { return lens[j] >= minLen && lens[(j - 1 + n) % n] >= 0.5 * lens[j] && lens[(j + 1) % n] >= 0.5 * lens[j]; }
+    function depthOf(j) { return Math.min(rayDepth(pts, j, 0.25, eps), rayDepth(pts, j, 0.5, eps), rayDepth(pts, j, 0.75, eps)); }
+    var caps = [], crossWing = false;
     for (i = 0; i < n; i++) {
-      var perpIn = ridgeInput && axisDiff(brg[i], rb) >= 75;
-      if (!((convex[i] && convex[(i + 1) % n]) || perpIn)) continue;
-      var depth = Math.min(rayDepth(pts, i, 0.25, eps), rayDepth(pts, i, 0.5, eps), rayDepth(pts, i, 0.75, eps));
-      if (depth > lens[i] + tol) out.push(i);
-      else if (Math.abs(depth - lens[i]) <= tol && axisDiff(brg[i], rb) > 45) out.push(i);
+      if (!(convex[i] && convex[(i + 1) % n]) || !capOK(i)) continue;
+      var dc = depthOf(i);
+      if (dc > lens[i] + tol || (Math.abs(dc - lens[i]) <= tol && axisDiff(brg[i], rb) > 45)) { caps.push(i); if (axisDiff(brg[i], rb) < 45) crossWing = true; }
     }
-    return out;
+    out = caps.slice();
+    if (ridgeInput && !crossWing) for (i = 0; i < n; i++) {
+      if (out.indexOf(i) >= 0 || axisDiff(brg[i], rb) < 75 || lens[i] < minLen) continue;
+      var depth = depthOf(i);
+      if (depth > lens[i] + tol) out.push(i);
+    }
+    return out.sort(function (a, b) { return a - b; });
   }
   function planeRise(p) { return p.pitch != null ? parsePitch(p.pitch) : Math.tan(+p.slope_deg * D2R) * 12; }
   function matchPlane(planes, downslope) {

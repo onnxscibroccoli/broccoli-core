@@ -649,7 +649,37 @@ def _overlay(r, P, scale_px_per_ft, casing=True, numbers=True, lengths=True, fac
                 best = (lx, ly, (lx - tw / 2, ly - th + 2, lx + tw / 2, ly + 4))
             placed.append(best[2])
             labels.append(_label(best[0], best[1], txt, size=11, fg="#111"))
-    return "".join(out + labels)
+    return "".join(out) + _features(r, P, scale_px_per_ft) + "".join(labels)
+
+
+def _features(r, P, s):
+    """0.1.7.5: labelled roof features (candidates): roof decks / flat sections (brown, hatched by dashes) and skylights
+    (rotated rectangles at their measured size). Drawn on the diagram and the overlay pages."""
+    rf = r.get("roof_features") or {}
+    out = []
+    for d in rf.get("decks") or []:
+        O = d.get("outline_lonlat") or []
+        if len(O) < 3:
+            continue
+        pts = [P(*p) for p in O]
+        pp = " ".join(f"{x:.1f},{y:.1f}" for x, y in pts)
+        cx, cy = sum(p[0] for p in pts) / len(pts), sum(p[1] for p in pts) / len(pts)
+        out.append(f'<polygon points="{pp}" fill="#a16207" fill-opacity="0.35" stroke="#000" stroke-width="4.5"/><polygon points="{pp}" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="6 3"/>')
+        out.append(_label(cx, cy - 4, f'DECK ≈{num(d.get("area_sqft"), 0)} sq ft', size=11, fg="#7c2d12"))
+        out.append(_label(cx, cy + 10, 'inspect: rubber/membrane?', size=9.5, fg="#7c2d12"))
+    for k in rf.get("skylights") or []:
+        c = k.get("centroid_lonlat")
+        if not c:
+            continue
+        x, y = P(*c)
+        w = float(k.get("w_ft") or 2.5) * s
+        h = float(k.get("h_ft") or 2.0) * s
+        a = float(k.get("angle_deg") or 0)
+        out.append(f'<g transform="translate({x:.1f},{y:.1f}) rotate({a:.1f})"><rect x="{-w/2:.1f}" y="{-h/2:.1f}" width="{w:.1f}" height="{h:.1f}" fill="#38bdf8" fill-opacity="0.45" stroke="#000" stroke-width="3.5"/>'
+                   f'<rect x="{-w/2:.1f}" y="{-h/2:.1f}" width="{w:.1f}" height="{h:.1f}" fill="none" stroke="#e0f2fe" stroke-width="1.5"/></g>')
+        sz = f' {num(k.get("w_ft"), 1)}×{num(k.get("h_ft"), 1)} ft' if k.get("w_ft") else ''
+        out.append(_label(x, y - max(w, h) / 2 - 5, f'{k.get("label", "S")}{sz}', size=10.5, fg="#075985"))
+    return "".join(out)
 
 
 def _legend(r, x, y, cand=False, bg="#fff"):
@@ -790,6 +820,18 @@ def ortho_appendix(r):
                      '</tr></thead><tbody><tr><th scope="row">Residual (m, along the edge normal)</th>' + "".join(f'<td class="n">{num(x.get("residual_m"), 2)}</td>' for x in rs[:24]) + '</tr></tbody></table>')
     elif oa.get("status"):
         H.append(f'<p class="note">Ortho offset estimate unavailable ({esc(oa.get("status"))} {esc(oa.get("error") or "")}).</p>')
+    lf = r.get("lidar_model_fit") if isinstance(r.get("lidar_model_fit"), dict) else {}
+    if lf.get("facets"):
+        H.append('<h3>Lidar points vs the 3-D facets model</h3><p class="note">' + esc(lf.get("method")) +
+                 f'. Model: {esc(lf.get("model"))}. Eave level {num(lf.get("eave_elev_ft"), 1)} ft elevation'
+                 + (f', ground {num(lf.get("ground_elev_ft"), 1)} ft (eave {num(lf.get("eave_above_ground_ft"), 1)} ft above ground)' if lf.get("ground_elev_ft") is not None else '')
+                 + f'. Median residual {num(lf.get("median_ft"), 2)} ft over {esc(lf.get("n_on_facets"))} roof points'
+                 + (f'; roofprint-to-lidar registration shift {esc(lf["shift_ft"][0])} ft E / {esc(lf["shift_ft"][1])} ft N applied to the points (median {num(lf.get("median_unshifted_ft"), 2)} ft without it)' if lf.get("shift_applied") else ('; best registration shift hit the ±4.5 ft search limit (' + esc(lf["shift_search_limit"].get("dx")) + ' / ' + esc(lf["shift_search_limit"].get("dy")) + ' ft E/N), so it was NOT applied: the roofprint and the lidar may disagree (rebuilt or extended house?)' if lf.get("shift_search_limit") else '; no horizontal shift needed'))
+                 + '. Large residuals on a facet mean the assumed model or its pitch does not match the lidar there (or trees / chimneys).</p>')
+        H.append('<table class="compact"><thead><tr><th scope="col">Facet</th><th scope="col">Pitch</th><th scope="col" class="n">Points</th><th scope="col" class="n">Median (ft)</th>'
+                 '<th scope="col" class="n">90th pct (ft)</th><th scope="col" class="n">Max (ft)</th><th scope="col" class="n">Bias (ft)</th></tr></thead><tbody>' +
+                 "".join(f'<tr><th scope="row">{esc(x.get("facet"))}</th><td>{esc(x.get("pitch"))}</td><td class="n">{esc(x.get("n"))}</td><td class="n">{num(x.get("median_ft"), 2)}</td>'
+                         f'<td class="n">{num(x.get("p90_ft"), 2)}</td><td class="n">{num(x.get("max_ft"), 2)}</td><td class="n">{num(x.get("bias_ft"), 2)}</td></tr>' for x in lf["facets"]) + '</tbody></table>')
     pt = r.get("ortho_patches") or []
     if pt:
         H.append('<table class="compact"><caption>Ortho patch candidates (skylight / chimney / vent; compact bright or dark rectangles in the free ortho, NOT_PROVEN)</caption><thead><tr>'
@@ -898,6 +940,33 @@ def lidar_seg_section(r):
     return "".join(H)
 
 
+def feature_rows(r):
+    rf = r.get("roof_features") or {}
+    sk, dk = rf.get("skylights") or [], rf.get("decks") or []
+    rows = [("Skylights (candidates, NOT_PROVEN)", (f'{len(sk)}: ' + "; ".join(f'{k.get("label")} {num(k.get("w_ft"), 1)}×{num(k.get("h_ft"), 1)} ft' if k.get("w_ft") else str(k.get("label")) for k in sk)) if sk else "none detected")]
+    if dk:
+        rows.append(("Roof deck / flat section (candidate)", "; ".join(f'≈{num(d.get("area_sqft"), 0)} sq ft at {esc(d.get("pitch"))} — inspect for rubber/membrane roof underneath' for d in dk)))
+    return rows
+
+
+def window_view(r, av):
+    """0.1.7.5: one page, 2 × 2: aerial, diagram, overlay and a quick footage summary."""
+    import re as _re
+    def cp(svg):
+        return _re.sub(r'\b(p[avc])-(t|d)\b', r'wv\1-\2', svg) if svg else '<div class="ph">not available</div>'
+    _, _, mats = compute(r)
+    L = r.get("lines") or {}
+    rows = [("Roof area", f'{num(r["roof_area_sqft"])} sq ft'), ("Squares", num(r["squares"], 2)), ("Pitch", str(r["pitch"])),
+            ("Eave", f'{num(r["eave_lf"])} LF'), ("Rake (sloped)", f'{num(r["rake_lf"])} LF'), ("Ridge", f'{num(L.get("ridge_lf") or 0)} LF'),
+            ("Hip", f'{num(L.get("hip_lf") or 0)} LF'), ("Valley", f'{num(L.get("valley_lf") or 0)} LF'), ("Drip edge", f'{num(mats["drip_edge_lf"])} LF'),
+            ("Gutters", f'{num(r["gutter_lf"])} LF, {esc(r["downspouts"])} downspouts')] + [(a, b) for a, b in feature_rows(r)]
+    box = ('<div class="wvsum"><h3>Quick footage</h3><table class="compact"><tbody>' + "".join(f'<tr><th scope="row">{esc(a)}</th><td>{b}</td></tr>' for a, b in rows)
+           + '</tbody></table><p class="note">Counted lines only (candidates in the Appendix). For estimating; verify on site.</p></div>')
+    return ('<section class="fullpage pb" aria-labelledby="h-wv"><h2 id="h-wv">Window view</h2><div class="wv">'
+            f'<div><h3>Aerial</h3>{cp(av.get("aerial"))}</div><div><h3>Diagram</h3>{cp(vector_page(r))}</div>'
+            f'<div><h3>Overlay</h3>{cp(av.get("composite"))}</div>{box}</div></section>')
+
+
 def fullpage_sections(r):
     av = aerial_views(r)
     info = av["info"]
@@ -910,6 +979,7 @@ def fullpage_sections(r):
                 f'{", failures: " + esc("; ".join(x.get("error", "") for x in d.get("failures") or [])) if d.get("failures") else ""}). '
                 'Paid imagery is never fetched. The vector diagram page is unaffected.</span></div>')
     a = info.get("aerial") or {}
+    H.append(window_view(r, av))
     H.append('<section class="fullpage pb" aria-labelledby="h-fa"><h2 id="h-fa">Aerial photo</h2>'
              + (av["aerial"] or ph("AERIAL IMAGE", a))
              + f'<p class="cap">MassGIS 2025 statewide orthoimagery (15 cm, Commonwealth of Massachusetts), zoom 19, tiles {a.get("tiles_loaded", 0)}/{a.get("tiles_needed", 0)}. '
@@ -1000,6 +1070,11 @@ td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
 .fullpage { page-break-inside: avoid; break-inside: avoid; }
 .fullpage h2 { margin-top: 0; }
 .fullfig { display: block; width: 100%; height: auto; max-height: 8.6in; border: 1px solid #595959; }
+.wv { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.wv > div { min-width: 0; }
+.wv h3 { margin: 0 0 2px; font-size: 11pt; }
+.wv .fullfig { max-height: 4.1in; width: auto; max-width: 100%; }
+.wvsum table { width: 100%; font-size: 9.5pt; }
 .fullph { height: 8.0in; display: flex; flex-direction: column; justify-content: center; }
 p.cap { font-size: 8.5pt; color: #333; margin: 4px 0 0; }
 .note { font-size: 8.5pt; color: #333; }
@@ -1246,6 +1321,7 @@ def build_html(r, rows, waste, mats, aerial, generated):
         tot.append(("Roof facets (facets lane)", str(len(r["facets"]))))
     tot += [("Roof area (sloped)", f'{num(r["roof_area_sqft"])} sq ft'),
             ("Squares (roof area ÷ 100)", num(r["squares"], 2))]
+    tot += feature_rows(r)
     H.append('<table><caption>Totals</caption><tbody>' +
              "".join(f'<tr><th scope="row">{esc(k)}</th><td class="n">{esc(v)}</td></tr>' for k, v in tot) + '</tbody></table>')
     H.append('<p class="formula">roof_area = plan_area_with_overhang × pitch_factor; pitch_factor = √(1 + (rise/12)²)</p></section>')
@@ -1302,7 +1378,7 @@ def build_html(r, rows, waste, mats, aerial, generated):
              "".join(f"<li>{esc(a)}</li>" for a in attributions(r, aerial[0])) + "</ul></section>")
     H.append('<section aria-labelledby="h-disc"><h2 id="h-disc" class="sr-only">Note</h2><p class="disclaimer"><b>For estimating; verify on site.</b></p></section>')
     H.append(appendix_section(r))
-    H.append(f'<footer>RoofMeasure 0.1.7.4 report · {addr} · generated {esc(generated)} · RoofMeasure (MIT)</footer></main></body></html>')
+    H.append(f'<footer>RoofMeasure 0.1.7.5 report · {addr} · generated {esc(generated)} · RoofMeasure (MIT)</footer></main></body></html>')
     return "".join(H)
 
 

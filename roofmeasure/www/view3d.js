@@ -38,29 +38,67 @@
     var facets = (r.facets || []).map(function (fx) {
       var poly = (fx.polygon_lonlat || []).map(F.f); if (poly.length > 2 && poly[0][0] === poly[poly.length - 1][0] && poly[0][1] === poly[poly.length - 1][1]) poly.pop();
       var rise = /^(\d+(?:\.\d+)?)\/12$/.exec(String(fx.pitch || '')), s = rise ? +rise[1] / 12 : 0;
-      // height above the eave: distance up-slope from the facet's lowest (down-slope-most) point x rise/12
       var bd = (fx.downslope_bearing_deg != null ? fx.downslope_bearing_deg : NaN) * Math.PI / 180, d = [Math.sin(bd), Math.cos(bd)], ok = isFinite(bd) && s > 0;
-      var tmax = ok ? Math.max.apply(null, poly.map(function (p) { return p[0] * d[0] + p[1] * d[1]; })) : 0;
-      return { id: fx.id, pitch: fx.pitch, user: !!fx.user_pitch, poly: poly, plan: fx.plan_area_sqft, area: fx.area_sqft,
-        h: function (p) { return ok ? Math.max(0, tmax - (p[0] * d[0] + p[1] * d[1])) * s : 0; } };
+      var ts = poly.map(function (p) { return p[0] * d[0] + p[1] * d[1]; });
+      return { id: fx.id, pitch: fx.pitch, s: s, ok: ok, d: d, tmax: ok ? Math.max.apply(null, ts) : 0, tmin: ok ? Math.min.apply(null, ts) : 0, skeleton: fx.edge_index != null,
+        user: !!fx.user_pitch, poly: poly, plan: fx.plan_area_sqft, area: fx.area_sqft, pitch_source: fx.pitch_source };
     }).filter(function (x) { return x.poly.length >= 3; });
+    // 0.1.7.5 heights. Straight-skeleton facets (hip / wings): every point of facet e is up-slope of its eave edge e, so
+    // h = (distance up-slope from the eave line) x rise/12 and all eaves sit at 0, exactly the 2-D model's geometry (ridges,
+    // hips and valleys meet). Ridge-split gable (FA/FB, notches absorbed): the two planes meet at ONE ridge height and the
+    // eaves fall where they fall: h = Hr - (distance down-slope from the ridge) x rise/12.
+    var Hr = 0; facets.forEach(function (fx) { if (!fx.skeleton && fx.ok) Hr = Math.max(Hr, (fx.tmax - fx.tmin) * fx.s); });
+    facets.forEach(function (fx) {
+      fx.h = function (p) { if (!fx.ok) return 0; var t = p[0] * fx.d[0] + p[1] * fx.d[1];
+        return fx.skeleton ? Math.max(0, fx.tmax - t) * fx.s : Math.max(0, Hr - (t - fx.tmin) * fx.s); };
+    });
+    function facetAt(p) { var best = null, bz = -Infinity; facets.forEach(function (fx) { if (inPoly(p, fx.poly)) { var h = fx.h(p); if (h > bz) { bz = h; best = fx; } } }); return best; }
     function zAt(p) { var z = 0, hit = false; facets.forEach(function (fx) { if (nearPoly(p, fx.poly, 0.6)) { var h = fx.h(p); if (!hit || h > z) { z = h; hit = true; } } }); return z; }
     var lines = (r.line_segments || []).map(function (sg, i) { return { i: i, sg: sg }; }).filter(function (x) { return x.sg.coords_lonlat && !x.sg.deleted && COL[x.sg.type] != null; })
       .map(function (x) { var a = F.f(x.sg.coords_lonlat[0]), b = F.f(x.sg.coords_lonlat[1]); return { i: x.i, type: x.sg.type, cand: !!x.sg.unverified, a: a, b: b, za: zAt(a), zb: zAt(b), len: x.sg.length_ft, src: x.sg.source }; });
-    return { F: F, ring: ring, facets: facets, lines: lines, zAt: zAt };
+    return { F: F, ring: ring, facets: facets, lines: lines, zAt: zAt, facetAt: facetAt };
   }
 
+  /* 0.1.7.5: lidar registration against the model. Points (USGS 3DEP EPT, EPSG:3857 metres, heights in metres) are
+   * converted to the same local ft frame as the roofprint. Heights are absolute, so the model's eave level is placed at
+   * the robust (median) eave elevation z - h(p) over the roof points; the ground level comes from class-2 points.
+   * Residual = perpendicular point-to-facet-plane distance (vertical difference x cos(slope)). */
+  function median(a) { if (!a.length) return null; var s = a.slice().sort(function (x, y) { return x - y; }); return s[s.length >> 1]; }
   function lidarCloud(app, M) {
     var L = app.state.lidar, P = L && L.points_full, fr = L && L.frame; if (!P || !fr || !P.length) return null;
-    var R = 6378137, D = Math.PI / 180, pts = [], dz = [];
-    for (var i = 0; i < P.length; i += Math.max(1, Math.floor(P.length / 6000))) { var p = P[i]; if (!p[5]) continue;
-      var mx = p[0] / fr.k + fr.ox, my = p[1] / fr.k + fr.oy, ll = [mx / R / D, (2 * Math.atan(Math.exp(my / R)) - Math.PI / 2) / D], q = M.F.f(ll), z = p[2] * 3.280839895;
-      pts.push([q[0], q[1], z]); dz.push(z - M.zAt(q)); }
+    var R = 6378137, D = Math.PI / 180, pts = [], ground = [];
+    function toLocal(p) { var mx = p[0] / fr.k + fr.ox, my = p[1] / fr.k + fr.oy; return M.F.f([mx / R / D, (2 * Math.atan(Math.exp(my / R)) - Math.PI / 2) / D]); }
+    var step = Math.max(1, Math.floor(P.length / 12000));
+    for (var i = 0; i < P.length; i += step) { var p = P[i]; if (p[3] === 2) { ground.push(p[2] * 3.280839895); continue; } if (!p[5]) continue; var q = toLocal(p); pts.push([q[0], q[1], p[2] * 3.280839895]); }
     if (!pts.length) return null;
-    var srt = dz.slice().sort(function (a, b) { return a - b; }), off = srt[srt.length >> 1];
-    return { pts: pts.map(function (p, k) { return [p[0], p[1], p[2] - off, dz[k] - off]; }), offset_ft: off };
+    function evalShift(dx, dy, sub) { var dz = [], own = [];
+      pts.forEach(function (p, k) { if (sub && k % sub) return; var q = [p[0] - dx, p[1] - dy], fx = M.facetAt(q); if (!fx) return; dz.push(p[2] - fx.h(q)); own.push(fx); });
+      var base = median(dz); if (base == null) return null;
+      var ab = dz.map(function (v, k) { return Math.abs(v - base) / Math.sqrt(1 + own[k].s * own[k].s); });
+      return { base: base, med: median(ab), dz: dz, own: own }; }
+    // horizontal registration check: roofprint vs lidar, +-4.5 ft grid in 0.75 ft steps; applied only if it clearly helps
+    var sub0 = Math.max(1, Math.round(pts.length / 2500)), e0 = evalShift(0, 0), es0 = evalShift(0, 0, sub0), best = { dx: 0, dy: 0, m: es0 ? es0.med : Infinity };
+    if (e0) for (var dy = -4.5; dy <= 4.5; dy += 0.75) for (var dx = -4.5; dx <= 4.5; dx += 0.75) { var e = evalShift(dx, dy, sub0); if (e && e.med < best.m - 1e-9) best = { dx: dx, dy: dy, m: e.med }; }
+    var atLimit = Math.abs(best.dx) >= 4.5 || Math.abs(best.dy) >= 4.5, cand = { dx: best.dx, dy: best.dy };
+    if (!e0 || !es0 || atLimit || !(best.m < es0.med * 0.8 && es0.med - best.m > 0.15)) best = { dx: 0, dy: 0 };
+    best.cand = cand; best.atLimit = atLimit;
+    best.e = (best.dx || best.dy) ? evalShift(best.dx, best.dy) : e0; best.med0 = e0 ? e0.med : null;
+    var E = best.e; if (!E) return null;
+    var per = {}; M.facets.forEach(function (fx) { per[fx.id] = []; });
+    E.own.forEach(function (fx, k) { per[fx.id].push((E.dz[k] - E.base) / Math.sqrt(1 + fx.s * fx.s)); });
+    var stats = M.facets.map(function (fx) { var a = per[fx.id].map(Math.abs); a.sort(function (x, y) { return x - y; });
+      return { facet: fx.id, pitch: fx.pitch, n: a.length, median_ft: a.length ? Math.round(median(a) * 100) / 100 : null, p90_ft: a.length ? Math.round(a[Math.floor(a.length * 0.9)] * 100) / 100 : null,
+        max_ft: a.length ? Math.round(a[a.length - 1] * 100) / 100 : null, bias_ft: a.length ? Math.round(median(per[fx.id]) * 100) / 100 : null }; });
+    var allAbs = []; Object.keys(per).forEach(function (k) { per[k].forEach(function (v) { allAbs.push(Math.abs(v)); }); });
+    var g = median(ground);
+    var out = { pts: pts.map(function (p) { var q = [p[0] - best.dx, p[1] - best.dy], fx = M.facetAt(q), res = fx ? (p[2] - E.base - fx.h(q)) / Math.sqrt(1 + fx.s * fx.s) : 99;
+        return [q[0], q[1], p[2] - E.base, res]; }),
+      eave_elev_ft: Math.round(E.base * 10) / 10, ground_elev_ft: g == null ? null : Math.round(g * 10) / 10, eave_above_ground_ft: g == null ? null : Math.round((E.base - g) * 10) / 10,
+      shift_ft: [best.dx, best.dy], shift_applied: !!(best.dx || best.dy), median_unshifted_ft: best.med0 == null ? null : Math.round(best.med0 * 100) / 100, shift_search_limit: best.atLimit ? best.cand : null, median_ft: Math.round(median(allAbs) * 100) / 100, n_on_facets: allAbs.length, n_points: pts.length, facets: stats,
+      method: 'USGS 3DEP EPT (EPSG:3857) → local ft; eave level = median(z − model height) over roof points; residual = perpendicular distance to the facet plane' };
+    out.offset_ft = out.eave_elev_ft;
+    return out;
   }
-
   function v3(p, z) { return new THREE.Vector3(p[0], z, -p[1]); }
 
   function scene(M, cloud) {
@@ -137,11 +175,11 @@
     var ctl = new T.OrbitControls(cam, renderer.domElement); ctl.target.set(0, 4, 0); ctl.update();
     var grid = new T.GridHelper(Math.ceil(ext * 3 / 10) * 10, Math.ceil(ext * 3 / 10), 0x334155, 0x1e293b); grid.position.y = -9; sc.add(grid);
     var built = scene(M, cloud); sc.add(built.group);
-    S = { box: box, renderer: renderer, scene: sc, cam: cam, ctl: ctl, M: M, built: built, r: r, mode: 'orbit', pending: { vertices: {}, ends: {}, types: {}, pitch: {} } };
+    S = { box: box, renderer: renderer, scene: sc, cam: cam, ctl: ctl, M: M, built: built, r: r, cloud: cloud, mode: 'orbit', pending: { vertices: {}, ends: {}, types: {}, pitch: {} } };
     function upd() {
       var p = S.pending, n = Object.keys(p.vertices).length + Object.keys(p.ends).length + Object.keys(p.types).length + Object.keys(p.pitch).length;
       info.textContent = 'Roof ' + r.roof_area_sqft + ' sq ft (' + r.squares + ' sq) · eave ' + r.eave_lf + ' · rake ' + r.rake_lf + ' (sloped) · ridge ' + ((r.lines && r.lines.ridge_lf) || 0) +
-        ' · hip ' + ((r.lines && r.lines.hip_lf) || 0) + ' · valley ' + ((r.lines && r.lines.valley_lf) || 0) + ' LF · pitch ' + r.pitch + (cloud ? ' · lidar points offset ' + cloud.offset_ft.toFixed(1) + ' ft' : '') +
+        ' · hip ' + ((r.lines && r.lines.hip_lf) || 0) + ' · valley ' + ((r.lines && r.lines.valley_lf) || 0) + ' LF · pitch ' + r.pitch + (cloud ? ' · lidar: eave level ' + cloud.eave_elev_ft + ' ft elev.' + (cloud.eave_above_ground_ft != null ? ' (' + cloud.eave_above_ground_ft + ' ft above ground)' : '') + ', point-to-facet residual median ' + cloud.median_ft + ' ft over ' + cloud.n_on_facets + ' pts' + (cloud.shift_applied ? ', registration shift ' + cloud.shift_ft.join('/') + ' ft E/N' : '') + ' · per facet (median/max ft): ' + cloud.facets.filter(function (f) { return f.n; }).map(function (f) { return f.facet + ' ' + f.median_ft + '/' + f.max_ft; }).join(', ') : '') +
         ' · free data only (roofprint, lidar, facets model)' + (n ? ' · ' + n + ' pending edit(s) — Apply to update the measurements' : '');
     }
     upd();
@@ -211,7 +249,15 @@
   function info3() {
     if (!S) return null; var r = S.r;
     return { facets: S.M.facets.length, lines: S.M.lines.length, handles: S.built.handles.children.length, lidar_points: S.built.points ? S.built.points.geometry.attributes.position.count : 0,
-      roof_area_sqft: r.roof_area_sqft, squares: r.squares, ridge_lf: r.lines && r.lines.ridge_lf, max_z_ft: Math.max.apply(null, S.M.facets.map(function (f) { return Math.max.apply(null, f.poly.map(f.h)); })) };
+      roof_area_sqft: r.roof_area_sqft, squares: r.squares, ridge_lf: r.lines && r.lines.ridge_lf,
+      lidar: S.cloud ? { eave_elev_ft: S.cloud.eave_elev_ft, ground_elev_ft: S.cloud.ground_elev_ft, eave_above_ground_ft: S.cloud.eave_above_ground_ft, median_ft: S.cloud.median_ft, n_on_facets: S.cloud.n_on_facets,
+        shift_ft: S.cloud.shift_ft, shift_applied: S.cloud.shift_applied, facets: S.cloud.facets } : null, max_z_ft: Math.max.apply(null, S.M.facets.map(function (f) { return Math.max.apply(null, f.poly.map(f.h)); })) };
   }
-  window.Roof3D = { open: open, close: close, apply: apply, info: info3 };
+  /** lidar-vs-model statistics without opening the view (no three.js needed); used by the report appendix */
+  function registration(app, r) {
+    var M = buildModel(app, r || window.RoofReport.buildResult(app)), c = lidarCloud(app, M); if (!c) return null;
+    var o = {}; Object.keys(c).forEach(function (k) { if (k !== 'pts') o[k] = c[k]; });
+    o.model = r && r.roof_model_info ? (r.roof_model_info.model + ' / ' + r.roof_model_info.source) : null; return o;
+  }
+  window.Roof3D = { open: open, close: close, apply: apply, info: info3, registration: registration };
 })();

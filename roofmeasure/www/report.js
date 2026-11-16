@@ -199,6 +199,7 @@
               ' re-typed by lidar.');
           }
           if (T.dormers && L) r.dormers = T.dormers(T.lidarSeg(L), tags);
+          if (T.decks && L) r.decks = T.decks(T.lidarSeg(L));
           else if (tags && tags.dormersAdded && tags.dormersAdded.length && T.dormers) r.dormers = T.dormers(null, tags);
           var skyU = (tags && Array.isArray(tags.skylights)) ? tags.skylights : [], skyL = (L && T && T.lidarSeg(L) && T.lidarSeg(L).skylights) || [], skyDel = (tags && tags.skylightsDeleted) || {};
           r.skylights = skyL.map(function (k, i) { return Object.assign({ key: 'S' + i }, k); }).filter(function (k) { return !skyDel[k.key]; })
@@ -248,6 +249,7 @@
       r.notes.push(r.user_measurements.length + ' user-supplied measurement(s) recorded (see "User-supplied measurements"); not computed by RoofMeasure and not used in its totals.');
     }
     if (st.geocodeWarning) r.notes.push(st.geocodeWarning);
+    try { roofFeatures(r); } catch (e) { /* features are optional */ }
     if (st.edits3d && st.edits3d.n) { r.edits_3d = { n: st.edits3d.n, summary: st.edits3d.summary }; r.notes.push('User edits in the 3-D roof editor (' + st.edits3d.n + '): ' + st.edits3d.summary + '.'); }
     var refs = Object.keys(st.refLayersViewed || {});
     if (refs.length) r.reference_layers_viewed = refs;
@@ -294,6 +296,29 @@
 
   /* 0.1.7.4: ortho lean/offset estimate + ortho patch candidates (free MassGIS ortho pixels only), from the
      tiles already fetched for the aerial pages. Sets result.ortho_align and result.ortho_patches. */
+  /* 0.1.7.5: labelled roof features for the diagram / overlay / summary: skylights (ortho patches sized 1.3-6 ft a side,
+   * plus lidar candidates and user skylights) and roof decks / flat sections (lidar flat planes). All candidates (NOT_PROVEN). */
+  function roofFeatures(r) {
+    var tg = (window.RoofApp && window.RoofApp.state && window.RoofApp.state.tags) || {}, rm = tg.featuresRemoved || {};
+    var sk = [], n = 0, c0 = (r.ortho_patches || [])[0], kx = Math.cos(((c0 && c0.centroid_lonlat[1]) || r.lat || 42) * Math.PI / 180) * 111320, ky = 110540;
+    function dm(a, b) { return Math.hypot((a[0] - b[0]) * kx, (a[1] - b[1]) * ky); }
+    var dorm = (r.dormers || []).filter(function (d) { return d.kept !== false; }).map(function (d) { return d.centroid_lonlat || (d.coords_lonlat ? [(d.coords_lonlat[0][0] + d.coords_lonlat[1][0]) / 2, (d.coords_lonlat[0][1] + d.coords_lonlat[1][1]) / 2] : null); }).filter(Boolean);
+    (r.ortho_patches || []).forEach(function (p) {
+      if (p.approx_w_ft < 1.3 || p.approx_h_ft < 1.0 || p.approx_w_ft > 8.5) return;
+      if ((r.decks || []).some(function (d) { return d.outline_lonlat && (pipLL(p.centroid_lonlat, d.outline_lonlat.concat([d.outline_lonlat[0]])) || d.outline_lonlat.some(function (q) { return dm(q, p.centroid_lonlat) < 1.0; })); })) { p.excluded = 'on a roof deck (railing / boards)'; return; }
+      if (dorm.some(function (q) { return dm(q, p.centroid_lonlat) < 2.5; })) { p.excluded = 'at a dormer (dormer window / trim)'; return; }
+      if ((r.ortho_patches || []).filter(function (o) { return o !== p && dm(o.centroid_lonlat, p.centroid_lonlat) < 2.0; }).length >= 2) { p.excluded = 'cluster of 3+ patches (dormer window, trim or railing, not a skylight)'; return; } // smaller = vent / pipe, larger = not a skylight
+      sk.push({ key: p.key, centroid_lonlat: p.centroid_lonlat, w_ft: p.approx_w_ft, h_ft: p.approx_h_ft, angle_deg: p.angle_deg || 0, source: p.source + (p.lidar_match ? ' + lidar' : ''),
+        evidence: p.polarity + ' patch on its facet, contrast ' + p.contrast, confidence: p.confidence });
+    });
+    (r.skylights || []).forEach(function (k) { if (k.ortho_match || !k.centroid_lonlat) return;
+      sk.push({ key: k.key || ('L' + sk.length), centroid_lonlat: k.centroid_lonlat, w_ft: k.approx_w_ft || k.w_ft || null, h_ft: k.approx_h_ft || k.h_ft || null, angle_deg: 0,
+        source: k.source === 'user' ? 'user' : (k.source || 'lidar'), confidence: k.source === 'user' ? 'user' : (k.confidence || 'low') }); });
+    sk = sk.filter(function (k) { return !rm[k.key]; });
+    sk.forEach(function (k) { k.label = 'S' + (++n); });
+    r.roof_features = { skylights: sk, decks: (r.decks || []).filter(function (d) { return !rm[d.key]; }) };
+    return r.roof_features;
+  }
   function orthoStep(result, need, opt) {
     var O = window.RoofOrtho;
     if (!O || opt.noAerial || !result.footprint_geojson) return Promise.resolve(null);
@@ -309,14 +334,25 @@
       var al = O.align(ring, m, { apply: !opt.noOrthoAlign && !window.RM_NO_ORTHO_ALIGN, lines: lines });
       al.ms = Date.now() - t0; al.source = 'MassGIS 2025 ortho z' + z;
       result.ortho_align = al;
-      var pt = O.patches(ring, m, al);
-      // fuse with lidar skylight candidates (within 1.2 m)
-      var sky = result.skylights || [], kx = Math.cos(ring[0][1] * Math.PI / 180) * 111320, ky = 110540;
-      pt.forEach(function (p, i) { p.key = 'O' + i;
-        var hit = sky.filter(function (k) { return k.centroid_lonlat && Math.hypot((k.centroid_lonlat[0] - p.centroid_lonlat[0]) * kx, (k.centroid_lonlat[1] - p.centroid_lonlat[1]) * ky) < 1.2; })[0];
-        if (hit) { p.lidar_match = hit.key; p.confidence = 'medium'; hit.ortho_match = p.key; } });
-      result.ortho_patches = pt;
-      return al;
+      // 0.1.7.5: skylight / vent patches at z20 (7.5 cm/px world grid of the 15 cm orthos) with a per-facet background
+      var facetsLL = (result.facets || []).map(function (f) { return f.polygon_lonlat; }).filter(function (P) { return P && P.length > 3; });
+      var z2 = z + 1, x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+      ring.forEach(function (p) { var w = O.world(p[0], p[1], z2); x0 = Math.min(x0, w[0]); x1 = Math.max(x1, w[0]); y0 = Math.min(y0, w[1]); y1 = Math.max(y1, w[1]); });
+      var pad = 40 + (al.applied ? Math.abs(al.dx_px) * 2 + Math.abs(al.dy_px) * 2 : 0), tpl = need.filter(function (u) { return /\/tile\/\d+\/\d+\/\d+/.test(u); })[0], urls = [];
+      for (var tx = Math.floor((x0 - pad) / 256); tx <= Math.floor((x1 + pad) / 256); tx++) for (var ty = Math.floor((y0 - pad) / 256); ty <= Math.floor((y1 + pad) / 256); ty++)
+        urls.push(tpl.replace(/\/tile\/\d+\/\d+\/\d+/, '/tile/' + z2 + '/' + ty + '/' + tx));
+      var hi = urls.length <= 30 ? Promise.all(urls.map(function (u) { return fetchTile(u).then(function (d) { var q = /\/tile\/(\d+)\/(\d+)\/(\d+)/.exec(u); return { tx: +q[3], ty: +q[2], data: d }; }, function () { return null; }); }))
+        .then(function (ts) { return O.mosaic(z2, ts.filter(Boolean)); }) : Promise.reject(new Error('roof too large for z' + z2));
+      return hi.then(function (m2) { O._last2 = { m: m2, ring: ring, al: al, facets: facetsLL }; return O.patches(ring, m2, al, { facets: facetsLL }); }, function () { return O.patches(ring, m, al, { facets: facetsLL }); }).then(function (pt) {
+        // fuse with lidar skylight candidates (within 1.2 m)
+        var sky = result.skylights || [], kx = Math.cos(ring[0][1] * Math.PI / 180) * 111320, ky = 110540;
+        pt.forEach(function (p, i) { p.key = 'O' + i;
+          var hit = sky.filter(function (k) { return k.centroid_lonlat && Math.hypot((k.centroid_lonlat[0] - p.centroid_lonlat[0]) * kx, (k.centroid_lonlat[1] - p.centroid_lonlat[1]) * ky) < 1.2; })[0];
+          if (hit) { p.lidar_match = hit.key; p.confidence = 'medium'; hit.ortho_match = p.key; } });
+        result.ortho_patches = pt;
+        roofFeatures(result);
+        return al;
+      });
     }).catch(function (e) { result.ortho_align = { status: 'error', error: String(e && e.message || e), applied: false }; return null; });
   }
 
@@ -559,6 +595,8 @@
     if (pend) { say('Waiting for the lidar pitch to finish before building the report …'); return pend.then(function () { return preview(app, statusFn); }, function () { app.state.lidarPending = null; return preview(app, statusFn); }); }
     var result;
     try { result = buildResult(app); } catch (e) { say(e.message); return Promise.resolve(null); }
+    // 0.1.7.5: lidar points vs the 3-D facets model (per-facet point-to-plane residuals) for the appendix
+    try { if (window.Roof3D && window.Roof3D.registration) result.lidar_model_fit = window.Roof3D.registration(app, result); } catch (e) { result.lidar_model_fit = { error: String(e && e.message || e) }; }
     var pre = prefetchTiles(result); // aerial tiles download in parallel with the lot/solar lookups
     return Promise.all([enrich(result, app, say), pre]).then(function () {
       say('Building report… (first time loads the offline report engine, ~5-15 s)');

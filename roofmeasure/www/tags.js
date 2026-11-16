@@ -107,6 +107,25 @@
       lines_added: added, lines_doubtful: doubtful, axis_deg: axis == null ? null : Math.round(axis * 10) / 10, model_lines_confirmed: confirmed, model_lines_retyped: retyped, skylight_candidates: (sg.skylights || []).length };
     return f.lidar_seg_summary;
   }
+  /* 0.1.7.5: roof deck / flat-section candidates from the lidar segmentation (NOT_PROVEN). A low-slope plane (<= 1.5/12)
+   * of 25+ sq ft that is mostly inside the roofprint but is not most of the roof is a roof deck or flat section; decks over
+   * living space usually sit on a rubber (EPDM) or membrane roof, so it is flagged to inspect. */
+  function decks(sg, ringLL) {
+    if (!sg || !sg.planes) return [];
+    var tot = 0; sg.planes.forEach(function (p) { tot += p.plan_area_sqft_approx || 0; });
+    var out = [];
+    sg.planes.forEach(function (p) {
+      if (!(p.rise_raw <= 1.5) || (p.plan_area_sqft_approx || 0) < 25 || p.inside_frac < 0.6 || !p.outline_lonlat || p.outline_lonlat.length < 3) return;
+      if (tot && p.plan_area_sqft_approx > 0.6 * tot) return; // a flat ROOF, not a deck
+      var A = 0, O = p.outline_lonlat, kx = Math.cos(O[0][1] * Math.PI / 180) * 364000, ky = 364000;
+      for (var i = 0; i < O.length; i++) { var a = O[i], b = O[(i + 1) % O.length]; A += (a[0] * kx) * (b[1] * ky) - (b[0] * kx) * (a[1] * ky); }
+      out.push({ key: 'K' + out.length, plane: p.id, outline_lonlat: O, area_sqft: Math.round(Math.abs(A) / 2), points_area_sqft: p.plan_area_sqft_approx, pitch: p.pitch, z_m: p.z_m,
+        n_points: p.n_points, centroid_lonlat: p.centroid_lonlat, type: 'roof deck / flat section', confidence: p.small ? 'low' : 'medium',
+        inspect: 'Possible rubber (EPDM) or membrane roof under the deck or flat section: inspect seams, drains and flashing; replace with the roof if worn.',
+        source: 'USGS 3DEP lidar low-slope plane ' + p.id });
+    });
+    return out;
+  }
   /* 0.1.7.4: dormer candidates from the whole-roof lidar segmentation (NOT_PROVEN).
    * gable dormer: a lidar ridge between two minor planes facing opposite ways; shed dormer: a minor plane facing the
    * same way as a major plane but at least 2/12 flatter. Dormer gutters (often with returns) collect debris and can
@@ -397,5 +416,5 @@
   }
   window.RoofTags = { EDGE_TAGS: EDGE_TAGS, AREA_TAGS: AREA_TAGS, LINE_TYPES: LINE_TYPES, emptyTags: emptyTags, liveFacets: liveFacets, facetsKey: facetsKey,
     facetsInput: facetsInput, applyLineTags: applyLineTags, facetAt: facetAt, matchPlanes: matchPlanes, reportPayload: reportPayload, sectionHtml: sectionHtml,
-    inject: inject, pointInRing: pointInRing, esc: esc, EXTRA_TYPES: EXTRA_TYPES, ALL_TYPES: ALL_TYPES, lidarSeg: lidarSeg, reconcileLidar: reconcileLidar, dormers: dormers };
+    inject: inject, pointInRing: pointInRing, esc: esc, EXTRA_TYPES: EXTRA_TYPES, ALL_TYPES: ALL_TYPES, lidarSeg: lidarSeg, reconcileLidar: reconcileLidar, dormers: dormers, decks: decks };
 })();

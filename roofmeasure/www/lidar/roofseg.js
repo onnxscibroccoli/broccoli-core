@@ -8,7 +8,7 @@
  * Everything is an estimate from free USGS 3DEP data; nothing here is verified (NOT_PROVEN). */
 (function (root, factory) { var m = factory(); if (typeof module === 'object' && module.exports) module.exports = m; else root.RoofSeg = m; })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
-  var VERSION = '0.1.7.4-roofseg-2', M2FT = 3.280839895, R = 6378137, D2R = Math.PI / 180;
+  var VERSION = '0.1.7.5-roofseg-3', M2FT = 3.280839895, R = 6378137, D2R = Math.PI / 180;
   function r2(v) { return Math.round(v * 100) / 100; } function r1(v) { return Math.round(v * 10) / 10; }
   function grid(P, cs) { var g = new Map(); P.forEach(function (p, i) { var k = Math.floor(p[0] / cs) + ',' + Math.floor(p[1] / cs); var a = g.get(k); if (!a) g.set(k, a = []); a.push(i); }); return g; }
   function near(P, g, cs, i, rad) { var p = P[i], cx = Math.floor(p[0] / cs), cy = Math.floor(p[1] / cs), n = Math.ceil(rad / cs), out = [], r2_ = rad * rad;
@@ -97,7 +97,9 @@
       var strike = (q(ps, 0.97) - q(ps, 0.03)) + 0.5, dip = (q(pd, 0.97) - q(pd, 0.03)) + 0.5;
       return { id: 'P' + (k + 1), n_points: pl.idx.length, rms_m: r2(pl.rms * 100) / 100, rise_raw: r2(rs), pitch: snap(rs), slope_deg: r1(slopeDeg(pl)), aspect_deg: rs < 0.6 ? null : r1(aspectDeg(pl)),
         plan_area_sqft_approx: Math.round(area), inside_frac: r2(ins / pl.idx.length), small: small, confidence: small ? 'low' : conf(pl.idx.length, pl.rms), centroid_lonlat: toLL(fr, c[0], c[1]), z_m: r2(c[2]),
-        strike_len_ft: r1(strike * M2FT), dip_len_ft: r1(dip * M2FT) };
+        strike_len_ft: r1(strike * M2FT), dip_len_ft: r1(dip * M2FT),
+        // 0.1.7.5: outline (convex hull) of low-slope planes, for roof-deck / flat-section candidates
+        outline_lonlat: rs <= 2 ? hull(pl.idx.map(function (i) { return [P[i][0], P[i][1]]; })).map(function (h) { var ll = toLL(fr, h[0], h[1]); return [Math.round(ll[0] * 1e7) / 1e7, Math.round(ll[1] * 1e7) / 1e7]; }) : undefined };
     });
     out.coverage = r2(totalIn / N);
     // 5. adjacency: boundary point pairs between planes
@@ -215,6 +217,14 @@
       });
     });
     return out.slice(0, 12);
+  }
+  function hull(pts) { // Andrew monotone chain
+    var p = pts.slice().sort(function (a, b) { return a[0] - b[0] || a[1] - b[1]; }); if (p.length < 3) return p;
+    function cr(o, a, b) { return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]); }
+    var lo = [], up = [], i;
+    for (i = 0; i < p.length; i++) { while (lo.length >= 2 && cr(lo[lo.length - 2], lo[lo.length - 1], p[i]) <= 0) lo.pop(); lo.push(p[i]); }
+    for (i = p.length - 1; i >= 0; i--) { while (up.length >= 2 && cr(up[up.length - 2], up[up.length - 1], p[i]) <= 0) up.pop(); up.push(p[i]); }
+    return lo.slice(0, -1).concat(up.slice(0, -1));
   }
   return { VERSION: VERSION, segment: segment, _robust: robust };
 });

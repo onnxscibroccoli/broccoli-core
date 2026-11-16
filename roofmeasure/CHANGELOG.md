@@ -1,6 +1,33 @@
 <!-- SPDX-License-Identifier: MIT -->
 # RoofMeasure changelog (0.1.7.x line — stays on 0.1.7.x until Ian verifies an improvement)
 
+## 0.1.7.5 (versionCode 10705) — 2026-11-15
+Same rules (free data only; Google/Bing/Esri display-only; candidates NOT_PROVEN; MIT).
+
+- 3-D view, lidar points floating ("lidar points offset 81 ft"). Root cause: NOT a CRS/datum or ortho-shift error. The EPT points
+  (EPSG:3857, metres) were converted to the roofprint frame correctly, and the ortho shift was never applied to them. The 81 ft is simply
+  the absolute eave elevation: the model's eave sat at 0 ft and the label called the elevation baseline an "offset". The points
+  floated because the MODEL was wrong (next item), and the baseline was the median over that wrong model. Fix: eave level =
+  median(z − model height) over roof points; perpendicular point-to-facet residuals (median / 90th pct / max / bias per facet) shown in the
+  3-D status line and a new appendix table. A ±4.5 ft roofprint↔lidar horizontal check is applied only when it clearly helps and is
+  not at the search limit (6 Harborview Rd: the limit was hit and the shift NOT applied; its 2011 roofprint covers only part of today's
+  house). 15 Ward St (lidar-verified gable): median residual 0.05 ft on both facets (max 16–17 ft = chimney/trees).
+- Wings rendered as single tilted slabs. Root cause in lib/facets.js gableEdges(): footprint jogs (2–3 ft), bump-outs and the long sides
+  of a cross wing were chosen as gable ends (vertical walls), so a few skeleton faces swallowed whole wings (2-D diagram and 3-D alike). Fix: a
+  gable end must be ≥ 6 ft with both neighbouring edges ≥ half its length; a cross wing turns off the "perpendicular to the input
+  ridge" rule. 3-D heights: skeleton facets = distance from their eave line × rise/12 (ridges, hips and valleys meet); ridge-split
+  gables share one ridge height.
+- Snap button: the ortho lean is estimated (same method as the report) and removed before snapping; the snapped ring stays in
+  roofprint coordinates.
+- Roof features (candidates, on the diagram, the overlay, the Totals and the new Window view): skylights WITH sizes from the free
+  MassGIS 2025 orthos at z20 with a per-facet background (dark on a sunlit facet, glare on a shaded one) plus lidar candidates; patches on a
+  roof deck, at a dormer, or in clusters of 3+ are excluded. Roof decks / flat sections from lidar low-slope planes (outline, area),
+  flagged "possible rubber (EPDM) or membrane roof underneath: inspect".
+- Window view: one 2 × 2 report page (aerial, diagram, overlay, quick footage summary: area, squares, pitch, eave, rake, ridge, hip,
+  valley, drip edge, gutters, skylights, deck) and a "Window view" button in the app.
+- Benchmark: Oakcrest Road, Hingham (the "Oakrest Road" next to 15 Ward St; MassGIS L3 parcels list 1–6 Oakcrest Rd) runs as a CI
+  matrix with PDFs as artifacts. Tests: tests/v0175_test.cjs (RM_ONLY_HOUSES=1 for houses only).
+
 ## 0.1.7.4 (versionCode 10704) — 2026-11-15
 Same rules: free data for every measurement (MassGIS roofprints, USGS 3DEP lidar, MassGIS 2025 orthos / NAIP); Google/Bing/Esri tiles stay display-only
 (no pixel access, no edge detection, no photogrammetry, no toggle for it); no accuracy claims; labels PASS / FAIL / NOT_PROVEN. MIT.

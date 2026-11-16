@@ -668,16 +668,34 @@
     var z = Math.min(BASEMAPS[state.basemap].maxzoom, 20);
     status('Snapping edges using ' + state.basemap + ' z' + z + ' imagery …');
     return mosaic(state.ring, z).then(function (m) {
-      var res = RC.snapRingToEdges(state.ring, m.img, m.project, m.unproject, { maxShiftPx: z >= 20 ? 8 : 4 });
+      // 0.1.7.5: the free orthos lean, so first estimate the roof's offset in this imagery (lib/orthoalign.js, same method as the
+      // report) and snap against the shifted roof; the snapped ring is mapped back, so it stays in roofprint coordinates.
+      var al = null, O = window.RoofOrtho, proj = m.project, unproj = m.unproject;
+      if (O && O.align && !window.RM_NO_ORTHO_ALIGN) try {
+        var d = m.img.data, g = new Float32Array(m.img.width * m.img.height);
+        for (var i = 0, j = 0; i < g.length; i++, j += 4) g[i] = 0.299 * d[j] + 0.587 * d[j + 1] + 0.114 * d[j + 2];
+        var w0 = RC.lonLatToWorld(state.ring[0][0], state.ring[0][1], z), p0 = m.project(state.ring[0]);
+        var gm = { gray: g, W: m.img.width, H: m.img.height, ox: w0[0] - p0[0], oy: w0[1] - p0[1], z: z };
+        var ls = ((state.result && state.result.line_segments) || []).filter(function (sg) { return /^(ridge|hip|valley)$/.test(sg.type) && !sg.deleted && !sg.unverified && sg.coords_lonlat; }).map(function (sg) { return sg.coords_lonlat; });
+        al = O.align(state.ring, gm, { lines: ls });
+        if (al && al.applied) { var sx = al.dx_px, sy = al.dy_px;
+          proj = function (ll) { var q = m.project(ll); return [q[0] + sx, q[1] + sy]; };
+          unproj = function (px) { return m.unproject([px[0] - sx, px[1] - sy]); }; }
+      } catch (e) { al = { status: 'error', error: String(e && e.message || e), applied: false }; }
+      window.RoofApp.lastSnapAlign = al;
+      var res = RC.snapRingToEdges(state.ring, m.img, proj, unproj, { maxShiftPx: z >= 20 ? 8 : 4 });
       window.RoofApp.lastSnap = res;
       var mpp = RC.metersPerPixel(state.ring[0][1], z) * RC.M_TO_FT;
       if (res.applied) { var ov = state.overrides; state.ring = RC.normalizeRing(res.ring, 0); state.overrides = ov; state.source = (state.source || '') + ' + edge-snapped'; render(); }
-      status('Snap: ' + res.reason + '. Edge shifts (ft): ' + res.shiftsPx.map(function (s) { return (s * mpp).toFixed(1); }).join(', ') +
+      status((al && al.applied ? 'Ortho lean ' + al.shift_m.toFixed(1) + ' m (' + al.confidence + ') removed before snapping. ' : al && al.status === 'ok' ? 'Ortho lean estimate low-confidence; snapped unshifted. ' : '') + 'Snap: ' + res.reason + '. Edge shifts (ft): ' + res.shiftsPx.map(function (s) { return (s * mpp).toFixed(1); }).join(', ') +
         '\n(+ = moved outward, − = inward; verify visually, re-pick to undo)');
     }).catch(function (e) { status('Snap unavailable: ' + e.message); });
   }
   window.RoofApp.snap = snap;
   $('snapBtn').onclick = snap;
+  if ($('windowBtn')) $('windowBtn').onclick = function () { // 0.1.7.5: open the report at its 2 x 2 window-view page
+    window.RoofReport.preview(window.RoofApp, status).then(function () { var f = $('rvFrame'); if (!f) return;
+      var go = function () { var d = f.contentDocument, e = d && d.getElementById('h-wv'); if (e) e.scrollIntoView(); }; setTimeout(go, 400); f.addEventListener('load', go, { once: true }); }); };
   if ($('view3dBtn')) $('view3dBtn').onclick = function () { if (window.Roof3D) window.Roof3D.open(); };
 
   // ------------------------------------------------------------ lidar pitch
