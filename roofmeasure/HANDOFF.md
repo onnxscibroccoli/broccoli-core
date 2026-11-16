@@ -3,6 +3,15 @@
 
 Read in order: this file, CODEVELOP.md (rules, build), CHANGELOG.md, docs/research/ (*.md notes; *.pdf + .txt reference papers from Ian: lidar structural pipeline, zero-cost measurement uncertainties).
 
+## Repeat alpha install identity
+- Every GitHub Actions run signs with a new debug key. Package IDs
+  `com.ian.roofmeasure.alpha.c<commit-sha-8>` avoid signature conflicts
+  with both the original stable package and previous CI alphas.
+- These are side-by-side trial installations with separate Android data;
+  stable alpha upgrades require a secure persistent signing key.
+- Java class namespace still `com.ian.roofmeasure`; manifest activity,
+  provider and native PDF folder names adjust per variant.
+
 ## Pitch summary/report mismatch (display correction only)
 - User PDF: base 6/12 manual selector; two user-edited facets 12/12. One
   report calculated 2,023.5 sq ft but labelled the headline pitch 6/12.

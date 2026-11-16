@@ -8,8 +8,14 @@ set -euo pipefail
 R=$(cd "$(dirname "$0")" && pwd)
 VC=${VERSION_CODE:-10706}; VN=${VERSION_NAME:-0.1.7.6}  # 0.1.7.x -> versionCode 10700+x (above v0.2.0 = 200, so it installs over it)
 PKG=${PACKAGE_NAME:-com.ian.roofmeasure}
-case "$PKG" in com.ian.roofmeasure|com.ian.roofmeasure.alpha) ;; *) echo "Unsupported PACKAGE_NAME: $PKG" >&2; exit 2;; esac
-SUFFIX=""; [ "$PKG" = "com.ian.roofmeasure.alpha" ] && SUFFIX="-alpha"
+case "$PKG" in
+  com.ian.roofmeasure|com.ian.roofmeasure.alpha) ;;
+  com.ian.roofmeasure.alpha.c????????) [[ "${PKG##*.}" =~ ^c[0-9a-f]{8}$ ]] || { echo "Invalid alpha commit package" >&2; exit 2; } ;;
+  *) echo "Unsupported PACKAGE_NAME: $PKG" >&2; exit 2;;
+esac
+SUFFIX=""
+if [ "$PKG" = "com.ian.roofmeasure.alpha" ]; then SUFFIX="-alpha"
+elif [[ "$PKG" == com.ian.roofmeasure.alpha.c* ]]; then SUFFIX="-alpha-${PKG##*.}"; fi
 SDK=${ANDROID_HOME:?set ANDROID_HOME}; BTV=${BUILD_TOOLS:-34.0.0}; BT=$SDK/build-tools/$BTV; JAR=$SDK/platforms/android-34/android.jar
 [ -n "${JAVA_HOME:-}" ] && export PATH=$JAVA_HOME/bin:$PATH
 OUT=${1:-$R/out}; B=$(mktemp -d); mkdir -p "$B/classes" "$B/gen" "$B/assets" "$OUT"

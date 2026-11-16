@@ -15,14 +15,16 @@ class PackageVariantTest(unittest.TestCase):
     def test_separate_package_and_provider_authorities(self):
         manifest = ROOT / "android" / "AndroidManifest.xml"
         with tempfile.TemporaryDirectory() as tmp:
-            for package in (BASE, ALPHA):
+            for package in (BASE, ALPHA, ALPHA + ".c1234abcd"):
                 out = Path(tmp) / (package + ".xml")
                 write_variant(manifest, out, package)
                 root = ET.parse(out).getroot()
                 self.assertEqual(root.attrib["package"], package)
                 app = root.find("application")
                 self.assertEqual(app.get("{" + ANDROID + "}label"),
-                                 "RoofMeasure Alpha" if package == ALPHA else "@string/app_name")
+                                 ("RoofMeasure Alpha " + package.rsplit(".", 1)[1][1:5]
+                                  if package.startswith(ALPHA + ".c") else
+                                  ("RoofMeasure Alpha" if package == ALPHA else "@string/app_name")))
                 activity = app.find("activity")
                 provider = app.find("provider")
                 self.assertEqual(activity.get("{" + ANDROID + "}name"), BASE + ".MainActivity")

@@ -193,7 +193,10 @@ public class MainActivity extends Activity {
             ContentValues v = new ContentValues();
             v.put(MediaStore.MediaColumns.DISPLAY_NAME, f.getName());
             v.put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf");
-            final String folder = getPackageName().endsWith(".alpha") ? "RoofMeasureAlpha" : "RoofMeasure";
+            final String pkg = getPackageName();
+            final String folder = pkg.startsWith("com.ian.roofmeasure.alpha.c")
+                ? "RoofMeasureAlpha_" + pkg.substring("com.ian.roofmeasure.alpha.".length())
+                : (pkg.endsWith(".alpha") ? "RoofMeasureAlpha" : "RoofMeasure");
             v.put(MediaStore.MediaColumns.RELATIVE_PATH, "Download/" + folder);
             Uri u = getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, v);
             if (u == null) throw new Exception("MediaStore insert returned null");

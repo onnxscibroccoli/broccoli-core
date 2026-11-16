@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 """Generate a build-time manifest for either stable or isolated alpha package."""
 import sys
+import re
 import xml.etree.ElementTree as ET
 
 BASE = "com.ian.roofmeasure"
@@ -12,7 +13,7 @@ ET.register_namespace("android", ANDROID)
 
 
 def write_variant(input_path, output_path, package):
-    if package not in (BASE, ALPHA):
+    if package not in (BASE, ALPHA) and not re.fullmatch(re.escape(ALPHA) + r"\.c[0-9a-f]{8}", package):
         raise ValueError("unsupported Android package: " + package)
     tree = ET.parse(input_path)
     root = tree.getroot()
@@ -22,8 +23,11 @@ def write_variant(input_path, output_path, package):
     app = root.find("application")
     if app is None:
         raise ValueError("no application in manifest")
-    if package == ALPHA:
-        app.set("{" + ANDROID + "}label", "RoofMeasure Alpha")
+    if package != BASE:
+        label = "RoofMeasure Alpha"
+        if package.startswith(ALPHA + ".c"):
+            label += " " + package.rsplit(".", 1)[1][1:5]
+        app.set("{" + ANDROID + "}label", label)
     for kind in ("activity", "provider"):
         for component in app.iter(kind):
             name = component.attrib.get(NAME, "")

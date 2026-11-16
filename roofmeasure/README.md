@@ -22,6 +22,21 @@ The measured ortho offset conflates camera perspective and possible georegistrat
 inspect the 6 Harborview deck position against its walls before treating the overlay as reliable.
 Offline test: `node tests/featurelean_test.cjs`; CI also runs headless reports and emulator smoke.
 
+## CI signature isolation for repeated alpha builds
+
+Until a long-lived Android signing certificate is supplied through secure CI secrets,
+every CI run uses a disposable debug signing key. Such APKs cannot update one another
+under the *same package name*. CI now uses a **commit-specific alpha ID**:
+`com.ian.roofmeasure.alpha.c<8-char-commit-sha>`. This permits each reviewed APK
+to install beside the original app **and all prior test alphas**, with no
+signature conflict. They do not share Android private app data; unique labelled
+icons and Downloads folders distinguish them. Stable in-place alpha updates
+will require a securely managed stable signing key; never commit it or derive
+it from a public seed.
+
+Manual build `PACKAGE_NAME=com.ian.roofmeasure.alpha.c1234abcd ./build.sh out/`.
+The original package and prior simple `.alpha` package remain supported.
+
 ## Pitch provenance correction (0.1.7.6)
 
 If someone edits facet pitch in the 3-D editor (e.g. both facets 12/12) while

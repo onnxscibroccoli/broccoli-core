@@ -6,7 +6,9 @@ set -uo pipefail
 APK=${1:?apk}; OUT=${2:-smoke-out}; mkdir -p "$OUT"
 PKG=$("${ANDROID_HOME:?}/build-tools/34.0.0/aapt2" dump badging "$APK" | awk -F "'" '/^package:/{print $2; exit}')
 [ -n "$PKG" ] || { echo "APK package detection failed" >&2; exit 1; }
-OUTDIR=RoofMeasure; [ "$PKG" = "com.ian.roofmeasure.alpha" ] && OUTDIR=RoofMeasureAlpha
+OUTDIR=RoofMeasure
+if [[ "$PKG" == com.ian.roofmeasure.alpha.c* ]]; then OUTDIR="RoofMeasureAlpha_${PKG##*.}"
+elif [ "$PKG" = "com.ian.roofmeasure.alpha" ]; then OUTDIR=RoofMeasureAlpha; fi
 adb wait-for-device
 adb shell settings put global window_animation_scale 0; adb shell settings put global transition_animation_scale 0; adb shell settings put global animator_duration_scale 0
 adb install -r -g "$APK" || { echo "install failed"; exit 1; }

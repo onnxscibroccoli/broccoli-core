@@ -31,10 +31,13 @@ jobs:
         run: |
           KS="$RUNNER_TEMP/ci-debug.keystore"
           keytool -genkeypair -keystore "$KS" -storepass android -keypass android -alias roofdebug -keyalg RSA -keysize 2048 -validity 30 -dname "CN=RoofMeasure CI Debug" >/dev/null 2>&1
-          KEYSTORE="$KS" bash roofmeasure/build.sh "$RUNNER_TEMP/apk"
+          # CI intentionally uses a fresh test certificate. Give each build a new
+          # package ID so users never have to uninstall differently-signed builds.
+          CI_VARIANT="com.ian.roofmeasure.alpha.c${GITHUB_SHA:0:8}"
+          PACKAGE_NAME="$CI_VARIANT" KEYSTORE="$KS" bash roofmeasure/build.sh "$RUNNER_TEMP/apk"
           rm -f "$RUNNER_TEMP/apk/classes.dex"
           $ANDROID_HOME/build-tools/34.0.0/aapt2 dump badging "$RUNNER_TEMP/apk/"*.apk | head -3
-          $ANDROID_HOME/build-tools/34.0.0/aapt2 dump badging "$RUNNER_TEMP/apk/"*.apk | grep -F "package: name='com.ian.roofmeasure.alpha' versionCode='10706' versionName='0.1.7.6'"
+          $ANDROID_HOME/build-tools/34.0.0/aapt2 dump badging "$RUNNER_TEMP/apk/"*.apk | grep -F "package: name='com.ian.roofmeasure.alpha.c${GITHUB_SHA:0:8}' versionCode='10706' versionName='0.1.7.6'"
           ls -l "$RUNNER_TEMP/apk"
       - uses: actions/upload-artifact@v4
         with:
