@@ -1,15 +1,16 @@
 <!-- SPDX-License-Identifier: MIT -->
-# RoofMeasure 0.1.7.3 (versionCode 10703)
+# RoofMeasure 0.1.7.4 (versionCode 10704)
 
 **Mission:** open-source roof measurement tools so contractors and homeowners can get accurate measurements from free public data
 and check whether a roofing quote is fair. Every number is traceable to its free data source and labelled; nothing is claimed as verified.
 
-Based on the reconstructed v0.1.7 source; changes are in CHANGELOG.md. Headless test: `node tests/v0173_test.cjs <outdir>`
-(older tests kept as tests/v0171_test.cjs, tests/v0172_test.cjs) (Playwright + Chrome, live MassGIS/USGS; reference-imagery endpoints are blocked/mocked).
-Test houses: 15 Ward St Hingham, 30 Lockwood Dr Weymouth, 49 Scotland St Hingham, 6 Harborview Rd Hull (override with RM_HOUSES='[{"slug":..,"addr":..}]').
+Based on the reconstructed v0.1.7 source; changes are in CHANGELOG.md. Headless test: `node tests/v0174_test.cjs <outdir>`
+(older tests kept as tests/v0171_test.cjs … v0173_test.cjs) (Playwright + Chrome, live MassGIS/USGS; reference-imagery endpoints are blocked/mocked).
+Test houses: 15 Ward St Hingham, 6 Harborview Rd Hull, 30 Lockwood Dr Weymouth, 49 Scotland St Hingham (30 Lockwood Drive and 49 Scotland
+Street are not in Hull in any free source; the test checks the Hull spellings are reported not found) (override with RM_HOUSES='[{"slug":..,"addr":..}]').
 CI: `.github/workflows/roofmeasure.yml` builds the APK (throwaway CI key), runs the headless report tests and an emulator smoke test
 (tests/ci_emulator_smoke.sh: install, launch with `--es rm_query 'addr=...&smoke=1'` on debug builds, build the report, save the PDF), and uploads
-APK, PDFs, screenshots and logcat as artifacts. Third-party components: THIRD_PARTY.md.
+APK, PDFs, screenshots and logcat as artifacts. Third-party components: THIRD_PARTY.md. 3-D roof view/editor: "3-D view / edit" button (view3d.js, three.js).
 
 ## Original v0.1.7 reconstruction notes
 

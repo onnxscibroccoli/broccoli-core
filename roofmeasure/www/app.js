@@ -489,9 +489,14 @@
     var a = $('addr').value.trim(); if (!a) return;
     status('Geocoding "' + a + '" …');
     S.geocode(a).then(function (g) {
-      if (!g) { status('Address not found.'); return; }
-      state.address = g.label; state.geocoder = g.source; map.jumpTo({ center: [g.lon, g.lat], zoom: 19.5 });
-      status('Geocoded via ' + g.source + ': ' + g.label);
+      var town = S.townOf ? S.townOf(a) : null;
+      if (!g) { status('Address not found' + (town ? ' in ' + town : '') + ' (MassGIS, Census and OSM geocoders). Check the street, number and town.'); return; }
+      state.address = g.label; state.geocoder = g.source; state.geocodeWarning = null;
+      if (g.town_mismatch) {
+        state.geocodeWarning = 'Town mismatch: asked for ' + g.town_mismatch.asked + ', the only match is ' + g.label + '.';
+        status('WARNING — no match in ' + g.town_mismatch.asked + '. The closest match is ' + g.label + ' (' + g.source + '). Check the address before measuring.');
+      } else status('Geocoded via ' + g.source + ': ' + g.label);
+      map.jumpTo({ center: [g.lon, g.lat], zoom: 19.5 });
       return pickAt([g.lon, g.lat]);
     }).catch(function (e) { status('Geocode failed: ' + e.message); });
   }
@@ -673,6 +678,7 @@
   }
   window.RoofApp.snap = snap;
   $('snapBtn').onclick = snap;
+  if ($('view3dBtn')) $('view3dBtn').onclick = function () { if (window.Roof3D) window.Roof3D.open(); };
 
   // ------------------------------------------------------------ lidar pitch
   var lidarMod = null;

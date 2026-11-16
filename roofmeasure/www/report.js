@@ -101,14 +101,19 @@
     return best;
   }
   /** Opt-in per-facet pitch: facet areas from usable lidar fits; rakes sloped with the pitch of the facet each part of the rake bounds. */
-  function applyPerFacet(r) {
-    var fit = r.facet_fit;
-    if (!fit || !fit.facets || !fit.facets.length) { r.notes.push('Per-facet lidar pitch was requested but no per-facet lidar fits are available (run Auto pitch); single pitch ' + r.pitch + ' used for all totals.'); return; }
+  function applyPerFacet(r, edits, useLidar) {
+    edits = edits || {}; if (useLidar == null) useLidar = true;
+    var nEd = Object.keys(edits).filter(function (k) { return (r.facets || []).some(function (fx) { return fx.id === k; }); }).length;
+    var fit = r.facet_fit || (nEd ? { facets: [] } : null);
+    if (!nEd && !useLidar) return;
+    if (!fit || ((!fit.facets || !fit.facets.length) && !nEd)) { r.notes.push('Per-facet lidar pitch was requested but no per-facet lidar fits are available (run Auto pitch); single pitch ' + r.pitch + ' used for all totals.'); return; }
     var byId = {}; fit.facets.forEach(function (x) { byId[x.id] = x; });
     var tot = 0, totU = 0, nUsed = 0;
     r.facets.forEach(function (fx) {
       var x = byId[fx.id]; fx.model_pitch = fx.pitch; fx.model_area_sqft = fx.area_sqft;
-      if (x && x.usable && x.pitch_used) { var pf = pfOf(x.pitch_used); fx.pitch = x.pitch_used; fx.pitch_source = 'lidar facet fit (' + x.confidence + ')'; fx.area_sqft = Math.round(fx.plan_area_sqft * pf * 10) / 10; nUsed++; }
+      if (edits[fx.id] && pfOf(edits[fx.id])) { x = { usable: true, pitch_used: edits[fx.id], confidence: 'user edit' }; fx.user_pitch = true; }
+      else if (!useLidar) x = null;
+      if (x && x.usable && x.pitch_used) { var pf = pfOf(x.pitch_used); fx.pitch = x.pitch_used; fx.pitch_source = x.confidence === 'user edit' ? 'user edit (3-D editor)' : 'lidar facet fit (' + x.confidence + ')'; fx.area_sqft = Math.round(fx.plan_area_sqft * pf * 10) / 10; nUsed++; }
       else { fx.pitch_source = 'single pitch (no usable lidar fit: ' + (x ? x.status + (x.confidence ? ', ' + x.confidence : '') : 'none') + ')'; }
       tot += +fx.area_sqft;
       totU += x && x.usable && x.pitch_used ? fx.plan_area_sqft * pfOf(x.pitch_used) : (+fx.model_area_sqft || 0);
@@ -129,8 +134,9 @@
     if (rakePlan) { r.rake_sloped_lf_single_pitch = r.rake_sloped_lf; r.rake_sloped_lf = r.rake_lf = Math.round(rakeSum * 10) / 10;
       // facets-model rake (drip edge) scaled by the same per-facet/single-pitch ratio so drip edge stays consistent
       if (r.lines && r.lines.rake_lf && r.rake_sloped_lf_single_pitch) { r.lines.rake_lf_single_pitch = r.lines.rake_lf; r.lines.rake_lf = Math.round(r.lines.rake_lf * r.rake_sloped_lf / r.rake_sloped_lf_single_pitch * 100) / 100; } }
-    r.per_facet_pitch_used = true; r.per_facet_n_used = nUsed;
-    r.notes.push('OPT-IN per-facet lidar pitch: roof area ' + r.roof_area_sqft + ' sq ft = sum over facets of plan area × pitch factor, using the snapped lidar plane-fit pitch for ' + nUsed + ' of ' +
+    r.per_facet_pitch_used = true; r.per_facet_n_used = nUsed; r.facet_pitch_user_edits = nEd;
+    if (nEd) r.notes.push('User edit (3-D editor): pitch set by hand on ' + nEd + ' facet(s): ' + Object.keys(edits).map(function (k) { return k + ' ' + edits[k]; }).join(', ') + '; areas and adjacent rakes use these pitches.');
+    if (useLidar) r.notes.push('OPT-IN per-facet lidar pitch: roof area ' + r.roof_area_sqft + ' sq ft = sum over facets of plan area × pitch factor, using the snapped lidar plane-fit pitch for ' + nUsed + ' of ' +
       r.facets.length + ' facets (single pitch ' + r.pitch + ' for the rest); single-pitch area was ' + r.roof_area_sqft_single_pitch + ' sq ft. Rake (sloped) ' + r.rake_sloped_lf +
       ' LF uses the pitch of the facet each rake bounds (single-pitch rake ' + (r.rake_sloped_lf_single_pitch != null ? r.rake_sloped_lf_single_pitch : r.rake_sloped_lf) + ' LF). Eaves are level and unchanged. Ridge/hip/valley stay at ' + r.pitch + '. NOT_PROVEN against field measurements.');
   }
@@ -182,7 +188,7 @@
         var f = F.computeFacets(fin.fp, fin.opts);
         if (f && f.lines && !f.unsupported) {
           f.roof_model_info = r.roof_model_info || null;
-          var segSum = (T && T.reconcileLidar && L && r.use_lidar_lines !== false) ? T.reconcileLidar(f, L) : null;
+          var segSum = (T && T.reconcileLidar && L && r.use_lidar_lines !== false) ? T.reconcileLidar(f, L, RC.extractRing(r.footprint_geojson)) : null;
           if (T) lineChanges = T.applyLineTags(f, tags, T.facetsKey(r, L, useR));
           if (segSum) {
             var SG = T.lidarSeg(L);
@@ -192,6 +198,8 @@
               lidSegs.filter(function (x) { return !x.unverified && !x.deleted; }).length + ' counted, the rest UNVERIFIED candidates), ' + segSum.model_lines_confirmed + ' model line(s) confirmed and ' + segSum.model_lines_retyped +
               ' re-typed by lidar.');
           }
+          if (T.dormers && L) r.dormers = T.dormers(T.lidarSeg(L), tags);
+          else if (tags && tags.dormersAdded && tags.dormersAdded.length && T.dormers) r.dormers = T.dormers(null, tags);
           var skyU = (tags && Array.isArray(tags.skylights)) ? tags.skylights : [], skyL = (L && T && T.lidarSeg(L) && T.lidarSeg(L).skylights) || [], skyDel = (tags && tags.skylightsDeleted) || {};
           r.skylights = skyL.map(function (k, i) { return Object.assign({ key: 'S' + i }, k); }).filter(function (k) { return !skyDel[k.key]; })
             .concat(skyU.map(function (k, i) { return { key: 'U' + i, centroid_lonlat: k.centroid_lonlat || null, approx_w_ft: +k.w_ft || null, approx_h_ft: +k.h_ft || null, approx_area_sqft: (+k.w_ft && +k.h_ft) ? Math.round(k.w_ft * k.h_ft) : null,
@@ -225,7 +233,8 @@
     if (FF && r.facets && r.facets.length && L && L.points_local) {
       try { r.facet_fit = FF.fitFacets(L, r.facets); } catch (e) { r.notes.push('Per-facet lidar fit error: ' + e.message); }
     }
-    if (st.perFacetPitch) applyPerFacet(r);
+    var fpEd = (st.tags && st.tags.facetPitch) || {};
+    if (st.perFacetPitch || Object.keys(fpEd).length) applyPerFacet(r, fpEd, !!st.perFacetPitch);
     if (T) {
       try {
         r.user_tags = T.reportPayload(r, tags, lidarUsed ? L : (L && L.planes ? L : null), lineChanges);
@@ -238,8 +247,10 @@
       if (r.user_tags) r.user_tags.user_measurements = r.user_measurements;
       r.notes.push(r.user_measurements.length + ' user-supplied measurement(s) recorded (see "User-supplied measurements"); not computed by RoofMeasure and not used in its totals.');
     }
+    if (st.geocodeWarning) r.notes.push(st.geocodeWarning);
+    if (st.edits3d && st.edits3d.n) { r.edits_3d = { n: st.edits3d.n, summary: st.edits3d.summary }; r.notes.push('User edits in the 3-D roof editor (' + st.edits3d.n + '): ' + st.edits3d.summary + '.'); }
     var refs = Object.keys(st.refLayersViewed || {});
-    if (false && refs.length) r.notes.push('Visual reference layers viewed in the app (display only; nothing measured, traced, snapped or stored from them): ' + refs.join(', ') + '.');
+    if (refs.length) r.reference_layers_viewed = refs;
     var un = (document.getElementById('userNotes') || {}).value;
     if (un && String(un).trim()) String(un).trim().split(/\n+/).forEach(function (line) { r.notes.push('User note: ' + line.trim()); });
     r.palette = (document.getElementById('palette') || {}).value === 'cb' ? 'cb' : 'std';
@@ -281,16 +292,52 @@
     return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate()) + ' ' + z(d.getHours()) + ':' + z(d.getMinutes()) + (tz ? ' ' + tz : '');
   }
 
+  /* 0.1.7.4: ortho lean/offset estimate + ortho patch candidates (free MassGIS ortho pixels only), from the
+     tiles already fetched for the aerial pages. Sets result.ortho_align and result.ortho_patches. */
+  function orthoStep(result, need, opt) {
+    var O = window.RoofOrtho;
+    if (!O || opt.noAerial || !result.footprint_geojson) return Promise.resolve(null);
+    var tiles = need.map(function (u) { var m = /\/tile\/(\d+)\/(\d+)\/(\d+)/.exec(u); return m && TILE_CACHE[u] ? { z: +m[1], ty: +m[2], tx: +m[3], data: TILE_CACHE[u] } : null; }).filter(Boolean);
+    if (!tiles.length) return Promise.resolve(null);
+    var z = tiles[0].z, ring = window.RoofCalc.extractRing(result.footprint_geojson);
+    if (!ring) return Promise.resolve(null);
+    var t0 = Date.now();
+    return O.mosaic(z, tiles.filter(function (t) { return t.z === z; })).then(function (m) {
+      var lines = (result.line_segments || []).filter(function (g) { return /^(ridge|hip|valley)$/.test(g.type) && !g.deleted && !g.unverified && g.coords_lonlat && g.coords_lonlat.length === 2; })
+        .map(function (g) { return g.coords_lonlat; });
+      O._last = { m: m, ring: ring, lines: lines };
+      var al = O.align(ring, m, { apply: !opt.noOrthoAlign && !window.RM_NO_ORTHO_ALIGN, lines: lines });
+      al.ms = Date.now() - t0; al.source = 'MassGIS 2025 ortho z' + z;
+      result.ortho_align = al;
+      var pt = O.patches(ring, m, al);
+      // fuse with lidar skylight candidates (within 1.2 m)
+      var sky = result.skylights || [], kx = Math.cos(ring[0][1] * Math.PI / 180) * 111320, ky = 110540;
+      pt.forEach(function (p, i) { p.key = 'O' + i;
+        var hit = sky.filter(function (k) { return k.centroid_lonlat && Math.hypot((k.centroid_lonlat[0] - p.centroid_lonlat[0]) * kx, (k.centroid_lonlat[1] - p.centroid_lonlat[1]) * ky) < 1.2; })[0];
+        if (hit) { p.lidar_match = hit.key; p.confidence = 'medium'; hit.ortho_match = p.key; } });
+      result.ortho_patches = pt;
+      return al;
+    }).catch(function (e) { result.ortho_align = { status: 'error', error: String(e && e.message || e), applied: false }; return null; });
+  }
+
   /* -> Promise<{html, edges_csv, measurements_csv, summary, result}> */
   function render(result, opt) {
     opt = opt || {};
     var rjson = JSON.stringify(result);
     return engine().then(function (py) {
       var need = opt.noAerial ? [] : JSON.parse(py.globals.get('tiles_needed')(rjson));
-      var log0 = TILE_LOG.length;
-      return Promise.all(need.map(function (u) { return fetchTile(u).then(function (d) { return [u, d]; }); })).then(function (got) {
-        var set = py.globals.get('set_tile');
+      var log0 = TILE_LOG.length, set = py.globals.get('set_tile');
+      function fetchAll(list) { return Promise.all(list.map(function (u) { return fetchTile(u).then(function (d) { return [u, d]; }); })); }
+      return fetchAll(need).then(function (got) {
         got.forEach(function (x) { set(x[0], x[1]); });
+        return orthoStep(result, need, opt).then(function (al) {
+          if (!al || !al.applied) return got;
+          // the raster is drawn shifted by the offset: fetch any tile the shifted boxes now need
+          var need2 = JSON.parse(py.globals.get('tiles_needed')(JSON.stringify(result))), extra = need2.filter(function (u) { return need.indexOf(u) < 0; });
+          need = need.concat(extra);
+          return fetchAll(extra).then(function (g2) { g2.forEach(function (x) { set(x[0], x[1]); }); return got.concat(g2); });
+        });
+      }).then(function (got) {
         result.aerial_diag = { tiles_needed: need.length, tiles_loaded: got.filter(function (x) { return x[1]; }).length, cached: need.filter(function (u) { return !!TILE_CACHE[u]; }).length,
           failures: TILE_LOG.slice(log0).slice(-6) };
         rjson = JSON.stringify(result);
@@ -456,6 +503,17 @@
     var skyRow = function (k, j) { return '<tr data-me-skyu="' + j + '"><th scope="row">U' + j + '</th><td><input type="number" step="0.1" min="0" aria-label="Skylight ' + j + ' width ft" value="' + (k.w_ft || '') + '" style="width:60px"> × <input type="number" step="0.1" min="0" aria-label="Skylight ' + j + ' height ft" value="' + (k.h_ft || '') + '" style="width:60px"></td><td><input type="text" aria-label="Skylight ' + j + ' note / location" value="' + E(k.note || '') + '" placeholder="e.g. rear plane, near ridge"></td><td><button type="button" data-me-del="sky' + j + '">Remove</button></td></tr>'; };
     tg.skylights.forEach(function (k, j) { H.push(skyRow(k, j)); });
     H.push('</tbody></table><button type="button" id="me-addsky">Add a skylight</button><br>');
+    // dormers (0.1.7.4): lidar candidates (keep to count their gutters) + user-entered; returns yes/no; inspect & clean
+    if (!tg.dormers) tg.dormers = {}; if (!Array.isArray(tg.dormersAdded)) tg.dormersAdded = [];
+    var dmL = (st.lidar && T.lidarSeg && T.dormers) ? T.dormers(T.lidarSeg(st.lidar), { dormers: tg.dormers }) : [];
+    var retSel = function (v, lab2) { return '<select aria-label="' + lab2 + '">' + ['unknown', 'yes', 'no'].map(function (o) { return '<option' + (v === o ? ' selected' : '') + '>' + o + '</option>'; }).join('') + '</select>'; };
+    H.push('<h4>Dormers and dormer gutters (inspect and clean: debris at dormer gutters and returns can let water in)</h4><table><thead><tr><th>#</th><th>Type</th><th>Gutter LF</th><th>Returns</th><th>Keep</th></tr></thead><tbody id="me-dorm">');
+    dmL.forEach(function (d) { if (d.source !== 'lidar') return; H.push('<tr data-me-dorl="' + d.key + '"><th scope="row">' + d.key + '</th><td>' + E(d.type) + ' (' + E(d.confidence) + ')</td><td><input type="number" step="0.1" min="0" aria-label="Dormer ' + d.key + ' gutter feet" value="' + (d.gutter_lf || '') + '" style="width:70px"></td><td>' +
+      retSel(d.returns, 'Dormer ' + d.key + ' gutter returns') + '</td><td><input type="checkbox" aria-label="Keep dormer ' + d.key + '"' + (d.kept ? ' checked' : '') + '></td></tr>'); });
+    var dRow = function (a, j) { return '<tr data-me-doru="' + j + '"><th scope="row">UD' + j + '</th><td><input type="text" aria-label="Dormer ' + j + ' type" value="' + E(a.type || 'dormer') + '" style="width:90px"></td><td><input type="number" step="0.1" min="0" aria-label="Dormer ' + j + ' gutter feet" value="' + (a.gutter_lf || '') + '" style="width:70px"></td><td>' +
+      retSel(a.returns || 'unknown', 'Dormer ' + j + ' gutter returns') + '</td><td><button type="button" data-me-del="dor' + j + '">Remove</button></td></tr>'; };
+    tg.dormersAdded.forEach(function (a, j) { H.push(dRow(a, j)); });
+    H.push('</tbody></table><button type="button" id="me-adddorm">Add a dormer</button><br>');
     H.push('<button id="me-apply">Apply and rebuild report</button> <button id="me-reset">Reset edits</button>');
     box.innerHTML = H.join(''); box.hidden = false;
     var q = function (sel) { return box.querySelectorAll(sel); };
@@ -463,8 +521,10 @@
     document.getElementById('me-addline').onclick = function () { var tb = document.getElementById('me-added'); tb.insertAdjacentHTML('beforeend', addRow({ type: 'hip' }, nAdd++)); };
     var nSky = tg.skylights.length;
     document.getElementById('me-addsky').onclick = function () { document.getElementById('me-sky').insertAdjacentHTML('beforeend', skyRow({}, nSky++)); };
+    var nDor = tg.dormersAdded.length;
+    document.getElementById('me-adddorm').onclick = function () { document.getElementById('me-dorm').insertAdjacentHTML('beforeend', dRow({}, nDor++)); };
     box.addEventListener('click', function (ev) { var b = ev.target.closest && ev.target.closest('[data-me-del]'); if (b) { var tr = b.closest('tr'); if (tr) tr.remove(); } });
-    document.getElementById('me-reset').onclick = function () { tg.lengths = {}; st.overrides = {}; tg.lines = {}; tg.added = []; tg.skylights = []; tg.skylightsDeleted = {}; box.hidden = true; app.render && app.render(); preview(app, statusFn); };
+    document.getElementById('me-reset').onclick = function () { tg.lengths = {}; st.overrides = {}; tg.lines = {}; tg.added = []; tg.skylights = []; tg.skylightsDeleted = {}; tg.dormers = {}; tg.dormersAdded = []; box.hidden = true; app.render && app.render(); preview(app, statusFn); };
     document.getElementById('me-apply').onclick = function () {
       var lab = 'report editor';
       var mv = document.getElementById('me-model').value;
@@ -482,6 +542,10 @@
       Array.prototype.forEach.call(q('[data-me-skyl]'), function (el) { if (el.checked) delete tg.skylightsDeleted[el.dataset.meSkyl]; else tg.skylightsDeleted[el.dataset.meSkyl] = lab; });
       tg.skylights = Array.prototype.map.call(q('[data-me-skyu]'), function (tr) { var ins = tr.querySelectorAll('input');
         return { w_ft: +ins[0].value || null, h_ft: +ins[1].value || null, note: ins[2].value, source: 'user-entered (report editor)' }; }).filter(function (k) { return k.w_ft || k.h_ft || k.note; });
+      Array.prototype.forEach.call(q('[data-me-dorl]'), function (tr) { var ins = tr.querySelectorAll('input'), sel = tr.querySelector('select');
+        tg.dormers[tr.dataset.meDorl] = { keep: ins[1].checked, gutter_lf: +ins[0].value || null, returns: sel.value, layer: lab }; });
+      tg.dormersAdded = Array.prototype.map.call(q('[data-me-doru]'), function (tr) { var ins = tr.querySelectorAll('input'), sel = tr.querySelector('select');
+        return { type: ins[0].value || 'dormer', gutter_lf: +ins[1].value || null, returns: sel.value, source: 'user-entered (report editor)' }; }).filter(function (a) { return a.gutter_lf || a.type; });
       var pe = document.getElementById('pitch'), pv = document.getElementById('me-pitch').value;
       if (pv !== r.pitch) { pe.value = pv; st.pitchSource = 'manual'; st.pitchConfidence = null; }
       document.getElementById('waste').value = document.getElementById('me-waste').value;

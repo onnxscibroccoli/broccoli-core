@@ -470,13 +470,16 @@ def _rings_ll(g):
     return []
 
 
-def _tiles_svg(tpl, z, x0, y0, w, h):
+def _tiles_svg(tpl, z, x0, y0, w, h, shift=(0.0, 0.0)):
     """Embed the tiles covering world-pixel box (x0, y0, w, h). Each tile is fetched on its own: a failed tile is drawn as a
     grey square instead of dropping the whole image (0.1.7.3 bug B). Returns (svg_fragment, loaded, needed, errors)."""
     import urllib.request
     imgs, loaded, needed, errs = [], 0, 0, []
-    for ty in range(int(y0 // 256), int((y0 + h) // 256) + 1):
-        for tx in range(int(x0 // 256), int((x0 + w) // 256) + 1):
+    # shift = (dx, dy) world px: the ortho shows the roof at roofprint + shift (lean / registration), so the raster
+    # is drawn moved by -shift and the roofprint overlay lands on the roof in the photo (0.1.7.4)
+    sx_, sy_ = float(shift[0] or 0), float(shift[1] or 0)
+    for ty in range(int((y0 + sy_) // 256), int((y0 + sy_ + h) // 256) + 1):
+        for tx in range(int((x0 + sx_) // 256), int((x0 + sx_ + w) // 256) + 1):
             needed += 1
             url = tpl.replace("{z}", str(z)).replace("{x}", str(tx)).replace("{y}", str(ty))
             data = None
@@ -490,7 +493,7 @@ def _tiles_svg(tpl, z, x0, y0, w, h):
             except Exception as ex:  # noqa
                 errs.append(f"tile {tx},{ty}: {type(ex).__name__}")
                 data = None
-            X, Y = tx * 256 - x0, ty * 256 - y0
+            X, Y = tx * 256 - x0 - sx_, ty * 256 - y0 - sy_
             if data is None:
                 imgs.append(f'<rect x="{X:.1f}" y="{Y:.1f}" width="256" height="256" fill="#9ca3af"/>')
                 continue
@@ -676,6 +679,9 @@ def aerial_views(r):
         return res
     z = 19
     W = _world(z)
+    oa = r.get("ortho_align") if isinstance(r.get("ortho_align"), dict) else {}
+    shift = (float(oa.get("dx_px") or 0), float(oa.get("dy_px") or 0)) if oa.get("applied") and oa.get("z", 19) == z else (0.0, 0.0)
+    res["info"]["shift_px"] = shift
     ring = ring_of(r["footprint_geojson"])
     lat0 = float(r["lat"])
     m_per_px = 156543.03392 * math.cos(math.radians(lat0)) / (2 ** z)
@@ -688,7 +694,7 @@ def aerial_views(r):
         for rg in _rings_ll(g):
             ctx += [W(*p) for p in rg]
     x0, y0, w, h = _fit_box(ctx, aspect, 0.25, 260)
-    frag, ld, nd, er = _tiles_svg(tpl, z, x0, y0, w, h)
+    frag, ld, nd, er = _tiles_svg(tpl, z, x0, y0, w, h, shift)
     sx = PAGE_W / w
     def PA(lo, la):
         p = W(lo, la)
@@ -714,7 +720,7 @@ def aerial_views(r):
     res["info"]["aerial"] = {"tiles_loaded": ld, "tiles_needed": nd, "errors": er[:6]}
     # --- page C: composite (roof only, tighter)
     x0, y0, w, h = _fit_box(roof, aspect, 0.55, 150)
-    frag, ld2, nd2, er2 = _tiles_svg(tpl, z, x0, y0, w, h)
+    frag, ld2, nd2, er2 = _tiles_svg(tpl, z, x0, y0, w, h, shift)
     sx2 = PAGE_W / w
     def PC(lo, la):
         p = W(lo, la)
@@ -755,6 +761,57 @@ def vector_page(r, show_cand=False):
             + _overlay(r, PV, s, casing=True, show_cand=show_cand) + _legend(r, 10, 10, cand) + _north_scale(PAGE_W, PAGE_H, s) + '</svg>')
 
 
+def ortho_shift_text(r):
+    oa = r.get("ortho_align") if isinstance(r.get("ortho_align"), dict) else {}
+    if oa.get("applied"):
+        return (f'Photo shifted {num(abs(oa.get("dx_m") or 0), 1)} m {"W" if (oa.get("dx_m") or 0) > 0 else "E"} and {num(abs(oa.get("dy_m") or 0), 1)} m '
+                f'{"S" if (oa.get("dy_m") or 0) > 0 else "N"} so the roof in the photo sits on the roofprint (ortho lean/offset estimate, {esc(oa.get("confidence"))} confidence; residual in the Appendix).')
+    if oa.get("status") == "ok" and oa.get("confidence") != "low":
+        return f'Photo not shifted (ortho alignment turned off; estimate was {num(oa.get("shift_m"), 1)} m). The 2025 orthos are not true orthos, so roofs can sit a few metres off the roofprint.'
+    if oa.get("status") == "ok":
+        return f'Ortho offset estimate {num(oa.get("shift_m"), 1)} m was low-confidence and not applied. The 2025 orthos are not true orthos, so roofs can sit a few metres off the roofprint.'
+    return 'The 2025 orthos are not true orthos, so roofs can sit a few metres off the roofprint.'
+
+
+def ortho_appendix(r):
+    oa = r.get("ortho_align") if isinstance(r.get("ortho_align"), dict) else {}
+    H = []
+    if oa.get("status") == "ok":
+        H.append('<h3>Ortho lean / offset (free MassGIS 2025 pixels)</h3><p class="note">' + esc(oa.get("method")) +
+                 f'. Estimated offset of the roof in the photo vs the roofprint: {num(oa.get("dx_m"), 2)} m east, {num(oa.get("dy_m"), 2)} m north '
+                 f'({num(oa.get("shift_m"), 2)} m; edge score {esc(oa.get("score0"))} → {esc(oa.get("score"))}, peak/median {esc(oa.get("ratio"))}, peak/second {esc(oa.get("sep"))}, '
+                 f'confidence {esc(oa.get("confidence"))}, {"applied to the aerial pages" if oa.get("applied") else "NOT applied"}). '
+                 f'Residual per edge after the shift: median {num(oa.get("residual_median_m"), 2)} m, max {num(oa.get("residual_max_m"), 2)} m'
+                 + (f'; {esc(oa.get("edges_no_clear_edge"))} edge(s) with no clear photo edge within ±2 m (shown —)' if oa.get("edges_no_clear_edge") else '') + ' '
+                 '(what one translation cannot explain: lean differs with roof height, or the roofprint differs from the roof). Measurements use the roofprint, not the photo.</p>')
+        rs = oa.get("residuals") or []
+        if rs:
+            H.append('<table class="compact"><thead><tr><th scope="col">Edge</th>' + "".join(f'<th scope="col" class="n">{esc(x.get("edge"))}</th>' for x in rs[:24]) +
+                     '</tr></thead><tbody><tr><th scope="row">Residual (m, along the edge normal)</th>' + "".join(f'<td class="n">{num(x.get("residual_m"), 2)}</td>' for x in rs[:24]) + '</tr></tbody></table>')
+    elif oa.get("status"):
+        H.append(f'<p class="note">Ortho offset estimate unavailable ({esc(oa.get("status"))} {esc(oa.get("error") or "")}).</p>')
+    pt = r.get("ortho_patches") or []
+    if pt:
+        H.append('<table class="compact"><caption>Ortho patch candidates (skylight / chimney / vent; compact bright or dark rectangles in the free ortho, NOT_PROVEN)</caption><thead><tr>'
+                 '<th scope="col">#</th><th scope="col" class="n">Approx. size (ft)</th><th scope="col" class="n">≈ sq ft</th><th scope="col">Tone</th><th scope="col" class="n">Contrast</th>'
+                 '<th scope="col">Location (lon, lat)</th><th scope="col">Lidar match</th></tr></thead><tbody>')
+        for k in pt:
+            c = k.get("centroid_lonlat") or [0, 0]
+            H.append(f'<tr><th scope="row">{esc(k.get("key"))}</th><td class="n">{num(k.get("approx_w_ft"), 1)} × {num(k.get("approx_h_ft"), 1)}</td><td class="n">{esc(k.get("approx_area_sqft"))}</td>'
+                     f'<td>{esc(k.get("polarity"))}</td><td class="n">{esc(k.get("contrast"))}</td><td>{c[0]:.6f}, {c[1]:.6f}</td><td>{esc(k.get("lidar_match") or "—")}</td></tr>')
+        H.append('</tbody></table>')
+    dm = [d for d in (r.get("dormers") or [])]
+    if dm:
+        H.append('<table class="compact"><caption>Dormers (lidar candidates unless kept by the user; dormer gutters: inspect and clean)</caption><thead><tr><th scope="col">#</th><th scope="col">Type</th>'
+                 '<th scope="col">Planes / pitch</th><th scope="col" class="n">Ridge LF</th><th scope="col" class="n">Gutter LF</th><th scope="col">Returns</th><th scope="col">Status</th></tr></thead><tbody>')
+        for d in dm:
+            H.append(f'<tr><th scope="row">{esc(d.get("key"))}</th><td>{esc(d.get("type"))}</td><td>{esc("+".join(d.get("planes") or []) or "—")} {esc(d.get("pitch") or "")}'
+                     f'{(" on " + esc(d.get("host_pitch"))) if d.get("host_pitch") else ""}</td><td class="n">{num(d.get("ridge_lf"), 1) if is_number(d.get("ridge_lf")) else "—"}</td>'
+                     f'<td class="n">{num(d.get("gutter_lf"), 1) if is_number(d.get("gutter_lf")) else "—"}</td><td>{esc(d.get("returns"))}</td><td>{esc(d.get("status"))} · {esc(d.get("confidence") or d.get("source"))}</td></tr>')
+        H.append('</tbody></table>')
+    return "".join(H)
+
+
 def appendix_section(r):
     """Appendix: everything NOT counted (candidate / deleted lines, uncounted model wall flashing, lidar plane and
     step tables, skylight candidates). A person can promote any candidate to counted in the app (tap it, Confirm)
@@ -763,7 +820,8 @@ def appendix_section(r):
     skc = sky
     cands = [(i, x) for i, x in enumerate(r.get("line_segments") or []) if x.get("unverified") or x.get("deleted")]
     lc = r.get("line_candidates") or {}
-    if not cands and not sg and not sky and not lc.get("wall_flashing_model_lf"):
+    oapp = ortho_appendix(r)
+    if not cands and not sg and not sky and not lc.get("wall_flashing_model_lf") and not oapp:
         return ""
     H = ['<section aria-labelledby="h-app" class="pb"><h2 id="h-app">Appendix — candidates and lidar detail (NOT counted)</h2>',
          '<p class="note">Nothing on this page is in the totals. Candidates come from the facets model (when the roof model is ASSUMED) or from the lidar '
@@ -781,6 +839,7 @@ def appendix_section(r):
             why = "deleted by user" if x.get("deleted") else (
                 f'lidar {x.get("lidar_source") or "line"}, confidence {x.get("lidar_conf")}' + (f', drop {num(x.get("drop_ft"), 1)} ft' if is_number(x.get("drop_ft")) else "")
                 + ("; wall flashing needs confirmation" if str(x.get("type")) == "wall_flashing" else "")
+                + (f'; doubtful: {x.get("lidar_doubt")}' if x.get("lidar_doubt") else "")
                 if x.get("source") == "lidar" else "facets-model line, roof model ASSUMED (not lidar-verified)")
             H.append(f'<tr><th scope="row">L{i}</th><td>{esc(str(x.get("type") or x.get("auto_type")).replace("_", " ").title())}</td><td class="n">{num(x.get("length_ft"), 1)}</td><td>{esc(why)}</td></tr>')
         H.append('</tbody></table>')
@@ -812,6 +871,7 @@ def appendix_section(r):
             H.append(f'<tr><th scope="row">{esc(k.get("key"))}</th><td class="n">{sz}</td><td class="n">{esc(k.get("approx_area_sqft") or "—")}</td><td>{loc}</td>'
                      f'<td>{esc(", ".join(k.get("evidence") or []))} · {esc(k.get("status"))}{(" — " + esc(k.get("note"))) if k.get("note") and c else ""}</td></tr>')
         H.append('</tbody></table>')
+    H.append(oapp)
     H.append('</section>')
     return "".join(H)
 
@@ -854,7 +914,7 @@ def fullpage_sections(r):
              + (av["aerial"] or ph("AERIAL IMAGE", a))
              + f'<p class="cap">MassGIS 2025 statewide orthoimagery (15 cm, Commonwealth of Massachusetts), zoom 19, tiles {a.get("tiles_loaded", 0)}/{a.get("tiles_needed", 0)}. '
              'Cyan = roofprint used for the measurements' + ('; dashed yellow = MassGIS L3 tax parcel' if r.get("parcel_geojson") else '')
-             + ('; white = other structures on the lot' if r.get("lot_footprints") else '') + '. The 2025 orthos may lean 2-6 m off the roofprint.</p></section>')
+             + ('; white = other structures on the lot' if r.get("lot_footprints") else '') + '. ' + ortho_shift_text(r) + '</p></section>')
     H.append('<section class="fullpage pb" aria-labelledby="h-fv"><h2 id="h-fv">Roof diagram</h2>' + vector_page(r)
              + '<p class="cap">Roofprint + USGS lidar model. Edge numbers match the edge tables. Rake lengths are SLOPED '
              '(drip-edge length, plan length in brackets); eaves are level. Facet badges: pitch and plan area' + ('; "lidar" = per-facet lidar pitch used' if r.get("per_facet_pitch_used") else '')
@@ -865,7 +925,7 @@ def fullpage_sections(r):
     H.append('<section class="fullpage pb" aria-labelledby="h-fc"><h2 id="h-fc">Diagram over aerial photo</h2>'
              + (av["composite"] or ph("AERIAL OVERLAY", c))
              + f'<p class="cap">The same vector model drawn over MassGIS 2025 orthoimagery (tiles {c.get("tiles_loaded", 0)}/{c.get("tiles_needed", 0)}) so eaves and rakes can be '
-             'checked against the building. Blue eave, orange rake, red ridge, purple hip, teal valley (or the colour-blind palette).</p></section>')
+             'checked against the building. Blue eave, orange rake, red ridge, purple hip, teal valley (or the colour-blind palette). ' + ortho_shift_text(r) + '</p></section>')
     kind = "massgis_ortho_2025" if (av["aerial"] or av["composite"]) else "placeholder"
     return "".join(H), kind
 
@@ -893,7 +953,15 @@ def attributions(r, aerial_kind=None):
     if isinstance(r.get("solar"), dict) and (r["solar"].get("pvwatts") or {}).get("worked"):
         a.append("NREL/NLR PVWatts v8 (public DEMO_KEY) for PVWatts-derived solar values.")
     if aerial_kind == "massgis_ortho_2025":
-        a.append("MassGIS 2025 statewide orthoimagery (15 cm), Commonwealth of Massachusetts — aerial thumbnail.")
+        oa = r.get("ortho_align") if isinstance(r.get("ortho_align"), dict) else {}
+        a.append("MassGIS 2025 statewide orthoimagery (15 cm), Commonwealth of Massachusetts — aerial pages"
+                 + ("; its pixels were also used for the lean/offset estimate and patch candidates" if oa.get("status") == "ok" else "") + ".")
+    refs = r.get("reference_layers_viewed") or []
+    if refs:
+        a.append("Viewed in the app for reference only (no measurement, analysis or storage): " + ", ".join(str(x) for x in refs) + ".")
+    e3 = r.get("edits_3d") or {}
+    if e3.get("n"):
+        a.append(f'User edits in the 3-D roof editor: {e3.get("n")} ({e3.get("summary") or ""}); built from the roofprint, lidar and facets model only.')
     if not a:
         a.append(f"Source as reported in result: {r.get('source')}.")
     return a
@@ -1215,6 +1283,12 @@ def build_html(r, rows, waste, mats, aerial, generated):
             H.append(f'<tr><th scope="row">{k}</th><td>{esc(", ".join("#" + str(x) for x in g.get("edges", [])))}</td>'
                      f'<td class="n">{num(g.get("length_ft"))}</td><td class="n">{num(g.get("gutter_ft"))}</td><td class="n">{esc(g.get("downspouts"))}</td></tr>')
         H.append('</tbody></table>')
+    dk = [d for d in (r.get("dormers") or []) if d.get("kept")]
+    if dk:
+        tl = sum(float(d.get("gutter_lf") or 0) for d in dk)
+        H.append(f'<p><b>Dormer gutters: {len(dk)} dormer(s), ≈ {num(tl, 1)} LF</b> (not in the gutter totals above). Returns: '
+                 + esc(", ".join(f'{d.get("key")} {d.get("returns")}' for d in dk))
+                 + '. <b>Inspect and clean</b>: debris at dormer gutters and returns can let water in.</p>')
     H.append('</section>')
 
     H.append(lidar_seg_section(r))
@@ -1228,7 +1302,7 @@ def build_html(r, rows, waste, mats, aerial, generated):
              "".join(f"<li>{esc(a)}</li>" for a in attributions(r, aerial[0])) + "</ul></section>")
     H.append('<section aria-labelledby="h-disc"><h2 id="h-disc" class="sr-only">Note</h2><p class="disclaimer"><b>For estimating; verify on site.</b></p></section>')
     H.append(appendix_section(r))
-    H.append(f'<footer>RoofMeasure 0.1.7.3 report · {addr} · generated {esc(generated)} · RoofMeasure (MIT)</footer></main></body></html>')
+    H.append(f'<footer>RoofMeasure 0.1.7.4 report · {addr} · generated {esc(generated)} · RoofMeasure (MIT)</footer></main></body></html>')
     return "".join(H)
 
 

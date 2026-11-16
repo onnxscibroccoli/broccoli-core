@@ -78,3 +78,14 @@ Done in 0.1.7.2 (headless PASS, on-device NOT_PROVEN): 2, 3 (opt-in), 5 (logo + 
 - Report: three full pages (aerial + parcel, vector diagram, diagram over aerial), robust aerial (session tile cache, retries, grey tile on failure).
 - CI does the heavy work (APK, headless tests, emulator smoke); keep box runs light.
 - Private complex-roof test cases stay outside the repo (local only).
+
+## 0.1.7.4 notes for co-developers
+- Pixel analysis is allowed ONLY on free imagery (MassGIS 2025 orthos, NAIP). Google/Bing/Esri tiles are display-only: never read their pixels,
+  never run edge detection or photogrammetry on them, and do not add a toggle for it.
+- lib/orthoalign.js: ortho lean/offset estimate (outline + ridge/hip/valley gradient score, bounded search) and patch candidates. The report shifts
+  the photo, not the measurements. Set window.RM_NO_ORTHO_ALIGN = true (or opt.noOrthoAlign) to compare with the unshifted photo.
+- view3d.js (window.Roof3D): three.js 3-D view/editor, lazy-loaded from www/vendor/three/. Edits use the tag paths (tags.lineMoves, tags.lines,
+  tags.facetPitch, ring overrides) and are logged in state.edits3d → result.edits_3d → report note + attributions.
+- tags.js: dormers() (lidar dormer candidates with gutter LF / returns / inspect-and-clean), doubtful lidar ridges (lidar_doubt).
+- sources.js: town-aware geocoding (townOf, town_mismatch); the app shows "not found in <TOWN>" or a WARNING.
+- Tests: tests/v0174_test.cjs (CI report-tests job). WebGL in headless Chrome uses --use-gl=swiftshader --enable-unsafe-swiftshader.

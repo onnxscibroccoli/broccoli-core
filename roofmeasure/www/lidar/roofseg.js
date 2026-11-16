@@ -8,7 +8,7 @@
  * Everything is an estimate from free USGS 3DEP data; nothing here is verified (NOT_PROVEN). */
 (function (root, factory) { var m = factory(); if (typeof module === 'object' && module.exports) module.exports = m; else root.RoofSeg = m; })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
-  var VERSION = '0.1.7.3-roofseg-1', M2FT = 3.280839895, R = 6378137, D2R = Math.PI / 180;
+  var VERSION = '0.1.7.4-roofseg-2', M2FT = 3.280839895, R = 6378137, D2R = Math.PI / 180;
   function r2(v) { return Math.round(v * 100) / 100; } function r1(v) { return Math.round(v * 10) / 10; }
   function grid(P, cs) { var g = new Map(); P.forEach(function (p, i) { var k = Math.floor(p[0] / cs) + ',' + Math.floor(p[1] / cs); var a = g.get(k); if (!a) g.set(k, a = []); a.push(i); }); return g; }
   function near(P, g, cs, i, rad) { var p = P[i], cx = Math.floor(p[0] / cs), cy = Math.floor(p[1] / cs), n = Math.ceil(rad / cs), out = [], r2_ = rad * rad;
@@ -89,8 +89,15 @@
       var cells = new Set(); pl.idx.forEach(function (i) { cells.add(Math.floor(P[i][0] / 0.5) + ',' + Math.floor(P[i][1] / 0.5)); });
       var c = cent(P, pl.idx), ins = pl.idx.filter(function (i) { return P[i][5]; }).length, rs = rise(pl);
       var area = cells.size * 0.25 * M2FT * M2FT, small = pl.idx.length < 25 || area < 40;
+      // extents along strike (eave direction) and dip (down-slope) for dormer / gutter estimates
+      var gl = Math.hypot(pl.a, pl.b), du = gl > 1e-6 ? [-pl.a / gl, -pl.b / gl] : [1, 0], su = [-du[1], du[0]];
+      var ps = pl.idx.map(function (i) { return P[i][0] * su[0] + P[i][1] * su[1]; }).sort(function (x, y) { return x - y; });
+      var pd = pl.idx.map(function (i) { return P[i][0] * du[0] + P[i][1] * du[1]; }).sort(function (x, y) { return x - y; });
+      var q = function (a2, f) { return a2[Math.min(a2.length - 1, Math.max(0, Math.round((a2.length - 1) * f)))]; };
+      var strike = (q(ps, 0.97) - q(ps, 0.03)) + 0.5, dip = (q(pd, 0.97) - q(pd, 0.03)) + 0.5;
       return { id: 'P' + (k + 1), n_points: pl.idx.length, rms_m: r2(pl.rms * 100) / 100, rise_raw: r2(rs), pitch: snap(rs), slope_deg: r1(slopeDeg(pl)), aspect_deg: rs < 0.6 ? null : r1(aspectDeg(pl)),
-        plan_area_sqft_approx: Math.round(area), inside_frac: r2(ins / pl.idx.length), small: small, confidence: small ? 'low' : conf(pl.idx.length, pl.rms), centroid_lonlat: toLL(fr, c[0], c[1]), z_m: r2(c[2]) };
+        plan_area_sqft_approx: Math.round(area), inside_frac: r2(ins / pl.idx.length), small: small, confidence: small ? 'low' : conf(pl.idx.length, pl.rms), centroid_lonlat: toLL(fr, c[0], c[1]), z_m: r2(c[2]),
+        strike_len_ft: r1(strike * M2FT), dip_len_ft: r1(dip * M2FT) };
     });
     out.coverage = r2(totalIn / N);
     // 5. adjacency: boundary point pairs between planes

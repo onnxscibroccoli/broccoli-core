@@ -1,6 +1,37 @@
 <!-- SPDX-License-Identifier: MIT -->
 # RoofMeasure changelog (0.1.7.x line — stays on 0.1.7.x until Ian verifies an improvement)
 
+## 0.1.7.4 (versionCode 10704) — 2026-11-15
+Same rules: free data for every measurement (MassGIS roofprints, USGS 3DEP lidar, MassGIS 2025 orthos / NAIP); Google/Bing/Esri tiles stay display-only
+(no pixel access, no edge detection, no photogrammetry, no toggle for it); no accuracy claims; labels PASS / FAIL / NOT_PROVEN. MIT.
+
+- Ortho lean/offset (new lib/orthoalign.js). Root cause: the MassGIS 2025 orthos are not true orthos, so a roof can sit metres off its roofprint
+  (15 Ward St: the overlay covered the sunlit facet and the lawn, not the whole roof). Fix: bounded 2-D translation search (±8 m, 2 px grid →
+  1 px → sub-pixel) that maximises the ortho gradient along the roofprint edges AND the model ridge/hip/valley lines (a sunlit/shaded facet pair
+  makes the ridge the strongest edge; outline-only scoring locked an eave onto the ridge boundary, 6.2 m the wrong way), with a mild prior
+  against large shifts. Confidence from peak/median and peak/second; low confidence = not applied. The PHOTO is shifted (aerial and composite
+  pages), the measurements stay on the roofprint. Appendix: offset, scores, per-edge residual (1-D ±2 m search; "—" = no clear edge).
+  15 Ward St: 3.7 m E, 0.7 m S, high confidence; ridge now on the light/dark boundary (before/after PNG in the delivery).
+- Geocoding: town-aware. MassGIS (6 candidates) and Census prefer a match in the town typed; a match in another town gives a WARNING in the
+  app and a report note; no match gives "Address not found in <TOWN>". 30 Lockwood Drive and 49 Scotland Street do not exist in Hull in
+  MassGIS, Census, OSM or the L3 parcels, so the fixtures stay 30 Lockwood Dr Weymouth and 49 Scotland St Hingham (labelled with their real
+  towns) and a test checks the Hull spellings are reported not found. 6 Harborview Rd Hull unchanged.
+- Skylight / chimney / vent candidates from MassGIS 2025 pixels (compact bright/dark patches vs a local background inside the shifted roof),
+  fused with the lidar skylight candidates (within 1.2 m → medium). Appendix only, size optional (w × h ft shown), NOT counted.
+- Dormer candidates from the lidar segmentation (gable dormer: ridge between two opposite minor planes; shed dormer: minor plane flatter than
+  the main plane it faces with). Dormer gutter LF estimate, returns unknown/yes/no, keep/drop and add rows in the report editor; the gutter
+  section flags dormer gutters (especially with returns) for inspect-and-clean because debris there can cause water intrusion.
+- Doubtful lidar ridges: a lidar ridge more than 8° off the building axes (length-weighted from the roofprint), or between planes 6/12+ apart,
+  or a line with under 75% of its length inside the roofprint, becomes an appendix candidate with the reason (not counted),
+  e.g. a diagonal ridge across a wing.
+- 3-D roof view / editor (new view3d.js, three.js r187 MIT, lazy-loaded): orbit/zoom; facets from the roofprint + facets model + pitch, lidar
+  points coloured by residual; move outline vertices, ridge/hip/valley ends; set facet pitch; re-type lines. Edits go through the existing
+  tag paths (lineMoves, line types, facetPitch, ring) so the measurements and the report update; the report marks them as user edits and
+  lists the data sources (and any Google/Bing/Esri layers that were only viewed). Built from free data only.
+- 30 Lockwood Dr Weymouth per-facet gap re-checked (1,520.2 off vs 1,704.4 on): two high-confidence steep plane fits (F9 17/12, 192 pts,
+  RMS 0.047 m; F14 11/12, 174 pts) account for ≈ +180 sq ft vs the single 3.5/12. The house has mixed pitches; NOT_PROVEN which is right.
+- Version 0.1.7.4 / 10704; tests/v0174_test.cjs (CI).
+
 ## 0.1.7.3 (versionCode 10703) — 2026-11-15
 Same rules: free data for every measurement; free MassGIS/NAIP imagery may be analysed (edge snap, edge detection); Google/Bing/Esri stay display-only; no accuracy claims,
 labels PASS / FAIL / NOT_PROVEN. License is now MIT (LICENSE, © 2026 Ian Cossette); third-party components are listed in THIRD_PARTY.md.

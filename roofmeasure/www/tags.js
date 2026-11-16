@@ -11,7 +11,7 @@
   var LINE_TYPES = ['ridge', 'hip', 'valley'];
   var EXTRA_TYPES = ['wall_flashing', 'eave', 'rake']; // lidar-detected step edges (dormers, raised sections); user-retypable
   var ALL_TYPES = LINE_TYPES.concat(EXTRA_TYPES);
-  function emptyTags() { return { edges: {}, lines: {}, linesKey: null, areas: {}, layers: {}, confirmed: {}, lengths: {}, added: [], skylights: [], skylightsDeleted: {} }; }
+  function emptyTags() { return { edges: {}, lines: {}, linesKey: null, areas: {}, layers: {}, confirmed: {}, lengths: {}, added: [], skylights: [], skylightsDeleted: {}, dormers: {}, dormersAdded: [], facetPitch: {}, lineMoves: {} }; }
   function r1(x) { return Math.round(x * 10) / 10; }
   function r2(x) { return Math.round(x * 100) / 100; }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
@@ -47,7 +47,7 @@
   /* Reconcile the footprint model with lidar lines: lidar wins where confident (confirms or retypes a model line),
    * the model fills gaps; lidar lines the model lacks (dormer ridges, raised-section steps) are appended as segments
    * with source 'lidar' (counted when confidence is high and no plane is a flagged small plane; otherwise candidates). */
-  function reconcileLidar(f, lidar) {
+  function reconcileLidar(f, lidar, ringLL) {
     var sg = lidarSeg(lidar); if (!f || !sg || sg.status !== 'ok' || !Array.isArray(f.line_segments)) return null;
     var lat0 = null; (f.line_segments[0] && f.line_segments[0].coords_lonlat || sg.lines.concat(sg.steps).map(function (l) { return l.coords_lonlat[0]; })).some(function (p) { lat0 = p[1]; return true; });
     if (lat0 == null) return null;
@@ -60,7 +60,7 @@
       var d = Math.abs(brg(s) - brg(l)); d = Math.min(d, 180 - d); if (d > 20) return 0; var hit = 0;
       for (var t = 0; t <= 10; t++) { var p = [s[0][0] + (s[1][0] - s[0][0]) * t / 10, s[0][1] + (s[1][1] - s[0][1]) * t / 10]; if (dps(p, l[0], l[1]) <= 6) hit++; }
       return hit / 11; }
-    var small = {}; (sg.planes || []).forEach(function (p) { small[p.id] = p.small; });
+    var small = {}, rise = {}; (sg.planes || []).forEach(function (p) { small[p.id] = p.small; var m = /^(\d+(?:\.\d+)?)\/12$/.exec(String(p.pitch || '')); rise[p.id] = m ? +m[1] : null; });
     var polys = (f.facets || []).map(function (x) { return x.polygon_lonlat ? ringOf(x.polygon_lonlat).map(xy) : null; }).filter(Boolean);
     function inRoof(p) { if (!polys.length) return true; for (var k = 0; k < polys.length; k++) { var P = polys[k]; if (pointInRing(p, P)) return true;
       for (var j = 0; j + 1 < P.length; j++) if (dps(p, P[j], P[j + 1]) <= 0.5) return true; } return false; }
@@ -71,7 +71,13 @@
       var A = [sg2[0][0] + (sg2[1][0] - sg2[0][0]) * best[0] / N, sg2[0][1] + (sg2[1][1] - sg2[0][1]) * best[0] / N], B = [sg2[0][0] + (sg2[1][0] - sg2[0][0]) * best[1] / N, sg2[0][1] + (sg2[1][1] - sg2[0][1]) * best[1] / N];
       return [A, B, fr]; }
     var model = f.line_segments.filter(function (s) { return s.coords_lonlat && LINE_TYPES.indexOf(s.type) >= 0; });
-    var added = 0, confirmed = 0, retyped = 0;
+    var added = 0, confirmed = 0, retyped = 0, doubtful = 0;
+    // 0.1.7.4: building axes from the roofprint (length-weighted circular mean of 4 x edge bearing); a lidar ridge
+    // more than 8 deg off both axes (e.g. a diagonal "ridge" across a wing), or between planes 6/12+ apart, is doubtful and stays a candidate
+    var axis = null;
+    if (Array.isArray(ringLL) && ringLL.length > 3) { var cs = 0, sn = 0; for (var e = 0; e + 1 < ringLL.length; e++) { var A = xy(ringLL[e]), B = xy(ringLL[e + 1]), Le = Math.hypot(B[0] - A[0], B[1] - A[1]);
+      var th = Math.atan2(B[0] - A[0], B[1] - A[1]) * 4; cs += Le * Math.cos(th); sn += Le * Math.sin(th); } axis = ((Math.atan2(sn, cs) / 4) * 180 / Math.PI + 360) % 90; }
+    function offAxis(L2) { if (axis == null) return 0; var d = Math.abs(brg(L2) % 90 - axis); return Math.min(d, 90 - d); }
     sg.lines.concat(sg.steps.filter(function (s) { return !s.on_footprint; })).forEach(function (l) {
       var L2 = seg2(l.coords_lonlat), strong = l.confidence === 'high' && !(l.planes || [l.upper, l.lower]).some(function (id) { return small[id]; });
       var hit = null, best = 0;
@@ -85,15 +91,60 @@
         return; }
       // clip to the roofprint (+0.5 ft): lidar lines can run past it where the cloud buffer or a porch/neighbour continues
       var cl = clipToRoof(L2); if (!cl) return;
+      var doubt = null;
+      var pl = l.planes || [l.upper, l.lower], dr = pl.length === 2 && rise[pl[0]] != null && rise[pl[1]] != null ? Math.abs(rise[pl[0]] - rise[pl[1]]) : 0;
+      if (l.type === 'ridge' && offAxis(L2) > 8) doubt = 'ridge ' + Math.round(offAxis(L2)) + '° off the building axes (diagonal across the roof)' + (dr >= 3 ? '; its two planes differ by ' + dr + '/12' : '');
+      else if (l.type === 'ridge' && dr >= 6) doubt = 'ridge between planes of very different pitch (' + pl.map(function (id) { return rise[id] + '/12'; }).join(' vs ') + ')';
+      else if (cl[2] < 0.75) doubt = Math.round((1 - cl[2]) * 100) + '% of the line runs outside the roofprint';
+      if (doubt) { strong = false; doubtful++; }
       var c0 = [lon0 + cl[0][0] / kx, lat0 + cl[0][1] / ky], c1 = [lon0 + cl[1][0] / kx, lat0 + cl[1][1] / ky];
       l = Object.assign({}, l, { coords_lonlat: [c0, c1], length_ft: r2(l.length_ft * cl[2]), plan_length_ft: r2(l.plan_length_ft * cl[2]), clipped: cl[2] < 0.999 });
       f.line_segments.push({ type: l.type, auto_type: l.type, length_ft: l.length_ft, plan_length_ft: l.plan_length_ft, coords_lonlat: l.coords_lonlat, weight: 1,
-        source: 'lidar', lidar_source: l.source + (l.subtype ? ' — ' + l.subtype : ''), lidar_conf: l.confidence, lidar_strong: strong, drop_ft: l.drop_ft, planes: l.planes || [l.upper, l.lower] });
+        source: 'lidar', lidar_source: l.source + (l.subtype ? ' — ' + l.subtype : ''), lidar_conf: l.confidence, lidar_strong: strong, lidar_doubt: doubt, drop_ft: l.drop_ft, planes: l.planes || [l.upper, l.lower] });
       added++;
     });
     f.lidar_seg_summary = { version: sg.version, n_planes: sg.planes.length, n_small: sg.planes.filter(function (p) { return p.small; }).length, coverage: sg.coverage,
-      lines_added: added, model_lines_confirmed: confirmed, model_lines_retyped: retyped, skylight_candidates: (sg.skylights || []).length };
+      lines_added: added, lines_doubtful: doubtful, axis_deg: axis == null ? null : Math.round(axis * 10) / 10, model_lines_confirmed: confirmed, model_lines_retyped: retyped, skylight_candidates: (sg.skylights || []).length };
     return f.lidar_seg_summary;
+  }
+  /* 0.1.7.4: dormer candidates from the whole-roof lidar segmentation (NOT_PROVEN).
+   * gable dormer: a lidar ridge between two minor planes facing opposite ways; shed dormer: a minor plane facing the
+   * same way as a major plane but at least 2/12 flatter. Dormer gutters (often with returns) collect debris and can
+   * let water in, so each dormer carries gutter fields and an inspect-and-clean flag. User edits (tags.dormers,
+   * tags.dormersAdded) keep / size / add them. */
+  function dormers(sg, tags) {
+    var out = [], ed = (tags && tags.dormers) || {}, P = (sg && sg.planes) || [], byId = {};
+    P.forEach(function (p) { byId[p.id] = p; });
+    var tot = P.reduce(function (a, p) { return a + (+p.plan_area_sqft_approx || 0); }, 0) || 1;
+    function major(p) { return p.plan_area_sqft_approx >= 0.15 * tot; }
+    function minor(p) { return p && !major(p) && p.aspect_deg != null && p.plan_area_sqft_approx >= 12 && p.plan_area_sqft_approx <= 400; }
+    function ad(a, b) { var d = Math.abs(a - b) % 360; return Math.min(d, 360 - d); }
+    var used = {};
+    (sg && sg.lines || []).forEach(function (l) {
+      if (l.type !== 'ridge' || !l.planes || l.planes.length < 2) return; var A = byId[l.planes[0]], B = byId[l.planes[1]];
+      if (!minor(A) || !minor(B) || ad(A.aspect_deg, B.aspect_deg) < 140) return;
+      used[A.id] = used[B.id] = 1;
+      out.push({ type: 'gable dormer', planes: [A.id, B.id], pitch: A.pitch, ridge_lf: l.plan_length_ft, coords_lonlat: l.coords_lonlat,
+        centroid_lonlat: [(l.coords_lonlat[0][0] + l.coords_lonlat[1][0]) / 2, (l.coords_lonlat[0][1] + l.coords_lonlat[1][1]) / 2],
+        gutter_lf_est: r2((+A.strike_len_ft || 0) + (+B.strike_len_ft || 0)), confidence: l.confidence === 'high' ? 'medium' : 'low' });
+    });
+    P.forEach(function (p) {
+      if (used[p.id] || !minor(p)) return;
+      var host = P.filter(function (q) { return major(q) && q.aspect_deg != null && ad(q.aspect_deg, p.aspect_deg) <= 30 && q.rise_raw - p.rise_raw >= 2; })[0];
+      if (!host) return;
+      out.push({ type: 'shed dormer', planes: [p.id], host: host.id, pitch: p.pitch, host_pitch: host.pitch, ridge_lf: null, centroid_lonlat: p.centroid_lonlat,
+        gutter_lf_est: +p.strike_len_ft || null, confidence: p.small ? 'low' : 'medium' });
+    });
+    out = out.slice(0, 12).map(function (d, i) {
+      var k = 'D' + i, e = ed[k] || {};
+      return Object.assign(d, { key: k, source: 'lidar', kept: !!e.keep, returns: e.returns || 'unknown', gutter_lf: e.gutter_lf > 0 ? +e.gutter_lf : d.gutter_lf_est,
+        inspect_clean: true, status: e.keep ? 'confirmed by user' : 'candidate (NOT_PROVEN, not counted)' });
+    });
+    ((tags && tags.dormersAdded) || []).forEach(function (a, j) {
+      out.push({ key: 'UD' + j, type: a.type || 'dormer', source: 'user', kept: true, returns: a.returns || 'unknown', gutter_lf: +a.gutter_lf || null,
+        note: a.note || '', inspect_clean: true, status: 'user-entered' });
+    });
+    return out;
   }
   function facetsKey(r, lidar, useRidge) {
     var i = facetsInput(r, lidar, useRidge); return JSON.stringify([i.fp.geometry.coordinates, i.opts]);
@@ -101,7 +152,7 @@
   function liveFacets(r, lidar, useRidge) {
     var F = window.RoofFacets; if (!F || typeof F.computeFacets !== 'function' || !r) return null;
     var i = facetsInput(r, lidar, useRidge);
-    try { var f = F.computeFacets(i.fp, i.opts); if (f && !f.unsupported) { f.roof_model_info = r.roof_model_info || null; if (r.use_lidar_lines !== false) reconcileLidar(f, lidar); return f; } return null; } catch (e) { return null; }
+    try { var f = F.computeFacets(i.fp, i.opts); if (f && !f.unsupported) { f.roof_model_info = r.roof_model_info || null; if (r.use_lidar_lines !== false) reconcileLidar(f, lidar, window.RoofCalc && r.footprint_geojson ? window.RoofCalc.extractRing(r.footprint_geojson) : null); return f; } return null; } catch (e) { return null; }
   }
   /* Apply user interior-line types; recompute ridge/hip/valley LF from the segments. Returns list of changes.
    * 0.1.7.3: type 'none' = deleted by the user (not counted); hips/valleys of an ASSUMED wings/hip model are unverified
@@ -116,6 +167,15 @@
       if (s.source !== 'lidar' && EXTRA_TYPES.indexOf(t.type) >= 0) return;
       if ((s.auto_type || s.type) !== t.type) changes.push({ i: +k, from: s.auto_type || s.type, to: t.type === 'none' ? 'deleted' : t.type, length_ft: s.length_ft, layer: t.layer });
       if (!s.auto_type) s.auto_type = s.type; s.type = t.type; s.user_tagged = true; s.deleted = t.type === 'none';
+    });
+    // 0.1.7.4: line endpoints moved in the 3-D editor (plan position; length scaled by the plan-length change)
+    if (tags && tags.linesKey === key && tags.lineMoves) Object.keys(tags.lineMoves).forEach(function (k) {
+      var s = segs[+k], mv = tags.lineMoves[k]; if (!s || !mv || !mv.coords_lonlat || !s.coords_lonlat) return;
+      function pl(c) { var kx = Math.cos(c[0][1] * Math.PI / 180) * 364567.2; return Math.hypot((c[1][0] - c[0][0]) * kx, (c[1][1] - c[0][1]) * 364567.2); }
+      var p0 = pl(s.coords_lonlat), p1 = pl(mv.coords_lonlat); if (!(p1 > 0.5)) return;
+      var ratio = p0 > 0.01 ? (+s.length_ft || p0) / p0 : 1, old = s.length_ft;
+      s.coords_lonlat = mv.coords_lonlat; s.plan_length_ft = r2(p1); s.length_ft = r2(p1 * ratio); s.user_moved = true; s.user_tagged = true;
+      changes.push({ i: +k, from: s.type + ' ' + (+old).toFixed(1) + ' ft', to: 'moved in 3-D editor, ' + s.length_ft.toFixed(1) + ' ft', length_ft: s.length_ft, layer: mv.layer || '3-D editor' });
     });
     var mi = f.roof_model_info, unver = mi && !mi.verified && (mi.model === 'wings' || mi.model === 'hip');
     var verified = !!(mi && mi.verified);
@@ -337,5 +397,5 @@
   }
   window.RoofTags = { EDGE_TAGS: EDGE_TAGS, AREA_TAGS: AREA_TAGS, LINE_TYPES: LINE_TYPES, emptyTags: emptyTags, liveFacets: liveFacets, facetsKey: facetsKey,
     facetsInput: facetsInput, applyLineTags: applyLineTags, facetAt: facetAt, matchPlanes: matchPlanes, reportPayload: reportPayload, sectionHtml: sectionHtml,
-    inject: inject, pointInRing: pointInRing, esc: esc, EXTRA_TYPES: EXTRA_TYPES, ALL_TYPES: ALL_TYPES, lidarSeg: lidarSeg, reconcileLidar: reconcileLidar };
+    inject: inject, pointInRing: pointInRing, esc: esc, EXTRA_TYPES: EXTRA_TYPES, ALL_TYPES: ALL_TYPES, lidarSeg: lidarSeg, reconcileLidar: reconcileLidar, dormers: dormers };
 })();

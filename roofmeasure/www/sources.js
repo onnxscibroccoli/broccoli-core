@@ -153,39 +153,49 @@
     return next();
   }
 
+  /** 0.1.7.4: town asked for in "street, Town, MA 0xxxx" (upper case) or null. */
+  function townOf(address) { var m = /,\s*([A-Za-z][A-Za-z .'-]*?)\s*,\s*(MA|Mass\.?|Massachusetts)\b/i.exec(String(address || '')); return m ? m[1].trim().toUpperCase() : null; }
+  function hasTown(label, town) { return !town || (' ' + String(label || '').toUpperCase().replace(/[^A-Z ]/g, ' ') + ' ').indexOf(' ' + town.replace(/[^A-Z ]/g, ' ') + ' ') >= 0; }
+  function flag(res, address) { var t = townOf(address); if (res && t && !hasTown(res.label, t)) res.town_mismatch = { asked: t, found: res.label }; return res; }
   /** US Census one-line geocoder (free, US only). Note: no CORS headers in browsers -> Nominatim fallback. */
   function geocodeCensus(address, opts) {
     var url = ENDPOINTS.censusGeocoder + '?' + qs({ address: address, benchmark: 'Public_AR_Current', format: 'json' });
     return getJSON(url, opts).then(function (d) {
-      var m = d.result && d.result.addressMatches && d.result.addressMatches[0];
-      return m ? { lon: m.coordinates.x, lat: m.coordinates.y, label: m.matchedAddress, source: 'US Census Geocoder' } : null;
+      var t = townOf(address), ms = (d.result && d.result.addressMatches) || [], m = ms.filter(function (x) { return hasTown(x.matchedAddress, t); })[0] || ms[0];
+      return m ? flag({ lon: m.coordinates.x, lat: m.coordinates.y, label: m.matchedAddress, source: 'US Census Geocoder' }, address) : null;
     });
   }
   function geocodeNominatim(address, opts) {
     var url = ENDPOINTS.nominatim + '?' + qs({ q: address, format: 'jsonv2', limit: 1, countrycodes: 'us' });
     return getJSON(url, opts).then(function (d) {
-      return d && d[0] ? { lon: +d[0].lon, lat: +d[0].lat, label: d[0].display_name, source: 'OSM Nominatim' } : null;
+      return d && d[0] ? flag({ lon: +d[0].lon, lat: +d[0].lat, label: d[0].display_name, source: 'OSM Nominatim' }, address) : null;
     });
   }
   /** MassGIS statewide geocoder (MA Master Address points — usually lands on the building). CORS ok. */
   function geocodeMassGIS(address, opts) {
-    var url = ENDPOINTS.massgisGeocoder + '?' + qs({ SingleLine: address, outSR: 4326, maxLocations: 1, f: 'json' });
+    var url = ENDPOINTS.massgisGeocoder + '?' + qs({ SingleLine: address, outSR: 4326, maxLocations: 6, f: 'json' });
     return getJSON(url, opts).then(function (d) {
-      var c = d.candidates && d.candidates[0];
-      return c && c.score >= 80 ? { lon: c.location.x, lat: c.location.y, label: c.address, score: c.score, source: 'MassGIS Statewide Geocoder' } : null;
+      // 0.1.7.4: prefer a candidate in the town that was asked for; never silently move to another town
+      var t = townOf(address), cs = (d.candidates || []).filter(function (c) { return c.score >= 80; });
+      var c = cs.filter(function (x) { return hasTown(x.address, t); })[0] || cs[0];
+      return c ? flag({ lon: c.location.x, lat: c.location.y, label: c.address, score: c.score, source: 'MassGIS Statewide Geocoder' }, address) : null;
     });
   }
-  /** MassGIS -> US Census -> Nominatim. */
+  /** MassGIS -> US Census -> Nominatim. A match in another town than the one asked for is kept only if no geocoder
+   * finds the asked town, and carries town_mismatch {asked, found} so the app can warn. */
   function geocode(address, opts) {
-    var chain = [geocodeMassGIS, geocodeCensus, geocodeNominatim];
+    var chain = [geocodeMassGIS, geocodeCensus, geocodeNominatim], fallback = null;
     function next(i) {
-      if (i >= chain.length) return Promise.resolve(null);
-      return chain[i](address, opts).catch(function () { return null; }).then(function (r) { return r || next(i + 1); });
+      if (i >= chain.length) return Promise.resolve(fallback);
+      return chain[i](address, opts).catch(function () { return null; }).then(function (r) {
+        if (r && !r.town_mismatch) return r;
+        if (r && !fallback) fallback = r;
+        return next(i + 1); });
     }
     return next(0);
   }
 
   return { ENDPOINTS: ENDPOINTS, pointInRing: pointInRing, distToRingFt: distToRingFt, pickBuilding: pickBuilding,
     fetchMassGIS: fetchMassGIS, fetchFema: fetchFema, fetchOverpass: fetchOverpass, fetchFootprint: fetchFootprint,
-    geocode: geocode, geocodeMassGIS: geocodeMassGIS, geocodeCensus: geocodeCensus, geocodeNominatim: geocodeNominatim };
+    geocode: geocode, townOf: townOf, geocodeMassGIS: geocodeMassGIS, geocodeCensus: geocodeCensus, geocodeNominatim: geocodeNominatim };
 });
