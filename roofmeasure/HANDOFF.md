@@ -12,7 +12,7 @@ Read in order: this file, CODEVELOP.md (rules, build), CHANGELOG.md, docs/resear
 - Roof features (skylights, decks, dormers) are CANDIDATES and are not in the billable totals (provenance boundary).
 - 3-D view/editor: www/view3d.js (three.js r187, MIT).
 
-## Status by test house (PASS / FAIL / NOT_PROVEN), CI run 43810427490
+## Status by test house (PASS / FAIL / NOT_PROVEN), CI runs 43810427490 and 43811370932 (same numbers)
 | House | Lidar residual (median) | Counted skylights | Deck | Dormers (cand.) | Status |
 |---|---|---|---|---|---|
 | 15 Ward St, Hingham | 0.05 ft PASS | 3 (7.1x5.0 NE, 4.4x2.0 SW, 3.9x1.8 SW) | none | 0 | residual PASS; skylights NOT_PROVEN (on the photo patches) |
@@ -36,7 +36,8 @@ Read in order: this file, CODEVELOP.md (rules, build), CHANGELOG.md, docs/resear
   dormer candidates: Oakcrest 1-6 = 3/1/1/3/2/3, 6 Harborview 1, 30 Lockwood 1, 49 Scotland 1, 15 Ward 0; skylight counts unchanged.
 - 0.1.7.6 increment 3 (87316c8): run 43810906221 all green, same numbers; the deck label still sat under the F5 badge on the overlay page
   (badges are drawn in a separate pass there).
-- 0.1.7.6 increment 4: _features() computes the facet badge boxes itself. Run: see `gh run list -R onnxscibroccoli/broccoli-core --branch feat/roofmeasure-dev`.
+- 0.1.7.6 increment 4 (fd51e26): _features() computes the facet badge boxes itself. Run 43811370932 all green (apk, report-tests, emulator-smoke,
+  Oakcrest 1-6); numbers as in the table; deck label now clear. CI APK sha256 c20e374edd512fb49d455fb8f832570c1847b392a040c200e044d8f821aa35cc.
 
 ## Requirements
 - Mission: open-source tools so contractors and homeowners get accurate roof measurements and can tell whether a quote is fair.
@@ -50,7 +51,9 @@ Read in order: this file, CODEVELOP.md (rules, build), CHANGELOG.md, docs/resear
 - One private internal test house is kept out of this repo. Never add private addresses.
 
 ## Next steps
-1. Check the 0.1.7.6 CI artifacts (overlay pages of 15 Ward, 6 Harborview, 4 Oakcrest) visually; per-house counts are in bench-oakcrest-*/summary.txt.
+1. Exact next step: lean model for features above the eaves (deck, dormers): shift x (feature height / eave height above lidar ground) so the
+   6 Harborview deck lands on its walls in the overlay; then re-check 4 Oakcrest's two lidar-only skylight candidates against ortho patches
+   (they sit on the two small squares on the north face but no ortho patch passed).
 2. Dormers: lidar finds 1 on 6 Harborview (two visible beside the deck); check after increment 2.
    The deck outline still sits ~1 m SE of the deck walls in the photo: the deck is higher than the eaves, so it leans further (lean grows with height).
 3. Lidar lines (plane intersections) are still in the lidar frame (~1 m off the roofprint): consider moving them too, then re-check totals.
