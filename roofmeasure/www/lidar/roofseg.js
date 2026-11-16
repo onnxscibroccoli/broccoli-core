@@ -94,7 +94,7 @@
     var merged = true;
     while (merged) { merged = false;
       for (var a = 0; a < planes.length && !merged; a++) for (var b = a + 1; b < planes.length && !merged; b++) {
-        var A = planes[a], B = planes[b]; if (nAngle(A, B) > 3) continue;
+        var A = planes[a], B = planes[b]; if (nAngle(A, B) > 5) continue; // 0.1.7.6: 5° (was 3°): QL2 interswath steps (<= 0.08 m) split coplanar planes
         var cB = cent(P, B.idx); if (Math.abs(zAt(A, cB[0], cB[1]) - cB[2]) > 0.2) continue;
         var cA = cent(P, A.idx); if (Math.abs(zAt(B, cA[0], cA[1]) - cA[2]) > 0.2) continue;
         var idx = A.idx.concat(B.idx), pl = robust(P, idx); if (!pl) continue; pl.idx = idx; planes.splice(b, 1); planes[a] = pl; merged = true; } }

@@ -326,11 +326,18 @@
       var dt = det(M); if (Math.abs(dt) < 1e-9) return null;
       function rep(k) { return M.map(function (row, i) { return row.map(function (x, j) { return j === k ? v[i] : x; }); }); }
       var a = det(rep(0)) / dt, b = det(rep(1)) / dt, c0 = det(rep(2)) / dt;
-      if (!on.length) return { ok: true, note: 'no returns on the patch (glass), on plane P' + (+top + 1) };
+      // 0.1.7.6 lidar skylight evidence: missing returns (density on the patch vs the ring) and an intensity anomaly (glass is
+      // specular: low or erratic returns). Raw EPT intensity (no range / incidence normalisation), so only relative to the ring.
+      var aOn = Math.PI * hs * hs, aRing = Math.PI * (r1 * r1 - r0 * r0), dens = aOn > 0 && ring.length ? (on.length / aOn) / (ring.length / aRing) : null;
+      var iR = Q.map(function (p) { return p[4] || 0; }).sort(function (x, y) { return x - y; }), iO = on.map(function (p) { return p[4] || 0; }).sort(function (x, y) { return x - y; });
+      var iRat = iR.length && iO.length && iR[iR.length >> 1] > 0 ? iO[iO.length >> 1] / iR[iR.length >> 1] : null;
+      var ev = []; if (dens != null && dens < 0.5) ev.push('few returns (' + Math.round(dens * 100) + ' % of the plane density)'); if (iRat != null && (iRat < 0.7 || iRat > 1.5)) ev.push('intensity ' + Math.round(iRat * 100) + ' % of the plane');
+      var tail = ev.length ? '; lidar glass evidence: ' + ev.join(', ') : '';
+      if (!on.length) return { ok: true, glass: true, note: 'no returns on the patch (glass?), on plane P' + (+top + 1) };
       var dz = on.map(function (p) { return p[2] - (a * (p[0] - c[0]) + b * (p[1] - c[1]) + c0); }).sort(function (x, y) { return x - y; }), med = dz[dz.length >> 1];
       if (med > 0.45) return { ok: false, why: 'raised ' + med.toFixed(2) + ' m above its lidar plane (dormer / chimney / vent box)' };
       if (med < -0.25) return { ok: false, why: 'sunk ' + (-med).toFixed(2) + ' m below its lidar plane (opening / lower roof)' };
-      return { ok: true, note: 'on plane P' + (+top + 1) + ', ' + on.length + ' returns ' + (med >= 0 ? '+' : '') + med.toFixed(2) + ' m (flush / curb)' };
+      return { ok: true, glass: ev.length > 0, note: 'on plane P' + (+top + 1) + ', ' + on.length + ' returns ' + (med >= 0 ? '+' : '') + med.toFixed(2) + ' m (flush / curb)' + tail };
     };
   }
   function roofFeatures(r) {
@@ -344,13 +351,26 @@
     //    within -0.25 / +0.45 m of that plane (flush glass or a low curb; dormers, chimneys, vents and plane edges fail);
     //  - not on a roof deck, not within 2.5 m of a dormer, not in a cluster of 3+ patches.
     // Patches without enough lidar points around them are kept as "lidar not checked" candidates but not counted.
-    var rej = [], LP = lidarProbe(r);
+    var rej = [], LP = lidarProbe(r), AX = (function () { // building axis (longest roofprint edge), degrees CCW from east
+      var R0 = r.footprint_geojson && window.RoofCalc.extractRing(r.footprint_geojson); if (!R0) return null; var best = 0, th = null, kx2 = Math.cos(R0[0][1] * Math.PI / 180);
+      for (var i = 0; i + 1 < R0.length; i++) { var dx = (R0[i + 1][0] - R0[i][0]) * kx2, dy = R0[i + 1][1] - R0[i][1], L = Math.hypot(dx, dy); if (L > best) { best = L; th = Math.atan2(dy, dx) * 180 / Math.PI; } }
+      return th; })();
+    // patch angle_deg is in image axes (x east, y south, clockwise): CCW-from-east = -angle; compare modulo 90
+    function axOff(a) { if (AX == null || a == null) return null; var d = ((-a - AX) % 90 + 180) % 90; return Math.min(d, 90 - d); }
     (r.ortho_patches || []).forEach(function (p) {
       var why = null, w = p.approx_w_ft, h = p.approx_h_ft;
+      var am2 = w * h / 10.764, asp = Math.max(w, h) / Math.max(0.01, Math.min(w, h)), dax = axOff(p.angle_deg);
       if (w < 1.5 || h < 1.5) why = 'smaller than 1.5 ft (vent / pipe / trim)';
       else if (w > 12 || h > 12) why = 'larger than 12 ft (not a skylight)';
+      // 0.1.7.6 gates from the pipeline spec (docs/research/lidar_pipeline_spec.md): 0.30-3.5 m2, width >= 0.35 m, aspect <= 3.5,
+      // rectangularity >= 0.78, long side within 10 deg of the eave / ridge bearing
+      else if (am2 < 0.30 || am2 > 3.5) why = 'area ' + am2.toFixed(2) + ' m2 outside 0.30-3.5 m2';
+      else if (asp > 3.5) why = 'aspect 1:' + asp.toFixed(1) + ' (over 1:3.5)';
       else if ((p.contrast || 0) < 4) why = 'weak ortho contrast (' + p.contrast + ')';
-      else if ((p.rectangularity || 0) < 0.6) why = 'not rectangular (' + p.rectangularity + ')';
+      // the spec's 0.78 assumes segmentation masks; on 15 cm threshold blobs the rims round off (15 Ward's three skylights measure
+      // 0.62-0.69), so the gate is 0.6 and >= 0.78 is reported as "strict rectangle" evidence
+      else if ((p.rectangularity || 0) < 0.6) why = 'not rectangular (' + p.rectangularity + ' < 0.6)';
+      else if (dax != null && dax > 10) why = Math.round(dax) + ' deg off the eave / ridge bearing (over 10)';
       else if ((r.decks || []).some(function (d) { return d.outline_lonlat && (pipLL(p.centroid_lonlat, d.outline_lonlat.concat([d.outline_lonlat[0]])) || d.outline_lonlat.some(function (q) { return dm(q, p.centroid_lonlat) < 1.0; })); })) why = 'on a roof deck (railing / boards)';
       else if (dorm.some(function (q) { return dm(q, p.centroid_lonlat) < 2.5; })) why = 'at a dormer (dormer window / trim)';
       else if ((r.ortho_patches || []).filter(function (o) { return o !== p && dm(o.centroid_lonlat, p.centroid_lonlat) < 2.0; }).length >= 2) why = 'cluster of 3+ patches (dormer window, trim or railing)';
@@ -358,7 +378,7 @@
       if (!why && lc && lc.ok === false) why = lc.why;
       if (why) { p.excluded = why; rej.push({ key: p.key, w_ft: w, h_ft: h, reason: why, centroid_lonlat: p.centroid_lonlat }); return; }
       sk.push({ key: p.key, centroid_lonlat: p.centroid_lonlat, w_ft: w, h_ft: h, angle_deg: p.angle_deg || 0, source: p.source + (p.lidar_match ? ' + lidar' : ''),
-        evidence: p.polarity + ' patch on its facet, contrast ' + p.contrast + (lc ? '; lidar: ' + lc.note : '; lidar not checked'), confidence: lc ? (p.lidar_match ? 'medium' : 'low') : 'low',
+        evidence: p.polarity + ' patch on its facet, contrast ' + p.contrast + ', rectangularity ' + p.rectangularity + (p.rectangularity >= 0.78 ? ' (strict)' : '') + (dax != null ? ', ' + Math.round(dax) + ' deg off the roof axis' : '') + (lc ? '; lidar: ' + lc.note : '; lidar not checked'), confidence: lc ? (p.lidar_match || lc.glass ? 'medium' : 'low') : 'low',
         counted: !!lc, lidar_check: lc ? lc.note : 'not checked (too few lidar points)' });
     });
     (r.skylights || []).forEach(function (k) { if (k.ortho_match || !k.centroid_lonlat) return;

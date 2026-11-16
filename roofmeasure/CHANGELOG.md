@@ -24,6 +24,20 @@ Guidance from docs/research (Ian's papers): lines come from fitted lidar planes;
   dormers now also exclude their window patches from the skylights (0.1.7.5 used confirmed dormers only, so none were excluded).
 - Deck rectangle is square to the house (longest roofprint edge); flat strips under 5 ft wide are not decks. Facet badges are part of
   the label collision check.
+- Pipeline spec (docs/research/lidar_pipeline_spec.md) items folded in:
+  - coplanar plane merge under a 5° normal delta (was 3°): QL2 interswath steps (<= 0.08 m) split coplanar planes;
+  - metric frame check: outline edges and areas already use a WGS84 local tangent frame (lib/roofcalc.js, geodesic lengths).
+    The lidar works in Web Mercator x cos(lat), which is off by about +0.15 % east / -0.22 % north; lidar line lengths are now
+    re-measured geodesically from their lon/lat ends (sloped = plan x the line's lidar slope ratio), deck areas via RoofCalc.areaSqft;
+  - ortho preprocessing: 5 x 5 bilateral smoothing of the roof window, 0.3 m inward erosion from the outline;
+  - skylight gates: 0.30-3.5 m², aspect <= 1:3.5, long side within 10° of the eave / ridge bearing, rectangularity of the closed,
+    hole-filled blob >= 0.6 (the spec's 0.78 assumes segmentation masks; 15 Ward's skylights measure 0.62-0.69 on 15 cm pixels, so
+    >= 0.78 is reported as "strict" evidence instead);
+  - lidar skylight evidence: missing returns (patch density < 50 % of its plane) or an intensity anomaly (< 70 % or > 150 % of the
+    plane; raw EPT intensity, no range / incidence normalisation) raise the confidence to medium;
+  - dormer size gate 1.5-20 m² (16-215 sq ft plan).
+  - Research list (not built): MobileSAM / SAM 2.1 Hiera-Tiny (ONNX, Apache-2.0), MLS + curvature for curved roofs, CLAHE, NDVI
+    (MassGIS tiles are RGB), intensity normalisation (no trajectory in EPT).
 - Tests: tests/v0176_test.cjs; CI gates 15 Ward residual <= 0.2 ft, 15 Ward 2-4 counted skylights, 6 Harborview deck 150-210 sq ft.
 
 ## 0.1.7.5 (versionCode 10705) — 2026-11-15

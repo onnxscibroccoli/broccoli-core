@@ -13,7 +13,7 @@
  */
 (function (root, factory) { var m = factory(); if (typeof module === 'object' && module.exports) module.exports = m; else root.RoofOrtho = m; })(this, function () {
   'use strict';
-  var VERSION = '0.1.7.6-ortho-4';
+  var VERSION = '0.1.7.6-ortho-5';
   function world(lon, lat, z) { var n = Math.pow(2, z) * 256, s = Math.sin(lat * Math.PI / 180);
     return [(lon + 180) / 360 * n, (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * n]; }
   function unworld(x, y, z) { var n = Math.pow(2, z) * 256, lon = x / n * 360 - 180, t = Math.PI - 2 * Math.PI * y / n;
@@ -241,6 +241,17 @@
   }
 
   /** Skylight / chimney / vent candidates: compact bright or dark rectangles inside the (shifted) roof. */
+  /** 0.1.7.6: edge-preserving bilateral smoothing (5 x 5, sigma_s 1.5 px, sigma_r 12 grey levels) of the roof window only; keeps
+   * 2-3 px skylight frames that a Gaussian blur would wash out (pipeline spec, docs/research/lidar_pipeline_spec.md). */
+  function bilateral(m, X0, Y0, X1, Y1) {
+    var g = m.gray, W = m.W, out = new Float32Array(g), ws = [];
+    for (var dy = -2; dy <= 2; dy++) for (var dx = -2; dx <= 2; dx++) ws.push([dx, dy, Math.exp(-(dx * dx + dy * dy) / (2 * 1.5 * 1.5))]);
+    for (var y = Math.max(2, Y0 - 2); y <= Math.min(m.H - 3, Y1 + 2); y++) for (var x = Math.max(2, X0 - 2); x <= Math.min(W - 3, X1 + 2); x++) {
+      var c = g[y * W + x], sw = 0, sv = 0;
+      for (var k = 0; k < ws.length; k++) { var v = g[(y + ws[k][1]) * W + x + ws[k][0]], d = v - c, w = ws[k][2] * Math.exp(-d * d / (2 * 144)); sw += w; sv += w * v; }
+      out[y * W + x] = sv / sw; }
+    return out;
+  }
   function patches(ringLL, m, al, opts) {
     opts = opts || {};
     var lat = ringLL[0][1], res = mpp(lat, m.z), zf = al && al.z ? Math.pow(2, m.z - al.z) : 1, sx = al && al.applied ? al.dx_px * zf : 0, sy = al && al.applied ? al.dy_px * zf : 0;
@@ -253,7 +264,7 @@
       if ((a[1] > y) !== (b[1] > y) && x < (b[0] - a[0]) * (y - a[1]) / (b[1] - a[1]) + a[0]) c = !c; } return c; }
     function dEdge(x, y) { var d = 1e9; for (var i = 0, j = P.length - 1; i < P.length; j = i++) { var a = P[i], b = P[j], vx = b[0] - a[0], vy = b[1] - a[1], L2 = vx * vx + vy * vy || 1,
       t = Math.max(0, Math.min(1, ((x - a[0]) * vx + (y - a[1]) * vy) / L2)); d = Math.min(d, Math.hypot(x - a[0] - t * vx, y - a[1] - t * vy)); } return d; }
-    var W = X1 - X0 + 1, H = Y1 - Y0 + 1, inm = new Uint8Array(W * H), g = m.gray, inset = 0.7 / res;
+    var W = X1 - X0 + 1, H = Y1 - Y0 + 1, inm = new Uint8Array(W * H), g = opts.bilateral === false ? m.gray : bilateral(m, X0, Y0, X1, Y1), inset = 0.7 / res;
     // 0.1.7.5: per-facet background. A sunlit and a shaded facet differ a lot, so a skylight is dark on a sunlit facet and
     // bright (glare) on a shaded one; compare each pixel with its OWN facet's median / MAD, away from facet boundaries.
     var FP = (opts.facets || []).map(function (poly) { return poly.map(function (p) { var w = world(p[0], p[1], m.z); return [w[0] - m.ox + sx, w[1] - m.oy + sy]; }); });
@@ -264,7 +275,7 @@
     if (FP.length) {
       var fid = new Int16Array(W * H).fill(-1), vals = FP.map(function () { return []; }), fin = 0.45 / res;
       for (var yy = 0; yy < H; yy++) for (var xx = 0; xx < W; xx++) { var px = X0 + xx + 0.5, py = Y0 + yy + 0.5;
-        for (var f = 0; f < FP.length; f++) if (inP(FP[f], px, py)) { if (dP(FP[f], px, py) > fin && dEdge(px, py) > 0.25 / res) { fid[yy * W + xx] = f; vals[f].push(g[(Y0 + yy) * m.W + X0 + xx]); } break; } }
+        for (var f = 0; f < FP.length; f++) if (inP(FP[f], px, py)) { if (dP(FP[f], px, py) > fin && dEdge(px, py) > 0.3 / res) { fid[yy * W + xx] = f; vals[f].push(g[(Y0 + yy) * m.W + X0 + xx]); } break; } }
       var med = vals.map(function (v) { if (v.length < 40) return null; var a = v.slice().sort(function (x, y) { return x - y; }); return a[a.length >> 1]; });
       var madF = vals.map(function (v, f) { if (med[f] == null) return null; var a = v.map(function (x) { return Math.abs(x - med[f]); }).sort(function (x, y) { return x - y; }); return Math.max(4, a[a.length >> 1] * 1.4826); });
       var diffF = new Float32Array(W * H), madPix = new Float32Array(W * H);
@@ -299,6 +310,16 @@
           if (lab[j] >= 0 || !inm[j] || diff[j] * pol < K * 0.6 * MAD(j)) return; lab[j] = comps.length; st.push(j); }); }
       comps.push({ pol: pol, mem: mem });
     }
+    function closedFill(mem, WW) {
+      var xs0 = 1e9, ys0 = 1e9, xs1 = -1e9, ys1 = -1e9; mem.forEach(function (q) { var x = q % WW, y = (q / WW) | 0; xs0 = Math.min(xs0, x); ys0 = Math.min(ys0, y); xs1 = Math.max(xs1, x); ys1 = Math.max(ys1, y); });
+      var bw = xs1 - xs0 + 5, bh = ys1 - ys0 + 5, a = new Uint8Array(bw * bh); mem.forEach(function (q) { a[(((q / WW) | 0) - ys0 + 2) * bw + (q % WW) - xs0 + 2] = 1; });
+      function mo(src, dil) { var o = new Uint8Array(bw * bh); for (var y = 1; y < bh - 1; y++) for (var x = 1; x < bw - 1; x++) { var i = y * bw + x;
+        o[i] = dil ? (src[i] | src[i - 1] | src[i + 1] | src[i - bw] | src[i + bw]) : (src[i] & src[i - 1] & src[i + 1] & src[i - bw] & src[i + bw]); } return o; }
+      a = mo(mo(a, true), false);
+      var out2 = new Uint8Array(bw * bh), st = [0]; out2[0] = 1; // flood the outside from the corner; the rest is the filled blob
+      while (st.length) { var q = st.pop(), x = q % bw, y = (q / bw) | 0; [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(function (o) { var nx = x + o[0], ny = y + o[1]; if (nx < 0 || ny < 0 || nx >= bw || ny >= bh) return; var j = ny * bw + nx; if (out2[j] || a[j]) return; out2[j] = 1; st.push(j); }); }
+      var n = 0; for (var k = 0; k < bw * bh; k++) if (!out2[k]) n++; return n;
+    }
     var out = [];
     comps.forEach(function (cpt) {
       var n = cpt.mem.length, area = n * res * res; if (opts.debug && n > 6) out.push({ dbg: 1, n: n, area: Math.round(area * 100) / 100, pol: cpt.pol, at: [X0 + (cpt.mem[0] % W), Y0 + ((cpt.mem[0] / W) | 0)] }); if (area < 0.25 || area > 6) return;
@@ -307,7 +328,9 @@
       var th = 0.5 * Math.atan2(2 * sxy, sxx - syy), u = [Math.cos(th), Math.sin(th)], lo = [1e9, 1e9], hi = [-1e9, -1e9];
       cpt.mem.forEach(function (q) { var a = q % W - mx, b = ((q / W) | 0) - my, s1 = a * u[0] + b * u[1], s2 = -a * u[1] + b * u[0];
         lo[0] = Math.min(lo[0], s1); hi[0] = Math.max(hi[0], s1); lo[1] = Math.min(lo[1], s2); hi[1] = Math.max(hi[1], s2); });
-      var w = (hi[0] - lo[0] + 1) * res, h = (hi[1] - lo[1] + 1) * res, fill = area / (w * h), asp = Math.max(w, h) / Math.min(w, h);
+      var w = (hi[0] - lo[0] + 1) * res, h = (hi[1] - lo[1] + 1) * res, asp = Math.max(w, h) / Math.min(w, h);
+      // 0.1.7.6: rectangularity of the CLOSED, hole-filled blob (a threshold blob is ragged at its rim; a segmentation mask is not)
+      var fill = closedFill(cpt.mem, W) * res * res / (w * h);
       if (opts.debug) out.push({ dbg: 2, w: w, h: h, fill: fill, asp: asp }); if (fill < 0.5 || asp > 3.5 || Math.min(w, h) < 0.35) return;
       var mad = MAD(cpt.mem[0]);
       var ll = unworld(X0 + mx + 0.5 - sx + m.ox, Y0 + my + 0.5 - sy + m.oy, m.z); // back to roofprint coordinates

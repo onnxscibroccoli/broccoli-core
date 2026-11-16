@@ -98,7 +98,11 @@
       else if (cl[2] < 0.75) doubt = Math.round((1 - cl[2]) * 100) + '% of the line runs outside the roofprint';
       if (doubt) { strong = false; doubtful++; }
       var c0 = [lon0 + cl[0][0] / kx, lat0 + cl[0][1] / ky], c1 = [lon0 + cl[1][0] / kx, lat0 + cl[1][1] / ky];
-      l = Object.assign({}, l, { coords_lonlat: [c0, c1], length_ft: r2(l.length_ft * cl[2]), plan_length_ft: r2(l.plan_length_ft * cl[2]), clipped: cl[2] < 0.999 });
+      // 0.1.7.6: plan length from the clipped lon/lat ends on the WGS84 ellipsoid (geodesic, same as the outline edges), not the
+      // lidar's spherical Web-Mercator x cos(lat) frame (that frame is off by about +0.15 % E / -0.22 % N); sloped = plan x the
+      // lidar slope ratio (sqrt(1 + (rise/run)^2) of the line)
+      var RCg = window.RoofCalc, slr = l.plan_length_ft > 0.01 ? l.length_ft / l.plan_length_ft : 1, pg = RCg && RCg.geodesicDistanceFt ? RCg.geodesicDistanceFt(c0, c1) : null;
+      l = Object.assign({}, l, { coords_lonlat: [c0, c1], length_ft: r2(pg != null ? pg * slr : l.length_ft * cl[2]), plan_length_ft: r2(pg != null ? pg : l.plan_length_ft * cl[2]), clipped: cl[2] < 0.999, length_frame: pg != null ? 'WGS84 geodesic' : 'lidar local' });
       f.line_segments.push({ type: l.type, auto_type: l.type, length_ft: l.length_ft, plan_length_ft: l.plan_length_ft, coords_lonlat: l.coords_lonlat, weight: 1,
         source: 'lidar', lidar_source: l.source + (l.subtype ? ' — ' + l.subtype : ''), lidar_conf: l.confidence, lidar_strong: strong, lidar_doubt: doubt, drop_ft: l.drop_ft, planes: l.planes || [l.upper, l.lower] });
       added++;
@@ -121,6 +125,8 @@
       var A = 0, O = p.outline_lonlat, kx = Math.cos(O[0][1] * Math.PI / 180) * 364000, ky = 364000;
       for (var i = 0; i < O.length; i++) { var a = O[i], b = O[(i + 1) % O.length]; A += (a[0] * kx) * (b[1] * ky) - (b[0] * kx) * (a[1] * ky); }
       var rc = p.rect && p.rect.area_sqft > 0 ? p.rect : null; // 0.1.7.6: robust rectangle (the hull is inflated by stray edge points)
+      var RCa = window.RoofCalc, ga = function (ring) { try { return Math.round(RCa.areaSqft({ type: 'Polygon', coordinates: [ring.concat([ring[0]])] })); } catch (e) { return null; } }; // 0.1.7.6: WGS84 local tangent frame
+      if (RCa && RCa.areaSqft) { var h2 = ga(O); if (h2) A = 2 * h2; if (rc) { var r2a = ga(rc.outline_lonlat); if (r2a) rc = Object.assign({}, rc, { area_sqft: r2a }); } }
       out.push({ key: 'K' + out.length, plane: p.id, outline_lonlat: rc ? rc.outline_lonlat : O, area_sqft: rc ? rc.area_sqft : Math.round(Math.abs(A) / 2), hull_area_sqft: Math.round(Math.abs(A) / 2),
         w_ft: rc ? rc.w_ft : null, h_ft: rc ? rc.h_ft : null, outline_method: rc ? rc.method : 'convex hull', points_area_sqft: p.plan_area_sqft_approx, pitch: p.pitch, z_m: p.z_m,
         n_points: p.n_points, centroid_lonlat: p.centroid_lonlat, type: 'roof deck / flat section', confidence: p.small ? 'low' : 'medium',
@@ -157,6 +163,9 @@
       out.push({ type: 'shed dormer', planes: [p.id], host: host.id, pitch: p.pitch, host_pitch: host.pitch, ridge_lf: null, centroid_lonlat: p.centroid_lonlat,
         gutter_lf_est: +p.strike_len_ft || null, confidence: p.small ? 'low' : 'medium' });
     });
+    // 0.1.7.6: dormer size gate 1.5-20 m2 (16-215 sq ft plan, sum of its lidar planes), pipeline spec
+    out.forEach(function (d) { d.area_sqft = Math.round((d.planes || []).reduce(function (a, id) { return a + (+(byId[id] || {}).plan_area_sqft_approx || 0); }, 0)) || null; });
+    out = out.filter(function (d) { return d.area_sqft == null || (d.area_sqft >= 16 && d.area_sqft <= 215); });
     out = out.slice(0, 12).map(function (d, i) {
       var k = 'D' + i, e = ed[k] || {};
       return Object.assign(d, { key: k, source: 'lidar', kept: !!e.keep, returns: e.returns || 'unknown', gutter_lf: e.gutter_lf > 0 ? +e.gutter_lf : d.gutter_lf_est,

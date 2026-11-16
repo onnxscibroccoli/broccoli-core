@@ -39,6 +39,11 @@ Read in order: this file, CODEVELOP.md (rules, build), CHANGELOG.md, docs/resear
 - 0.1.7.6 increment 4 (fd51e26): _features() computes the facet badge boxes itself. Run 43811370932 all green (apk, report-tests, emulator-smoke,
   Oakcrest 1-6); numbers as in the table; deck label now clear. CI APK sha256 c20e374edd512fb49d455fb8f832570c1847b392a040c200e044d8f821aa35cc.
 
+- docs: e0cea8c adds docs/research/lidar_pipeline_spec.md (Ian's GNSS/geomatics pipeline spec, summary + QL2 applicability).
+- 0.1.7.6 increment 5: spec items (5° coplanar merge, geodesic lidar line lengths, bilateral + 0.3 m erosion, skylight area/aspect/axis/
+  rectangularity gates, lidar glass evidence, dormer 1.5-20 m² gate). Local check: 15 Ward 3 skylights (6.8x5.0, 4.3x1.9, 3.8x1.8),
+  4 Oakcrest 0 (+2 lidar-only), 6 Harborview 0 (+1), deck 183. Run: (filled in after the run)
+
 ## Requirements
 - Mission: open-source tools so contractors and homeowners get accurate roof measurements and can tell whether a quote is fair.
 - Beat GAF QuickMeasure / EagleView / Hover using free data only. Stay on 0.1.7.x until Ian verifies on his phone. No accuracy claims.
