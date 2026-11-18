@@ -79,6 +79,8 @@ OAuth setup is documented through `bin/xai-oauth`. Keep credentials outside Git.
 
 ## AI model instructions
 
+**Agent operating contract:** read [AGENTS.md](AGENTS.md) before any model/provider automation changes. It defines verified GitHub handoffs, issue ownership, bounded retries, user-authorization gates, and the RoofMeasure branch boundary. The current feature issue map is in that file; instructions do not imply completed implementation.
+
 Before changing anything, classify the target:
 
 1. current runtime;
